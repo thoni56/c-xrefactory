@@ -1,6 +1,6 @@
 # Backlog
 
-What to work on next, and in what order. As of 2026-10-01.
+What to work on next, and in what order. As of 2026-10-02.
 
 The *descriptions* live in the guidebook (`doc/docs/`), in the `.suspended` notes and in
 the ADRs. This file carries only the **order** and the **dependencies**, which are
@@ -15,9 +15,14 @@ Ordering principle: first the cheap things that change what everything else cost
 the one item that gates the most rows, then the chains that unblock, then bugs and
 features. Relative effort only — no dates (#noestimates).
 
+Each item has a name, the `<a id>` before its title. A `Waits for:` line names what it
+waits for, and `Goes with:` what it belongs with. `utils/backlog_graph --update
+doc/backlog.md` draws the graph at the end of this file, and `--check`, run with the
+tests, fails if a name is unknown or the graph is out of date.
+
 ## 0. Verify first — cheap, and might change the cost of the rest
 
-1. **An operation's cursor parse re-parses a CU that Pass 3 already parsed** — *no repo
+1. <a id="cursor-parse-reuse"></a>**An operation's cursor parse re-parses a CU that Pass 3 already parsed** — *no repo
    home.* Traced 2026-09-23 on `7ba5650f` in `tests/test_browsing_push_in_unexpanded_macro`,
    cold: `-getproject` parses `source.c` in Pass 3, `-push` skips it as already parsed — so
    entry refresh is doing its job — and then the macro-body path parses it again to resolve
@@ -26,13 +31,14 @@ features. Relative effort only — no dates (#noestimates).
    Related: that parse was never recorded as a parse until `bb5110e7`, so the file counted
    as unparsed afterwards.
 
-2. **A cold start interrogates the compiler twice** —
+2. <a id="compiler-asked-twice"></a>**A cold start interrogates the compiler twice** —
    `tests/test_cold_start_interrogates_compiler_once/.suspended`. Waits for item 3,
    steps 2a and 2b.
+   Waits for: partition-options
 
 ## 1. The foundational one
 
-3. **Partition `options` by lifetime** — Session / Project / Request, one owner each, and
+3. <a id="partition-options"></a>**Partition `options` by lifetime** — Session / Project / Request, one owner each, and
    a pure `parseCommandLine()`. `doc/docs/17-major-codebase-improvements.adoc` §17.4. The
    roadmap's Setup Ladder says it gates the rows below it. Largest single item here.
    Begin with step 2 of that section, extracting side effects, in the order it gives.
@@ -44,9 +50,9 @@ features. Relative effort only — no dates (#noestimates).
    automatic `ProjectConfig` declared without `= {0}` would free garbage. A constructor
    makes "born empty" one expression instead of every declaration site remembering, and
    gives `makeOptionSets()` its first production caller.
-4. **The Setup Ladder, in this sequence**, each small once the partition lands
+4. <a id="setup-ladder"></a>**The Setup Ladder, in this sequence**, each small once the partition lands
    (`doc/docs/10-roadmap.adoc`, Convergence: The Setup Ladder → Remaining):
-   a. the client stops sending `-p` on every request — ADR-0029: this is not tidying,
+   a. <a id="client-stops-p"></a>**the client stops sending `-p` on every request** — ADR-0029: this is not tidying,
       it is what re-enables `PPC_PROJECT_MISMATCH`, since `handleProject()`
       (`src/cxref.c:1805`) returns on its first line when `options.project` is set and
       never looks at the request's file
@@ -60,11 +66,15 @@ features. Relative effort only — no dates (#noestimates).
       of one outside it. Today a `-getproject` from a modified buffer carries it as a
       preload (`c-xref-server-call-on-current-buffer-no-saves`, the "softsetup" hack in
       `editors/emacs/c-xref.el`), and Pass 1-2 reparse it;
-   b. project setup moves into the future `-openproject` — discovery, config read, compiler
+      Waits for: adr-0029, adr-0030
+      Goes with: startup-command-line, project-extent
+   b. <a id="setup-into-openproject"></a>**project setup moves into the future `-openproject`** — discovery, config read, compiler
       interrogation, snapshot load;
-   c. the assert that nothing before the future `-openproject` reads a project-scoped option — the
+      Waits for: partition-options
+   c. <a id="openproject-tripwire"></a>**the assert that nothing before the future `-openproject` reads a project-scoped option** — the
       tripwire, as the disk-read assert was for Memory as Truth;
-   d. what a project consists of — ADR-0031 (accepted 2026-10-02). One definition of
+      Waits for: setup-into-openproject
+   d. <a id="project-extent"></a>**what a project consists of** — ADR-0031 (accepted 2026-10-02). One definition of
       *own* for scan and membership, *visible* through the include graph, *outside* saying
       whether a project was found, the root path as the id (`lockedProjectRoot` goes).
       Pinned by three suspended tests: `test_server_refuse_project_switch`,
@@ -74,22 +84,23 @@ features. Relative effort only — no dates (#noestimates).
       walks the root twice, since `.` normalizes with a trailing slash and the skip in
       `scanProjectStructure()` compares unnormalized strings; and the client's mismatch
       switch kills the server without `-exit`, losing everything since the last snapshot.
+      Waits for: adr-0031
 
-5. **Drop the `CXFI_REFNUM` record from the snapshot** — it is always written as 1. A safe
+5. <a id="drop-cxfi-refnum"></a>**Drop the `CXFI_REFNUM` record from the snapshot** — it is always written as 1. A safe
    format change: a snapshot of another format version is ignored like no snapshot and
    rewritten on exit, so it costs one cold start. Do it with the next format change.
 
 ## 2. After XrefMode
 
-6. **Re-key the 19 `options.mode != ServerMode` guards in `src/yylex.c` onto a
-   report-errors flag**, and stop `formatMessage()` (`src/commons.c`) dropping the position
+6. <a id="report-errors-flag"></a>**Re-key the 19 `options.mode != ServerMode` guards in `src/yylex.c`** onto a
+   report-errors flag, and stop `formatMessage()` (`src/commons.c`) dropping the position
    in server mode. Roadmap, "Report what did not parse". Doubles as the server half of
    the Indexing Log Buffer item. Scope reporting to the operation's own parse, not the
    session-wide `-errors`. Restore `tests/test_multipass`'s error-position assertion in
    the same change: it was dropped when that test moved to the server, because the
    position is what server mode throws away. With XrefMode gone the guards never
    fire, so today the server reports nothing they guard.
-7. **Decide, and enforce, what the startup command line may carry** — *no repo home yet.*
+7. <a id="startup-command-line"></a>**Decide, and enforce, what the startup command line may carry** — *no repo home yet.*
    Bigger than `c-xref file.c`, and it needs code, not just a decision. Once XrefMode is
    gone the server takes no file at startup: every request names its own, and the same
    parser serves both phases, so the question becomes which options are process-scoped at
@@ -125,7 +136,7 @@ features. Relative effort only — no dates (#noestimates).
      look. Auto-discovery gives you the tree under the config; anything outside it still
      has to be named. Likely home: the config, or the machine-specific sibling, since an
      external source tree is usually a local path.
-8. **Finish after XrefMode** — the mode, `xref.c`, every `XrefMode` branch, the snapshot
+8. <a id="finish-after-xrefmode"></a>**Finish after XrefMode** — the mode, `xref.c`, every `XrefMode` branch, the snapshot
    merge path and the `-create`/`-update`/`-fastupdate` options went on 2026-09-24 (WSL,
    session `a3efe465`). Left: the `options.mode ==/!= ServerMode` checks, which are
    constant wherever the mode is known, since LSP sets `ServerMode` too
@@ -133,27 +144,29 @@ features. Relative effort only — no dates (#noestimates).
    drop the flag and the client's use of it (`editors/emacs/c-xref.el:1615`); the
    client's tags-dispatch trio, which rendered a `-create` log (keep or delete with
    item 21); and the chapters that still describe XrefMode as present.
-9. **Remove the `parseBufferUsingServer` bridge** — §17.3; 9 refactoring call sites
+   Goes with: indexing-log-buffer
+9. <a id="remove-bridge"></a>**Remove the `parseBufferUsingServer` bridge** — §17.3; 9 refactoring call sites
    re-entering `callServer`. Independent of the rest of this section (it asserts
    `ServerMode`), but it is the last divergent parse path.
 
 ## 3. Correctness, by (quiet × cheap)
 
-10. **Extract passes statics by value** — *no test pins it.* Since the gate fix this
+10. <a id="extract-statics-by-value"></a>**Extract passes statics by value** — *no test pins it.* Since the gate fix this
     compiles and silently does the wrong thing, where before it failed to compile.
     Liveness-after-the-region is the wrong question for static storage: treat
     static/thread-local as live after the region in `classifyVariableUsingDataFlow`
     (`src/extract.c`), which pushes it to `CLASSIFIED_AS_IN_OUT_ARGUMENT`. Failing system
     test first. Quietest bug on this list.
-11. **Token pasting trio**, in this order — the later two assume the first
+11. <a id="token-pasting-trio"></a>**Token pasting trio**, in this order — the later two assume the first
     (`doc/docs/18-known-bugs.adoc`): `tests/test_token_pasting_numbers` (changes the
     passing `test_collate_const_suffix_pasting`) → `tests/test_token_pasting_float` →
     `tests/test_collate_hex_prefix_pasting` (touches how every number is lexed).
-12. **Header static: prototype and definition get different link names** —
+12. <a id="header-static-link-names"></a>**Header static: prototype and definition get different link names** —
     `setStaticFunctionLinkName` (`src/semact.c`); renames break the build today.
     `tests/test_static_declared_and_defined_in_header/.suspended` has the
     `exactPositionResolve` question to settle first, so it starts as a decision.
-13. Then, roughly by cost — each has a `.suspended` note or a `18-known-bugs.adoc` entry:
+    Waits for: startup-command-line
+13. <a id="correctness-by-cost"></a>**Then, roughly by cost** — each has a `.suspended` note or a `18-known-bugs.adoc` entry:
     `tests/test_getproject_unknown_cu_under_include_path` (any file under an `-I`
     directory counts as project) · `tests/test_preprocess_edit_removes_ifdef_define` (CU
     reparse leaves a header declaration it no longer emits — ADR-0025 variant B) ·
@@ -164,6 +177,7 @@ features. Relative effort only — no dates (#noestimates).
     of 25 occurrences on ffmpeg, but it needs a header included by more than ~130 CUs, and
     c-xrefactory has 79 with a worst fan-in of 39, so it cannot happen here. That, and
     not its severity, is why it sits in this bucket.
+    Goes with: project-extent
 
     Also here, and *without a repo home yet*: **a warm start trips
     `FATAL cxref.c:1494: 'browsingStack.top' is not true`**. Run
@@ -195,21 +209,25 @@ features. Relative effort only — no dates (#noestimates).
 Roadmap → Optimization. Baseline: cold-start PUSH on ffmpeg `af_afir.c` — scan 2.7s, two
 Pass 3 rounds 19s each, 42s total.
 
-14. **Header-filtered sibling parsing** — 2481 sibling CUs → 2 for `AudioFIRContext`. The
+14. <a id="header-filtered-siblings"></a>**Header-filtered sibling parsing** — 2481 sibling CUs → 2 for `AudioFIRContext`. The
     design problem is that Pass 3 runs during sync and the symbol is only known during
     dispatch.
-15. **Extend the lightweight scan to `<...>` includes** — blocked on header-filtered
+15. <a id="scan-angle-includes"></a>**Extend the lightweight scan to `<...>` includes** — blocked on header-filtered
     sibling parsing, or ubiquitous system headers drag in nearly every CU. Also removes
     the cold-start double progress bar.
-16. **Lexing cache re-introduction** — present in the original codebase, lost in
+    Waits for: header-filtered-siblings
+    Goes with: project-extent
+16. <a id="lexing-cache"></a>**Lexing cache re-introduction** — present in the original codebase, lost in
     restructuring.
-17. **Parallel parsing** — last, and only if the three above leave `avcodec.h` (614 CUs) or
+    Waits for: scan-angle-includes
+17. <a id="parallel-parsing"></a>**Parallel parsing** — last, and only if the three above leave `avcodec.h` (614 CUs) or
     `internal.h` (1171 CUs) unacceptable. Global mutable parser state, a single CX arena
     and a shared file table are the obstacles.
+    Waits for: lexing-cache
 
 ## 5. Features, by readiness
 
-18. **Take the client's "Remove References and Restart Server" back out** — it landed
+18. <a id="remove-references-stopgap"></a>**Take the client's "Remove References and Restart Server" back out** — it landed
     2026-09-24 as a deliberate stopgap (`c-xref-project-remove-references-and-restart`,
     `editors/emacs/c-xref.el`), because discarding the database is the standing remedy for
     two unrelated symptoms: shadow occurrences after behind-the-back disk changes, and a
@@ -218,31 +236,34 @@ Pass 3 rounds 19s each, 42s total.
     entry refresh are probably most of it,
     and item 20 dissolves another part. Remove the entry when they land, and check the
     symptoms are gone rather than assuming it.
+    Goes with: index-based-sessions
 
-19. **Move Function comment y/n prompt** — replaces the `c-xref-comments-moving-level`
+19. <a id="move-function-comment-prompt"></a>**Move Function comment y/n prompt** — replaces the `c-xref-comments-moving-level`
     customization; collapse `CommentMovingMode` to a bool and stop the backward walk at a
     blank line (`src/options.h`, `src/move_function.c`). The TDD scaffolding already
     landed: four `tests/test_move_function_*comment*` tests; sweep
     `-commentmovinglevel=6` → `=1` in the three "with…" `commands.input` files and add
     `test_move_function_stops_at_blank_line` in the same change. Most shovel-ready item
     here.
-20. **Index-based sessions** — dissolves stale-POP *and* lets an answer grow while you
+20. <a id="index-based-sessions"></a>**Index-based sessions** — dissolves stale-POP *and* lets an answer grow while you
     work. Roadmap → Memory as Truth → Remaining. Depends only on entry refresh, which is
     done.
-21. **Indexing Log Buffer** — Option A (`PPC_LOG` + a silent `*c-xref-log*` buffer),
+    Waits for: entry-refresh
+21. <a id="indexing-log-buffer"></a>**Indexing Log Buffer** — Option A (`PPC_LOG` + a silent `*c-xref-log*` buffer),
     `doc/docs/11-planned-features.adoc`. Follows the report-errors item. The client half
     does not have to be invented: `c-xref-tags-dispatch` and its two helpers in
     `editors/emacs/c-xref.el` rendered exactly this for the `-create` log — a stream of
     PPC records into `*c-xref-log*`, severity faces, `file://` links made clickable — and
     are kept, uncalled, for that reason. The viewer commands and keymap below them are
     still bound; only the producer is gone.
-22. **Retry the request that created the project** — small, and it becomes first contact
+    Waits for: report-errors-flag
+22. <a id="retry-creating-request"></a>**Retry the request that created the project** — small, and it becomes first contact
     with every new project once auto-discovery is the only way in.
-23. **LSP tiers 1–2** — code actions and `workspace/executeCommand` for extract, move
+23. <a id="lsp-tiers"></a>**LSP tiers 1–2** — code actions and `workspace/executeCommand` for extract, move
     function and the parameter refactorings. Stubs exist: `handle_code_action`,
     `handle_execute_command`, with `codeActionProvider` commented out in
     `src/lsp_handler.c`. Keep tier 3 (custom methods + per-editor extension code) small.
-24. **Move Function next steps** — remove the source header's extern declaration, include
+24. <a id="move-function-next"></a>**Move Function next steps** — remove the source header's extern declaration, include
     management, helper-function detection, smarter header placement, preview — then
     **Delete Function**. Also **`-parse-all`, a request that parses every compilation
     unit the scan found and has not parsed** — what ADR-0024's CreateMode reduces to
@@ -266,7 +287,7 @@ Pass 3 rounds 19s each, 42s total.
     **semantic read-only files**, **rename handles `expect`**, **project-local
     config**, **Inline Function and Inline Macro**, **Extract an Expression as a
     Function**. All in `11-planned-features.adoc`.
-25. **Local config fragments — the need, not a solution** — *no repo home yet.*
+25. <a id="local-config-fragments"></a>**Local config fragments — the need, not a solution** — *no repo home yet.*
     `.c-xrefrc` travels with the project and is checked in, which is why
     `11-planned-features.adoc` argues for it: "it will not contain absolute file paths".
     Some things are machine-specific and still have to be said somewhere — where the
@@ -290,10 +311,11 @@ Pass 3 rounds 19s each, 42s total.
     shell's environment, and an unbound name is left as written and becomes a path that
     does not exist, silently. ADR-0031 makes directories outside the root more common
     and points here.
-26. **Chapter 17 hygiene, opportunistically** — incremental `cxfile.c` cleanup, extract
+    Goes with: project-extent
+26. <a id="chapter-17-hygiene"></a>**Chapter 17 hygiene, opportunistically** — incremental `cxfile.c` cleanup, extract
     the macro expansion module, hashtab → hashlist, split the editor module, rename server
     operations, elisp recompiled and deleted on every build.
-27. **Dump Reference Database** — *no repo home yet.* A request that answers with the
+27. <a id="dump-reference-database"></a>**Dump Reference Database** — *no repo home yet.* A request that answers with the
     in-memory table, and a client command for it, so you can see what the server thinks it
     knows without stopping it. The answer is enough to read, e.g. in `*Messages*`. It dumps
     memory, not the snapshot, which leaves out most of what is not visible outside a file,
@@ -308,7 +330,7 @@ Pass 3 rounds 19s each, 42s total.
 
 ## 6. Developer tooling
 
-28. **Two causes of watchers not firing on macOS, both found** — *no repo home yet.*
+28. <a id="macos-watchers"></a>**Two causes of watchers not firing on macOS, both found** — *no repo home yet.*
     Kept because the symptoms are absence and noise, which is what gets
     re-investigated from scratch. Diagnosed on the Mac, session `4e8903dc`,
     2026-09-30.
@@ -358,11 +380,25 @@ Pass 3 rounds 19s each, 42s total.
     can stay beside the sources where Emacs cov-mode reads them. Whether it works is
     the open question above; if it does not, moving the build output is what is left.
 
-29. **Tests that copy a preload next to the file it replaces can be flaky** — the driver
+29. <a id="flaky-preload-tests"></a>**Tests that copy a preload next to the file it replaces can be flaky** — the driver
     refuses a preload that is not newer than its file, and two `cp`s in a row can get the
     same mtime from the kernel's coarse clock. `test_preload_pruned_after_close` failed so
     once. The fix is to make the replaced file older, `touch -t 200001010000 <file>`. About
     ten test Makefiles create preloads with `cp`; check which do it next to the file.
+30. <a id="backlog-graph-tidy"></a>**Tidy `utils/backlog_graph` after seeing the graph live** — the item is built
+    in two almost identical places, which a `new_item()` would make one, and `draw()`
+    does four things in a row (header, clusters, edges, states) that read better as four
+    functions.
+
+## Foundation
+
+What the open items rest on, so that a `Waits for:` can name it. Not a record of what
+was done.
+
+- <a id="entry-refresh"></a>**Entry refresh before every request (ADR-0020)**
+- <a id="adr-0029"></a>**ADR-0029: the project's identity is its root path**
+- <a id="adr-0030"></a>**ADR-0030: opening a project and asking about a file are separate**
+- <a id="adr-0031"></a>**ADR-0031: what files a project consists of**
 
 ## Open questions that would reorder this
 
