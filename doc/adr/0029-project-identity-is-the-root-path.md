@@ -6,6 +6,7 @@ Date: 2026-09-25
 
 Accepted
 
+Corrected by [ADR-0031](0031-what-files-a-project-consists-of.md)
 Builds on [ADR-0005](0005-automatically-find-config-files.md)
 Builds on [ADR-0021](0021-single-project-server.md)
 Builds on [ADR-0028](0028-remove-snapshot-location-and-partition-options.md)
@@ -65,6 +66,10 @@ _disregarding the fact that_
 - a `.c-xrefrc` may carry several sections describing overlapping trees, and a path
   cannot tell those apart. The name still selects *which options apply*; it simply
   stops deciding *which server owns this file*,
+  (*Corrected by ADR-0031, 2026-10-02:* the name never selected among several sections —
+  in practice only the first section is read. ADR-0031 makes the section header mean
+  nothing at all, and the root path the project's id everywhere, including what
+  `set-info` returns.)
 - the root path must never be written anywhere that travels — a config, or a snapshot
   copied between machines,
 

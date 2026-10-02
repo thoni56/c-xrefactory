@@ -7,6 +7,8 @@ Date: 2022-04-06
 Accepted (discovery implemented 2026-01-23 in `d5a7182f`; the option removals it calls
 for — `-xrefrc`, `-stdop`, `-no-stdop` — are outstanding and tracked in the backlog)
 
+Outcome settled by [ADR-0031](0031-what-files-a-project-consists-of.md)
+
 ## Deciders
 
 Thomas Nilefalk
@@ -38,6 +40,13 @@ None.
 ### Decision Outcome
 
 Yet to be decided.
+
+*Settled by ADR-0031 (2026-10-02).* A config holds one project, and its section header
+means nothing. The project is the tree under the config's directory, plus the
+directories the config lists, minus what `-prune` removes; a nested `.c-xrefrc` is
+another project. The root path is the project's identity (ADR-0029). The implications
+below were answered along those lines: no multiple projects per file, and no required
+project heading.
 
 ### Decision Implications
 
