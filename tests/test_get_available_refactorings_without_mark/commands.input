@@ -1,4 +1,4 @@
-CXREF -xrefactory-II -crlfconversion -crconversion -server
+CXREF -crlfconversion -crconversion -server
 -getproject  CURDIR/parameter.c
 <sync>
 -olcxgetrefactorings -olcursor=217 CURDIR/parameter.c

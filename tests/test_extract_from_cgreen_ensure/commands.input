@@ -1,4 +1,4 @@
-CXREF -xrefactory-II -server
+CXREF -server
 -getproject CURDIR/source.c
 <sync>
 -rfct-extract-function -olmark=173 -olcursor=157 CURDIR/source.c

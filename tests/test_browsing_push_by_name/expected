@@ -1,4 +1,4 @@
-CXREF -xrefactory-II -crlfconversion -crconversion -server -o server-buffer
+CXREF -crlfconversion -crconversion -server -o server-buffer
 -getproject CURDIR/browsing.c
 end-of-options
 

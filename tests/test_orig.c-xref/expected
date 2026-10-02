@@ -1,4 +1,4 @@
-CXREF -server -xrefactory-II -o server-buffer
+CXREF -server -o server-buffer
 -getproject CURDIR/src/main.c
 end-of-options
 

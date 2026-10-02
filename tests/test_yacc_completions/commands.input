@@ -1,4 +1,4 @@
-CXREF -xrefactory-II -crlfconversion -crconversion -server
+CXREF -crlfconversion -crconversion -server
 -getproject CURDIR/simple_grammar.y
 <sync>
 -olcxcomplet -maxcompls=500 -olinelen=236  -olmark=496 -olcursor=411 CURDIR/simple_grammar.y

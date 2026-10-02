@@ -1,4 +1,4 @@
-CXREF -xrefactory-II -server
+CXREF -server
 -getproject CURDIR/hello.c
 <sync>
 -rfct-del-param -olcxparnum=1 -olcursor=17 CURDIR/hello.c

@@ -1,4 +1,4 @@
-CXREF -xrefactory-II -server
+CXREF -server
 -getproject CURDIR/server.c
 <sync>
 -rfct-move-function -commentmovinglevel=0 -movetargetfile=parsing.c -rfct-target-line=47 -olcursor=4419 CURDIR/server.c

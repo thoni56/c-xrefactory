@@ -1,4 +1,4 @@
-CXREF -xrefactory-II -server
+CXREF -server
 -getproject CURDIR/cexercise/refactorings/extract.c
 <sync>
 -rfct-extract-function -olmark=315 -olcursor=423 CURDIR/cexercise/refactorings/extract.c

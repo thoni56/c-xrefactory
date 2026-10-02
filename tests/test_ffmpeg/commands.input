@@ -1,4 +1,4 @@
-CXREF -xrefactory-II -server -statistics
+CXREF -server -statistics
 -getproject CURDIR/ffmpeg/fftools/ffmpeg.c
 <sync>
 -search=non_existant_to_force_parse_all -olcursor=1 CURDIR/ffmpeg/fftools/ffmpeg.c -p CURDIR

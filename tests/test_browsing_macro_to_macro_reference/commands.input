@@ -1,4 +1,4 @@
-CXREF -xrefactory-II -server
+CXREF -server
 -getproject CURDIR/macros.h
 <sync>
 -push -preload CURDIR/macros.h CURDIR/macros.preload -olcursor=79 CURDIR/macros.h

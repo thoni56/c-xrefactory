@@ -1,4 +1,4 @@
-CXREF -xrefactory-II -server
+CXREF -server
 -getproject CURDIR/project/main.c
 <sync>
 -getproject CURDIR/lib/libfile.c

@@ -1,4 +1,4 @@
-CXREF -xrefactory-II -crlfconversion -crconversion -server .
+CXREF -crlfconversion -crconversion -server .
 -getproject CURDIR/test_source/single_int1.c
 <sync>
 -get env

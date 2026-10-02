@@ -1,4 +1,4 @@
-CXREF -xrefactory-II -server
+CXREF -server
 -getproject CURDIR/main.c
 <sync>
 -rfct-rename -renameto=total -olmark=70 -olcursor=70 CURDIR/main.c

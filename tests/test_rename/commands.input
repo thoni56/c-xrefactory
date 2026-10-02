@@ -1,4 +1,4 @@
-CXREF -xrefactory-II -server
+CXREF -server
 -getproject CURDIR/test_source/single_int1.c
 <sync>
 -rfct-rename -renameto=single_int_on_line_1_col_44 -olmark=66 -olcursor=66 CURDIR/test_source/single_int1.c

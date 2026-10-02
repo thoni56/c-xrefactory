@@ -1,4 +1,4 @@
-CXREF -xrefactory-II -crlfconversion -crconversion -server
+CXREF -crlfconversion -crconversion -server
 -getproject CURDIR/node.h
 <sync>
 -push  -olcursor=24 CURDIR/node.h

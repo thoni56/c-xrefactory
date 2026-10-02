@@ -1,4 +1,4 @@
-CXREF  test_source/single_int1.c -xrefactory-II -server -log=log.log -commandlog=commands.log -o server-buffer
+CXREF  test_source/single_int1.c -server -log=log.log -commandlog=commands.log -o server-buffer
 -getproject  CURDIR/test_source/single_int1.c
 end-of-options
 

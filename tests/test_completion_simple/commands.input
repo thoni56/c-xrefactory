@@ -1,4 +1,4 @@
-CXREF  test_source/single_int1.c -xrefactory-II -server -log=log.log -commandlog=commands.log
+CXREF  test_source/single_int1.c -server -log=log.log -commandlog=commands.log
 -getproject  CURDIR/test_source/single_int1.c
 <sync>
 -olcxcomplet CURDIR/test_source/single_int1.c -olcursor=85

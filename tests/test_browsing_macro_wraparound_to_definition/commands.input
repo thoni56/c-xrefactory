@@ -1,4 +1,4 @@
-CXREF -xrefactory-II -server
+CXREF -server
 -getproject CURDIR/aaa_usage.c
 <sync>
 -push -preload CURDIR/zzz_define.h CURDIR/zzz_define.preload -olcursor=8 CURDIR/zzz_define.h

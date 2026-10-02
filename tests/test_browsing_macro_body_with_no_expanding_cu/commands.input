@@ -1,4 +1,4 @@
-CXREF -xrefactory-II -crlfconversion -crconversion -server
+CXREF -crlfconversion -crconversion -server
 -getproject CURDIR/only.c
 <sync>
 -push  -olcursor=30 CURDIR/only.c

@@ -1,4 +1,4 @@
-CXREF -server -xrefactory-II
+CXREF -server
 -getproject CURDIR/src/main.c
 <sync>
 -push -olmark=67072 -olcursor=104883 CURDIR/src/main.c

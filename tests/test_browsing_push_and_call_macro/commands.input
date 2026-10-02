@@ -1,4 +1,4 @@
-CXREF -xrefactory-II -crlfconversion -crconversion -errors -server
+CXREF -crlfconversion -crconversion -errors -server
 -getproject CURDIR/source.c
 <sync>
 -olcxpushandcallmacro  -olcursor=97 CURDIR/source.c

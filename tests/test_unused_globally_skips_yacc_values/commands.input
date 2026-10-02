@@ -1,4 +1,4 @@
-CXREF -xrefactory-II -server
+CXREF -server
 -getproject CURDIR/grammar.y
 <sync>
 -olcxpushglobalunused CURDIR/grammar.y

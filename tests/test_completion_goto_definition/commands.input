@@ -1,4 +1,4 @@
-CXREF  src/main.c -xrefactory-II -server -log=log.log -commandlog=commands.log
+CXREF  src/main.c -server -log=log.log -commandlog=commands.log
 -getproject  CURDIR/src/main.c
 <sync>
 -olcxcomplet CURDIR/src/main.c -olcursor=243

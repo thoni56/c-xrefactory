@@ -1,4 +1,4 @@
-CXREF -xrefactory-II -server
+CXREF -server
 -getproject CURDIR/cexercise/refactorings/rename.c
 <sync>
 -rfct-rename -renameto=renameMi -olcursor=703 CURDIR/cexercise/refactorings/rename.c

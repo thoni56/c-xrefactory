@@ -1,4 +1,4 @@
-CXREF -xrefactory-II -server
+CXREF -server
 -getproject CURDIR/main.c
 <sync>
 -rfct-rename-included-file -renameto=include2.h -olcursor=6 CURDIR/main.c

@@ -1,4 +1,4 @@
-CXREF -xrefactory-II -server
+CXREF -server
 -getproject CURDIR/main.c
 <sync>
 -olcxpushname=helper -olcxlccursor=1:0 -olcursor=0 CURDIR/main.c

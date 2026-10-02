@@ -1,4 +1,4 @@
-CXREF -xrefactory-II -server
+CXREF -server
 -getproject -preload CURDIR/source.c CURDIR/source.preload CURDIR/source.c
 <sync>
 -push -olcursor=35 -preload CURDIR/source.c CURDIR/source.preload CURDIR/source.c

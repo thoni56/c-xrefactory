@@ -1,4 +1,4 @@
-CXREF -xrefactory-II -server
+CXREF -server
 -getproject CURDIR/project/source.c
 <sync>
 -getproject CURDIR/external/external.h

@@ -1,4 +1,4 @@
-CXREF -xrefactory-II -server
+CXREF -server
 -getproject CURDIR/source.c
 <sync>
 -olcxgetrefactorings -olcursor=17 CURDIR/source.c

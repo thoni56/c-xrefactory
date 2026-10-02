@@ -1,4 +1,4 @@
-CXREF -xrefactory-II -server
+CXREF -server
 -getproject CURDIR/b.c
 <sync>
 -push -olcursor=25 CURDIR/b.c

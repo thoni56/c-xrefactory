@@ -1,4 +1,4 @@
-CXREF -xrefactory-II -server
+CXREF -server
 -getproject CURDIR/source.c
 <sync>
 -rfct-move-param -olcxparnum=1 -olcxparnum2=2 -olcursor=17 CURDIR/source.c

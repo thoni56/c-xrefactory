@@ -1,4 +1,4 @@
- CXREF -xrefactory-II -crlfconversion -crconversion -server
+ CXREF -crlfconversion -crconversion -server
 -getproject test_source/single_int1.c
 <sync>
 -push -olmark=0 -olcursor=6 test_source/single_int1.c

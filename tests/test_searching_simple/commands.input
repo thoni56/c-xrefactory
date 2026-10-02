@@ -1,4 +1,4 @@
-CXREF -xrefactory-II -server
+CXREF -server
 -getproject CURDIR/source.c
 <sync>
 -search=int* -olcxlccursor=1:5 -olcursor=5 CURDIR/source.c -olcursor=85

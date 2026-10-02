@@ -1,4 +1,4 @@
-CXREF -xrefactory-II -server
+CXREF -server
 -getproject CURDIR/counter.h
 <sync>
 -push -olcursor=14 CURDIR/counter.h

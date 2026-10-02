@@ -1,4 +1,4 @@
-CXREF -xrefactory-II -server
+CXREF -server
 -getproject CURDIR/test_sources/yylex.c
 <sync>
 -rfct-extract-function -olmark=5350 -olcursor=5440 CURDIR/test_sources/yylex.c

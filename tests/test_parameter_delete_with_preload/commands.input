@@ -1,4 +1,4 @@
-CXREF -xrefactory-II -server
+CXREF -server
 -getproject CURDIR/source.c
 <sync>
 -rfct-del-param -olcxparnum=2 -olcursor=75 CURDIR/source.c -preload CURDIR/source.c CURDIR/source.preload
