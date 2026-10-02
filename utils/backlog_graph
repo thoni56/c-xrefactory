@@ -79,12 +79,12 @@ def read_backlog(lines):
 
 
 def draw(sections, items, foundation):
-    # A dependency graph and nothing else: only what takes part in an edge is drawn,
+    # A dependency graph and nothing else: every item and the foundation are drawn,
     # and the section an item belongs to is a tag in its label, not a box
     work = [item for item in items.values() if not item['parts']]
     edges = []
     goes_with = []
-    involved = []
+    involved = [item['slug'] for item in work] + [done['slug'] for done in foundation]
     def involve(slug):
         if slug not in involved:
             involved.append(slug)

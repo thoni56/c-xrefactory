@@ -2,21 +2,21 @@ flowchart BT
   classDef ready fill:#9fd4a8,stroke:#4f9a5d,color:#13261a
   classDef blocked fill:#f1c48b,stroke:#b9853f,color:#2b1d08
   classDef done fill:#c9d3cb,stroke:#8a958c,color:#1f2421
-  groundwork["The groundwork"]
   first_item["§0 · 1 · First item"]
   second_item["§1 · 2 · Second item"]
   rung_a["§2 · 3a · the first rung"]
   rung_b["§2 · 3b · the second rung"]
   odd_title["§3 · 4 · Take out #quot;Remove#quot; for `#lt;...#gt;` includes"]
+  groundwork["The groundwork"]
   groundwork --> first_item
   first_item --> second_item
   rung_a --> rung_b
   second_item -.- rung_b
   odd_title -.- first_item
   linkStyle 3,4 stroke:#8a63d2,stroke-width:2px,stroke-dasharray:6 4
-  class groundwork done
   class first_item ready
   class second_item blocked
   class rung_a ready
   class rung_b blocked
   class odd_title ready
+  class groundwork done
