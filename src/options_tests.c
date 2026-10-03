@@ -185,23 +185,32 @@ Ensure(Options, has_no_mode_by_default) {
     assert_that(presetOptions.mode, is_equal_to(UndefinedMode));
 }
 
-Ensure(Options, reports_xrefrc_option_with_equals_as_no_longer_supported) {
+/* The server's command line is processed before any request and again on every
+ * request, so -xrefrc is only noted there, and reported once, when the project is locked */
+Ensure(Options, notes_xrefrc_option_with_equals_without_reporting_it) {
     char *argv[] = {"", "-xrefrc=abc"};
     ArgumentsVector args = {2, argv};
 
-    expect(errorMessage);
-
+    never_expect(errorMessage);
     processOptions(args, PROCESS_FILE_ARGUMENTS_NO);
+}
+
+Ensure(Options, reports_a_noted_xrefrc_option_as_no_longer_supported) {
+    char *argv[] = {"", "-xrefrc=abc"};
+    ArgumentsVector args = {2, argv};
+    processOptions(args, PROCESS_FILE_ARGUMENTS_NO);
+
+    expect(errorMessage);
+    reportUnsupportedOptions();
 }
 
 /* The config is found from the file now, but an old command line still names
  * one, and its file name must not be taken for a file to parse */
-Ensure(Options, reports_xrefrc_option_with_filename_separate_and_skips_the_filename) {
+Ensure(Options, notes_xrefrc_option_with_filename_separate_without_reporting_it_and_skips_the_filename) {
     char *argv[] = {"", "-xrefrc", "abc"};
     ArgumentsVector args = {3, argv};
 
-    expect(errorMessage);
-
+    never_expect(errorMessage);
     processOptions(args, PROCESS_FILE_ARGUMENTS_YES);
     assert_that(options.inputFiles, is_null);
 }

@@ -1454,6 +1454,7 @@ static bool processPOption(int *argi, ArgumentsVector args) {
 static bool refsWasGiven = false;
 static bool refnumWasGiven = false;
 static bool xrefactoryIIGiven = false;
+static bool xrefrcGiven = false;
 
 void reportUnsupportedOptions(void) {
     if (refsWasGiven)
@@ -1462,6 +1463,8 @@ void reportUnsupportedOptions(void) {
         warningMessage(ERR_ST, "-refnum is ignored, the snapshot is always a single file");
     if (xrefactoryIIGiven)
         errorMessage(ERR_ST, "-xrefactory-II is no longer supported, -server sets the protocol");
+    if (xrefrcGiven)
+        errorMessage(ERR_ST, "-xrefrc is no longer supported, the .c-xrefrc is found from the file");
 }
 
 static bool processROption(int *argi, ArgumentsVector args) {
@@ -1621,11 +1624,11 @@ static bool processXOption(int *argi, ArgumentsVector args) {
         xrefactoryIIGiven = true;
     }
     else if (strncmp(args.argv[i], "-xrefrc=",8) == 0) {
-        errorMessage(ERR_ST, "-xrefrc is no longer supported, the .c-xrefrc is found from the file");
+        xrefrcGiven = true;
     }
     else if (strcmp(args.argv[i], "-xrefrc") == 0) {
         ensureNextArgumentIsAFileName(&i, args);
-        errorMessage(ERR_ST, "-xrefrc is no longer supported, the .c-xrefrc is found from the file");
+        xrefrcGiven = true;
     }
     else return false;
     *argi = i;
