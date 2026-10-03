@@ -1627,8 +1627,7 @@ tries to delete C-xrefactory windows first.
   (let ((oldpct) (opts))
     (setq oldpct process-connection-type)
     (setq process-connection-type nil)
-    (setq opts (list "-xrefactory-II"
-                     "-crlfconversion"
+    (setq opts (list "-crlfconversion"
                      "-crconversion"
                      "-o" ofile))
 

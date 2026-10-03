@@ -40,7 +40,6 @@ static EditorUndo *refactoringStartingPoint;
 
 static char *serverDefaultArguments[] = {
     "c-xref",
-    "-xrefactory-II",
     //& "-debug",
     "-server",
     NULL,

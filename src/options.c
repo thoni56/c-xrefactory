@@ -1452,12 +1452,15 @@ static bool processPOption(int *argi, ArgumentsVector args) {
    parser only notes these, and they are reported once, when the project is locked */
 static bool refsWasGiven = false;
 static bool refnumWasGiven = false;
+static bool xrefactoryIIGiven = false;
 
 void reportIgnoredOptions(void) {
     if (refsWasGiven)
         warningMessage(ERR_ST, "-refs is ignored, the snapshot is always .c-xref/db in the project root");
     if (refnumWasGiven)
         warningMessage(ERR_ST, "-refnum is ignored, the snapshot is always a single file");
+    if (xrefactoryIIGiven)
+        errorMessage(ERR_ST, "-xrefactory-II is no longer supported, -server sets the protocol");
 }
 
 static bool processROption(int *argi, ArgumentsVector args) {
@@ -1614,7 +1617,7 @@ static bool processXOption(int *argi, ArgumentsVector args) {
     int i = * argi;
     if (0) {}
     else if (strcmp(args.argv[i], "-xrefactory-II") == 0){
-        options.cxrefProtocol = true;
+        xrefactoryIIGiven = true;
     }
     else if (strncmp(args.argv[i], "-xrefrc=",8) == 0) {
         errorMessage(ERR_ST, "-xrefrc is no longer supported, the .c-xrefrc is found from the file");
