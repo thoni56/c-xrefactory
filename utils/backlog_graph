@@ -136,7 +136,8 @@ PAGE = '''<!doctype html>
 <head>
 <meta charset="utf-8">
 <title>Backlog dependencies</title>
-<style>body {{ margin: 0; background: #fff; }} pre.mermaid {{ margin: 0; }}</style>
+<style>html, body {{ margin: 0; height: 100%; overflow: hidden; background: #fff; }} pre.mermaid {{ margin: 0; }}</style>
+<script src="https://cdn.jsdelivr.net/npm/svg-pan-zoom@3.6.2/dist/svg-pan-zoom.min.js"></script>
 </head>
 <body>
 <pre class="mermaid">
@@ -144,7 +145,15 @@ PAGE = '''<!doctype html>
 </pre>
 <script type="module">
 import mermaid from 'https://cdn.jsdelivr.net/npm/mermaid@11/dist/mermaid.esm.min.mjs';
-mermaid.initialize({{ startOnLoad: true, flowchart: {{ useMaxWidth: false }} }});
+mermaid.initialize({{ startOnLoad: false, flowchart: {{ useMaxWidth: false }} }});
+await mermaid.run();
+// Drag to pan and scroll to zoom, as in mermaid.live, over the whole window
+const svg = document.querySelector('pre.mermaid svg');
+svg.removeAttribute('width');
+svg.style.maxWidth = 'none';
+svg.style.width = '100vw';
+svg.style.height = '100vh';
+svgPanZoom(svg, {{ controlIconsEnabled: true, fit: true, center: true, minZoom: 0.1, maxZoom: 20 }});
 </script>
 </body>
 </html>'''
