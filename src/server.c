@@ -442,8 +442,6 @@ static void parseUnparsedSiblingCUs(int requestFileNumber, ArgumentsVector baseA
         options.cursorOffset = NO_CURSOR_OFFSET;
         for (int i = 0; i < cuCount; i++) {
             reparseStaleFile(cuFileNumbers[i], baseArgs);
-            FileItem *fi = getFileItemWithFileNumber(cuFileNumbers[i]);
-            fi->lastParsedMtime = editorFileModificationTime(fi->name);
             if (options.cxrefProtocol)
                 writeProgressInformation(cuCount - i - 1);
         }
@@ -482,9 +480,6 @@ static void reparseStalePreloadedFiles(ArgumentsVector baseArgs) {
                 } else {
                     log_debug("Reparsing stale CU '%s'", fileItem->name);
                     reparseStaleFile(fileNumber, baseArgs);
-                    EditorBuffer *buffer = getOpenedAndLoadedEditorBuffer(fileItem->name);
-                    if (buffer != NULL)
-                        fileItem->lastParsedMtime = buffer->modificationTime;
                     fileItem->needsBrowsingStackRefresh = true;
                 }
             }
@@ -618,7 +613,6 @@ static void parseAllUnparsedCompilationUnits(ArgumentsVector baseArgs, int total
             FileItem *fi = getFileItemWithFileNumber(i);
             if (isCompilationUnit(fi->name) && fileTimestampIsZero(fi->lastParsedMtime)) {
                 reparseStaleFile(i, baseArgs);
-                fi->lastParsedMtime = editorFileModificationTime(fi->name);
                 parsed++;
                 writeProgressInformation(staleCUs - parsed);
                 /* Save snapshot periodically so progress survives Ctrl-g/crash */
