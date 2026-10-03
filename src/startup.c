@@ -570,6 +570,10 @@ bool initializeProjectContext(char *fileName, ArgumentsVector baseArgs, Argument
     return true;
 }
 
+static void applyCurrentPassOptions(void) {
+    applyOptionSet(getProjectConfig()->optionSets.set[currentPass]);
+}
+
 /* Heavy orchestration-level initialization for legacy Server/Xref modes.
  * Handles multi-project server architecture where project settings can change per file.
  *
@@ -631,8 +635,9 @@ bool initializeFileProcessing(ArgumentsVector baseArgs, ArgumentsVector requestA
     ) {
         /* === PHASE 2-4: Options reading, compiler discovery, memory checkpointing === */
         loadProjectSettings(baseArgs, requestArgs, projectConfigFileName, projectSectionName);
+
         /* Before the input is opened: a -D is lexed through the same input */
-        applyOptionSet(getProjectConfig()->optionSets.set[currentPass]);
+        applyCurrentPassOptions();
 
         if (options.mode != ServerMode && inputFileName == NULL) {
             /* TODO Create a test that covers this */
@@ -657,8 +662,8 @@ bool initializeFileProcessing(ArgumentsVector baseArgs, ArgumentsVector requestA
 
         deepCopyOptionsFromTo(&savedOptions, &options);
         processOptions(requestArgs, PROCESS_FILE_ARGUMENTS_NO); /* no include or define options */
-        applyOptionSet(getProjectConfig()->optionSets.set[currentPass]);
-        inputOpened = computeAndOpenInputFile(inputFileName);  /* Phase 5 only */
+        applyCurrentPassOptions();
+        inputOpened = computeAndOpenInputFile(inputFileName); /* Phase 5 only */
     }
 
     assert(options.mode);
