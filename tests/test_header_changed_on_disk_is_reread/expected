@@ -1,0 +1,24 @@
+CXREF -server -o server-buffer
+-getproject CURDIR/source.c
+end-of-options
+
+<sync>
+<set-info len=<n>>CURDIR</set-info>
+-push -olcursor=46 CURDIR/source.c
+end-of-options
+
+<sync>
+<goto>
+ <position-lc line=1 col=8 len=<n>>CURDIR/header.h</position-lc>
+</goto>
+shell: cp CURDIR/header_v2.h CURDIR/header.h
+-push -olcursor=46 CURDIR/source.c
+end-of-options
+
+<sync>
+<goto>
+ <position-lc line=3 col=8 len=<n>>CURDIR/header.h</position-lc>
+</goto>
+-exit
+end-of-options
+

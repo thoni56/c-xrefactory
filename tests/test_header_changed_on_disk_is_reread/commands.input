@@ -1,0 +1,9 @@
+CXREF -server
+-getproject CURDIR/source.c
+<sync>
+-push -olcursor=46 CURDIR/source.c
+<sync>
+!cp CURDIR/header_v2.h CURDIR/header.h
+-push -olcursor=46 CURDIR/source.c
+<sync>
+<exit>
