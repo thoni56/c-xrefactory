@@ -1,0 +1,16 @@
+Bug: a header changed on disk leaves ghosts in its other includers
+
+definer.c and user.c both include header.h. When header.h is rewritten on disk with
+the declaration moved, a push in definer.c parses definer.c again and finds the
+declaration on line 3. user.c is not parsed again, and its reference to line 1 of the
+old header.h stays.
+
+Cause: Pass 2 parses the includers of a header only when the header is edited, i.e.
+preloaded. A disk change never makes a header stale. Changed CUs are picked up by
+their mtime.
+
+Likely fix: let Pass 2 treat a header whose disk mtime is newer than its last parse as
+stale, like a CU. Decide first whether that check runs for every header on each
+request, or only for headers the request's answer reaches.
+
+Backlog item behind-the-back in doc/backlog.md.

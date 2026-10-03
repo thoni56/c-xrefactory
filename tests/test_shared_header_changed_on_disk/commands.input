@@ -1,0 +1,11 @@
+CXREF -server
+-getproject CURDIR/definer.c
+<sync>
+-push -olcursor=24 CURDIR/definer.c
+<sync>
+!cp CURDIR/header_v2.h CURDIR/header.h
+-push -olcursor=24 CURDIR/definer.c
+<sync>
+-olcxfilter=0 -olcursor=0 nil
+<sync>
+<exit>
