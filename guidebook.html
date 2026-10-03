@@ -7785,21 +7785,11 @@ now builds like any other project.</p>
 xrefactory and probably also the proprietary C++ supporting version.</p>
 </div>
 <div class="paragraph">
-<p>There is an option, "-xrefactory-II", that might indicate that
-something was going on. But currently the only difference seems to be
-if the edit server protocol output is in the form of non-structured
-fprintf:s or using functions in the <code>ppc</code>-family (either calling
-<code>ppcGenRecord()</code> or `fprint`ing using some PPC-symbol). This, and
-hinted to in how the emacs-part starts the server and some initial
-server option variables in refactory.c, indicates that the
-communication from the editor and the refactory server is using
-this. It does <strong>not</strong> look like this is a forward to next generation
-attempt.</p>
-</div>
-<div class="paragraph">
-<p>What we should do is investigate if this switch actually is used
-anywhere but in the editor server context, and if so, if it can be
-made the default and the 'non-xrefactory-II' communication removed.</p>
+<p>There used to be an option, "-xrefactory-II". It did not indicate a
+next generation, it selected the edit server protocol, i.e. output
+through the <code>ppc</code>-family of functions instead of non-structured
+fprintf:s. The editor server was the only user, so <code>-server</code> now
+selects the protocol, and <code>-xrefactory-II</code> is reported as an error.</p>
 </div>
 </div>
 <div class="sect2">
@@ -12044,7 +12034,7 @@ operation reads the in-memory table.</p>
 </div>
 <div id="footer">
 <div id="footer-text">
-Last updated 2026-10-03 18:11:07 UTC
+Last updated 2026-10-03 19:12:25 UTC
 </div>
 </div>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.18.3/highlight.min.js"></script>

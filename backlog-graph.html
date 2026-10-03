@@ -1,0 +1,117 @@
+<!doctype html>
+<html>
+<head>
+<meta charset="utf-8">
+<title>Backlog dependencies</title>
+<style>body { margin: 0; background: #fff; } pre.mermaid { margin: 0; }</style>
+</head>
+<body>
+<pre class="mermaid">
+flowchart BT
+  classDef ready fill:#9fd4a8,stroke:#4f9a5d,color:#13261a
+  classDef blocked fill:#f1c48b,stroke:#b9853f,color:#2b1d08
+  classDef done fill:#c9d3cb,stroke:#8a958c,color:#1f2421
+  cursor_parse_reuse["§0 · 1 · An operation's cursor parse re-parses a CU that Pass 3 already parsed"]
+  compiler_asked_twice["§0 · 2 · A cold start interrogates the compiler twice"]
+  partition_options["§1 · 3 · Partition `options` by lifetime"]
+  client_stops_p["§1 · 4a · the client stops sending `-p` on every request"]
+  setup_into_openproject["§1 · 4b · project setup moves into the future `-openproject`"]
+  openproject_tripwire["§1 · 4c · the assert that nothing before the future `-openproject` reads a project-scoped option"]
+  project_extent["§1 · 4d · what a project consists of"]
+  drop_cxfi_refnum["§1 · 5 · Drop the `CXFI_REFNUM` record from the snapshot"]
+  report_errors_flag["§2 · 6 · Re-key the 19 `options.mode != ServerMode` guards in `src/yylex.c`"]
+  startup_command_line["§2 · 7 · Decide, and enforce, what the startup command line may carry"]
+  mode_checks["§2 · 8a · fold the `options.mode` checks outside `src/yylex.c`"]
+  xrefmode_in_docs["§2 · 8b · the docs stop describing XrefMode as present"]
+  remove_bridge["§2 · 9 · Remove the `parseBufferUsingServer` bridge"]
+  behind_the_back["§3 · 10 · Behind-the-back disk changes"]
+  extract_statics_by_value["§3 · 11 · Extract passes statics by value"]
+  token_pasting_trio["§3 · 12 · Token pasting trio"]
+  header_static_link_names["§3 · 13 · Header static: prototype and definition get different link names"]
+  correctness_by_cost["§3 · 14 · Then, roughly by cost"]
+  header_filtered_siblings["§4 · 15 · Header-filtered sibling parsing"]
+  scan_angle_includes["§4 · 16 · Extend the lightweight scan to `#lt;...#gt;` includes"]
+  lexing_cache["§4 · 17 · Lexing cache re-introduction"]
+  parallel_parsing["§4 · 18 · Parallel parsing"]
+  remove_references_stopgap["§5 · 19 · Take the client's #quot;Remove References and Restart Server#quot; back out"]
+  move_function_comment_prompt["§5 · 20 · Move Function comment y/n prompt"]
+  index_based_sessions["§5 · 21 · Index-based sessions"]
+  indexing_log_buffer["§5 · 22 · Indexing Log Buffer"]
+  retry_creating_request["§5 · 23 · Retry the request that created the project"]
+  lsp_tiers["§5 · 24 · LSP tiers 1–2"]
+  move_function_next["§5 · 25 · Move Function next steps"]
+  local_config_fragments["§5 · 26 · Local config fragments — the need, not a solution"]
+  chapter_17_hygiene["§5 · 27 · Chapter 17 hygiene, opportunistically"]
+  dump_reference_database["§5 · 28 · Dump Reference Database"]
+  macos_watchers["§6 · 29 · Two causes of watchers not firing on macOS, both found"]
+  flaky_preload_tests["§6 · 30 · Tests that copy a preload next to the file it replaces can be flaky"]
+  entry_refresh["Entry refresh before every request (ADR-0020)"]
+  adr_0029["ADR-0029: the project's identity is its root path"]
+  adr_0030["ADR-0030: opening a project and asking about a file are separate"]
+  adr_0031["ADR-0031: what files a project consists of"]
+  partition_options --&gt; compiler_asked_twice
+  adr_0029 --&gt; client_stops_p
+  adr_0030 --&gt; client_stops_p
+  partition_options --&gt; setup_into_openproject
+  setup_into_openproject --&gt; openproject_tripwire
+  adr_0031 --&gt; project_extent
+  startup_command_line --&gt; header_static_link_names
+  header_filtered_siblings --&gt; scan_angle_includes
+  scan_angle_includes --&gt; lexing_cache
+  lexing_cache --&gt; parallel_parsing
+  behind_the_back --&gt; remove_references_stopgap
+  entry_refresh --&gt; index_based_sessions
+  report_errors_flag --&gt; indexing_log_buffer
+  client_stops_p -.- startup_command_line
+  client_stops_p -.- project_extent
+  mode_checks -.- report_errors_flag
+  correctness_by_cost -.- project_extent
+  scan_angle_includes -.- project_extent
+  remove_references_stopgap -.- index_based_sessions
+  local_config_fragments -.- project_extent
+  linkStyle 13,14,15,16,17,18,19 stroke:#8a63d2,stroke-width:2px,stroke-dasharray:6 4
+  class cursor_parse_reuse ready
+  class compiler_asked_twice blocked
+  class partition_options ready
+  class client_stops_p ready
+  class setup_into_openproject blocked
+  class openproject_tripwire blocked
+  class project_extent ready
+  class drop_cxfi_refnum ready
+  class report_errors_flag ready
+  class startup_command_line ready
+  class mode_checks ready
+  class xrefmode_in_docs ready
+  class remove_bridge ready
+  class behind_the_back ready
+  class extract_statics_by_value ready
+  class token_pasting_trio ready
+  class header_static_link_names blocked
+  class correctness_by_cost ready
+  class header_filtered_siblings ready
+  class scan_angle_includes blocked
+  class lexing_cache blocked
+  class parallel_parsing blocked
+  class remove_references_stopgap blocked
+  class move_function_comment_prompt ready
+  class index_based_sessions ready
+  class indexing_log_buffer blocked
+  class retry_creating_request ready
+  class lsp_tiers ready
+  class move_function_next ready
+  class local_config_fragments ready
+  class chapter_17_hygiene ready
+  class dump_reference_database ready
+  class macos_watchers ready
+  class flaky_preload_tests ready
+  class entry_refresh done
+  class adr_0029 done
+  class adr_0030 done
+  class adr_0031 done
+</pre>
+<script type="module">
+import mermaid from 'https://cdn.jsdelivr.net/npm/mermaid@11/dist/mermaid.esm.min.mjs';
+mermaid.initialize({ startOnLoad: true, flowchart: { useMaxWidth: false } });
+</script>
+</body>
+</html>
