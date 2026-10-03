@@ -115,7 +115,7 @@ doc/backlog.md` puts a link to the dependency graph at the end of this file, and
    - **`-exactpositionresolve` has no strategy.** It is real: it changes link names
      (`src/semact.c`) and goes into the snapshot's check number (`src/cxfile.c`). Since it
      changes what a symbol is, it is probably project-scoped, although `options.h` marks it
-     REQUEST. Decide whether it belongs in the config or goes. Item 12 waits on the same
+     REQUEST. Decide whether it belongs in the config or goes. Item 13 waits on the same
      question.
    - **`-lsp` is a third mode and should be one.** `want_lsp_server()` (`src/lsp.c`) scans
      argv in `main()` and returns before `mainTaskEntryInitialisations()`, so it is a mode
@@ -160,22 +160,27 @@ doc/backlog.md` puts a link to the dependency graph at the end of this file, and
 
 ## 3. Correctness, by (quiet × cheap)
 
-10. <a id="extract-statics-by-value"></a>**Extract passes statics by value** — *no test pins it.* Since the gate fix this
+10. <a id="behind-the-back"></a>**Behind-the-back disk changes** — a header changed on
+    disk does not make its includers stale. Only the request file is parsed again, and
+    every other includer keeps its references to the old header (ghosts). Pass 2 parses
+    the includers of a header only when the header is edited. Changed CUs are picked up
+    by their mtime. `tests/test_shared_header_changed_on_disk`.
+11. <a id="extract-statics-by-value"></a>**Extract passes statics by value** — *no test pins it.* Since the gate fix this
     compiles and silently does the wrong thing, where before it failed to compile.
     Liveness-after-the-region is the wrong question for static storage: treat
     static/thread-local as live after the region in `classifyVariableUsingDataFlow`
     (`src/extract.c`), which pushes it to `CLASSIFIED_AS_IN_OUT_ARGUMENT`. Failing system
     test first. Quietest bug on this list.
-11. <a id="token-pasting-trio"></a>**Token pasting trio**, in this order — the later two assume the first
+12. <a id="token-pasting-trio"></a>**Token pasting trio**, in this order — the later two assume the first
     (`doc/docs/18-known-bugs.adoc`): `tests/test_token_pasting_numbers` (changes the
     passing `test_collate_const_suffix_pasting`) → `tests/test_token_pasting_float` →
     `tests/test_collate_hex_prefix_pasting` (touches how every number is lexed).
-12. <a id="header-static-link-names"></a>**Header static: prototype and definition get different link names** —
+13. <a id="header-static-link-names"></a>**Header static: prototype and definition get different link names** —
     `setStaticFunctionLinkName` (`src/semact.c`); renames break the build today.
     `tests/test_static_declared_and_defined_in_header/.suspended` has the
     `exactPositionResolve` question to settle first, so it starts as a decision.
     Waits for: startup-command-line
-13. <a id="correctness-by-cost"></a>**Then, roughly by cost** — each has a `.suspended` note or a `18-known-bugs.adoc` entry:
+14. <a id="correctness-by-cost"></a>**Then, roughly by cost** — each has a `.suspended` note or a `18-known-bugs.adoc` entry:
     `tests/test_getproject_unknown_cu_under_include_path` (any file under an `-I`
     directory counts as project) · `tests/test_preprocess_edit_removes_ifdef_define` (CU
     reparse leaves a header declaration it no longer emits — ADR-0025 variant B) ·
@@ -218,47 +223,48 @@ doc/backlog.md` puts a link to the dependency graph at the end of this file, and
 Roadmap → Optimization. Baseline: cold-start PUSH on ffmpeg `af_afir.c` — scan 2.7s, two
 Pass 3 rounds 19s each, 42s total.
 
-14. <a id="header-filtered-siblings"></a>**Header-filtered sibling parsing** — 2481 sibling CUs → 2 for `AudioFIRContext`. The
+15. <a id="header-filtered-siblings"></a>**Header-filtered sibling parsing** — 2481 sibling CUs → 2 for `AudioFIRContext`. The
     design problem is that Pass 3 runs during sync and the symbol is only known during
     dispatch.
-15. <a id="scan-angle-includes"></a>**Extend the lightweight scan to `<...>` includes** — blocked on header-filtered
+16. <a id="scan-angle-includes"></a>**Extend the lightweight scan to `<...>` includes** — blocked on header-filtered
     sibling parsing, or ubiquitous system headers drag in nearly every CU. Also removes
     the cold-start double progress bar.
     Waits for: header-filtered-siblings
     Goes with: project-extent
-16. <a id="lexing-cache"></a>**Lexing cache re-introduction** — present in the original codebase, lost in
+17. <a id="lexing-cache"></a>**Lexing cache re-introduction** — present in the original codebase, lost in
     restructuring.
     Waits for: scan-angle-includes
-17. <a id="parallel-parsing"></a>**Parallel parsing** — last, and only if the three above leave `avcodec.h` (614 CUs) or
+18. <a id="parallel-parsing"></a>**Parallel parsing** — last, and only if the three above leave `avcodec.h` (614 CUs) or
     `internal.h` (1171 CUs) unacceptable. Global mutable parser state, a single CX arena
     and a shared file table are the obstacles.
     Waits for: lexing-cache
 
 ## 5. Features, by readiness
 
-18. <a id="remove-references-stopgap"></a>**Take the client's "Remove References and Restart Server" back out** — it landed
+19. <a id="remove-references-stopgap"></a>**Take the client's "Remove References and Restart Server" back out** — it landed
     2026-09-24 as a deliberate stopgap (`c-xref-project-remove-references-and-restart`,
     `editors/emacs/c-xref.el`), because discarding the database is the standing remedy for
     two unrelated symptoms: shadow occurrences after behind-the-back disk changes, and a
     stale snapshot outliving a visibility fix (both in `doc/docs/18-known-bugs.adoc`). The
     real work is making the database not need discarding — behind-the-back detection and
     entry refresh are probably most of it,
-    and item 20 dissolves another part. Remove the entry when they land, and check the
+    and item 21 dissolves another part. Remove the entry when they land, and check the
     symptoms are gone rather than assuming it.
+    Waits for: behind-the-back
     Goes with: index-based-sessions
 
-19. <a id="move-function-comment-prompt"></a>**Move Function comment y/n prompt** — replaces the `c-xref-comments-moving-level`
+20. <a id="move-function-comment-prompt"></a>**Move Function comment y/n prompt** — replaces the `c-xref-comments-moving-level`
     customization; collapse `CommentMovingMode` to a bool and stop the backward walk at a
     blank line (`src/options.h`, `src/move_function.c`). The TDD scaffolding already
     landed: four `tests/test_move_function_*comment*` tests; sweep
     `-commentmovinglevel=6` → `=1` in the three "with…" `commands.input` files and add
     `test_move_function_stops_at_blank_line` in the same change. Most shovel-ready item
     here.
-20. <a id="index-based-sessions"></a>**Index-based sessions** — dissolves stale-POP *and* lets an answer grow while you
+21. <a id="index-based-sessions"></a>**Index-based sessions** — dissolves stale-POP *and* lets an answer grow while you
     work. Roadmap → Memory as Truth → Remaining. Depends only on entry refresh, which is
     done.
     Waits for: entry-refresh
-21. <a id="indexing-log-buffer"></a>**Indexing Log Buffer** — Option A (`PPC_LOG` + a silent `*c-xref-log*` buffer),
+22. <a id="indexing-log-buffer"></a>**Indexing Log Buffer** — Option A (`PPC_LOG` + a silent `*c-xref-log*` buffer),
     `doc/docs/11-planned-features.adoc`. Follows the report-errors item. The client half
     does not have to be invented: `c-xref-tags-dispatch` and its two helpers in
     `editors/emacs/c-xref.el` rendered exactly this for the `-create` log — a stream of
@@ -266,13 +272,13 @@ Pass 3 rounds 19s each, 42s total.
     are kept, uncalled, for that reason. The viewer commands and keymap below them are
     still bound; only the producer is gone. Whether they stay is decided here.
     Waits for: report-errors-flag
-22. <a id="retry-creating-request"></a>**Retry the request that created the project** — small, and it becomes first contact
+23. <a id="retry-creating-request"></a>**Retry the request that created the project** — small, and it becomes first contact
     with every new project once auto-discovery is the only way in.
-23. <a id="lsp-tiers"></a>**LSP tiers 1–2** — code actions and `workspace/executeCommand` for extract, move
+24. <a id="lsp-tiers"></a>**LSP tiers 1–2** — code actions and `workspace/executeCommand` for extract, move
     function and the parameter refactorings. Stubs exist: `handle_code_action`,
     `handle_execute_command`, with `codeActionProvider` commented out in
     `src/lsp_handler.c`. Keep tier 3 (custom methods + per-editor extension code) small.
-24. <a id="move-function-next"></a>**Move Function next steps** — remove the source header's extern declaration, include
+25. <a id="move-function-next"></a>**Move Function next steps** — remove the source header's extern declaration, include
     management, helper-function detection, smarter header placement, preview — then
     **Delete Function**. Also **`-parse-all`, a request that parses every compilation
     unit the scan found and has not parsed** — what ADR-0024's CreateMode reduces to
@@ -296,7 +302,7 @@ Pass 3 rounds 19s each, 42s total.
     **semantic read-only files**, **rename handles `expect`**, **project-local
     config**, **Inline Function and Inline Macro**, **Extract an Expression as a
     Function**. All in `11-planned-features.adoc`.
-25. <a id="local-config-fragments"></a>**Local config fragments — the need, not a solution** — *no repo home yet.*
+26. <a id="local-config-fragments"></a>**Local config fragments — the need, not a solution** — *no repo home yet.*
     `.c-xrefrc` travels with the project and is checked in, which is why
     `11-planned-features.adoc` argues for it: "it will not contain absolute file paths".
     Some things are machine-specific and still have to be said somewhere — where the
@@ -321,10 +327,10 @@ Pass 3 rounds 19s each, 42s total.
     does not exist, silently. ADR-0031 makes directories outside the root more common
     and points here.
     Goes with: project-extent
-26. <a id="chapter-17-hygiene"></a>**Chapter 17 hygiene, opportunistically** — incremental `cxfile.c` cleanup, extract
+27. <a id="chapter-17-hygiene"></a>**Chapter 17 hygiene, opportunistically** — incremental `cxfile.c` cleanup, extract
     the macro expansion module, hashtab → hashlist, split the editor module, rename server
     operations, elisp recompiled and deleted on every build.
-27. <a id="dump-reference-database"></a>**Dump Reference Database** — *no repo home yet.* A request that answers with the
+28. <a id="dump-reference-database"></a>**Dump Reference Database** — *no repo home yet.* A request that answers with the
     in-memory table, and a client command for it, so you can see what the server thinks it
     knows without stopping it. The answer is enough to read, e.g. in `*Messages*`. It dumps
     memory, not the snapshot, which leaves out most of what is not visible outside a file,
@@ -339,7 +345,7 @@ Pass 3 rounds 19s each, 42s total.
 
 ## 6. Developer tooling
 
-28. <a id="macos-watchers"></a>**Two causes of watchers not firing on macOS, both found** — *no repo home yet.*
+29. <a id="macos-watchers"></a>**Two causes of watchers not firing on macOS, both found** — *no repo home yet.*
     Kept because the symptoms are absence and noise, which is what gets
     re-investigated from scratch. Diagnosed on the Mac, session `4e8903dc`,
     2026-09-30.
@@ -389,7 +395,7 @@ Pass 3 rounds 19s each, 42s total.
     can stay beside the sources where Emacs cov-mode reads them. Whether it works is
     the open question above; if it does not, moving the build output is what is left.
 
-29. <a id="flaky-preload-tests"></a>**Tests that copy a preload next to the file it replaces can be flaky** — the driver
+30. <a id="flaky-preload-tests"></a>**Tests that copy a preload next to the file it replaces can be flaky** — the driver
     refuses a preload that is not newer than its file, and two `cp`s in a row can get the
     same mtime from the kernel's coarse clock. `test_preload_pruned_after_close` failed so
     once. The fix is to make the replaced file older, `touch -t 200001010000 <file>`. About
@@ -454,6 +460,6 @@ was done.
   no `Makefile` reads as a failure.
 
 <!-- graph start -->
-[Open the dependency graph](https://mermaid.live/view#pako:eNqFWFtv2zgW_itnnIfZBeyM5TiJ7WIWmGlabIF2t0haYIDNQKYpStZGJjUkVUcYzH_fQ4qibnT3JZHFc75zv1B_zqhI2GwHs7QQZ3okUsOvX545AC2IUg8sBclIUkOaF8Xuapsma7KZKy3FC9tdrdMtuU3mVBRC7q6im9VdRAa8h0LQF5Y47jSi683Bcx-2m9ubtOVeHaJkuRlwJ4Izx0q3yQ3tWDdke7uhXnC6Wq8iy1pJJWRcEqlYLFml2H-eZ8_Vcknul2D-H-4hah9-4SBKJonOBf9ROV6wvGj0wj4oIPD2K-gj0fAZ1YIbIEXjEXuePM9-t4LFqcwLJmOi0N5Yn3MaEL3yopGhSEBp4--cayalyIhGcfrIPBhYGCcBxencqBqL0vxTHt4bdNM-fG5pYe-I93CoochTpvNTi0iLnHEdKy1KFZdTuDVpn6xSlhosNSjGk5xnsF-Ue0Ax7BuTNTrtj4op7eAV01UZo3ECNWa8lOK_jOqAmEP75EgaTjiJb-gPw2_lp5WuJEOJPbC9E9V7FWuZl-dcsoAg2rcHg8nQ-TayXOijMefAUoEyLoqztWBSwr1YKIrHCTRObgPlFGGvGh0WUCNpn85GtgfDsHOVK61ApA4qkaKM6WuaYy6nvDpNwW7bhwcktYrv3_72_kP8-O79v75-MgpTIbH-pDjZU8VJqY6ijZFkpZCoKqafVHFakMyL8Ll61z48ssULqy1MtPWZdX3CBgI__AxPTGIWfMJfe8gqIhMTPNgrSX-q64K9XtM2XDbtMTcwz0-EJ3GRczaVe-9NYzRP2ByQFBjHCFH8YX1nLWrAwIGBAYMTqYESKWsn0egY0yOjL2oqaOPzPDVFaZ3YN24PDSeISivUJGjTK0Zo5UozzkTIoI1P9P3CkBOqhawXHz6gv_JvttWcieSYiMMCNVmgYisgAEr_b5Hmuqej9UTO40TQkCuSPpqhsViQMEVlfjBovyGICTIWEGYuQyFdMpmSjQ8yT7KA-dsujwxd42fbRH-t0pTJrwrhmyTCbmVBHDBWkkRnYafCXk1VfKjjb6SoOhm-8UW-1b5reLBtKtPFHavpgpbVIWucJhzHhdIo27QOEcD0xfbFUIOjBkPtYI7YFrD3N0JMOr_EnJyYCoB5d_zT8jjFdqYJaKHrktk0T1ia86aDZ0xDkhsHmcgabLDYfvBIrHHNmbJ-oULpgFT_9OXI-BykqLJjURtvGIahFThwcR7hEFP5AcVlnRVrj7ceWrFoecDx2OHYJbKihMeEZ4VJPVpUCQuB3vZih6lrE6TIs6M-M_PXomDEYH9V6DfX19dXmX6zhxbQicKiNKGkBGs2IMM3s4-WDiydmfY4Z6RIKtpv5ESSomBF7IwJwN33Jq6lHRnuSgJLxoSPMmWnbUa6aeuNjjY-RuSF9aoZV5OrPyqh37i6efRgNlUeWbNFNJXTUMKB0BfTrnz7QyXSilvrbNs1fQVT7lTqgCa-Uj8Zee8dHzg-qH_i0PA6-Jwn7DU-EGWSBhNxsJ142JWvzQ-GfmHpoaXvQ5kAFiKLD7YvBJCiAZKJ40eRQdNGvOe1xHLAgW1L260mAaxV15aQw_rdETe7gYVgTTa6Sd2mmipjnTMZstUX3Menz2CJIHquVkvckYMx4djjAjDrcCQMNXYOVvqsF5QUGFie5lmcSpKZQIX08k8fDQc0HOA5wOq4tsZyxpK5WY1wLilRVL3KwHtCifUeR_fxsc4wSVlAlC-1tw21qRZHPceNySweFcd9J0dFinZQJ9Wp7MolTogmJk8C8N16gCxdUcCDY2ndTLDDxWeisc57kfLKrbqyOwtsB5WZFiKFlsM6IM2lSTL0PML9-2kOB1wYcVuoeLv_4-r0UmNFsUIQXP8xe0KyfGF9MQQuv0RZ2yXQsjahbVdevATg9DZbWkFMvZsGeGCNsHY2cpPn6DEcxUcU-c78Bve7XWgH6zn87ZeHx8VyuVr-3WGQRMb4e4vs7mi76-c7diBcezheKWrI8RlVl0KY2aqPA4ibpYe4We7sWm781q24pmHhDcm-PGB_wiNrJEElFTMNV7MhYtQhRrtm6zMc6rt78-SuBIvFP4J3tL75DdHgUtQ37cJxWFb48nP5WmSZQteYviss0fB6EVw9-5r2lsdLq7clv7TCfG8xaCydzvYLI9-S9-fzeF439o2m7iTJLVVo5IQvNB35cKxMb8CwuF4EHXSBdBqJ3jXDUky1ubCyXcALOjFIeXHRsPSXvBUeGxdEmJx40njrwXVyHq3n0e08uptH9_NoM8eVofs0c3eTrNyXmsU5T_Rxtypf2xcJUUe8mJF6dwdr_7Un8OGm-e7UowhUb_t9qaOaVuMYZhjH0emF4pyICVVqQJmBD8eyxpf78Xkglcfahop5RNNPydHRtG-EfdVrIVMbx3fKqRW9S-H48NLFbkw3vaaNKS61r6nCoeoLg0373dj_gfKcyBs0uFC-DrrdlOJyZU8ifXnJH9OGGkKQZtgzQ9qF1uwxlN-Uv6-z3X3GrOEWNc7UyUI6qbbwYjlRaLAujk8DW94kpQejynzB7s78ohF6jQtG8HVkX8_mMDsxeSJ5Yj7W__k8w_3MfMndwfMsYSmpCryW_GXISKXFU80pHmlZ4a49q0o0lz3kJJPk5F7_9T-uzGdw), drawn from the `Waits for:` and `Goes with:` lines above.
+[Open the dependency graph](https://mermaid.live/view#pako:eNqFWVuP2zYW_itnPQ_bBeyJZc_FdrAFkkyCBki6wUwCFOgsZJqiZK1lUiWpeISi_30PKYrWhU5fMrJ4znfuFyp_TqhI2GQDk7QQJ7onUsPbr88cgBZEqQeWgmQkqSHNi2JztU6TG7KaKi3FgW2ubtI1uU2mVBRCbq6i5eIuIj3eXSHogSWOO43ozWrnuXfr1e0ybbkXuyiZr3rcieDMsdJ1sqRn1hVZ366oF5wubhaRZa2kEjIuiVQslqxS7PfnyXM1n5P7OZi_u3uI2oc3HETJJNG54P9UjhcsLxo9sw8KCLz7BnpPNHxBtWAJpGg8Ys-T58l_rWBxLPOCyZgotDfWp5wGRC-8aGQoElDa-DvnmkkpMqJRnN4zDwYWxklAcTo3qsaiNH-Uh_cGLduHLy0tbB3xFnY1FHnKdH5sEWmRM65jpUWp4nIMd0PaJ6uUpQZLDYrxJOcZbGflFlAM-85kjU77o2JKO3jFdFXGaJxAjRkvpfgfozogZtc-OZKGE47iO_rD8Fv5aaUryVBiB2zrRHVexVrm5SmXLCCIdu3BYDJ0vo0sF3pvzNmxVKCMi-JsLZiUcC9miuJxAo2T20A5RdiLRocF1Ejap5OR7cEw7FzlSisQqYNKpChj-pLmmMspr45jsNv24QFJreLbd799-Bg_vv_w67fPRmEqJNafFEd7qjgp1V60MZKsFBJVxfSTKk4LknkRPlfv2odHNjuw2sJEa59Z10dsIPCPf8MTk5gFn_HXFrKKyMQED7ZK0ld1XbCXa9qGy6Y95gbm-ZHwJC5yzsZy771pjOYJmwKSAuMYIYo_rO-sRQ0YODAwYHAkNVAiZe0kGh1jumf0oMaCVj7PU1OU1old47bQcIKotEJNgja9YIQWrjTjTIQMWvlE384MOaFayHr28SP6K_9uW82JSI6J2C9QkwUqtgICoPRvizTXHR2tJ3IeJ4KGXJF00QyNxYKEKSrznUH7DUFMkLGAMHMZCjknkynZeCfzJAuYvz7nkaFr_Gyb6NsqTZn8phC-SSLsVhbEAe8YVic21T2CE3rw0L7fRb7DvrWkMySdGVJIcnXA8BGeMeXQsC4luh77HnZ-quJdHX8nRcUCsL7M3jc82ISVmQmO1fRUy-qQNc4mjsNHabTENCIRwPT--GqowVGDoXYwe2wyOEkaIaY4DjEnR6YCYP7pF8vjFNuYlqKFrktmiyZhac6beZAxjT4x7jZ5YrDBYvsxJrFjaM6U9QsVSgek3ngT9oxPQYoq2xe18YZh6FuB4xunG45Ele9QXHa2wqNEt30rZi0POB47as9loSjhMUa0MIlMiyphIdC7TuywEGy6FXm21ydm_rUoGDHYXhX69fX19VWmX2-hBXSisMRNKCnBDhCQ4VvUJ0sHls7sDji1pEgq2h0LRJKiYEXsjAnArTrz29IODHcFhgVowkeZsrM7I-fZ7T0Z-Wr7Sg6s0xtw0bn6oxL6tavCRw9mU-WRNTtJU4cNJdhKwubnmykqkVbcWmebuOlSmHLHUo81Wfja_GzkfXB84PigfsWh4XXwWL_sBQtdmaTBROztOmdYX5sfDf3M0kNL34UyASxEFu9slwkgLXpIJo6fRAZNU_Ke1xLLAce_LW236ASwlucmhxzW74642TQsBGuy0c39NtVUGeucyZCtPkU-PX0BSwTRc7WY48YdjAnHHheAuQ1HwlBj52Clz3pBSYGB5WmexakkmQlUSC9fY58MBzQc4DnA6nhjjeWMJVOzaOGUU6KoOpWB7bnEeo-j-3hfZ5ikLCDKl9q7htoUn6Oe4v5l1piK4_aUoyJFO_aT6lieyyVOiCYmTwLwvvQekOVcFPDgWFo3E-xw8YlorPNOpLwfFueyOwlsB5WZFiKFlsM6IM2lSTL0PML952kKO1w_cfeoeHubwEXsUGNFsUIQnHuYPQFZS19YXw2Byy9R1naltKxNaNsFGq8UuAuYna8gpt5NA9yxRlg7G7nJc_QYDvY9inxvfoP73a7HvWUffnrz8DibzxfzfzkMksgYf6-R3R2tN918xw6ESxTHC0oNOT6j6lIIM1v1vgexnHuI5Xxjl3zjt_PCbBoW3rfsyx32JzyyRhJUUjHTcDXrI0ZnxGjT7JCGQ_1wCx_dvGA2-zl44-ua3xD1rlhd0y4ch2WFr1KXL1mWKXQp6rrCEvUvK8FFtqtpZxW9tMhb8ksrzI8Wg8bS8Wy_MPIteXc-D-d1Y99g6gbWSUt3cbSOqsKSh2ZU-D51Ju_PofEFHGbXs6BHL5COQ9e55ViKsTYXdrwLeEGvBykvus_SX_JWeM5cEGGS6EnjpQv3z2l0O43uptH9NFpNo_UUd4zzl6G7ZbJwH4pmpzzR-82ifGlfJETt8V5I6s0d3PiPTYHvRs1nrw5FoNzbz1tnqnH5DmH6cRycXqjmkZhQaQeU6flwKGv4bWF4Hkjlobah6h_QdFNycDRuNGFfdXrO2MbhlXZsRedOOjwcNoLB8aWL4pBufO0bUlxqh2N7QsUZBhv3z2F4AtU7ktdrmKF07nXPMcXlwh-R_ujaMNQ91DGCNP2mGtIvtLgPofzuPU7f4Vo9Yg33sGEqj1bcUTmGV9WRQr0FdHga2BtHSd2bZeYL-_nMry6h17iyBF9H9vVkCpMjk0eSJ-Y_E_58nmBVmS_NG3ieJCwlVYEXnb8MGam0eKo5xSMtK9zeJ1WJ5rKHnGSSHN3rv_4PuyOfSQ), drawn from the `Waits for:` and `Goes with:` lines above.
 It opens in a window of its own, at mermaid.live.
 <!-- graph end -->
