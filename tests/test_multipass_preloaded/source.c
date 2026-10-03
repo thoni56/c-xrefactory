@@ -1,0 +1,9 @@
+#ifdef PASS1
+int pass1;
+#endif
+
+#ifdef PASS2
+int pass2;
+#endif
+
+int common;

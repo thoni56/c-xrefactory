@@ -1,0 +1,15 @@
+Bug: a push in a project with -passN hangs the server
+
+Any position request on a CU, in a project whose config has -passN sections, never
+answers, with or without a preload. In the push's first pass processOptions lexes
+-DPASS1 as a string, then singlePass starts the parse and the lexer loops on line 0
+col 4, right after PASS1 in that string. The parser seems to read the define's
+exhausted input instead of the source. The binary from e10dc05a hangs the same way.
+
+test_multipass does not see it: -search does not parse the request file through
+singlePass (server.c, "Not parsing input because of server operation TAG_SEARCH").
+
+This test was written for a second question, which waits for the hang: singlePass
+strips a preloaded file's references on every pass (the isPreloaded term), which
+would throw away what the earlier passes added. Then pass1 would be missing below.
+The expected output is written by hand, since the server has never answered here.

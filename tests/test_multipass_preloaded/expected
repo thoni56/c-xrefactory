@@ -1,0 +1,10 @@
+PASS1
+    @source.c:2:7
+PASS2
+    @source.c:6:7
+common
+    @source.c:10:4
+pass1
+    @source.c:3:4
+pass2
+    @source.c:7:4
