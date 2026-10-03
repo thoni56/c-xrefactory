@@ -3,6 +3,4 @@ CXREF -server
 <sync>
 -push -preload CURDIR/source.c CURDIR/source.preload -olcursor=69 CURDIR/source.c
 <sync>
--olcxfilter=0 -olcursor=0 nil
-<sync>
 <exit>

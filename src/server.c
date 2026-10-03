@@ -218,12 +218,11 @@ static void singlePass(ArgumentsVector args, ArgumentsVector nargs) {
     parsingConfig.fileNumber = currentFile.characterBuffer.fileNumber;
 
     if (inputOpened) {
-        /* If the file has preloaded content, or changed on disk since it was last
+        /* If the content, preloaded or on disk, changed since the file was last
          * parsed, remove old references before parsing. A later pass over the same
          * content finds it parsed and keeps what the earlier pass added. */
-        EditorBuffer *buffer = getOpenedAndLoadedEditorBuffer(inputFileName);
-        if (isPreloaded(buffer) || fileNeedsParsing(getFileItemWithFileNumber(parsingConfig.fileNumber))) {
-            log_debug("file has preloaded or changed content, removing old references for file %d",
+        if (fileNeedsParsing(getFileItemWithFileNumber(parsingConfig.fileNumber))) {
+            log_debug("file has changed content, removing old references for file %d",
                       parsingConfig.fileNumber);
             removeReferenceableItemsForFile(parsingConfig.fileNumber);
         }
