@@ -164,7 +164,8 @@ doc/backlog.md` puts a link to the dependency graph at the end of this file, and
     disk does not make its includers stale. Only the request file is parsed again, and
     every other includer keeps its references to the old header (ghosts). Pass 2 parses
     the includers of a header only when the header is edited. Changed CUs are picked up
-    by their mtime. `tests/test_shared_header_changed_on_disk`.
+    by their mtime. `tests/test_shared_header_changed_on_disk`. The fix follows from
+    ADR-0032 (proposed), so it waits for that to be accepted.
 11. <a id="extract-statics-by-value"></a>**Extract passes statics by value** — *no test pins it.* Since the gate fix this
     compiles and silently does the wrong thing, where before it failed to compile.
     Liveness-after-the-region is the wrong question for static storage: treat
@@ -217,6 +218,16 @@ doc/backlog.md` puts a link to the dependency graph at the end of this file, and
     the protocol also lets a server pick only an encoding the client offered, with
     "utf-16" as the default, which agrees with code points outside the astral planes.
     From reading the code (Mac, session `36694da1`, 2026-10-02), not tested.
+
+    Also *without a repo home yet*: **a rename may miss a CU that reaches the symbol's
+    header through another header.** A position-based operation needs the symbol's reach
+    (ADR-0032), but its completeness comes from Pass 3 (`parseUnparsedSiblingCUs()`),
+    which looks only one level: headers the request file includes directly, and CUs that
+    include those directly. With the request including `a.h`, `a.h` including `decl.h`
+    and an unparsed `z.c` including `decl.h`, a rename of a symbol from `decl.h` should
+    miss `z.c`. Test first. The performance side of the same question is
+    header-filtered sibling parsing (item 15). From reading the code (WSL, session
+    `76735541`, 2026-10-03), not tested.
 
 ## 4. Performance, in strict dependency order
 
