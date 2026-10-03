@@ -1,0 +1,2 @@
+#include "header.h"
+int f(void) { return 0; }

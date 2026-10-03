@@ -39,13 +39,15 @@ static void parseFileWithFullInit(char *fileName, ArgumentsVector baseArgs) {
 }
 
 void reparseStaleFile(int fileNumber, ArgumentsVector baseArgs) {
-    char *fileName = getFileItemWithFileNumber(fileNumber)->name;
+    FileItem *fileItem = getFileItemWithFileNumber(fileNumber);
+    char *fileName = fileItem->name;
     if (!editorFileExists(fileName)) {
         markFileAsDeleted(fileNumber);
         return;
     }
     removeReferenceableItemsForFile(fileNumber);
     parseFileWithFullInit(fileName, baseArgs);
+    fileItem->lastParsedMtime = editorFileModificationTime(fileName);
 }
 
 /* Mark every compilation unit unparsed so the next entry refresh reparses it.

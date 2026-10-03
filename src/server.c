@@ -208,6 +208,8 @@ void initServer(ArgumentsVector args) {
 }
 
 
+static bool fileNeedsParsing(FileItem *fileItem);
+
 static void singlePass(ArgumentsVector args, ArgumentsVector nargs) {
     bool inputOpened = false;
 
@@ -216,10 +218,12 @@ static void singlePass(ArgumentsVector args, ArgumentsVector nargs) {
     parsingConfig.fileNumber = currentFile.characterBuffer.fileNumber;
 
     if (inputOpened) {
-        /* If the file has preloaded content, remove old references before parsing */
+        /* If the file has preloaded content, or changed on disk since it was last
+         * parsed, remove old references before parsing. A later pass over the same
+         * content finds it parsed and keeps what the earlier pass added. */
         EditorBuffer *buffer = getOpenedAndLoadedEditorBuffer(inputFileName);
-        if (isPreloaded(buffer)) {
-            log_debug("file has preloaded content, removing old references for file %d",
+        if (isPreloaded(buffer) || fileNeedsParsing(getFileItemWithFileNumber(parsingConfig.fileNumber))) {
+            log_debug("file has preloaded or changed content, removing old references for file %d",
                       parsingConfig.fileNumber);
             removeReferenceableItemsForFile(parsingConfig.fileNumber);
         }
@@ -336,8 +340,6 @@ static int collectCUsIncluding(int fileNumber, int cuFileNumbers[], int cuCount,
 
     return cuCount;
 }
-
-static bool fileNeedsParsing(FileItem *fileItem);
 
 static void setupProgress(int cuCount, int skippedCapped) {
     static char progressFormat[128];
