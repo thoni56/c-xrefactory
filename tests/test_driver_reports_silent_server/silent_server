@@ -1,0 +1,4 @@
+#!/bin/sh
+# Stands in for a server that is alive but never answers: it keeps its
+# stdout open and reads its input without ever writing
+while read line; do :; done

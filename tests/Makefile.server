@@ -21,7 +21,7 @@ PREPARE ?=
 ifeq ($(UNAME_S),Darwin)
 debug: $(PREPARE)
 	@{ \
-		$(SERVER_DRIVER) commands.input $(EXTRA) --delay 5 --timeout=0 > output.tmp & \
+		$(SERVER_DRIVER) commands.input $(EXTRA) --delay 5 --exit-timeout=0 > output.tmp & \
 		pid=$$! ; \
 		sleep 1 ; \
 		cxref_pid=$$(pgrep -P $$pid c-xref) ; \
@@ -30,7 +30,7 @@ debug: $(PREPARE)
 else
 debug: $(PREPARE)
 	@{ \
-		$(SERVER_DRIVER) commands.input $(EXTRA) --delay 5 --timeout=0 > output.tmp & \
+		$(SERVER_DRIVER) commands.input $(EXTRA) --delay 5 --exit-timeout=0 > output.tmp & \
 		pid=$$! ; \
 		sleep 1 ; \
 		cxref_pid=$$(pgrep -P $$pid c-xref) ; \

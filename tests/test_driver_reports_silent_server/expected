@@ -1,0 +1,6 @@
+CXREF -server -o server-buffer
+-getproject CURDIR/source.c
+end-of-options
+
+ERROR: the server did not answer within 2 seconds
+exit=0

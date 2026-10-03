@@ -86,12 +86,24 @@ def end_of_options(p):
     p.stdin.flush()
 
 
+def read_answer_line(p):
+    # A server that is alive but never answers would block readline() forever.
+    # Like a crash, it is reported on stdout, so the diff against expected shows it.
+    # Any line, progress too, shows the server is working, so the limit is on silence.
+    if args.answer_timeout > 0:
+        if not select.select([p.stdout], [], [], args.answer_timeout)[0]:
+            print(f"ERROR: the server did not answer within {args.answer_timeout} seconds")
+            p.kill()
+            sys.exit(0)
+    return p.stdout.readline().decode()[:-1]
+
+
 def wait_for_sync(p):
-    line = p.stdout.readline()[:-1].decode()
+    line = read_answer_line(p)
     while line != '<sync>' and line != '':
         if not line.startswith("<progress>"):
             eprint("Waiting for <sync>, got: '{0}'".format(line))
-        line = p.stdout.readline().decode()[:-1]
+        line = read_answer_line(p)
     if line == '':
         # Empty read = subprocess closed its stdout. Usually means c-xref crashed
         # or exited unexpectedly. What the server did wrong goes to stdout, so it
@@ -175,7 +187,8 @@ if __name__ == "__main__":
     parser.add_argument('--delay', type=int, dest='delay', help="How many seconds to sleep before starting the c-xref server process", default=0)
     parser.add_argument('--buffer', dest='server_buffer_filename', help="Name of file to use as communication buffer, default 'server-buffer'", default="server-buffer")
     parser.add_argument('--extra', dest='extra_options', help="Extra options to the c-xref startup command", default="")
-    parser.add_argument('--timeout', type=int, dest='timeout', help="Seconds to wait for server shutdown, 0 for no timeout, default 5", default=5)
+    parser.add_argument('--exit-timeout', type=int, dest='exit_timeout', help="Seconds to wait for server shutdown, 0 for no timeout, default 5", default=5)
+    parser.add_argument('--answer-timeout', type=int, dest='answer_timeout', help="Seconds the server may stay silent while answering a request, 0 for no timeout, default 60", default=60)
     parser.add_argument('--cxref', dest='cxref_program', help="Which c-xref program to use, default is to use the one in PATH. Only applies if the command file starts with 'CXREF'", default="c-xref")
     args = parser.parse_args()
 
@@ -193,9 +206,11 @@ if __name__ == "__main__":
         if args.delay > 0:
             arguments = [arguments[0]] + [f"-delay={args.delay}"] + arguments[1:]
 
+        # Unbuffered, so a line Python has read ahead cannot hide from select()
         p = subprocess.Popen(arguments,
                              stdout=subprocess.PIPE,
-                             stdin=subprocess.PIPE)
+                             stdin=subprocess.PIPE,
+                             bufsize=0)
 
         if "-refactory" in invocation:
             wait_for_sync(p)
@@ -231,10 +246,10 @@ if __name__ == "__main__":
                     end_of_options(p)
                 sys.stdout.flush()
                 try:
-                    timeout = args.timeout if args.timeout > 0 else None
+                    timeout = args.exit_timeout if args.exit_timeout > 0 else None
                     p.wait(timeout=timeout)
                 except subprocess.TimeoutExpired:
-                    print("Warning: Server did not exit cleanly within 5 seconds, killing...")
+                    print(f"Warning: Server did not exit cleanly within {args.exit_timeout} seconds, killing...")
                     p.kill()            # Force kill if it doesn't exit cleanly
                     sys.exit(0)         # in the output, the diff reports it
                 # c-xref uses exit code 64 (XREF_EXIT_BASE) as normal exit in server mode.
@@ -264,7 +279,7 @@ if __name__ == "__main__":
         # at its next read. We keep draining its stdout until then, because
         # leaving first would send it SIGPIPE on that write instead.
         p.stdin.close()
-        timeout = args.timeout if args.timeout > 0 else None
+        timeout = args.exit_timeout if args.exit_timeout > 0 else None
         deadline = None if timeout is None else time.monotonic() + timeout
         server_gone = False
         while True:
