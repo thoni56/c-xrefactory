@@ -1,0 +1,6 @@
+CXREF -server
+-getproject CURDIR/source.c
+<sync>
+-push -olcursor=68 CURDIR/source.c
+<sync>
+<exit>
