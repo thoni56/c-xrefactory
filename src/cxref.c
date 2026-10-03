@@ -1823,7 +1823,7 @@ static void handleProject() {
                     lockedProjectRoot = strdup(options.detectedProjectRoot);
                     log_debug("Server locked to project: %s (root: %s)", lockedProject,
                               lockedProjectRoot);
-                    reportIgnoredOptions();
+                    reportUnsupportedOptions();
                     ppcGenRecord(PPC_SET_INFO, projectOptionsSectionName);
                     /* Persist the lock across requests: sync into savedOptions so
                      * cxFileLocation survives the next request's options reset,

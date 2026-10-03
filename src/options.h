@@ -181,7 +181,7 @@ extern ArgumentsVector readOptionsFromPipe(void);
 extern void searchForProjectConfigFileAndProjectForFile(char *filename, char *optionsFilename,
                                                          char *foundProjectName);
 extern void applyConventionBasedDatabasePath(void);
-extern void reportIgnoredOptions(void);
+extern void reportUnsupportedOptions(void);
 
 extern void printOptionsMemoryStatistics(void);
 

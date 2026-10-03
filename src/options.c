@@ -1448,13 +1448,14 @@ static bool processPOption(int *argi, ArgumentsVector args) {
     return true;
 }
 
-/* The config is read before any request and again several times per request, so the
-   parser only notes these, and they are reported once, when the project is locked */
+/* The server's command line and the config are processed before any request, and
+   again on every request, so the parser only notes these, and they are reported once,
+   when the project is locked */
 static bool refsWasGiven = false;
 static bool refnumWasGiven = false;
 static bool xrefactoryIIGiven = false;
 
-void reportIgnoredOptions(void) {
+void reportUnsupportedOptions(void) {
     if (refsWasGiven)
         warningMessage(ERR_ST, "-refs is ignored, the snapshot is always .c-xref/db in the project root");
     if (refnumWasGiven)

@@ -104,7 +104,7 @@ void applyConventionBasedDatabasePath(void) {
     mock();
 }
 
-void reportIgnoredOptions(void) {
+void reportUnsupportedOptions(void) {
     mock();
 }
 
