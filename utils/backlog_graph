@@ -8,11 +8,9 @@
 # and what it waits for is a line of slugs below it,
 #        Waits for: first-item
 
-import base64
-import json
+import html
 import re
 import sys
-import zlib
 
 SECTION = re.compile(r'^## (\d+)\. (.+)$')
 ITEM = re.compile(r'^(\d+)\. <a id="([^"]+)"></a>\*\*(.+?)\*\*')
@@ -128,43 +126,37 @@ def draw(sections, items, foundation):
             + state_lines(work, items, foundation))
 
 
-GRAPH_START = "<!-- graph start -->"
-GRAPH_END = "<!-- graph end -->"
-
-
-def without_graph(text):
-    if GRAPH_START not in text:
-        return text
-    before, rest = text.split(GRAPH_START, 1)
-    after = rest.split(GRAPH_END, 1)[1]
-    return before.rstrip('\n') + '\n' + after.lstrip('\n')
-
-
 def graph_of(text):
     sections, items, foundation = read_backlog(text.split('\n'))
     return '\n'.join(draw(sections, items, foundation))
 
 
-def mermaid_live_link(graph):
-    # The diagram travels in the part after '#', which the browser keeps to itself
-    state = json.dumps({"code": graph, "mermaid": '{"theme": "default"}',
-                        "autoSync": True, "updateDiagram": True})
-    packed = base64.urlsafe_b64encode(zlib.compress(state.encode(), 9)).decode().rstrip('=')
-    return "https://mermaid.live/view#pako:" + packed
+PAGE = '''<!doctype html>
+<html>
+<head>
+<meta charset="utf-8">
+<title>Backlog dependencies</title>
+<style>body {{ margin: 0; background: #fff; }} pre.mermaid {{ margin: 0; }}</style>
+</head>
+<body>
+<pre class="mermaid">
+{graph}
+</pre>
+<script type="module">
+import mermaid from 'https://cdn.jsdelivr.net/npm/mermaid@11/dist/mermaid.esm.min.mjs';
+mermaid.initialize({{ startOnLoad: true, flowchart: {{ useMaxWidth: false }} }});
+</script>
+</body>
+</html>'''
 
 
-def with_graph(text):
-    text = without_graph(text)
-    graph = graph_of(text)
-    # Only the link: GitHub's own Mermaid lays the graph out in a way that can mislead
-    return (text.rstrip('\n') + '\n\n' + GRAPH_START + '\n'
-            + f'[Open the dependency graph]({mermaid_live_link(graph)}), drawn from the '
-            + '`Waits for:` and `Goes with:` lines above.\n'
-            + 'It opens in a window of its own, at mermaid.live.\n' + GRAPH_END + '\n')
+def page_of(text):
+    # Mermaid reads the text of the element, so the escaping is undone before it draws
+    return PAGE.format(graph=html.escape(graph_of(text), quote=False))
 
 
 def problems_in(path, text):
-    sections, items, foundation = read_backlog(without_graph(text).split('\n'))
+    sections, items, foundation = read_backlog(text.split('\n'))
     known = set(items) | {done['slug'] for done in foundation}
     found = []
     for item in items.values():
@@ -174,8 +166,6 @@ def problems_in(path, text):
         for other in item['goes_with']:
             if other not in known:
                 found.append(f"{path}: {item['slug']} goes with {other}, which is not in the backlog")
-    if with_graph(text) != text:
-        found.append(f"{path}: the graph is out of date, run utils/backlog_graph --update {path}")
     return found
 
 
@@ -186,11 +176,9 @@ if __name__ == "__main__":
         for problem in found:
             print(problem)
         sys.exit(1 if found else 0)
-    elif sys.argv[1] == '--update':
+    elif sys.argv[1] == '--html':
         with open(sys.argv[2]) as f:
-            text = f.read()
-        with open(sys.argv[2], 'w') as f:
-            f.write(with_graph(text))
+            print(page_of(f.read()))
     else:
         with open(sys.argv[1]) as f:
-            print(graph_of(without_graph(f.read())))
+            print(graph_of(f.read()))

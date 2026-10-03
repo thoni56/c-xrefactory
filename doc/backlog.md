@@ -16,9 +16,9 @@ the one item that gates the most rows, then the chains that unblock, then bugs a
 features. Relative effort only — no dates (#noestimates).
 
 Each item has a name, the `<a id>` before its title. A `Waits for:` line names what it
-waits for, and `Goes with:` what it belongs with. `utils/backlog_graph --update
-doc/backlog.md` puts a link to the dependency graph at the end of this file, and
-`--check`, run with the tests, fails if a name is unknown or the link is out of date.
+waits for, and `Goes with:` what it belongs with. The docs build draws the dependency
+graph from them on every push, linked at the end of this file, and `utils/backlog_graph
+--check`, run with the tests, fails if a name is unknown.
 
 ## 0. Verify first — cheap, and might change the cost of the rest
 
@@ -463,7 +463,6 @@ was done.
   filter that `utils/failing` got in `db064a2a` — a `tests/test_*/` with an `output` but
   no `Makefile` reads as a failure.
 
-<!-- graph start -->
-[Open the dependency graph](https://mermaid.live/view#pako:eNp9WFtv2zYU_itnzsM2wM4s20lsFxuwNi02oN2KpAUGLINMUZSsWRY1kmoiDPvvO6QoWheqL4ksnvOd-4X6d0Z5zGZ7mCU5f6ZHIhS8_vRUANCcSHnPEhCMxDUkWZ7vr3ZJvCHbuVSCn9j-apPsyE08pzznYn8VrFe3AenxRjmnJxZb7iSgm23kuKPd9madtNyrKIiX2x53zAtmWekuXtML65bsbrbUCU5Wm1VgWCshuQhLIiQLBask-_Np9lQtl-RuCfp_dAdB-_BzAbxkgqiMF99KywuGF41emAcJBN58BnUkCj6iWrAGkjceMefx0-wvI5ifyyxnIiQS7Q3Vc0Y9oldONDLkMUil_Z0VignBU6JQnDoyBwYGxkpAcSrTqoa81P-kg3cGrduHjy0tHCzxAaIa8ixhKju3iDTPWKFCqXgpw3IMtyHtk1HKUIOhBsmKOCtSOCzKA6AY9oWJGp32T8WksvCSqaoM0TiOGrOiFPxvRpVHTNQ-WZKGE878C_pD8xv5SaUqwVBiB-xgRXVehUpk5XMmmEcQ7dqDwWTofBPZgqujNidiCUcZk-JMLeiUsC8WkuJxDI2T20BZRdiLQod51Ijbp2ct24Fh2AuZSSWBJxYqFrwM6UuSYS4nRXUeg920D_dIahQ_vPnj3a_hw9t3v33-oBWmXGD9CX42p7IgpTzyNkaClVygqph-QoZJTlInwuXqbfvwwBYnVhuYYOcy6_qMDQS--REemcAs-IC_DpBWRMQ6eHCQgv5Q1zl7uaZtuEzaY25gnp9JEYd5VrCx3DtnGqNZzOaApMAKjBDFH8Z3xqIGDCwYaDA4kxooEaK2ErWOIT0yepJjQVuX54kuSuPErnEHaDiBV0qiJl6bXjBCRkpWhDGnPjFRN_00jSkmiJmkIot0_v2BINqBmJyYFQyr7BIoXQ5hJLI49fhqd4mRpmtsMA3qdZUkTHyWCN8ECDuBAbHAEcPMx4Z1RHBCTw7a9ZLAda_XhnSBpAtNCnEmT-gaUqRMWjTMeUGo7inYVakMozr8QvKKeWBdCr9teLDBSd1vLavuV4bVIivs-wU2dqnQEl3k3IPp_PFJU4OlBk1tYY5YwNilGyE68U5hQc5MesDc0y-Gxyq21-WquKpLZhIyZklWNL02ZQp9ot2tG6XGBoPtRoTAalQFk8YvlEvlkbpxJhxZMQfBq_SY19obmqFvBY5GnBw4bmQWobj0YoVDCW76VixaHrA8Zozh_7Y0KSlCjGiuE5nmVcx8oLed2OEkMOmWZ-lRPTP916BgxOBwlatX19fXV6l6dYAW0IrC8tGhpASryyPDlf97QweGTs9lnAiCxxXttlwiSJ6zPLTGeOC2ndloaAeG2wLDAtTho0yauZiSy1x0ngxctX0iJ9YZjrhEXP1TcfXKVuGDAzOp8sCaed_UYUMJppKwsbhGhUokVWGsMw1Sj2hMuXOpxpqsXG1-0PLeWT6wfFD_UEDDa-GxftkLFrrUSYOJ2NsjLrCuNn_V9AtDDy19F0oHMOdpGJku40Fa9ZB0HN_zFJqm5DyvBJYDjlZT2naJ8GCtL00OOYzfLXEzxQ0Ea7LRztQ21WQZqowJn60uRd4_fgRDBMFTtVriNuuNSYE9zgNz44-EpsbOwUqX9ZySHANbJFkaJoKkOlA-vVyNvdcc0HCA4wCj48YYWzAWz_USg8uE5HnVqQxszyXWexjchcc6xSRlHlGu1N401Lr4LPUcdxu9IlQFbiYZKpK3IzWuzuWlXMKYKKLzxAPvSu8eWS5FAfeWpXUzwQ4XPhOFdd6JlPPD6lJ2zxzbQaWnBU-g5TAOSDKhkww9j3C_P84hwtUO53pVtJs6LjmnGiuK5Zzg3MPs8chau8L6pAlsfvGyNuuaYW1C2y6nuK5DpvQ-lRNd77oBRqwR1s7GQuc5egwH-xFFvtW_wf5uV8_eIg3f_Xz_sFguV8vvLQaJRYi_d8huj3b7br5jB8IFpcDlv4YMn1F1wbmererYg1gvHcR6uTcLtPbbZRnVDQvvMuZlhP0Jj4yRBJWUTDdcxfqIwQUx2Df7meaQX91wR7caWCx-8t6muuY3RL3rS9e0iWO_LP81ZfoCY5h8F46uKwxR_yIwtfga0qm15GvDvtF-PK8nxrgh787c4QxudB5MUs-KaOgmx-Uo0w25b-747x8X8v5sGV9YYXG98Hp0gnQcjs6twFCMtZnY2ybwvF73Uk66z9BPecs_OyZE6CR6VHhJwU12Hmzmwc08uJ0Hd_NgO8cN5vIl5XYdr-yHlcVzFqvjflW-tC9iIo94jyL1_hY27uOM5ztL85moQ-Ep4fZz0IVqXJJDmH4cB6cTFToS4ytXjzI9Hw5lDe_iw3NPKg-19VX_gKabkoOj4Q1zrEDnijg8HNbw4Hjq3jakG9_ChhRTnWzsbl9d-cHGrW_oWU_hjeT1ep0vE3uNb0wxXbMj0q9t8UPdfcXupen3Q59-vj16COVW4XHmDbfcEau__QwrdrRxjirJvzmOFOrtg8NTzxo3SureGNIfky9nbpPwvcYNwvs6MK9nc5idmTiTLNbfzf99mmFV6Y-qe3iaxSwhVY73jv80GakUf6wLikdKVLhMz6oSzWX3GUkFOdvX__0PLY4-UA), drawn from the `Waits for:` and `Goes with:` lines above.
-It opens in a window of its own, at mermaid.live.
-<!-- graph end -->
+[Open the dependency graph](https://thoni56.github.io/c-xrefactory/backlog-graph.html),
+drawn from the `Waits for:` and `Goes with:` lines above when a push reaches the docs site.
+For changes not pushed yet, `make -C doc dist/backlog-graph.html` draws it locally.
