@@ -5,6 +5,50 @@ described how things were before. They are no longer true, since that
 quirk, magic or bad coding is gone. But it is kept here as an archive
 for those wanting to do backtracking to original sources.
 
+=== XrefMode and its removal
+
+XrefMode was the cross-referencer run from the command line, the batch counterpart to
+the editor server. Where the server handled one file per request, `c-xref` without
+`-server` parsed every scheduled project file in one invocation and wrote the
+references to the `.cx` database on disk. It was the default mode.
+
+==== What it did
+
+* `-create` parsed every project file from scratch and wrote the whole database.
+* `-update` and `-fastupdate` parsed again only what had changed, see
+  <<Legacy Update Strategies (XrefMode)>> below. `-fullupdate` added the include
+  closure of changed headers (`makeIncludeClosureOfFilesToUpdate()`).
+* When the reference table overflowed in the middle of a run, the references so far
+  were flushed to disk with `saveReferences()`, memory was recovered and parsing went on
+  (`setjmp`/`longjmp`). This let it index projects larger than the memory it had.
+
+The entry was `xref()` in `xref.c`, which opened the output, loaded editor buffers,
+called `callXref()` and saved. `callXref()` scheduled the files (with
+`scheduleModifiedFilesToUpdate()` in update mode), made a list of all scheduled files,
+sorted by directory, and handed each to `oneWholeFileProcessing()`, which set
+`inputFileName` and parsed it.
+
+The refactorer also called `callXref()`, to bring the database up to date before a
+refactoring, see <<RefactoryMode Internally Calls XrefMode>>.
+
+==== Why it went
+
+Once the in-memory reference table became the truth (ADR-0014), the server parsed on
+demand and the `.cx` file was only a snapshot, there was nothing left for a batch run
+to produce. The pieces were replaced one at a time:
+
+* the lightweight scan (ADR-0022) found the project's files and includes, which was
+  what a first `-create` had been needed for,
+* entry refresh (ADR-0020) reparsed what had changed before each request, which was
+  what `-update` did,
+* refactorings moved into the server (`OP_REFACTORY`), and `RefactoryMode` was removed
+  in `5dd73f5b` (2026-03-26), so nothing called `callXref()` any more.
+
+The tests that still ran XrefMode were moved to the server or deleted, and the last one
+went in `01397db2` (2026-09-23). The `xref` module was deleted in `9559bfbf` and the
+mode itself, with everything that depended on it, in `a71fd719` (2026-09-24). Since then
+`c-xref` needs `-server` or `-lsp`, and answers only `-about` without one.
+
 === Legacy Update Strategies (XrefMode)
 
 Before server mode, `c-xrefactory` used two explicit update strategies triggered by
