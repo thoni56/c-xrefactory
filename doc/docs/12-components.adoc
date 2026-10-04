@@ -79,34 +79,6 @@ void callParser(int fileNumber, Language language);
 
 `callParser()` is the lower-level dispatch used by server mode's `parseInputFile()`, where configuration is set up separately with cursor position and operation-specific state.
 
-=== Xref
-
-==== Responsibilities
-
-Build and update the on-disk cross-reference database (`.cx` files) by parsing all scheduled project files. The xref component is the batch counterpart to the interactive server: where the server processes one file per editor request, xref processes all project files in a single invocation.
-
-==== Operations
-
-* **Create** (`-create`): Parse every project file from scratch, generate the full `.cx` database
-* **Fast update** (`-update`): Re-parse only files whose modification time has changed
-* **Full update** (`-update -fullupdate`): Re-parse modified files and their include closure — all compilation units that transitively include a modified header (`makeIncludeClosureOfFilesToUpdate()`)
-
-==== Memory Overflow Handling
-
-When the in-memory reference table overflows mid-parse, xref flushes the accumulated references to disk via `saveReferences()`, recovers memory, and continues parsing the remaining files. This `setjmp`/`longjmp`-based overflow mechanism allows xref to handle projects larger than available memory.
-
-==== Interface
-
-[source,c]
-----
-void xref(ArgumentsVector args);                    // Top-level entry: open output, load buffers, call callXref, save
-void callXref(ArgumentsVector args, XrefConfig *config);  // Core loop: schedule files, parse all, save references
-----
-
-NOTE: Historically, `callXref()` was also called by the refactory to re-index files
-after refactoring operations. Refactorings now run as server operations (`OP_REFACTORY`),
-using the server's own entry refresh mechanism instead.
-
 === Server
 
 ==== Responsibilities
@@ -347,8 +319,6 @@ When the user requests "go to definition" for a symbol:
 
 ==== Database Operations
 
-* **Create** (`-create`): Parse all project files, generate reference items, write to `.cx` files
-* **Update** (`-update`): Re-parse modified files (with include-closure expansion for full updates), merge into existing database
 * **Query** (server operations): Load symbol data from `.cx` files into the browsing stack for navigation
 
 === Main
@@ -566,9 +536,6 @@ Buffer lifetime depends on the server mode and buffer role:
 
 |**Server mode, disk cache**
 |Subject to the same closeable-check; the disk-cache role typically allows reaping, but a buffer held by markers (mid-refactoring) is preserved.
-
-|**Xref mode, disk cache**
-|Preserved across file processing under the same predicate. A header like `commons.h` included by many CUs is read once and reused.
 
 |**LSP mode, document state**
 |Persistent from `didOpen` to `didClose`. Not affected by request boundaries.

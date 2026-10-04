@@ -91,11 +91,11 @@ that has a LexemBuffer as a component (if they use it).
 `c-xrefactory` operates in different modes ("regimes" in original
 `c-xref` parlance):
 
-- xref - batch mode reference generation
-- server - editor server
+- server - editor server, selected by `-server`
+- lsp - the experimental LSP server, selected by `-lsp`
 
-The default mode is "xref". The command line option `-server` selects server mode.
-Branching is done in the final lines in `main()`.
+There is no default mode. Without one `c-xref` only answers `-about`, and otherwise
+says that a mode is needed. Branching is done in the final lines in `main()`.
 
 Refactoring operations run within the server process (via `OP_REFACTORY`), not as a
 separate mode. The refactoring code saves and restores options via `refactoringOptions`

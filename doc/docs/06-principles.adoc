@@ -291,7 +291,7 @@ Initialization::
 Lightweight scan::
   Discovery of project structure by globbing for compilation units and text-scanning
   `#include` lines, without full parsing. Populates the file table and include structure.
-  Replaces `-create` and the `callXref()` pre-refactoring pattern (ADR 22).
+  Replaced `-create` and the `callXref()` pre-refactoring pattern (ADR 22).
 
 Persisted snapshot::
   The `.cx` files on disk. A point-in-time copy of the reference table from a previous

@@ -8,11 +8,11 @@ The _editorExtension_ calls the server using command line
 options. These are then converted to first a command enum starting in
 `OP` ("operation") or `AVR` ("available refactoring").
 
-Some times the server needs to call the crossreferencer which is
-performed in the same manner, command line options, but this call is
-internal so the wanted arguments are stored in a vector which is
-passed to the `xref()` in the same manner as `main()` passes the
-actual `argc`/`argv`.
+Some refactorings need a file parsed again, which is done in the same
+manner, command line options, but this call is internal so the wanted
+arguments are stored in a vector which is passed to `callServer()`
+(the `parseBufferUsingServer` bridge, §17.3) in the same manner as
+`main()` passes the actual `argc`/`argv`.
 
 Many of the commands require extra arguments like positions/markers
 which are passed in as extra arguments. E.g. a rename requires the
@@ -28,7 +28,7 @@ mean that we need to:
 * List all "events" that `c-xref` need to handle
 * Define the parameters/extra info that each of them need
 * Clean up the command line options to follow this
-* Create event/request/operation structures to match each event and pass this to `server`, `xref` and `refactory`
+* Create event/request/operation structures to match each event and pass this to `server` and `refactory`
 * Rebuild the main command loop to parse command line options into these structures
 
 === Passes
@@ -40,12 +40,12 @@ that are to be applied for this pass over the sources.
 
 === File Processing Orchestration
 
-The file processing architecture differs significantly between Server mode, Xref mode,
-and LSP mode, with confusing global state and naming inconsistencies that make the code
+The file processing architecture differs significantly between Server mode and LSP
+mode, with confusing global state and naming inconsistencies that make the code
 hard to follow.
 
 NOTE: The auto-detect server path uses a unified flow where lightweight file structure
-scanning replaces the legacy `-create`/`callXref()` pattern (ADR 22). The legacy path
+scanning replaced the legacy `-create`/`callXref()` pattern (ADR 22). The legacy path
 runs when no project root was auto-detected, i.e. no `.c-xrefrc` was found above the
 request file. See
 <<unified-flow>> below.
@@ -59,7 +59,7 @@ All modes begin by marking files for processing using the `isScheduled` flag in 
 *Called from:*
 
 * Server: `initServer()` → `processFileArguments()` [`server.c:151`]
-* Xref: `mainTaskEntryInitialisations()` → `processFileArguments()` [`startup.c:706`]
+* Startup: `mainTaskEntryInitialisations()` → `processFileArguments()`
 
 *Flow:*
 
@@ -85,29 +85,6 @@ On the auto-detect path, `processFileArguments()` has been replaced by
 and builds the include graph transitively by text-scanning `#include` lines and resolving
 paths via `options.includeDirs`. The legacy path still uses `processFileArguments()`.
 See <<unified-flow>>.
-
-*_Additional Update Scheduling (Xref Mode Only)_*
-
-*Called from:* `callXref()` → `scheduleModifiedFilesToUpdate()` [`xref.c:296`]
-
-*Flow:*
-
-[source]
-----
-scheduleModifiedFilesToUpdate(isRefactoring) [xref.c:207]
-  │
-  ├─> mapOverFileTable(schedulingToUpdate, isRefactoring)
-  │    └─ For each file: if modified, SETS: fileItem->scheduledToUpdate = true
-  │
-  ├─> If UPDATE_FULL: makeIncludeClosureOfFilesToUpdate()
-  │    └─ Expands scheduledToUpdate to include all files that #include updated files
-  │
-  └─> mapOverFileTable(schedulingUpdateToProcess)
-       └─ For each file: if (scheduledToUpdate && isArgument)
-           SETS: fileItem->isScheduled = true [line 115]
-----
-
-*Result:* In update mode, only modified files (and their includers) get `isScheduled = true`.
 
 ==== Server Mode Flow
 
@@ -190,51 +167,6 @@ The per-request dispatch still follows the legacy pattern:
                            └─> parseInputFile() [again]
 ----
 
-==== Xref Mode Flow
-
-*PROCESSES ALL SCHEDULED FILES* - Xref creates a list of all scheduled files and processes them in a loop.
-
-[source]
-----
-xref(args) [xref.c:354]
-  │
-  └─> callXref(args, isRefactoring) [xref.c:283]
-       │
-       ├─> IF options.update:
-       │    └─> scheduleModifiedFilesToUpdate(isRefactoring) [line 296]
-       │         └─ Adds modified files to scheduled list
-       │
-       ├─> fileItem = createListOfInputFileItems() [line 298]
-       │    └─ Creates linked list of ALL scheduled files (sorted by directory)
-       │
-       └─> FOR LOOP over fileItem list [line 314]
-            │
-            └─> oneWholeFileProcessing(args, fileItem, &firstPass, ...) [xref.c:179]
-                 ├─ SETS: inputFileName = fileItem->name [line 181]
-                 │
-                 └─> processInputFile(args, &firstPass, &atLeastOneProcessed) [xref.c:149]
-                      │
-                      ├─> initializeFileProcessing(args, nargs, &firstPass) [startup.c:490]
-                      │    ├─ READS: fileName = inputFileName [line 502]
-                      │    │
-                      │    └─> computeAndOpenInputFile(inputFileName) [startup.c:112]
-                      │         └─> initInput(inputFile, inputBuffer, "\n", fileName) [yylex.c]
-                      │              └─ Sets currentFile.characterBuffer.fileNumber
-                      │
-                      ├─ SETS: parsingConfig.fileNumber = currentFileNumber [line 160]
-                      │         (NOTE: currentFileNumber is DIFFERENT global!)
-                      │
-                      └─> parseToCreateReferences(inputFileName) [parsing.c:165]
-                           ├─ Gets EditorBuffer using fileName parameter
-                           │
-                           ├─> initInput(NULL, buffer, "\n", fileName) [line 181]
-                           │    └─ DUPLICATE call! Already called in initializeFileProcessing!
-                           │
-                           ├─ Calls setupParsingConfig(currentFile.characterBuffer.fileNumber) [line 183]
-                           │
-                           └─> callParser(parsingConfig.fileNumber, parsingConfig.language) [line 190]
-----
-
 ==== LSP Mode Flow (New, Simplified)
 
 [source]
@@ -260,15 +192,10 @@ parseToCreateReferences(fileName) [parsing.c:165]
 * `processFile()` line 205 - sets the file for the current request
 * Special case: macro completion may parse a different file (line 189) to resolve symbols in unexpanded macro bodies
 
-*Xref Mode:* Set ONCE per file
-
-* `oneWholeFileProcessing()` line 181
-
 *_`requestFileNumber` Only Used in Server Mode_*
 
 * Set in `prepareInputFileForRequest()` (lines 104, 121)
 * Used in `parseInputFile()` line 136: `setupParsingConfig(requestFileNumber)`
-* NOT used in Xref mode at all
 
 *_Confusion: THREE Different File Number Globals!_*
 
@@ -276,31 +203,16 @@ parseToCreateReferences(fileName) [parsing.c:165]
 ----
 inputFileName           // The file name being processed
 requestFileNumber       // Server: file number from scheduled file (server.c)
-currentFileNumber       // Xref: file number after parsing starts (parsing.c:26)
+currentFileNumber       // set when parsing starts (parsers.c)
 ----
 
-In `xref.c` line 160:
-[source,c]
-----
-parsingConfig.fileNumber = currentFileNumber;
-----
-
-But `currentFileNumber` is defined in `parsing.c:26`:
+`currentFileNumber` is defined in `parsing.c`:
 [source,c]
 ----
 int currentFileNumber = -1;     /* Currently parsed file, maybe a header file */
 ----
 
 The comment reveals the distinction: `currentFileNumber` can change DURING parsing when entering `#include` files, while `requestFileNumber` stays constant as "the file we were asked to process."
-
-*_Double `initInput()` Call in Xref Mode_*
-
-In Xref mode, `initInput()` is called TWICE for the same file:
-
-1. First in `initializeFileProcessing()` → `computeAndOpenInputFile()` [`startup.c:128`]
-2. Second in `parseToCreateReferences()` [`parsing.c:181`]
-
-This appears to be a bug or wasteful duplication.
 
 *_`initializeFileProcessing` is Heavy Orchestration_*
 
@@ -321,9 +233,9 @@ target.
 
 *_Naming Inconsistency_*
 
-* `inputFileName` - used in both Server and Xref modes, but set in different places
-* `requestFileNumber` - only Server mode, represents the file from the request
-* `currentFileNumber` - only Xref mode(?), set by `initInput()` after file opened
+* `inputFileName` - set in different places depending on the operation
+* `requestFileNumber` - represents the file from the request
+* `currentFileNumber` - set when parsing starts, and changes while `#include` files are entered
 
 If they represent the same concept (the file being processed), they should have parallel names.
 
@@ -337,17 +249,6 @@ If they represent the same concept (the file being processed), they should have 
 ** FLAWED: unschedules all higher-numbered files (works because `c-xref .` schedules all)
 ** Sets both `inputFileName` and `requestFileNumber`
 * *Loop*: Infinite request loop in `server()` - different file per request
-
-*_Xref Mode - All Files Per Invocation_*
-
-* *Scheduling*: All files scheduled in `mainTaskEntryInitialisations()` → `processFileArguments()`
-* *Additional*: In update mode, `scheduleModifiedFilesToUpdate()` adds modified files
-* *Processing*: `createListOfInputFileItems()` creates list of ALL scheduled files
-** Loops over entire list in `callXref()` [line 314]
-** Each file processed via `oneWholeFileProcessing()`
-** Sets `inputFileName` for each file
-** Uses `currentFileNumber` (different global!) instead of `requestFileNumber`
-* *Loop*: Single invocation processes all files
 
 *_LSP Mode - Single File Per Request_*
 
@@ -419,21 +320,6 @@ This design eliminates the need for `-create` (replaced by the scan) and for
 `callXref()` before refactoring (replaced by scan + incremental reparse of stale files).
 It also makes the server viable for LSP, where blocking on a full project parse at
 startup is not acceptable.
-
-==== Opportunities for Alignment
-
-The Server and Xref paths do similar things but with different names and structures, creating cognitive overhead. Potential improvements:
-
-* *Naming consistency*: `processFile()` (server) vs `oneWholeFileProcessing()` (xref) could both use consistent naming
-* *Eliminate duplication*: Fix the double `initInput()` call in xref path
-* *Extract common logic*: The inner "process one file" logic should be identical between modes
-* *Make differences explicit*:
-** Server: `for (each request) { process one file }`
-** Xref: `for (each scheduled file) { process one file }`
-
-The paths are intertwined but different, making it hard to keep in your head which one
-you're modifying. Making them more similar were possible would reduce cognitive load
-during refactoring work.
 
 === Parsers
 

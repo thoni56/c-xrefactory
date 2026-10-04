@@ -34,6 +34,8 @@ convergence is **complete**; the mechanism lives in <<06-principles.adoc#,Princi
   the last disk-as-truth read is gone.
 * *Disk snapshot* — `.cx` loaded and mtime-validated at startup, saved on exit and
   periodically; no mandatory `-create`.
+* *XrefMode removed* — the `-create`/`-update` batch engine is gone, and a mode has to be
+  given, `-server` or `-lsp`.
 
 ==== Remaining
 
@@ -52,7 +54,6 @@ convergence is **complete**; the mechanism lives in <<06-principles.adoc#,Princi
 
 |Remove `parseBufferUsingServer` bridge
 |The last divergent parse path, re-entering `callServer` from 9 refactoring call sites.
- It asserts `ServerMode`, so it is not part of XrefMode and does not block its removal.
  See Chapter 17.3.
 
 |Behind-the-back disk-change detection
@@ -67,13 +68,6 @@ convergence is **complete**; the mechanism lives in <<06-principles.adoc#,Princi
  a report-errors flag; the include guard is done. The user-facing half is
  <<11-planned-features.adoc#,Planned Features>> (Indexing Log Buffer).
 
-|XrefMode removal
-|Deletes the `-create`/`-update` legacy engine. Needs the error guards re-keyed, since
- XrefMode is the only mode that lets them speak. Three tests observe server
- behaviour only through it — standard defines, per-pass `-D`, `-optinclude` — and need a
- server-mode home first. It is also the default mode, so a bare `c-xref file.c` needs an
- answer.
-
 |Batch prime
 |An explicit request — `-parse-all` — that parses every compilation unit the scan
  found and has not parsed yet. Whatever wants a whole-project parse then asks for it:
@@ -83,8 +77,7 @@ convergence is **complete**; the mechanism lives in <<06-principles.adoc#,Princi
  CreateMode (link:/workspace/1/decisions/C-xrefactory#24[ADR-0024]) is then whatever
  remains once the request exists — a command that starts, gets the project, sends it
  and exits — a convenience for a shell rather than the primitive. That ADR's own
- update of 2026-09-19 already narrows it this far. Not a dependency of XrefMode
- removal.
+ update of 2026-09-19 already narrows it this far.
 
 |Clean stale header emissions
 |Variant-B orphan fix — reparse by include structure gated on a per-CU fingerprint,

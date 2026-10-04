@@ -145,8 +145,6 @@ graph from them on every push, linked at the end of this file, and `utils/backlo
       ServerMode`, which is never true: only `-server` sets `cxrefProtocol`, together
       with the mode;
       Goes with: report-errors-flag
-   b. <a id="xrefmode-in-docs"></a>**the docs stop describing XrefMode as present** —
-      `10-roadmap`, `11-planned-features`, `12-components`, `14-code`, `20-insights`.
 9. <a id="remove-bridge"></a>**Remove the `parseBufferUsingServer` bridge** — §17.3; 9 refactoring call sites
    re-entering `callServer`. Independent of the rest of this section (it asserts
    `ServerMode`), but it is the last divergent parse path.
