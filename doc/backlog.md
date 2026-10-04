@@ -29,7 +29,9 @@ graph from them on every push, linked at the end of this file, and `utils/backlo
    the cursor, as `-push` always does with the request file. The open question is whether an
    operation's cursor parse should reuse a CU's references instead of re-parsing it.
    Related: that parse was never recorded as a parse until `bb5110e7`, so the file counted
-   as unparsed afterwards.
+   as unparsed afterwards. ADR-0032 answers the question: reuse them when the CU's
+   knowledge is current.
+   Waits for: out-of-date
 
 2. <a id="compiler-asked-twice"></a>**A cold start interrogates the compiler twice** —
    `tests/test_cold_start_interrogates_compiler_once/.suspended`. Waits for item 3,
@@ -155,8 +157,8 @@ graph from them on every push, linked at the end of this file, and `utils/backlo
     disk does not make its includers stale. Only the request file is parsed again, and
     every other includer keeps its references to the old header (ghosts). Pass 2 parses
     the includers of a header only when the header is edited. Changed CUs are picked up
-    by their mtime. `tests/test_shared_header_changed_on_disk`. The fix follows from
-    ADR-0032 (proposed), so it waits for that to be accepted.
+    by their mtime. `tests/test_shared_header_changed_on_disk`. Fixed by passes-as-one.
+    Waits for: passes-as-one
 11. <a id="extract-statics-by-value"></a>**Extract passes statics by value** — *no test pins it.* Since the gate fix this
     compiles and silently does the wrong thing, where before it failed to compile.
     Liveness-after-the-region is the wrong question for static storage: treat
@@ -175,7 +177,7 @@ graph from them on every push, linked at the end of this file, and `utils/backlo
 14. <a id="correctness-by-cost"></a>**Then, roughly by cost** — each has a `.suspended` note or a `18-known-bugs.adoc` entry:
     `tests/test_getproject_unknown_cu_under_include_path` (any file under an `-I`
     directory counts as project) · `tests/test_preprocess_edit_removes_ifdef_define` (CU
-    reparse leaves a header declaration it no longer emits — ADR-0025 variant B) ·
+    reparse leaves a header declaration it no longer emits — ADR-0025 variant B, fixed by `sweep`) ·
     `tests/test_browsing_push_by_name` (needs decided behaviour when a name has several
     bindings) · GlobalUnused false positive for statics in `.y` files ·
     `tests/test_parsing_generics` (`_Generic` not parsed) · **a refactoring can see a
@@ -209,16 +211,6 @@ graph from them on every push, linked at the end of this file, and `utils/backlo
     the protocol also lets a server pick only an encoding the client offered, with
     "utf-16" as the default, which agrees with code points outside the astral planes.
     From reading the code (Mac, session `36694da1`, 2026-10-02), not tested.
-
-    Also *without a repo home yet*: **a rename may miss a CU that reaches the symbol's
-    header through another header.** A position-based operation needs the symbol's reach
-    (ADR-0032), but its completeness comes from Pass 3 (`parseUnparsedSiblingCUs()`),
-    which looks only one level: headers the request file includes directly, and CUs that
-    include those directly. With the request including `a.h`, `a.h` including `decl.h`
-    and an unparsed `z.c` including `decl.h`, a rename of a symbol from `decl.h` should
-    miss `z.c`. Test first. The performance side of the same question is
-    header-filtered sibling parsing (item 15). From reading the code (WSL, session
-    `76735541`, 2026-10-03), not tested.
 
 ## 4. Performance, in strict dependency order
 
@@ -403,6 +395,74 @@ Pass 3 rounds 19s each, 42s total.
     once. The fix is to make the replaced file older, `touch -t 200001010000 <file>`. About
     ten test Makefiles create preloads with `cp`; check which do it next to the file.
 
+## 7. Freshness as make (ADR-0032, ADR-0033)
+
+The order is roughly the numbers. `header-not-half` can be done any time; `vocabulary`,
+`knowledge-time` and `cu-inputs` are the first steps and do not depend on each other.
+
+31. <a id="vocabulary"></a>**Rename to the ADR's words** — stale becomes out of date in
+    names, comments and log texts (`reparseStaleFile`, `countStalePreloadedFiles`,
+    `staleCUs`, ...), with c-xrefactory's own Rename; what it gets wrong goes to its
+    backlog. Changes no behaviour, so the later tests read in the new words.
+    Waits for: adr-0032
+32. <a id="knowledge-time"></a>**A knowledge time per CU** — recorded where the knowledge is
+    produced, beside `lastParsedMtime`, and kept in the snapshot. Knowledge from held
+    content is never written there.
+    Waits for: adr-0032
+    Goes with: vocabulary
+33. <a id="cu-inputs"></a>**A CU's inputs** — its forward include closure from the
+    `TypeCppInclude` references, the scan's for a CU never parsed, and the project
+    config. Today there is only the reverse walk, `collectCUsIncluding()`.
+    Waits for: adr-0032
+34. <a id="out-of-date"></a>**The one freshness predicate** — no knowledge, or an input
+    changed after the knowledge time, rounded down a tick. Replaces `fileNumberIsStale()`
+    and `fileNeedsParsing()`; the config as an input replaces
+    `markAllCompilationUnitsStale()`, and the zero sentinel goes.
+    Waits for: knowledge-time, cu-inputs
+35. <a id="request-target"></a>**What a request needs** — the symbol's reach for an
+    operation on a position, the whole project for one on a name. Pass 3 looks only one
+    level today: with the request including `a.h`, `a.h` including `decl.h` and an unparsed
+    `z.c` including `decl.h`, a rename of a symbol from `decl.h` should miss `z.c` (from
+    reading the code, WSL session `76735541`, not tested; test first). The hard part is
+    the one header-filtered sibling parsing has: the symbol is known only at dispatch.
+    Waits for: adr-0032
+    Goes with: header-filtered-siblings
+36. <a id="passes-as-one"></a>**Pass 1, 2 and 3 become one** — bring the target's
+    out-of-date CUs up to date. `test_shared_header_changed_on_disk` comes off suspension.
+    Waits for: out-of-date, request-target
+37. <a id="header-not-half"></a>**Pass 2 does not strip a header it cannot rebuild** — it
+    strips the header's references and then reparses at most 128 includers, so the rest
+    of their references are lost, not stale. Leave the header alone when the cap stops it.
+    Not needed once `sweep` is in.
+38. <a id="time-budget"></a>**A time budget instead of the 128 CUs** — above it the question
+    with an estimate. Browsing remembers a "no" for the session, an operation that edits
+    or works on a name is cancelled by it. Touches the client's question.
+    Waits for: passes-as-one
+39. <a id="freshness-docs"></a>**The docs follow** — the ADRs' Terms move to Terminology,
+    *Out of date* replaces *Staleness* in `06-principles`, and `08-algorithms` loses
+    "Dual Semantics".
+    Goes with: passes-as-one
+40. <a id="generations"></a>**Generations** — a counter per parse, a mark on every
+    reference, refreshed in `addToReferenceList()`, and a test that every reference
+    enters the table there.
+    Waits for: adr-0033
+41. <a id="sweep"></a>**Remove references no CU still emits** — after each request that
+    parsed something, remove a reference older than every reaching CU's knowledge
+    generation, and drop the strips in advance in `reparseStaleFile()`, Pass 2 and
+    `singlePass()`. A capped reverse walk removes nothing in that file.
+    `test_preprocess_edit_removes_ifdef_define` comes off suspension.
+    Waits for: generations, out-of-date
+42. <a id="sweep-cost"></a>**What the sweep costs** — memory and walk time on ffmpeg,
+    whether the reverse walk can go uncapped, and how the mark is stored.
+    Goes with: sweep
+43. <a id="snapshot-v2"></a>**Snapshot format 2.0.0** — one bump for the changes that make the
+    snapshot the make model's: the knowledge time, `n` gone, and `m`
+    (`lastFullUpdateMtime`, only written and read back) gone. Possibly also `i`
+    (`isArgument`), if it means nothing for a scanned project, and the usage numbering,
+    if `UsageMacroExpandingCU`, which nothing produces, goes. Whether c-xrefactory itself
+    becomes 2.0 with it is open.
+    Waits for: knowledge-time, drop-cxfi-refnum
+
 ## Foundation
 
 What the open items rest on, so that a `Waits for:` can name it. Not a record of what
@@ -412,6 +472,8 @@ was done.
 - <a id="adr-0029"></a>**ADR-0029: the project's identity is its root path**
 - <a id="adr-0030"></a>**ADR-0030: opening a project and asking about a file are separate**
 - <a id="adr-0031"></a>**ADR-0031: what files a project consists of**
+- <a id="adr-0032"></a>**ADR-0032: knowledge is rebuilt like `make` rebuilds targets**
+- <a id="adr-0033"></a>**ADR-0033: references are removed when every reaching CU is parsed again**
 
 ## Open questions that would reorder this
 
