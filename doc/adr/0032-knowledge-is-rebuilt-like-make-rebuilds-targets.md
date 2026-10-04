@@ -4,7 +4,7 @@ Date: 2026-10-03
 
 ## Status
 
-Proposed
+Accepted (2026-10-04)
 
 Builds on [ADR-0014](0014-adopt-on-demand-parsing-architecture.md) and
 [ADR-0020](0020-separate-buffer-sync-from-operation-dispatch.md)
@@ -17,7 +17,7 @@ Thomas Nilefalk (maintainer)
 ## Terms
 
 Used in this decision, and to move to Terminology in `doc/docs/06-principles.adoc` when
-it is accepted, where *Out of date* replaces *Staleness*:
+it is implemented, where *Out of date* replaces *Staleness*:
 
 - **Knowledge**: what the reference table holds from parsing one CU, its own references
   and those it emits into headers.

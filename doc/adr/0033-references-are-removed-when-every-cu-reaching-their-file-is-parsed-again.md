@@ -4,7 +4,7 @@ Date: 2026-10-03
 
 ## Status
 
-Proposed
+Accepted (2026-10-04)
 
 Supersedes the include-structure reparse and fingerprint gate of
 [ADR-0025](0025-clean-stale-header-emissions-by-reparse-not-provenance.md), keeping its
@@ -18,7 +18,7 @@ Thomas Nilefalk (maintainer)
 ## Terms
 
 Used in this decision, beside those of ADR-0032, and to move to Terminology in
-`doc/docs/06-principles.adoc` when it is accepted:
+`doc/docs/06-principles.adoc` when it is implemented:
 
 - **Generation**: the number of a CU parse, from a counter incremented once per parse.
 - **Knowledge generation**: the generation of a CU's latest parse.
