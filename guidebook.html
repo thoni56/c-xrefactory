@@ -1406,6 +1406,11 @@ are listed alphabetically; terms to avoid are noted to reduce ambiguity.</p>
 </div>
 <div class="dlist">
 <dl>
+<dt class="hdlist1">Change time</dt>
+<dd>
+<p>An input&#8217;s modification time, from the held buffer if the client holds one, otherwise
+from disk (ADR-0032).</p>
+</dd>
 <dt class="hdlist1">Cold start</dt>
 <dd>
 <p>Server startup with no persisted snapshot available. All compilation units must be
@@ -1418,6 +1423,19 @@ work.</p>
 project directory. Distinguished from header files, which are included transitively
 and not compiled independently.</p>
 </dd>
+<dt class="hdlist1">Completeness question</dt>
+<dd>
+<p>The question asked when bringing a request&#8217;s target up to date would take longer than
+the time budget (ADR-0032).</p>
+</dd>
+<dt class="hdlist1">Entry refresh</dt>
+<dd>
+<p>The per-request mechanism that ensures the reference table is up-to-date before executing
+an operation. Covers both <em>staleness</em> (content was known but is now outdated) and
+<em>unknown content</em> (file discovered by scan but never parsed). Uses the include structure
+to determine what needs reparsing. Runs on every request in <code>callServer()</code>.<br>
+See Server Mode Flow in <a href="14-code.html">Code</a> for implementation details.</p>
+</dd>
 <dt class="hdlist1">Expanding CU</dt>
 <dd>
 <p>A compilation unit that expands a given macro. Browsing from inside a macro body
@@ -1426,6 +1444,10 @@ A CU can only expand a macro if it includes the file that defines it, so the
 candidates are the includers of that file, found in the include graph without parsing
 anything (<code>collectCompilationUnitsExpandingTheMacro()</code>). Each one is parsed, and every
 meaning the identifier gets becomes a referent of its own (ADR-0027).</p>
+</dd>
+<dt class="hdlist1">Generation</dt>
+<dd>
+<p>The number of a CU parse, from a counter incremented once per parse (ADR-0033).</p>
 </dd>
 <dt class="hdlist1">Include structure</dt>
 <dd>
@@ -1442,11 +1464,39 @@ snapshot.<br>
 Process start does none of it. The first request that names a file does all of it,
 whatever the request is. The direction is to move it into <code>-getproject</code>.</p>
 </dd>
+<dt class="hdlist1">Input</dt>
+<dd>
+<p>A file or setting that a CU&#8217;s knowledge depends on, i.e. the CU, every file in its
+include closure, and the project config (ADR-0032).</p>
+</dd>
+<dt class="hdlist1">Knowledge</dt>
+<dd>
+<p>What the reference table holds from parsing one CU, its own references and those it
+emits into headers (ADR-0032).</p>
+</dd>
+<dt class="hdlist1">Knowledge generation</dt>
+<dd>
+<p>The generation of a CU&#8217;s latest parse (ADR-0033).</p>
+</dd>
+<dt class="hdlist1">Knowledge time</dt>
+<dd>
+<p>When the knowledge of a CU was recorded (ADR-0032).</p>
+</dd>
 <dt class="hdlist1">Lightweight scan</dt>
 <dd>
 <p>Discovery of project structure by globbing for compilation units and text-scanning
 <code>#include</code> lines, without full parsing. Populates the file table and include structure.
 Replaced <code>-create</code> and the <code>callXref()</code> pre-refactoring pattern (ADR 22).</p>
+</dd>
+<dt class="hdlist1">Operation on a position / on a name</dt>
+<dd>
+<p>Whether a request starts from a cursor position or from a symbol name.
+<code>needsWholeProjectParsed()</code> (<code>src/server.c</code>) lists the operations on a name (ADR-0032).</p>
+</dd>
+<dt class="hdlist1">Out of date</dt>
+<dd>
+<p>A CU with no knowledge, or with an input whose change time is after its knowledge time
+(ADR-0032). It replaces <em>Staleness</em>.</p>
 </dd>
 <dt class="hdlist1">Persisted snapshot</dt>
 <dd>
@@ -1471,7 +1521,7 @@ preloaded — the server reads disk directly.</p>
 <dd>
 <p>A set of source files governed by a single <code>.c-xrefrc</code> configuration file. Defines
 which files are parsed, which include paths are searched, and where the persisted
-snapshot is stored. Identified by the section name in the configuration file.</p>
+snapshot is stored. Identified by its project root (ADR-0029).</p>
 </dd>
 <dt class="hdlist1">Project root</dt>
 <dd>
@@ -1479,6 +1529,16 @@ snapshot is stored. Identified by the section name in the configuration file.</p
 under this directory are discovered by the lightweight scan; headers are discovered
 transitively through <code>#include</code> directives. On auto-detection, the project root is
 found by walking upward from the request file.</p>
+</dd>
+<dt class="hdlist1">Reach</dt>
+<dd>
+<p>The CUs that can reference a symbol. For a <code>static</code> that is its own CU, for a global the
+CUs that include its declaring header, directly or through other headers (ADR-0032).</p>
+</dd>
+<dt class="hdlist1">Reaching CU</dt>
+<dd>
+<p>For a file, a CU whose include closure contains the file, or that is the file
+(ADR-0033).</p>
 </dd>
 <dt class="hdlist1">Reference table</dt>
 <dd>
@@ -1488,6 +1548,11 @@ modification tracking), and <code>TypeCppInclude</code> references (include stru
 by parsing, snapshot restoration, and lightweight scanning.<br>
 <em>Avoid "in-memory db", "memory db".</em> It is the live working set, not a database in
 the traditional sense.</p>
+</dd>
+<dt class="hdlist1">Refresh</dt>
+<dd>
+<p>A parse emits a reference that is already in the table, and the reference gets that
+parse&#8217;s generation (ADR-0033).</p>
 </dd>
 <dt class="hdlist1">Restoring</dt>
 <dd>
@@ -1506,7 +1571,9 @@ mtime-based validation remains correct at next startup.<br>
 <dd>
 <p>A file is stale when its content has changed since it was last parsed. Detected by
 comparing <code>lastParsedMtime</code> against the current file modification time (from disk or
-editor buffer). Stale files trigger reparsing during the entry refresh (ADR 20).</p>
+editor buffer). Stale files trigger reparsing during the entry refresh (ADR 20).
+ADR-0032 replaces it with <em>Out of date</em>, and the code follows with <code>passes-as-one</code> in
+<code>doc/backlog.md</code>.</p>
 </dd>
 <dt class="hdlist1">Steady state</dt>
 <dd>
@@ -1519,13 +1586,14 @@ reparsing happen per-request. The reference table is authoritative.<br>
 <p>The detailed reference information (positions, usage types) for identifiers, created by
 full parsing. Expensive to produce. Distinguished from include structure, which is cheap.</p>
 </dd>
-<dt class="hdlist1">Entry refresh</dt>
+<dt class="hdlist1">Target</dt>
 <dd>
-<p>The per-request mechanism that ensures the reference table is up-to-date before executing
-an operation. Covers both <em>staleness</em> (content was known but is now outdated) and
-<em>unknown content</em> (file discovered by scan but never parsed). Uses the include structure
-to determine what needs reparsing. Runs on every request in <code>callServer()</code>.<br>
-See Server Mode Flow in <a href="14-code.html">Code</a> for implementation details.</p>
+<p>The knowledge that has to be up to date for a request. For an operation on a position it
+is the symbol&#8217;s reach, for an operation on a name the whole project (ADR-0032).</p>
+</dd>
+<dt class="hdlist1">Time budget</dt>
+<dd>
+<p>How long parsing may take before the user is asked (ADR-0032).</p>
 </dd>
 <dt class="hdlist1">Warm start</dt>
 <dd>
@@ -11848,7 +11916,7 @@ operation reads the in-memory table.</p>
 </div>
 <div id="footer">
 <div id="footer-text">
-Last updated 2026-10-04 16:54:53 UTC
+Last updated 2026-10-04 19:47:09 UTC
 </div>
 </div>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.18.3/highlight.min.js"></script>
