@@ -22,7 +22,4 @@ options:
 	-trace                    - also log trace & debug messages in log
 	-commandlog               - write all commands to /tmp/c-xref-command-log (experimental)
 	-compiler=<path>          - path to compiler to use for autodiscovered includes and defines
-	-update                   - update existing references database
-	-fastupdate               - fast update (modified files only)
-	-fullupdate               - full update (all files)
 	-version                  - print version information

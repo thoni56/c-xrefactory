@@ -193,9 +193,6 @@ static void usage() {
     fprintf(stdout, "\t-trace                    - also log trace & debug messages in log\n");
     fprintf(stdout, "\t-commandlog               - write all commands to /tmp/c-xref-command-log (experimental)\n");
     fprintf(stdout, "\t-compiler=<path>          - path to compiler to use for autodiscovered includes and defines\n");
-    fprintf(stdout, "\t-update                   - update existing references database\n");
-    fprintf(stdout, "\t-fastupdate               - fast update (modified files only)\n");
-    fprintf(stdout, "\t-fullupdate               - full update (all files)\n");
     fprintf(stdout, "\t-version                  - print version information\n");
 }
 
