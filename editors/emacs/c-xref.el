@@ -1591,7 +1591,7 @@ tries to delete C-xrefactory windows first.
 (defun c-xref-entry-point-make-initialisations ()
   (c-xref-entry-point-make-initialisations-no-project-required)
   ;; hack in order to permit asking for version without src project
-  (setq c-xref-active-project (c-xref-compute-active-project))
+  (setq c-xref-active-project (c-xref-lock-project-for-file (buffer-file-name)))
   (if c-xref-display-active-project-in-minibuffer
       (message "Project: %s" c-xref-active-project)
     )
@@ -2012,9 +2012,6 @@ has to do this before the user's next request reaches it.
     (c-xref-wait-until-task-sync proc nil)
     (c-xref-server-read-answer-file-and-dispatch c-xref-global-dispatch-data nil)
     (cdr (assoc 'info c-xref-global-dispatch-data))))
-
-(defun c-xref-compute-active-project ()
-  (c-xref-lock-project-for-file (buffer-file-name)))
 
 (defun c-xref-get-env (name)
   "Get value of a c-xrefactory environment variable.
