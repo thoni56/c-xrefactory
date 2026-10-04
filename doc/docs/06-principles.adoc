@@ -257,6 +257,10 @@ file table does not support.
 The following terms are used throughout the documentation and codebase. Preferred terms
 are listed alphabetically; terms to avoid are noted to reduce ambiguity.
 
+Change time::
+  An input's modification time, from the held buffer if the client holds one, otherwise
+  from disk (ADR-0032).
+
 Cold start::
   Server startup with no persisted snapshot available. All compilation units must be
   fully parsed to populate the reference table. Same code path as warm start, just more
@@ -267,6 +271,17 @@ Compilation unit (CU)::
   project directory. Distinguished from header files, which are included transitively
   and not compiled independently.
 
+Completeness question::
+  The question asked when bringing a request's target up to date would take longer than
+  the time budget (ADR-0032).
+
+Entry refresh::
+  The per-request mechanism that ensures the reference table is up-to-date before executing
+  an operation. Covers both _staleness_ (content was known but is now outdated) and
+  _unknown content_ (file discovered by scan but never parsed). Uses the include structure
+  to determine what needs reparsing. Runs on every request in `callServer()`. +
+  See Server Mode Flow in <<14-code.adoc#,Code>> for implementation details.
+
 Expanding CU::
   A compilation unit that expands a given macro. Browsing from inside a macro body
   needs one, because the identifiers there are not symbols until the macro is expanded.
@@ -274,6 +289,9 @@ Expanding CU::
   candidates are the includers of that file, found in the include graph without parsing
   anything (`collectCompilationUnitsExpandingTheMacro()`). Each one is parsed, and every
   meaning the identifier gets becomes a referent of its own (ADR-0027).
+
+Generation::
+  The number of a CU parse, from a counter incremented once per parse (ADR-0033).
 
 Include structure::
   The graph of `#include` relationships between files, represented in the reference table
@@ -288,10 +306,32 @@ Initialization::
   Process start does none of it. The first request that names a file does all of it,
   whatever the request is. The direction is to move it into `-getproject`.
 
+Input::
+  A file or setting that a CU's knowledge depends on, i.e. the CU, every file in its
+  include closure, and the project config (ADR-0032).
+
+Knowledge::
+  What the reference table holds from parsing one CU, its own references and those it
+  emits into headers (ADR-0032).
+
+Knowledge generation::
+  The generation of a CU's latest parse (ADR-0033).
+
+Knowledge time::
+  When the knowledge of a CU was recorded (ADR-0032).
+
 Lightweight scan::
   Discovery of project structure by globbing for compilation units and text-scanning
   `#include` lines, without full parsing. Populates the file table and include structure.
   Replaced `-create` and the `callXref()` pre-refactoring pattern (ADR 22).
+
+Operation on a position / on a name::
+  Whether a request starts from a cursor position or from a symbol name.
+  `needsWholeProjectParsed()` (`src/server.c`) lists the operations on a name (ADR-0032).
+
+Out of date::
+  A CU with no knowledge, or with an input whose change time is after its knowledge time
+  (ADR-0032). It replaces _Staleness_.
 
 Persisted snapshot::
   The `.cx` files on disk. A point-in-time copy of the reference table from a previous
@@ -313,13 +353,21 @@ Preload::
 Project::
   A set of source files governed by a single `.c-xrefrc` configuration file. Defines
   which files are parsed, which include paths are searched, and where the persisted
-  snapshot is stored. Identified by the section name in the configuration file.
+  snapshot is stored. Identified by its project root (ADR-0029).
 
 Project root::
   The directory containing the `.c-xrefrc` configuration file. All compilation units
   under this directory are discovered by the lightweight scan; headers are discovered
   transitively through `#include` directives. On auto-detection, the project root is
   found by walking upward from the request file.
+
+Reach::
+  The CUs that can reference a symbol. For a `static` that is its own CU, for a global the
+  CUs that include its declaring header, directly or through other headers (ADR-0032).
+
+Reaching CU::
+  For a file, a CU whose include closure contains the file, or that is the file
+  (ADR-0033).
 
 Reference table::
   The authoritative in-memory state during a running session. Comprises the
@@ -328,6 +376,10 @@ Reference table::
   by parsing, snapshot restoration, and lightweight scanning. +
   _Avoid "in-memory db", "memory db"._ It is the live working set, not a database in
   the traditional sense.
+
+Refresh::
+  A parse emits a reference that is already in the table, and the reference gets that
+  parse's generation (ADR-0033).
 
 Restoring::
   Loading a persisted snapshot into the reference table at startup. After restoration,
@@ -344,6 +396,8 @@ Staleness::
   A file is stale when its content has changed since it was last parsed. Detected by
   comparing `lastParsedMtime` against the current file modification time (from disk or
   editor buffer). Stale files trigger reparsing during the entry refresh (ADR 20).
+  ADR-0032 replaces it with _Out of date_, and the code follows with `passes-as-one` in
+  `doc/backlog.md`.
 
 Steady state::
   The server is initialized and processing requests. Staleness detection and incremental
@@ -354,12 +408,12 @@ Symbol references::
   The detailed reference information (positions, usage types) for identifiers, created by
   full parsing. Expensive to produce. Distinguished from include structure, which is cheap.
 
-Entry refresh::
-  The per-request mechanism that ensures the reference table is up-to-date before executing
-  an operation. Covers both _staleness_ (content was known but is now outdated) and
-  _unknown content_ (file discovered by scan but never parsed). Uses the include structure
-  to determine what needs reparsing. Runs on every request in `callServer()`. +
-  See Server Mode Flow in <<14-code.adoc#,Code>> for implementation details.
+Target::
+  The knowledge that has to be up to date for a request. For an operation on a position it
+  is the symbol's reach, for an operation on a name the whole project (ADR-0032).
+
+Time budget::
+  How long parsing may take before the user is asked (ADR-0032).
 
 Warm start::
   Server startup with an existing persisted snapshot. Most compilation units are fresh

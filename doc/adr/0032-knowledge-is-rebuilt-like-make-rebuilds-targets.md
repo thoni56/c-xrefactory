@@ -16,8 +16,8 @@ Thomas Nilefalk (maintainer)
 
 ## Terms
 
-Used in this decision, and to move to Terminology in `doc/docs/06-principles.adoc` when
-it is implemented, where *Out of date* replaces *Staleness*:
+Used in this decision, and also in Terminology in `doc/docs/06-principles.adoc`, where
+*Out of date* will replace *Staleness*:
 
 - **Knowledge**: what the reference table holds from parsing one CU, its own references
   and those it emits into headers.

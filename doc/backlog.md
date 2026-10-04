@@ -438,9 +438,8 @@ The order is roughly the numbers. `header-not-half` can be done any time; `vocab
     with an estimate. Browsing remembers a "no" for the session, an operation that edits
     or works on a name is cancelled by it. Touches the client's question.
     Waits for: passes-as-one
-39. <a id="freshness-docs"></a>**The docs follow** — the ADRs' Terms move to Terminology,
-    *Out of date* replaces *Staleness* in `06-principles`, and `08-algorithms` loses
-    "Dual Semantics".
+39. <a id="freshness-docs"></a>**The docs follow** — *Out of date* replaces *Staleness* in
+    `06-principles`, and `08-algorithms` loses "Dual Semantics".
     Goes with: passes-as-one
 40. <a id="generations"></a>**Generations** — a counter per parse, a mark on every
     reference, refreshed in `addToReferenceList()`, and a test that every reference

@@ -17,8 +17,8 @@ Thomas Nilefalk (maintainer)
 
 ## Terms
 
-Used in this decision, beside those of ADR-0032, and to move to Terminology in
-`doc/docs/06-principles.adoc` when it is implemented:
+Used in this decision, beside those of ADR-0032, and also in Terminology in
+`doc/docs/06-principles.adoc`:
 
 - **Generation**: the number of a CU parse, from a counter incremented once per parse.
 - **Knowledge generation**: the generation of a CU's latest parse.
