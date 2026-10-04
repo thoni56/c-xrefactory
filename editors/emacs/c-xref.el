@@ -26,7 +26,6 @@
 (defvar c-xref-user-identification nil "User identification for c-xref.")
 (defvar c-xref-run-batch-file nil "Batch file for c-xref.")
 (defvar c-xref-find-file-on-mouse-delimit nil "Regex for file delimitation in c-xref.")
-(defvar c-xref-path-separator nil "Path separator for c-xref.")
 
 (if (eq c-xref-platform 'windows)
     (progn
@@ -35,7 +34,6 @@
       (setq c-xref-user-identification "user")
       (setq c-xref-run-batch-file (concat (getenv "TEMP") "/c-xrefrun.bat"))
       (setq c-xref-find-file-on-mouse-delimit "[^A-Za-z0-9_\\.~-]")
-      (setq c-xref-path-separator ?\;)
       )
   ;; a linux/unix platform
   (progn
@@ -44,7 +42,6 @@
     (setq c-xref-user-identification (getenv "LOGNAME"))
     (setq c-xref-run-batch-file (format "%s/c-xref-%s-%d.sh" c-xref-tmp-dir c-xref-user-identification (emacs-pid)))
     (setq c-xref-find-file-on-mouse-delimit "[^A-Za-z0-9_/.~-]")
-    (setq c-xref-path-separator ?:)
     )
   )
 
@@ -3414,39 +3411,6 @@ Special hotkeys available:
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;;;;;;;;;;;;;;;;;;;;;    Projects    ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-
-(defun c-xref-path-completionfun (cstr _filter type)
-  (let ((res) (fname) (dir) (sep) (str) (prefix))
-    (setq str cstr)
-    (setq sep (string-match (format "\\%c" c-xref-path-separator) str))
-    (setq prefix "")
-    (while sep
-      (progn
-            (setq prefix (concat prefix (substring str  0 (+ sep 1))))
-            (setq str (substring str (+ sep 1) nil))
-            (setq sep (string-match (format "\\%c" c-xref-path-separator) str))
-        ))
-    ;;  (setq dir (concat (c-xref-file-directory-name str) "/"))
-    (setq dir (file-name-directory str))
-    (setq fname (file-name-nondirectory str))
-    (if (eq type t)
-            (setq res (file-name-all-completions fname dir))
-      (setq res (file-name-completion fname dir))
-      (if (eq c-xref-platform 'windows)
-              (setq res (c-xref-backslashify-name res))
-            )
-      )
-    (if (stringp res)
-            (setq res (concat cstr (substring res (length fname))))
-      )
-    res
-    ))
-
-(defun c-xref-read-path-from-minibuffer (prompt default)
-  (let ((res))
-    (setq res (completing-read prompt 'c-xref-path-completionfun nil nil default))
-    res
-    ))
 
 (defun c-xref-find-project-root ()
   "Find project root by looking for .git directory.
