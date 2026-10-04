@@ -204,9 +204,6 @@
 ;; by default truncation is disallowed in order to see profiles
 (defvar c-xref-completion-truncate-lines nil)
 
-;; by default the automatic project selection is on.
-(defvar c-xref-current-project nil)
-
 (defvar c-xref-coloring (fboundp 'make-face))
 
 (defvar c-xref-mouse-highlight t)
@@ -250,16 +247,6 @@
 
 (defvar c-xref-run-find-file-hooks t)
 
-(defvar c-xref-options-file (concat (getenv "HOME") "/.c-xrefrc"))
-(if (not (boundp 'c-xref-options-file))
-    (if (eq c-xref-platform 'windows)
-            (if (getenv "HOME")
-                (setq c-xref-options-file (concat (getenv "HOME") "/_c-xrefrc"))
-              (setq c-xref-options-file "c:/_c-xrefrc")
-              )
-      )
-  )
-
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; setting CXrefactory customization group
 
@@ -287,12 +274,6 @@ C-xrefactory functions.
 "
             :group 'c-xrefactory
         )
-
-      (defcustom c-xref-options-file c-xref-options-file
-            "This option determines where the file describing C-xrefactory project-specific options (projects and their setting) is stored. You will need to kill (and restart) the c-xref process if changing this option."
-            :type '(string)
-            ;; :type '(file) ;; this puts there ~, etc making problems
-            :group 'c-xrefactory-general)
 
       (defcustom c-xref-bind-left-mouse-button t
             "If on, C-xrefactory will bind the left mouse button in its dialog windows. The button will be bound to the same function as the middle button. If you change this value, you will need to restart Emacs in order for that new value take effect."
@@ -530,10 +511,6 @@ faces and highlighting in buffers created by C-xrefactory.
                                                                                             c-xref-project-edit-options))
 (define-key c-xref-project-menu [c-xref-prj-show-active] '("Show Active" .
                                                                                                            c-xref-project-active))
-(define-key c-xref-project-menu [c-xref-prj-set-active] '("Set Active" .
-                                                                                                          c-xref-project-set-active))
-(define-key c-xref-project-menu [c-xref-prj-del] '("Delete" .
-                                                                                           c-xref-project-delete))
 (define-key c-xref-project-menu [c-xref-prj-new] '("New" .
                                                                                            c-xref-project-new))
 
@@ -637,8 +614,6 @@ your .c-xrefrc file.
 
 (autoload 'c-xref-global-options "c-xref" c-xref-default-documentation-string t)
 (autoload 'c-xref-project-new "c-xref" c-xref-default-documentation-string t)
-(autoload 'c-xref-project-delete "c-xref" c-xref-default-documentation-string t)
-(autoload 'c-xref-project-set-active "c-xref" c-xref-default-documentation-string t)
 (autoload 'c-xref-project-active "c-xref" c-xref-default-documentation-string t)
 (autoload 'c-xref-project-edit-options "c-xref" c-xref-default-documentation-string t)
 (autoload 'c-xref-project-remove-references-and-restart "c-xref" c-xref-default-documentation-string t)

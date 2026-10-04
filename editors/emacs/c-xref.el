@@ -50,8 +50,6 @@
 
 (defvar c-xref-running-under 'emacs)
 
-(defvar c-xref-directory-dep-prj-name "++ Automatic (directory dependent) ++")
-(defvar c-xref-abandon-deletion "++ Cancel (no deletion) ++")
 (defvar c-xref-c-suffixes '(".c" ".h" ".tc" ".th"))
 
 (defvar c-xref-run-this-option "runthis")
@@ -122,7 +120,6 @@ has to do it after this returns rather than before.
 (defvar c-xref-server-answer-buffer "*c-xref-server-answer*")
 (defvar c-xref-completions-buffer "*completions*")
 (defvar c-xref-search-results-buffer "*c-xref-search-results*")
-(defvar c-xref-project-list-buffer " *project-list*")
 (defvar c-xref-extraction-buffer " *code-extraction*")
 
 (defvar c-xref-selection-modal-buffer (c-xref-modal-buffer-name " *selection"))
@@ -735,7 +732,6 @@ A-Za-z0-9.\t-- incremental search, insert character
              (equal name c-xref-completions-buffer)
              (equal name c-xref-search-results-buffer)
              (equal name c-xref-browser-info-buffer)
-             (equal name c-xref-project-list-buffer)
              (equal name c-xref-info-buffer)
              (equal name c-xref-info-modal-buffer)
              (equal name c-xref-error-modal-buffer)
@@ -2021,22 +2017,7 @@ has to do this before the user's next request reaches it.
     (cdr (assoc 'info c-xref-global-dispatch-data))))
 
 (defun c-xref-compute-active-project ()
-  (if c-xref-current-project
-      (setq c-xref-active-project c-xref-current-project)
-    (c-xref-lock-project-for-file (buffer-file-name))))
-
-(defun c-xref-softly-preset-project (pname)
-  (let ((actp))
-    (setq actp c-xref-active-project)
-    (setq c-xref-active-project pname)
-    ;; this is just a hack, it may cause problems, because current buffer
-    ;; is passed to c-xref (be careful on which buffer you call it)
-    ;; but c-xref needs to parse something to softsetup project, maybe
-    ;; I should implement special option '-softprojectset'?
-    (c-xref-call-process-with-basic-file-data-no-saves "-getproject")
-    ;; Hmm. this is also dispatching, hope it is no problem.
-    (setq c-xref-active-project actp)
-    ))
+  (c-xref-lock-project-for-file (buffer-file-name)))
 
 (defun c-xref-get-env (name)
   "Get value of a c-xrefactory environment variable.
@@ -3434,268 +3415,6 @@ Special hotkeys available:
 ;;;;;;;;;;;;;;;;;;;;;;;    Projects    ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
-(defun c-xref-split-path-on-path-list (pname cut-slash)
-  (let ((lplist) (i) (path) (_len) (_lchar))
-    ;; cut project path
-    (setq lplist nil)
-    (setq i (length pname))
-    (while (> i 0)
-      (setq i (- i 1))
-      (if (eq (elt pname i) c-xref-path-separator)
-              (progn
-                (setq path (substring pname (+ i 1)))
-                (if cut-slash (setq path (c-xref-remove-pending-slash path)))
-                (setq lplist (append lplist (cons path nil)))
-                (setq pname (substring pname 0 i))
-                )))
-    (setq lplist (append lplist (cons pname nil)))
-    lplist
-    ))
-
-
-(defun c-xref-get-project-list ()
-  (let ((_new-name) (loop) (mbeg) (mend) (pname "") (project-list) (_i) (_len) (lplist))
-    (with-current-buffer
-            (get-buffer-create " c-xref-project-list")
-      ;;(c-xref-erase-buffer)
-      (insert-file-contents c-xref-options-file  nil nil nil t)
-      (goto-char (point-min))
-      (setq project-list nil)
-      (setq loop t)
-      (while loop
-            (setq loop (search-forward-regexp "\\[\\([^\]]*\\)\\]"
-                                                              (buffer-size) 1))
-            (if loop
-                (progn
-                  (setq mbeg (match-beginning  1))
-                  (setq mend (match-end  1))
-                  (setq pname (buffer-substring mbeg mend))
-                  (setq lplist (c-xref-split-path-on-path-list pname nil))
-                  (setq project-list (append lplist project-list))
-                  )))
-      (kill-buffer nil)
-      )
-    project-list
-    ))
-
-(defun c-xref-prj-list-get-prj-on-line ()
-  (let ((res) (ppp) (bl) (el))
-    (setq ppp (point))
-    (beginning-of-line)
-    (setq bl (point))
-    (end-of-line)
-    (setq el (point))
-    (setq res (buffer-substring (+ bl 2) el))
-    (goto-char ppp)
-    res
-    ))
-
-(defun c-xref-interactive-project-select (&optional _argp)
-  "Go to the reference corresponding to this line."
-  (interactive "P")
-  (let ((_bl) (_el) (prj))
-    (setq prj (c-xref-prj-list-get-prj-on-line))
-    (if (string-equal prj c-xref-directory-dep-prj-name)
-            (progn
-              (setq c-xref-current-project nil)
-              ;; and reseting of softly selected project
-              (c-xref-softly-preset-project "")
-              )
-      (setq c-xref-current-project prj)
-      )
-    (c-xref-delete-window-in-any-frame  c-xref-project-list-buffer nil)
-    (message "Project '%s' is active." prj)
-    )
-  t
-  )
-
-(defun c-xref-interactive-m-project-select (event)
-  (interactive "e")
-  (mouse-set-point event)
-  (c-xref-interactive-project-select)
-  (other-window -1)
-  t
-  )
-
-(defun c-xref-interactive-project-escape (&optional _argp)
-  "Escape from the project selection window."
-  (interactive "P")
-  (c-xref-delete-window-in-any-frame  c-xref-project-list-buffer nil)
-  )
-
-(defvar c-xref-project-list-mode-map
-  (let ((map (make-sparse-keymap)))
-    (define-key map "\e" 'c-xref-interactive-project-escape)
-    (define-key map "q" 'c-xref-interactive-project-escape)
-    (define-key map "\C-m" 'c-xref-interactive-project-select)
-    ;;    (define-key map " " 'c-xref-interactive-project-select)
-    (define-key map "?" 'c-xref-interactive-project-selection-help)
-    (c-xref-bind-default-button map 'c-xref-interactive-m-project-select)
-    map)
-  "Keymap for `c-xref-project-list-mode'."
-  )
-(c-xref-add-bindings-to-keymap c-xref-project-list-mode-map)
-
-(defun c-xref-interactive-project-selection-help ()
-  (interactive "")
-  (c-xref-interactive-help
-   "Special hotkeys available:
-
-\\[c-xref-interactive-project-select] \t-- select project
-\\[c-xref-interactive-project-escape] \t-- close
-\\[c-xref-interactive-project-selection-help] \t-- toggle this help page
-" nil nil)
-  )
-
-(defun c-xref-display-project-list (last-project local-keymap)
-  (let ((c-xref-project-list) (dd))
-    (c-xref-delete-window-in-any-frame c-xref-project-list-buffer nil)
-    (setq dd (c-xref-get-basic-server-dispatch-data 'c-xref-server-process))
-    (setq c-xref-this-buffer-dispatch-data dd)
-    (setq c-xref-project-list (c-xref-get-project-list))
-    (c-xref-display-and-set-new-dialog-window c-xref-project-list-buffer nil t)
-    (setq c-xref-this-buffer-dispatch-data dd)
-    (insert "  ")
-    (insert last-project)
-    (put-text-property 3 (point) 'mouse-face 'highlight)
-    (newline)
-    (while c-xref-project-list
-      (goto-char (point-min))
-      (if (string-equal c-xref-current-project (car c-xref-project-list))
-              (insert "> ")
-            (insert "  ")
-            )
-      (insert (car c-xref-project-list))
-      (put-text-property 3 (point) 'mouse-face 'highlight)
-      (newline)
-      (setq c-xref-project-list (cdr c-xref-project-list))
-      )
-    (setq buffer-read-only t)
-    (c-xref-use-local-map local-keymap)
-    (message c-xref-standard-help-message)
-    ))
-
-(defun c-xref-project-set-active ()
-  "Set  active  project.
-
-This function is meningful only if your '.c-xrefrc' file
-contains a section defining options for your project. After
-setting a project to be active all C-xrefactory functions will
-proceed according to options corresponding to this project name.
-"
-  (interactive "")
-  (c-xref-entry-point-make-initialisations-no-project-required)
-  (c-xref-display-project-list c-xref-directory-dep-prj-name
-                                           c-xref-project-list-mode-map)
-  )
-
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-
-(defun c-xref-interactive-project-delete (&optional _argp)
-  (interactive "P")
-  (let ((prj) (eprj) (ppp) (eppp))
-    (setq prj (c-xref-prj-list-get-prj-on-line))
-    (if (string-equal prj c-xref-abandon-deletion)
-            (progn
-              (c-xref-delete-window-in-any-frame  c-xref-project-list-buffer nil)
-              (message "Deletion canceled.")
-              )
-      (forward-line)
-      (setq eprj (c-xref-prj-list-get-prj-on-line))
-      (c-xref-delete-window-in-any-frame  c-xref-project-list-buffer nil)
-      (find-file c-xref-options-file)
-      (goto-char (point-min))
-      (setq ppp (search-forward (format "[%s]" prj) nil t))
-      (if (not ppp)
-              (error "Project section not found, it's probably sharing options, delete it manually.")
-            (setq ppp (- ppp (length (format "[%s]" prj))))
-            )
-      (if (equal eprj c-xref-abandon-deletion)
-              (setq eppp (point-max))
-            (setq eppp (search-forward (format "[%s]" eprj) nil t))
-            (if (not eppp)
-                (setq eppp (search-forward (format "[%s:" eprj) nil t))
-              )
-            (if (not eppp)
-                (error "Can't find end of project section, internal error, sorry.")
-              (setq eppp (- eppp (length (format "[%s]" eprj))))
-              ))
-      (if (> ppp eppp)
-              (error "[ppp>eppp] internal check failed, sorry")
-            (goto-char ppp)
-            (if (yes-or-no-p (format "Really delete %s? " prj))
-                (progn
-                  (delete-char (- eppp ppp))
-                  (save-buffer)
-                  (kill-buffer (current-buffer))
-                  (message "Project %s has been deleted." prj)
-                  )
-              (message "No deletion.")
-              )
-            ))
-    t
-    ))
-
-(defun c-xref-interactive-m-project-delete (event)
-  (interactive "e")
-  (mouse-set-point event)
-  (c-xref-interactive-project-delete)
-  (other-window -1)
-  t
-  )
-
-(defvar c-xref-project-delete-mode-map
-  (let ((map (make-sparse-keymap)))
-    (define-key map "\e" 'c-xref-interactive-project-escape)
-    (define-key map "q" 'c-xref-interactive-project-escape)
-    (define-key map "\C-m" 'c-xref-interactive-project-delete)
-    ;; (define-key map " " 'c-xref-interactive-project-delete)
-    (define-key map "?" 'c-xref-interactive-project-delete-help)
-    (c-xref-bind-default-button map 'c-xref-interactive-m-project-delete)
-    map)
-  "Keymap for `c-xref-project-delete-mode'."
-  )
-(c-xref-add-bindings-to-keymap c-xref-project-delete-mode-map)
-
-
-(defun c-xref-interactive-project-delete-help ()
-  (interactive "")
-  (c-xref-interactive-help
-   "Special hotkeys available:
-
-\\[c-xref-interactive-project-delete] \t-- delete project
-\\[c-xref-interactive-project-escape] \t-- close
-\\[c-xref-interactive-project-delete-help] \t-- toggle this help page
-" nil nil)
-  )
-
-
-(defun c-xref-project-delete ()
-  "Delete a project.
-
-This function asks you to select the project you wish to
-delete. Then the part of .c-xrefrc file describing this project
-will be deleted.
-"
-  (interactive "")
-  (c-xref-entry-point-make-initialisations-no-project-required)
-  (c-xref-display-project-list c-xref-abandon-deletion
-                                           c-xref-project-delete-mode-map)
-  )
-
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-
-(defun c-xref-remove-pending-slash (pfiles)
-  (let ((dlen))
-    (setq dlen (- (length pfiles) 1))
-    (if (> dlen 0)
-            (progn
-              (if (or (eq (elt pfiles dlen) ?/) (eq (elt pfiles dlen) ?\\))
-                  (setq pfiles (substring pfiles 0 dlen))
-                )))
-    pfiles
-    ))
-
 (defun c-xref-path-completionfun (cstr _filter type)
   (let ((res) (fname) (dir) (sep) (str) (prefix))
     (setq str cstr)
@@ -3782,17 +3501,10 @@ or macro definitions (-D) if needed.
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 (defun c-xref-project-active ()
-  "Show currently  active project name.
-
-This  function is useful  mainly if  you are  not sure  which .c-xrefrc
-section applies to the currently edited file.
-"
+  "Show the active project, i.e. the project the current file belongs to."
   (interactive "")
   (c-xref-entry-point-make-initialisations)
-  (if c-xref-current-project
-      (message "Active project (manual): %s" c-xref-active-project)
-    (message "Active project (auto): %s" c-xref-active-project)
-    ))
+  (message "Active project: %s" c-xref-active-project))
 
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
@@ -3801,12 +3513,11 @@ section applies to the currently edited file.
   "Edit the project's .c-xrefrc configuration file."
   (interactive "")
   (c-xref-entry-point-make-initialisations)
-  (let* ((project-root (c-xref-get-env "__PROJECT_ROOT"))
-         (config-file (if (and project-root (not (equal project-root ""))
-                               (file-exists-p (concat project-root "/.c-xrefrc")))
-                          (concat project-root "/.c-xrefrc")
-                        c-xref-options-file)))
-    (find-file config-file)))
+  (let ((project-root (c-xref-get-env "__PROJECT_ROOT")))
+    (if (and project-root (not (equal project-root ""))
+             (file-exists-p (concat project-root "/.c-xrefrc")))
+        (find-file (concat project-root "/.c-xrefrc"))
+      (message "No .c-xrefrc found for this file, Project > New creates one"))))
 
 (defun c-xref-project-remove-references-and-restart ()
   "Delete the project's reference database and restart the server.
