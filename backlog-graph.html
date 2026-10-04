@@ -45,16 +45,33 @@ flowchart BT
   dump_reference_database["§5 · 28 · Dump Reference Database"]
   macos_watchers["§6 · 29 · Two causes of watchers not firing on macOS, both found"]
   flaky_preload_tests["§6 · 30 · Tests that copy a preload next to the file it replaces can be flaky"]
+  vocabulary["§7 · 31 · Rename to the ADR's words"]
+  knowledge_time["§7 · 32 · A knowledge time per CU"]
+  cu_inputs["§7 · 33 · A CU's inputs"]
+  out_of_date["§7 · 34 · The one freshness predicate"]
+  request_target["§7 · 35 · What a request needs"]
+  passes_as_one["§7 · 36 · Pass 1, 2 and 3 become one"]
+  header_not_half["§7 · 37 · Pass 2 does not strip a header it cannot rebuild"]
+  time_budget["§7 · 38 · A time budget instead of the 128 CUs"]
+  freshness_docs["§7 · 39 · The docs follow"]
+  generations["§7 · 40 · Generations"]
+  sweep["§7 · 41 · Remove references no CU still emits"]
+  sweep_cost["§7 · 42 · What the sweep costs"]
+  snapshot_v2["§7 · 43 · Snapshot format 2.0.0"]
   entry_refresh["Entry refresh before every request (ADR-0020)"]
   adr_0029["ADR-0029: the project's identity is its root path"]
   adr_0030["ADR-0030: opening a project and asking about a file are separate"]
   adr_0031["ADR-0031: what files a project consists of"]
+  adr_0032["ADR-0032: knowledge is rebuilt like `make` rebuilds targets"]
+  adr_0033["ADR-0033: references are removed when every reaching CU is parsed again"]
+  out_of_date --&gt; cursor_parse_reuse
   partition_options --&gt; compiler_asked_twice
   adr_0029 --&gt; client_stops_p
   adr_0030 --&gt; client_stops_p
   partition_options --&gt; setup_into_openproject
   setup_into_openproject --&gt; openproject_tripwire
   adr_0031 --&gt; project_extent
+  passes_as_one --&gt; behind_the_back
   startup_command_line --&gt; header_static_link_names
   header_filtered_siblings --&gt; scan_angle_includes
   scan_angle_includes --&gt; lexing_cache
@@ -62,6 +79,20 @@ flowchart BT
   behind_the_back --&gt; remove_references_stopgap
   entry_refresh --&gt; index_based_sessions
   report_errors_flag --&gt; indexing_log_buffer
+  adr_0032 --&gt; vocabulary
+  adr_0032 --&gt; knowledge_time
+  adr_0032 --&gt; cu_inputs
+  knowledge_time --&gt; out_of_date
+  cu_inputs --&gt; out_of_date
+  adr_0032 --&gt; request_target
+  out_of_date --&gt; passes_as_one
+  request_target --&gt; passes_as_one
+  passes_as_one --&gt; time_budget
+  adr_0033 --&gt; generations
+  generations --&gt; sweep
+  out_of_date --&gt; sweep
+  knowledge_time --&gt; snapshot_v2
+  drop_cxfi_refnum --&gt; snapshot_v2
   client_stops_p -.- startup_command_line
   client_stops_p -.- project_extent
   mode_checks -.- report_errors_flag
@@ -69,8 +100,12 @@ flowchart BT
   scan_angle_includes -.- project_extent
   remove_references_stopgap -.- index_based_sessions
   local_config_fragments -.- project_extent
-  linkStyle 13,14,15,16,17,18,19 stroke:#8a63d2,stroke-width:2px,stroke-dasharray:6 4
-  class cursor_parse_reuse ready
+  knowledge_time -.- vocabulary
+  request_target -.- header_filtered_siblings
+  freshness_docs -.- passes_as_one
+  sweep_cost -.- sweep
+  linkStyle 29,30,31,32,33,34,35,36,37,38,39 stroke:#8a63d2,stroke-width:2px,stroke-dasharray:6 4
+  class cursor_parse_reuse blocked
   class compiler_asked_twice blocked
   class partition_options ready
   class client_stops_p ready
@@ -82,7 +117,7 @@ flowchart BT
   class startup_command_line ready
   class mode_checks ready
   class remove_bridge ready
-  class behind_the_back ready
+  class behind_the_back blocked
   class extract_statics_by_value ready
   class token_pasting_trio ready
   class header_static_link_names blocked
@@ -103,10 +138,25 @@ flowchart BT
   class dump_reference_database ready
   class macos_watchers ready
   class flaky_preload_tests ready
+  class vocabulary ready
+  class knowledge_time ready
+  class cu_inputs ready
+  class out_of_date blocked
+  class request_target ready
+  class passes_as_one blocked
+  class header_not_half ready
+  class time_budget blocked
+  class freshness_docs ready
+  class generations ready
+  class sweep blocked
+  class sweep_cost ready
+  class snapshot_v2 blocked
   class entry_refresh done
   class adr_0029 done
   class adr_0030 done
   class adr_0031 done
+  class adr_0032 done
+  class adr_0033 done
 </pre>
 <script type="module">
 import mermaid from 'https://cdn.jsdelivr.net/npm/mermaid@11/dist/mermaid.esm.min.mjs';
