@@ -574,17 +574,22 @@ endif
 
 #########################################################################
 # Emacs writes .#<name> lock symlinks whose target is "user@host.pid:boot" rather
-# than a path, so following one fails with ENOENT and watchexec reports an "fs
+# than a path. On macOS, following one fails with ENOENT and watchexec reports an "fs
 # watcher error" on every scan for as long as that buffer is unsaved. Ignore
 # patterns do not help: they filter events, not the directory walk.
+# Linux does not have the problem (watchexec 1.16 and 2.7.4 checked), and 1.16
+# does not know the flag.
+ifeq ($(shell uname -s),Darwin)
+WATCHEXEC_FLAGS := --no-follow-symlinks
+endif
 
 .PHONY:watch
 watch:
-	watchexec --no-follow-symlinks -i \*.tab.\[ch\] -i lexem.\[ch\] -i options_config.h -e c,h,y,mock,tc,th -- execnotify -t Development make -j$(JOBS) devel
+	watchexec $(WATCHEXEC_FLAGS) -i \*.tab.\[ch\] -i lexem.\[ch\] -i options_config.h -e c,h,y,mock,tc,th -- execnotify -t Development make -j$(JOBS) devel
 
 .PHONY: watch-for-unittests
 watch-for-unittests:
-	watchexec --no-follow-symlinks -i yacc_parser.y -i \*.tab.\[ch\] -i lexem.\[ch\] -i options_config.h -e c,h,y,mock,tc,th -- execnotify -t Unittests make unit-logged
+	watchexec $(WATCHEXEC_FLAGS) -i yacc_parser.y -i \*.tab.\[ch\] -i lexem.\[ch\] -i options_config.h -e c,h,y,mock,tc,th -- execnotify -t Unittests make unit-logged
 
 
 # Same as unit, and keeps the output in unittests.log so the result of the last
@@ -599,19 +604,19 @@ unit-logged:
 
 .PHONY: watch-for-unittests-silent
 watch-for-unittests-silent:
-	watchexec --no-follow-symlinks -i yacc_parser.y -i \*.tab.\[ch\] -i lexem.\[ch\] -i options_config.h -e c,h,y,mock,tc,th -- make -j$(JOBS) unit
+	watchexec $(WATCHEXEC_FLAGS) -i yacc_parser.y -i \*.tab.\[ch\] -i lexem.\[ch\] -i options_config.h -e c,h,y,mock,tc,th -- make -j$(JOBS) unit
 
 .PHONY: watch-for-build-only
 watch-for-build-only:
-	watchexec --no-follow-symlinks --no-vcs-ignore -f '*/.unittests.done' -- execnotify -t Build make -j$(JOBS) c-xref
+	watchexec $(WATCHEXEC_FLAGS) --no-vcs-ignore -f '*/.unittests.done' -- execnotify -t Build make -j$(JOBS) c-xref
 
 .PHONY: watch-for-systemtests-only
 watch-for-systemtests-only:
-	watchexec --no-follow-symlinks --no-vcs-ignore -f '*/.build.done' -- execnotify -t Systemtests make -j$(JOBS) system-tests-proper
+	watchexec $(WATCHEXEC_FLAGS) --no-vcs-ignore -f '*/.build.done' -- execnotify -t Systemtests make -j$(JOBS) system-tests-proper
 
 .PHONY: watch-for-systemtests
 watch-for-systemtests:
-	watchexec --no-follow-symlinks --no-vcs-ignore -f '*/.unittests.done' -- execnotify -t Systemtests make system-tests-logged
+	watchexec $(WATCHEXEC_FLAGS) --no-vcs-ignore -f '*/.unittests.done' -- execnotify -t Systemtests make system-tests-logged
 
 # Same as system-tests, and keeps the output in systemtests.log so the result of
 # the last watcher run can be read by someone who was not watching the terminal.
@@ -625,7 +630,7 @@ system-tests-logged:
 
 .PHONY: watch-for-systemtests-silent
 watch-for-systemtests-silent:
-	watchexec --no-follow-symlinks --no-vcs-ignore -f '*/.unittests.done' -- make -j$(JOBS) system-tests-proper
+	watchexec $(WATCHEXEC_FLAGS) --no-vcs-ignore -f '*/.unittests.done' -- make -j$(JOBS) system-tests-proper
 
 .PHONY: system-tests-proper
 system-tests-proper:
