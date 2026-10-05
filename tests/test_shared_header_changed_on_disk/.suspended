@@ -1,16 +1,14 @@
 Bug: a header changed on disk leaves ghosts in its other includers
 
 definer.c and user.c both include header.h. When header.h is rewritten on disk with
-the declaration moved, a push in definer.c parses definer.c again and finds the
-declaration on line 3. user.c is not parsed again, and its reference to line 1 of the
-old header.h stays.
+the declaration moved, a push in definer.c finds the declaration on line 3, but the
+reference to line 1 of the old header.h stays. Both CUs put it there.
 
-Cause: Pass 2 parses the includers of a header only when the header is edited, i.e.
-preloaded. A disk change never makes a header stale. Changed CUs are picked up by
-their mtime.
+Cause: nothing makes a CU out of date when a header it includes changes on disk. Pass 2
+looks only at headers held in the editor.
 
-Likely fix: let Pass 2 treat a header whose disk mtime is newer than its last parse as
-stale, like a CU. Decide first whether that check runs for every header on each
-request, or only for headers the request's answer reaches.
-
-Backlog item behind-the-back in doc/backlog.md.
+Fix: ADR-0032. header.h is an input of both CUs, so their knowledge is out of date and
+both are built again. The references in header.h are removed first, which ADR-0032
+allows when all of its includers are built (all or nothing). The work is section 7 of
+doc/backlog.md, items knowledge-time, cu-inputs and out-of-date, wired in by
+passes-as-one, which takes this test off suspension.

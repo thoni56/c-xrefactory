@@ -447,7 +447,9 @@ and `cu-inputs` are the first steps and do not depend on each other.
     with an estimate. Browsing remembers a "no" for the session, an operation that edits
     or works on a name is cancelled by it. Touches the client's question. Today's text
     says "need reparsing" also of CUs never parsed (`src/server.c:603`, and the `expected`
-    of about 9 tests).
+    of about 9 tests). Open: does a remembered "no" stop parsing, or only the asking, so
+    that each request still parses a budget's worth? With `sweep` the second is safe, and
+    is what lets every reaching CU finally have parsed.
     Waits for: passes-as-one
 39. <a id="freshness-docs"></a>**The docs follow** — *Out of date* replaces *Staleness* in
     `06-principles`, and `08-algorithms` loses "Dual Semantics". In `06-principles`, the
