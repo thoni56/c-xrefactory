@@ -272,7 +272,7 @@ Compilation unit (CU)::
   and not compiled independently.
 
 Completeness question::
-  The question asked when bringing a request's target up to date would take longer than
+  The question asked when bringing a request's goal up to date would take longer than
   the time budget (ADR-0032).
 
 Entry refresh::
@@ -293,6 +293,11 @@ Expanding CU::
 Generation::
   The number of a CU parse, from a counter incremented once per parse (ADR-0033).
 
+Goal::
+  The knowledge that has to be up to date for a request. For an operation on a position
+  that of the CUs in the symbol's reach, for an operation on a name that of every CU
+  (ADR-0032). `make`'s word for what is asked for. A target is what a rule builds.
+
 Include structure::
   The graph of `#include` relationships between files, represented in the reference table
   as `TypeCppInclude` references. Cheap to build (text scanning for `#include` lines).
@@ -311,8 +316,10 @@ Input::
   include closure, and the project config (ADR-0032).
 
 Knowledge::
-  What the reference table holds from parsing one CU, its own references and those it
-  emits into headers (ADR-0032).
+  The references that parsing one CU adds to referenceable items, wherever they are
+  positioned, i.e. in the CU and in the headers it includes. They are not kept as a unit.
+  Only the knowledge time is. A header is never parsed on its own, so it has no knowledge
+  of its own (ADR-0032).
 
 Knowledge generation::
   The generation of a CU's latest parse (ADR-0033).
@@ -330,7 +337,7 @@ Operation on a position / on a name::
   `needsWholeProjectParsed()` (`src/server.c`) lists the operations on a name (ADR-0032).
 
 Out of date::
-  A CU with no knowledge, or with an input whose change time is after its knowledge time
+  A CU's knowledge, when there is none, or when an input changed after the knowledge time
   (ADR-0032). It replaces _Staleness_.
 
 Persisted snapshot::
@@ -362,8 +369,9 @@ Project root::
   found by walking upward from the request file.
 
 Reach::
-  The CUs that can reference a symbol. For a `static` that is its own CU, for a global the
-  CUs that include its declaring header, directly or through other headers (ADR-0032).
+  The CUs whose knowledge can reference a symbol. For a `static` that is its own CU, for a
+  global the CUs that include its declaring header, directly or through other headers.
+  Reach walks through headers but ends in CUs, since only a CU is parsed (ADR-0032).
 
 Reaching CU::
   For a file, a CU whose include closure contains the file, or that is the file
@@ -407,10 +415,6 @@ Steady state::
 Symbol references::
   The detailed reference information (positions, usage types) for identifiers, created by
   full parsing. Expensive to produce. Distinguished from include structure, which is cheap.
-
-Target::
-  The knowledge that has to be up to date for a request. For an operation on a position it
-  is the symbol's reach, for an operation on a name the whole project (ADR-0032).
 
 Time budget::
   How long parsing may take before the user is asked (ADR-0032).

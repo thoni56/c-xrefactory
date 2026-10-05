@@ -6,6 +6,8 @@ Date: 2026-10-03
 
 Accepted (2026-10-04)
 
+Amended (2026-10-05): terms sharpened, the decision unchanged.
+
 Builds on [ADR-0014](0014-adopt-on-demand-parsing-architecture.md) and
 [ADR-0020](0020-separate-buffer-sync-from-operation-dispatch.md)
 Goes with [ADR-0033](0033-references-are-removed-when-every-cu-reaching-their-file-is-parsed-again.md)
@@ -17,29 +19,53 @@ Thomas Nilefalk (maintainer)
 ## Terms
 
 Used in this decision, and also in Terminology in `doc/docs/06-principles.adoc`, where
-*Out of date* will replace *Staleness*:
+*Out of date* will replace *Staleness*.
 
-- **Knowledge**: what the reference table holds from parsing one CU, its own references
-  and those it emits into headers.
+This decision is about knowledge, not files. The reference table holds referenceable
+items, each with its references, and a reference's position names the file it is in.
+Nothing in the table is kept per file or per CU.
+
+- **Knowledge**: the references that parsing one CU adds to referenceable items, wherever
+  they are positioned, i.e. in the CU and in the headers it includes. They are not kept as
+  a unit. Only the knowledge time is.
 - **Input**: a file or setting that knowledge depends on, i.e. the CU, every file in its
   include closure, and the project config.
 - **Change time**: an input's modification time, from the held buffer if the client
   holds one, otherwise from disk.
 - **Knowledge time**: when the knowledge of a CU was recorded.
-- **Out of date**: a CU with no knowledge, or with an input whose change time is after
-  its knowledge time.
-- **Reach** (of a symbol): the CUs that can reference it. For a `static` that is its own
-  CU, for a global the CUs that include its declaring header, directly or through other
-  headers.
-- **Target** (of a request): the knowledge that has to be up to date for the request. For
-  an operation on a position it is the symbol's reach, for an operation on a name the
-  whole project.
+- **Out of date**: a CU's knowledge, when there is none, or when an input changed after
+  the knowledge time.
+- **Reach** (of a symbol): the CUs whose knowledge can reference it. For a `static` that is
+  its own CU, for a global the CUs that include its declaring header, directly or through
+  other headers. Reach walks through headers but ends in CUs, since only a CU is parsed.
+- **Goal** (of a request): the knowledge that has to be up to date for the request. For an
+  operation on a position that of the CUs in the symbol's reach, for an operation on a
+  name that of every CU. (`make`'s word for what is asked for. A target is what a rule
+  builds.)
 - **Operation on a position / on a name**: whether the request starts from a cursor
   position or from a symbol name. `needsWholeProjectParsed()` (`src/server.c`) lists
   the operations on a name.
 - **Time budget**: how long parsing may take before the user is asked.
-- **Completeness question**: the question asked when bringing the target up to date
+- **Completeness question**: the question asked when bringing the goal up to date
   would take longer than the time budget.
+
+## Where the `make` analogy stops
+
+The `make` analogy describes when a CU is parsed. It does not describe what a parse
+leaves in the table. Two things connect them. Reach goes from a symbol to the CUs whose
+knowledge the request needs. Parsing goes back, and is the only thing that adds
+references.
+
+```
+the request's symbol ── reach (via headers) ──▶ CUs whose knowledge must be current
+                                                         │ out of date?
+references at positions ◀──────── parse ──────── the CUs to build
+```
+
+A header takes part in three ways. Reach walks through it, it is an input to every CU
+that includes it, and references are positioned in it. It is never parsed on its own,
+since without an includer it has no preprocessor context, so it has no knowledge of its
+own.
 
 ## Problem Statement and Context
 
@@ -80,19 +106,19 @@ _we propose to_
 - let **one predicate** decide what needs parsing: a CU has no knowledge, or one of its
   inputs changed after its knowledge time. "No knowledge" is the only special value. A
   config change makes every CU out of date because the config is an input,
-- let **policy** decide what is parsed now: the request's target. An operation on a
+- let **policy** decide what is parsed now: the request's goal. An operation on a
   position needs the symbol's reach. An operation on a name (search, unused globals,
   push by name) needs the whole project, since the name can be anywhere,
 - replace the CU count with a **time budget**. What fits in it is parsed without asking.
   Above it, browsing asks with an estimate, e.g. "Parsed 128 of 400 CUs. Completing
   would take about 45 seconds more?", and remembers a "no" for the session,
 - let an operation that edits code, like a rename, or that works on a name, bring its
-  target up to date before it runs: silently within the time budget, and above it only
+  goal up to date before it runs: silently within the time budget, and above it only
   after the completeness question. A "no" cancels the operation and is not remembered.
   The question counts out-of-date knowledge of every kind, not only CUs never parsed,
-- treat **a header's knowledge as all or nothing** until ADR-0033 is in place: it is
-  rebuilt with all its includers, or not at all and left out of date. Its references
-  are not stripped before a complete rebuild is certain,
+- treat **the references positioned in a header** as all or nothing until ADR-0033 is in
+  place: either all its includers are parsed again, or none is and their knowledge is
+  left out of date. The references are not stripped before that is certain,
 
 _disregarding the fact that_
 - a file restored with an older modification time (`cp -p`, `tar`, `rsync -t`) is not
@@ -122,7 +148,7 @@ _because_
 
 A CU's knowledge is out of date when it has none, or when the CU, a file it includes or
 the project config changed after the knowledge was recorded. That is the only freshness
-test. What is brought up to date is the request's target, the symbol's reach or for a
+test. What is brought up to date is the request's goal, the symbol's reach or for a
 name the whole project, within a time budget. Above the budget browsing asks and
 remembers a "no" for the session, while an operation that edits code or works on a name
 asks every time and is cancelled by a "no".
@@ -144,7 +170,7 @@ asks every time and is cancelled by a "no".
 - *Include closures must be known before parsing.* The include references in the table
   give them, and the lightweight scan gives them for CUs never parsed. A CU whose
   closure is incomplete may be judged current when it is not.
-- *Checking inputs costs a `stat` per file*, per request, for the files the target
+- *Checking inputs costs a `stat` per file*, per request, for the files the goal
   reaches. That should be measured on a large project before it is optimized.
 - *Docs describe the old model.* The "Dual Semantics" and "Change Detection" parts of
   `doc/docs/08-algorithms.adoc` and the Staleness entry in `doc/docs/06-principles.adoc`
