@@ -529,6 +529,7 @@ body.book #toc,body.book #preamble,body.book h1.sect0,body.book .sect1>h2{page-b
 <li><a href="#_inline_function_and_inline_macro">11.11. Inline Function and Inline Macro</a></li>
 <li><a href="#_extract_an_expression_as_a_function">11.12. Extract an Expression as a Function</a></li>
 <li><a href="#_modernize_function">11.13. Modernize Function</a></li>
+<li><a href="#_unify_parameter_names">11.14. Unify Parameter Names</a></li>
 </ul>
 </li>
 <li><a href="#components">12. Components</a>
@@ -1425,7 +1426,7 @@ and not compiled independently.</p>
 </dd>
 <dt class="hdlist1">Completeness question</dt>
 <dd>
-<p>The question asked when bringing a request&#8217;s target up to date would take longer than
+<p>The question asked when bringing a request&#8217;s goal up to date would take longer than
 the time budget (ADR-0032).</p>
 </dd>
 <dt class="hdlist1">Entry refresh</dt>
@@ -1449,6 +1450,12 @@ meaning the identifier gets becomes a referent of its own (ADR-0027).</p>
 <dd>
 <p>The number of a CU parse, from a counter incremented once per parse (ADR-0033).</p>
 </dd>
+<dt class="hdlist1">Goal</dt>
+<dd>
+<p>The knowledge that has to be up to date for a request. For an operation on a position
+that of the CUs in the symbol&#8217;s reach, for an operation on a name that of every CU
+(ADR-0032). `make&#8217;s word for what is asked for. A target is what a rule builds.</p>
+</dd>
 <dt class="hdlist1">Include structure</dt>
 <dd>
 <p>The graph of <code>#include</code> relationships between files, represented in the reference table
@@ -1471,8 +1478,10 @@ include closure, and the project config (ADR-0032).</p>
 </dd>
 <dt class="hdlist1">Knowledge</dt>
 <dd>
-<p>What the reference table holds from parsing one CU, its own references and those it
-emits into headers (ADR-0032).</p>
+<p>The references that parsing one CU adds to referenceable items, wherever they are
+positioned, i.e. in the CU and in the headers it includes. They are not kept as a unit.
+Only the knowledge time is. A header is never parsed on its own, so it has no knowledge
+of its own (ADR-0032).</p>
 </dd>
 <dt class="hdlist1">Knowledge generation</dt>
 <dd>
@@ -1495,7 +1504,7 @@ Replaced <code>-create</code> and the <code>callXref()</code> pre-refactoring pa
 </dd>
 <dt class="hdlist1">Out of date</dt>
 <dd>
-<p>A CU with no knowledge, or with an input whose change time is after its knowledge time
+<p>A CU&#8217;s knowledge, when there is none, or when an input changed after the knowledge time
 (ADR-0032). It replaces <em>Staleness</em>.</p>
 </dd>
 <dt class="hdlist1">Persisted snapshot</dt>
@@ -1532,8 +1541,9 @@ found by walking upward from the request file.</p>
 </dd>
 <dt class="hdlist1">Reach</dt>
 <dd>
-<p>The CUs that can reference a symbol. For a <code>static</code> that is its own CU, for a global the
-CUs that include its declaring header, directly or through other headers (ADR-0032).</p>
+<p>The CUs whose knowledge can reference a symbol. For a <code>static</code> that is its own CU, for a
+global the CUs that include its declaring header, directly or through other headers.
+Reach walks through headers but ends in CUs, since only a CU is parsed (ADR-0032).</p>
 </dd>
 <dt class="hdlist1">Reaching CU</dt>
 <dd>
@@ -1585,11 +1595,6 @@ reparsing happen per-request. The reference table is authoritative.<br>
 <dd>
 <p>The detailed reference information (positions, usage types) for identifiers, created by
 full parsing. Expensive to produce. Distinguished from include structure, which is cheap.</p>
-</dd>
-<dt class="hdlist1">Target</dt>
-<dd>
-<p>The knowledge that has to be up to date for a request. For an operation on a position it
-is the symbol&#8217;s reach, for an operation on a name the whole project (ADR-0032).</p>
 </dd>
 <dt class="hdlist1">Time budget</dt>
 <dd>
@@ -4584,6 +4589,29 @@ An implicit <code>int</code>, for the return type or for a parameter that is not
 <p>A parameter declared <code>char</code>, <code>short</code> or <code>float</code> is a catch.
 A caller without a prototype in scope passes it promoted, to <code>int</code> or <code>double</code>, so adding the prototype changes how it is called.
 Refusing, or at least warning, is probably right there.</p>
+</div>
+</div>
+</div>
+<div class="sect2">
+<h3 id="_unify_parameter_names">11.14. Unify Parameter Names</h3>
+<div class="paragraph">
+<p><strong>Status</strong>: Not implemented.</p>
+</div>
+<div class="sect3">
+<h4 id="_background_10">11.14.1. Background</h4>
+<div class="paragraph">
+<p>A parameter&#8217;s name is given again in every declaration of its function, i.e. in the header, in a forward declaration, in the definition and in a mock.
+Each is a symbol of its own, so Rename changes one of them.
+Giving a parameter the same new name everywhere means one Rename for each definition, real and mock, and editing the declarations by hand.</p>
+</div>
+</div>
+<div class="sect3">
+<h4 id="_proposed_behaviour_6">11.14.2. Proposed Behaviour</h4>
+<div class="paragraph">
+<p>With the cursor on a parameter, <strong>Unify Parameter Name</strong> asks for a name and gives the parameter that name in every declaration and definition of the function.
+In a definition that is a rename of the parameter, uses included.
+In a declaration it is only the name in the parameter list.
+A declaration that has no name for the parameter could get one, or be left as it is.</p>
 </div>
 </div>
 </div>
@@ -8188,7 +8216,7 @@ setup.</p>
 <div class="sect2">
 <h3 id="_incremental_cxfile_c_cleanup">16.1. Incremental <code>cxfile.c</code> Cleanup</h3>
 <div class="sect3">
-<h4 id="_background_10">16.1.1. Background</h4>
+<h4 id="_background_11">16.1.1. Background</h4>
 <div class="paragraph">
 <p>The <code>cxfile</code> module was designed when the <code>.cx</code> files on disk were the reference database. Operations like "show all references to symbol X" or "find unused symbols" were table-driven scans over the disk format — hash the symbol name, stream the right partition, apply a per-operation filter. This was efficient for the batch cross-referencer that <code>c-xrefactory</code> evolved from, where the workflow was <code>c-xref -create</code> → <code>c-xref -update</code> → query the on-disk database.</p>
 </div>
@@ -11916,7 +11944,7 @@ operation reads the in-memory table.</p>
 </div>
 <div id="footer">
 <div id="footer-text">
-Last updated 2026-10-05 09:47:47 UTC
+Last updated 2026-10-05 15:07:06 UTC
 </div>
 </div>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.18.3/highlight.min.js"></script>
