@@ -25,7 +25,7 @@
  * Initial positioning (PUSH): a linear scan finds the reference nearest the
  * cursor in the caller's file — no dependency on sort order.
  *
- * After stale-file refresh: restore to nearest match of the saved position,
+ * After entry refresh: restore to nearest match of the saved position,
  * then advance (NEXT) or retreat (PREVIOUS) in list order. This avoids
  * assumptions about sort order that broke with definition-first ordering.
  */
@@ -118,11 +118,11 @@ void setCurrentReferenceToNextOrFirst(SessionStackEntry *sessionEntry, Reference
 }
 
 /*
- * Staleness is handled in two phases (ADR 20):
+ * Out-of-date knowledge is handled in two phases (ADR 20):
  *
- * 1. Entry-point reparse (server.c callServer): Before dispatching any operation,
- *    the server reparses stale CUs and headers, updating the in-memory reference
- *    table. Sets needsBrowsingStackRefresh on affected FileItems.
+ * 1. Entry refresh (server.c callServer): Before dispatching any operation, the
+ *    server parses out-of-date CUs and the includers of changed headers, updating the
+ *    in-memory reference table. Sets needsBrowsingStackRefresh on affected FileItems.
  *
  * 2. Browsing stack update (here): NEXT/PREVIOUS check the flag and update the
  *    browsing stack's reference list from the refreshed reference table. This is
@@ -167,8 +167,8 @@ bool fileNumberIsStale(int fileNumber) {
 extern void recomputeSelectedReferenceable(SessionStackEntry *entry);
 
 /* Update the browsing stack's references for a file using the current in-memory
- * reference table. Called after the file has already been reparsed (by the
- * entry-point or by refreshStaleReferencesInSession). */
+ * reference table. Called after entry refresh has updated the file's references, by
+ * parsing it or, for a header, its includers. */
 static void updateSessionReferencesForFile(SessionStackEntry *sessionEntry, int fileNumber) {
     // Remove refs for the file from menu - the menu already has cross-file refs
     // from the original PUSH operation. We only need to remove this file's refs

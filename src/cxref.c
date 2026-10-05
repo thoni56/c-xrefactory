@@ -338,10 +338,10 @@ Reference *handleFoundSymbolReference(Symbol *symbol, Position position, Usage u
             completionStringServed = true;
             olstringUsage = usage;
             assert(browsingStack.top);
-            /* Only update callerPosition during PUSH operations.
-             * During NEXT/PREVIOUS with staleness refresh, we parse files
-             * but should NOT update callerPosition - it should remain as
-             * set during the original PUSH. */
+            /* Only update callerPosition during PUSH operations.  During NEXT/PREVIOUS
+             * processing CUs might be parsed during the entry refresh but should NOT
+             * update callerPosition - it should remain as set during the original
+             * PUSH. */
             if (operationShouldUpdateCallerPosition(options.serverOperation)) {
                 olSetCallerPosition(position);
             }

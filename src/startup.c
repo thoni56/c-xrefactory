@@ -536,9 +536,9 @@ void reloadProjectConfig(ArgumentsVector baseArgs, ArgumentsVector requestArgs) 
     previousProjectConfigurationFileModificationTime = fileModificationTime(previousProjectConfigurationFile);
 }
 
-/* Initialize project context: discover project, load options, interrogate compiler,
- * and save memory checkpoint. Called during first GetProject so that the checkpoint
- * is available for stale-file reparsing on subsequent requests.
+/* Initialize project context: discover project, load options, interrogate compiler, and
+ * save memory checkpoint. Called during first GetProject so that the checkpoint is
+ * available for parsing on subsequent requests.
  *
  * Phase 1 (project discovery) is done inline, phases 2-4 delegate to
  * loadProjectSettings() which is shared with initializeFileProcessing.
