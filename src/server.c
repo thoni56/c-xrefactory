@@ -597,23 +597,23 @@ static void scanProjectStructure() {
     freeStringList(discoveredCUs);
 }
 
-static void parseAllUnparsedCompilationUnits(ArgumentsVector baseArgs, int totalCUs, int staleCUs) {
+static void parseAllUnparsedCompilationUnits(ArgumentsVector baseArgs, int totalCUs, int unparsedCUs) {
     char msg[TMP_STRING_SIZE];
     const char *operationName = parseAllPromptFor(options.serverOperation);
-    sprintf(msg, "%d of %d compilation units need reparsing. Parse all before %s?", staleCUs, totalCUs,
+    sprintf(msg, "%d of %d compilation units need reparsing. Parse all before %s?", unparsedCUs, totalCUs,
             operationName);
     if (waitForUserConfirmation(msg)) {
         int parsed = 0;
         char progressFormat[128];
         snprintf(progressFormat, sizeof(progressFormat), "Parsing %d compilation units... %%d remaining",
-                 staleCUs);
+                 unparsedCUs);
         initProgress(progressFormat);
         for (int i = getNextExistingFileNumber(0); i != -1; i = getNextExistingFileNumber(i + 1)) {
             FileItem *fi = getFileItemWithFileNumber(i);
             if (isCompilationUnit(fi->name) && fileTimestampIsZero(fi->lastParsedMtime)) {
                 buildKnowledgeOfCU(i, baseArgs);
                 parsed++;
-                writeProgressInformation(staleCUs - parsed);
+                writeProgressInformation(unparsedCUs - parsed);
                 /* Save snapshot periodically so progress survives Ctrl-g/crash */
                 if (parsed % 100 == 0)
                     saveReferences();
@@ -623,13 +623,13 @@ static void parseAllUnparsedCompilationUnits(ArgumentsVector baseArgs, int total
     }
 }
 
-static void countUnparsedCompilationUnits(int *totalCUs, int *staleCUs) {
+static void countUnparsedCompilationUnits(int *totalCUs, int *unparsedCUs) {
     for (int i = getNextExistingFileNumber(0); i != -1; i = getNextExistingFileNumber(i + 1)) {
         FileItem *fi = getFileItemWithFileNumber(i);
         if (isCompilationUnit(fi->name) && !fi->isDeleted) {
             (*totalCUs)++;
             if (fileTimestampIsZero(fi->lastParsedMtime))
-                (*staleCUs)++;
+                (*unparsedCUs)++;
         }
     }
 }
