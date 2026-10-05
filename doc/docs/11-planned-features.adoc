@@ -446,3 +446,25 @@ With the cursor on a parameter, *Unify Parameter Name* asks for a name and gives
 In a definition that is a rename of the parameter, uses included.
 In a declaration it is only the name in the parameter list.
 A declaration that has no name for the parameter could get one, or be left as it is.
+
+=== Background Work
+
+**Status**: Possible. Waits for the sweep (ADR-0033, `sweep` in `doc/backlog.md`).
+
+==== Background
+
+The server only works when a request arrives, and then the user waits.
+Out-of-date knowledge outside every request's goal is never brought up to date, and on a large project the first request carries the whole initialization.
+With the sweep, bringing knowledge up to date a part at a time is safe, since each step removes only what is shown to be false.
+
+==== Proposed Behaviour
+
+When no request is waiting, the server does one unit of work, e.g. builds the knowledge of one out-of-date CU, and then checks for a request again.
+Answers fill in while you work, and a cold start answers what it knows at once.
+Other candidates are the sweep itself, saving the snapshot, and checking the change times of inputs.
+
+==== Design
+
+The server has no threads and blocks in `readOptionsFromPipe()` until the next request.
+With all its global state, threads are not an option, so the work would be cooperative: wait for input with a timeout, and work when it expires.
+A parse cannot be interrupted, so a request may wait for one CU to finish.

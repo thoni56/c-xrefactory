@@ -3,7 +3,7 @@
 # buffer, not snapshotted) and unlike a cold-start disk change (the trace showed Pass 3
 # trusts the snapshot and does NOT reparse a snapshot-known CU).
 #
-# closeEditorBuffersNoLongerPreloaded -> reparseFile -> reparseStaleFile does
+# closeEditorBuffersNoLongerHeld -> reparseFile -> buildKnowledgeOfCU does
 #   removeReferenceableItemsForFile(source.c) ; parseFileWithFullInit(source.c from disk)
 #
 # Phase 1: source.c = with_feature, parsed from disk; snapshot holds feature_only -> precondition.

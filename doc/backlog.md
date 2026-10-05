@@ -438,6 +438,8 @@ and `cu-inputs` are the first steps and do not depend on each other.
     `countStalePreloadedFiles` and `reparseStalePreloadedFiles` (`src/server.c`) were left
     unrenamed for this, log texts included. They work on held buffers, not only preloaded
     ones, and a changed header is not parsed but stripped, with its includers parsed.
+    Until `sweep` is in, a changed header is stripped only in the entry refresh that
+    builds all of its includers, before them, or not at all (ADR-0032).
     Waits for: out-of-date, request-target
 37. <a id="header-not-half"></a>**Pass 2 does not strip a header it cannot rebuild** — it
     strips the header's references and then reparses at most 128 includers, so the rest

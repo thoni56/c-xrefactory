@@ -1,1 +1,13 @@
 Bug: CU reparse leaves behind a header declaration it no longer emits
+
+source.c defines FEATURE before it includes header.h, so parsing it adds the
+declaration of feature_only at header.h:2. When source.c is changed on disk to no
+longer define FEATURE and is parsed again, that declaration stays in the table.
+
+Cause: building a CU's knowledge removes only the references positioned in the CU.
+header.h did not change, so nothing removes its references. Under ADR-0032 nothing
+may, since other includers could have added the same ones (all or nothing).
+
+Fix: ADR-0033. Every CU reaching header.h, here only source.c, has parsed since the
+declaration was last added, so the sweep removes it. Item sweep in doc/backlog.md
+takes this test off suspension.
