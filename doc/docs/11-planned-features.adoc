@@ -429,3 +429,20 @@ An implicit `int`, for the return type or for a parameter that is not declared, 
 A parameter declared `char`, `short` or `float` is a catch.
 A caller without a prototype in scope passes it promoted, to `int` or `double`, so adding the prototype changes how it is called.
 Refusing, or at least warning, is probably right there.
+
+=== Unify Parameter Names
+
+**Status**: Not implemented.
+
+==== Background
+
+A parameter's name is given again in every declaration of its function, i.e. in the header, in a forward declaration, in the definition and in a mock.
+Each is a symbol of its own, so Rename changes one of them.
+Giving a parameter the same new name everywhere means one Rename for each definition, real and mock, and editing the declarations by hand.
+
+==== Proposed Behaviour
+
+With the cursor on a parameter, *Unify Parameter Name* asks for a name and gives the parameter that name in every declaration and definition of the function.
+In a definition that is a rename of the parameter, uses included.
+In a declaration it is only the name in the parameter list.
+A declaration that has no name for the parameter could get one, or be left as it is.

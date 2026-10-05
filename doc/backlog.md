@@ -284,7 +284,9 @@ Pass 3 rounds 19s each, 42s total.
     unit build would not compile. Whether that is ADR-0013's caveat — references are
     only guaranteed found once every CU is parsed — was *not* established: the snapshot
     did know `cxfile.mock` and the test CUs that include it, yet held only two
-    references to the symbol. Worth a test either way; no test pins mock-reaching
+    references to the symbol. A possible explanation, not tested: a `.mock` is never a
+    CU, so it has references only where a test CU including it was parsed, and a CU
+    known only from the scan has none. Worth a test either way; no test pins mock-reaching
     refactorings today. Observed on the Mac, session `3af59d00`, 2026-09-25. If it becomes something a user asks for, it needs to say how long
     it will take: `src/progress.c` already keeps `timeZero` and a monotonic clock,
     and the parse loops already count down, so the missing part is the division and
@@ -295,7 +297,7 @@ Pass 3 rounds 19s each, 42s total.
     Also **unused-detection exclude patterns**, **browsing includes**,
     **semantic read-only files**, **rename handles `expect`**, **project-local
     config**, **Inline Function and Inline Macro**, **Extract an Expression as a
-    Function**. All in `11-planned-features.adoc`.
+    Function**, **Unify Parameter Names**. All in `11-planned-features.adoc`.
 26. <a id="local-config-fragments"></a>**Local config fragments — the need, not a solution** — *no repo home yet.*
     `.c-xrefrc` travels with the project and is checked in, which is why
     `11-planned-features.adoc` argues for it: "it will not contain absolute file paths".
@@ -400,10 +402,15 @@ Pass 3 rounds 19s each, 42s total.
 The order is roughly the numbers. `header-not-half` can be done any time; `vocabulary`,
 `knowledge-time` and `cu-inputs` are the first steps and do not depend on each other.
 
-31. <a id="vocabulary"></a>**Rename to the ADR's words** — stale becomes out of date in
-    names, comments and log texts (`reparseStaleFile`, `countStalePreloadedFiles`,
-    `staleCUs`, ...), with c-xrefactory's own Rename; what it gets wrong goes to its
-    backlog. Changes no behaviour, so the later tests read in the new words.
+31. <a id="vocabulary"></a>**Rename to the ADR's words** — stale becomes out of date, with
+    c-xrefactory's own Rename; what it gets wrong goes to its backlog. Changes no
+    behaviour, so the later tests read in the new words. Left are comments and log texts
+    in `navigation.c`, `server.c` (around `callServer()`), `cxref.c:342` and
+    `startup.c:541`, and a comment naming `refreshStaleReferencesInSession`
+    (`navigation.c:171`), which no longer exists. Not here: `fileNumberIsStale` and
+    `markAllCompilationUnitsStale` change meaning and go with `out-of-date`, and the Pass
+    1 and 2 functions with `passes-as-one`. "Stale" in `refactory.c` is a position that no
+    longer matches the text, not freshness, and stays.
     Waits for: adr-0032
 32. <a id="knowledge-time"></a>**A knowledge time per CU** — recorded where the knowledge is
     produced, beside `lastParsedMtime`, and kept in the snapshot. Knowledge from held
@@ -427,8 +434,11 @@ The order is roughly the numbers. `header-not-half` can be done any time; `vocab
     the one header-filtered sibling parsing has: the symbol is known only at dispatch.
     Waits for: adr-0032
     Goes with: header-filtered-siblings
-36. <a id="passes-as-one"></a>**Pass 1, 2 and 3 become one** — bring the target's
+36. <a id="passes-as-one"></a>**Pass 1, 2 and 3 become one** — bring the goal's
     out-of-date CUs up to date. `test_shared_header_changed_on_disk` comes off suspension.
+    `countStalePreloadedFiles` and `reparseStalePreloadedFiles` (`src/server.c`) were left
+    unrenamed for this, log texts included. They work on held buffers, not only preloaded
+    ones, and a changed header is not parsed but stripped, with its includers parsed.
     Waits for: out-of-date, request-target
 37. <a id="header-not-half"></a>**Pass 2 does not strip a header it cannot rebuild** — it
     strips the header's references and then reparses at most 128 includers, so the rest
@@ -436,10 +446,13 @@ The order is roughly the numbers. `header-not-half` can be done any time; `vocab
     Not needed once `sweep` is in.
 38. <a id="time-budget"></a>**A time budget instead of the 128 CUs** — above it the question
     with an estimate. Browsing remembers a "no" for the session, an operation that edits
-    or works on a name is cancelled by it. Touches the client's question.
+    or works on a name is cancelled by it. Touches the client's question. Today's text
+    says "need reparsing" also of CUs never parsed (`src/server.c:603`, and the `expected`
+    of about 9 tests).
     Waits for: passes-as-one
 39. <a id="freshness-docs"></a>**The docs follow** — *Out of date* replaces *Staleness* in
-    `06-principles`, and `08-algorithms` loses "Dual Semantics".
+    `06-principles`, and `08-algorithms` loses "Dual Semantics". In `06-principles`, the
+    part on why reparsing only a subset is safe also describes strip-then-reparse.
     Goes with: passes-as-one
 40. <a id="generations"></a>**Generations** — a counter per parse, a mark on every
     reference, refreshed in `addToReferenceList()`, and a test that every reference
