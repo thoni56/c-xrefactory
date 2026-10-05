@@ -406,9 +406,17 @@ and `cu-inputs` are the first steps and do not depend on each other.
     produced, beside `lastParsedMtime`, and kept in the snapshot. Knowledge from held
     content is never written there.
     Waits for: adr-0032
-33. <a id="cu-inputs"></a>**A CU's inputs** — its forward include closure from the
-    `TypeCppInclude` references, the scan's for a CU never parsed, and the project
-    config. Today there is only the reverse walk, `collectCUsIncluding()`.
+33. <a id="cu-inputs"></a>**A CU's inputs** — the CU, its forward include closure from the
+    `TypeCppInclude` references in the table, and the project config. Today there is only
+    the reverse walk, `collectCUsIncluding()`, and the forward one starts a new module.
+    The predicate needs the inputs only of a CU that has knowledge, i.e. one that was
+    parsed, so the include references positioned in it are the ones the parse recorded:
+    the `#include`s the preprocessor took, quoted and `<...>`, at their real lines. The
+    lightweight scan records every quoted `#include` instead, `#ifdef` or not, no
+    `<...>`, all at line 1, column 0 of the includer. Those matter for reach. A first test
+    should pin down whether a scan can add include references to a CU that already has
+    knowledge. A "defined" reference at line 1 of a file marks the file itself and is not
+    an edge.
     Waits for: adr-0032
 34. <a id="out-of-date"></a>**The one freshness predicate** — no knowledge, or an input
     changed after the knowledge time, rounded down a tick. Replaces `fileNumberIsStale()`
@@ -421,6 +429,8 @@ and `cu-inputs` are the first steps and do not depend on each other.
     `z.c` including `decl.h`, a rename of a symbol from `decl.h` should miss `z.c` (from
     reading the code, WSL session `76735541`, not tested; test first). The hard part is
     the one header-filtered sibling parsing has: the symbol is known only at dispatch.
+    The scan does not record `<...>` includes, so for a project that includes its own
+    headers that way, reach misses CUs never parsed.
     Waits for: adr-0032
     Goes with: header-filtered-siblings
 36. <a id="passes-as-one"></a>**Pass 1, 2 and 3 become one** — bring the goal's
