@@ -399,24 +399,13 @@ Pass 3 rounds 19s each, 42s total.
 
 ## 7. Freshness as make (ADR-0032, ADR-0033)
 
-The order is roughly the numbers. `header-not-half` can be done any time; `vocabulary`,
-`knowledge-time` and `cu-inputs` are the first steps and do not depend on each other.
+The order is roughly the numbers. `header-not-half` can be done any time; `knowledge-time`
+and `cu-inputs` are the first steps and do not depend on each other.
 
-31. <a id="vocabulary"></a>**Rename to the ADR's words** — stale becomes out of date, with
-    c-xrefactory's own Rename; what it gets wrong goes to its backlog. Changes no
-    behaviour, so the later tests read in the new words. Left are comments and log texts
-    in `navigation.c`, `server.c` (around `callServer()`), `cxref.c:342` and
-    `startup.c:541`, and a comment naming `refreshStaleReferencesInSession`
-    (`navigation.c:171`), which no longer exists. Not here: `fileNumberIsStale` and
-    `markAllCompilationUnitsStale` change meaning and go with `out-of-date`, and the Pass
-    1 and 2 functions with `passes-as-one`. "Stale" in `refactory.c` is a position that no
-    longer matches the text, not freshness, and stays.
-    Waits for: adr-0032
 32. <a id="knowledge-time"></a>**A knowledge time per CU** — recorded where the knowledge is
     produced, beside `lastParsedMtime`, and kept in the snapshot. Knowledge from held
     content is never written there.
     Waits for: adr-0032
-    Goes with: vocabulary
 33. <a id="cu-inputs"></a>**A CU's inputs** — its forward include closure from the
     `TypeCppInclude` references, the scan's for a CU never parsed, and the project
     config. Today there is only the reverse walk, `collectCUsIncluding()`.
