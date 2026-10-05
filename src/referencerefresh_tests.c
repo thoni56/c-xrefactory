@@ -28,7 +28,7 @@ BeforeEach(ReferenceRefresh) {
 AfterEach(ReferenceRefresh) {}
 
 
-Ensure(ReferenceRefresh, reparseStaleFile_should_remove_old_refs_then_parses) {
+Ensure(ReferenceRefresh, buildKnowledgeOfCU_should_remove_old_refs_then_parses) {
     FileItem fileItem = {.name = "test.c"};
     expect(getFileItemWithFileNumber, when(fileNumber, is_equal_to(42)),
            will_return(&fileItem));
@@ -40,10 +40,10 @@ Ensure(ReferenceRefresh, reparseStaleFile_should_remove_old_refs_then_parses) {
     expect(editorFileModificationTime, will_return(&contentTime));
 
     ArgumentsVector baseArgs = {.argc = 0, .argv = NULL};
-    reparseStaleFile(42, baseArgs);
+    buildKnowledgeOfCU(42, baseArgs);
 }
 
-Ensure(ReferenceRefresh, reparseStaleFile_records_the_modification_time_of_what_it_parsed) {
+Ensure(ReferenceRefresh, buildKnowledgeOfCU_records_the_modification_time_of_what_it_parsed) {
     FileItem fileItem = {.name = "test.c"};
     FileTimestamp contentTime = {.tv_sec = 1234, .tv_nsec = 5678};
     expect(getFileItemWithFileNumber, when(fileNumber, is_equal_to(42)),
@@ -55,12 +55,12 @@ Ensure(ReferenceRefresh, reparseStaleFile_records_the_modification_time_of_what_
            will_return(&contentTime));
 
     ArgumentsVector baseArgs = {.argc = 0, .argv = NULL};
-    reparseStaleFile(42, baseArgs);
+    buildKnowledgeOfCU(42, baseArgs);
 
     assert_that(fileTimestampsEqual(fileItem.lastParsedMtime, contentTime));
 }
 
-Ensure(ReferenceRefresh, reparseStaleFile_marks_a_file_gone_from_disk_as_deleted) {
+Ensure(ReferenceRefresh, buildKnowledgeOfCU_marks_a_file_gone_from_disk_as_deleted) {
     FileItem fileItem = {.name = "test.c"};
     expect(getFileItemWithFileNumber, when(fileNumber, is_equal_to(42)),
            will_return(&fileItem));
@@ -69,5 +69,5 @@ Ensure(ReferenceRefresh, reparseStaleFile_marks_a_file_gone_from_disk_as_deleted
     never_expect(initializeFileProcessing);
 
     ArgumentsVector baseArgs = {.argc = 0, .argv = NULL};
-    reparseStaleFile(42, baseArgs);
+    buildKnowledgeOfCU(42, baseArgs);
 }

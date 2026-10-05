@@ -3,7 +3,7 @@
 #include "argumentsvector.h"
 
 
-extern void reparseStaleFile(int fileNumber, ArgumentsVector baseArgs);
+extern void buildKnowledgeOfCU(int fileNumber, ArgumentsVector baseArgs);
 
 extern void reparseFile(int fileNumber, ArgumentsVector baseArgs);
 

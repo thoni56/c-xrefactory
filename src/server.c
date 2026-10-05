@@ -440,7 +440,7 @@ static void parseUnparsedSiblingCUs(int requestFileNumber, ArgumentsVector baseA
         int savedCursorOffset = options.cursorOffset;
         options.cursorOffset = NO_CURSOR_OFFSET;
         for (int i = 0; i < cuCount; i++) {
-            reparseStaleFile(cuFileNumbers[i], baseArgs);
+            buildKnowledgeOfCU(cuFileNumbers[i], baseArgs);
             if (options.cxrefProtocol)
                 writeProgressInformation(cuCount - i - 1);
         }
@@ -478,7 +478,7 @@ static void reparseStalePreloadedFiles(ArgumentsVector baseArgs) {
                     markFileAsDeleted(fileNumber);
                 } else {
                     log_debug("Reparsing stale CU '%s'", fileItem->name);
-                    reparseStaleFile(fileNumber, baseArgs);
+                    buildKnowledgeOfCU(fileNumber, baseArgs);
                     fileItem->needsBrowsingStackRefresh = true;
                 }
             }
@@ -526,7 +526,7 @@ static void reparseStalePreloadedFiles(ArgumentsVector baseArgs) {
             initProgress(progressFormat);
         }
         for (int i = 0; i < cuCount; i++) {
-            reparseStaleFile(cuFileNumbers[i], baseArgs);
+            buildKnowledgeOfCU(cuFileNumbers[i], baseArgs);
             getFileItemWithFileNumber(cuFileNumbers[i])->needsBrowsingStackRefresh = true;
             if (options.cxrefProtocol)
                 writeProgressInformation(cuCount - i - 1);
@@ -611,7 +611,7 @@ static void parseAllUnparsedCompilationUnits(ArgumentsVector baseArgs, int total
         for (int i = getNextExistingFileNumber(0); i != -1; i = getNextExistingFileNumber(i + 1)) {
             FileItem *fi = getFileItemWithFileNumber(i);
             if (isCompilationUnit(fi->name) && fileTimestampIsZero(fi->lastParsedMtime)) {
-                reparseStaleFile(i, baseArgs);
+                buildKnowledgeOfCU(i, baseArgs);
                 parsed++;
                 writeProgressInformation(staleCUs - parsed);
                 /* Save snapshot periodically so progress survives Ctrl-g/crash */

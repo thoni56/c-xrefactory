@@ -5,7 +5,7 @@
 #include <cgreen/mocks.h>
 
 
-void reparseStaleFile(int fileNumber, ArgumentsVector baseArgs) {
+void buildKnowledgeOfCU(int fileNumber, ArgumentsVector baseArgs) {
     mock(fileNumber);
 }
 

@@ -38,7 +38,7 @@ static void parseFileWithFullInit(char *fileName, ArgumentsVector baseArgs) {
     options.serverOperation = savedServerOperation;
 }
 
-void reparseStaleFile(int fileNumber, ArgumentsVector baseArgs) {
+void buildKnowledgeOfCU(int fileNumber, ArgumentsVector baseArgs) {
     FileItem *fileItem = getFileItemWithFileNumber(fileNumber);
     char *fileName = fileItem->name;
     if (!editorFileExists(fileName)) {
@@ -54,7 +54,7 @@ void reparseStaleFile(int fileNumber, ArgumentsVector baseArgs) {
  * Called after a project-config change, which can invalidate any file's parse
  * (defines flip #ifdefs, -I re-resolves includes) with no cheap way to know
  * which — so treat it as a logical cold restart. Old refs are left in place
- * until reparseStaleFile clears and rebuilds each file as it is touched. */
+ * until buildKnowledgeOfCU clears and builds each CU as it is touched. */
 void markAllCompilationUnitsStale(void) {
     for (int i = getNextExistingFileNumber(0); i != -1; i = getNextExistingFileNumber(i + 1)) {
         FileItem *fileItem = getFileItemWithFileNumber(i);
@@ -71,7 +71,7 @@ void markAllCompilationUnitsStale(void) {
 void reparseFile(int fileNumber, ArgumentsVector baseArgs) {
     FileItem *fileItem = getFileItemWithFileNumber(fileNumber);
     if (isCompilationUnit(fileItem->name)) {
-        reparseStaleFile(fileNumber, baseArgs);
+        buildKnowledgeOfCU(fileNumber, baseArgs);
     } else {
         removeReferenceableItemsForFile(fileNumber);
     }
