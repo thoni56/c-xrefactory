@@ -389,6 +389,11 @@ Refresh::
   A parse emits a reference that is already in the table, and the reference gets that
   parse's generation (ADR-0033).
 
+Request file::
+  The file a request names, usually the one the cursor is in. Most operations parse it.
+  A search or a push by name answers from the reference table and does not. +
+  _Avoid "input file"_, although the code still says it in places (`inputFileName`).
+
 Restoring::
   Loading a persisted snapshot into the reference table at startup. After restoration,
   mtime comparison determines which entries are fresh and which need reparsing. +
