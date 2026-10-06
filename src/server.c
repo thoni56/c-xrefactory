@@ -275,8 +275,8 @@ static void processFile(ArgumentsVector baseArgs, ArgumentsVector requestArgs) {
 
 #define MAX_INCLUDE_WALK_FILES 256
 /* Walk the reverse-include graph from a file up to compilation units,
- * using TypeCppInclude references in the reference table (populated by prior
- * parsing or loaded from disk db). Collect CU file numbers into the provided
+ * using TypeCppInclude references in the reference table (recorded by parsing
+ * or by the lightweight scan). Collect CU file numbers into the provided
  * array, deduplicating against entries already present. */
 static int collectCUsIncluding(int fileNumber, int cuFileNumbers[], int cuCount, int maxCUs) {
     FileItem *fileItem = getFileItemWithFileNumber(fileNumber);

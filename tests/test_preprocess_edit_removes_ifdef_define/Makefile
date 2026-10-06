@@ -1,7 +1,7 @@
 # Variant B, finally observable: force a from-disk reparse of the includer via the "save"
 # path (un-preload), which the snapshot DOES persist -- unlike a live preload (editor
 # buffer, not snapshotted) and unlike a cold-start disk change (the trace showed Pass 3
-# trusts the snapshot and does NOT reparse a snapshot-known CU).
+# does NOT parse a CU that already has knowledge).
 #
 # closeEditorBuffersNoLongerHeld -> reparseFile -> buildKnowledgeOfCU does
 #   removeReferenceableItemsForFile(source.c) ; parseFileWithFullInit(source.c from disk)

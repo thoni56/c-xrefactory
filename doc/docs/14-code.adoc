@@ -304,8 +304,8 @@ server() loop:
 
 Key principles:
 
-* *"Cold start" is not a separate path.* Same code, different amount of work. With disk
-  db: most CUs are fresh, few need reparsing. Without disk db: all CUs are unknown, all
+* *"Cold start" is not a separate path.* Same code, different amount of work. With a
+  snapshot: most CUs are fresh, few need reparsing. Without one: all CUs are unknown, all
   get parsed.
 * *Include structure and symbol references are separate layers.* Include structure is
   cheap (text scanning for `#include`). Symbol references are expensive (full parsing).

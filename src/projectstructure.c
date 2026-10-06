@@ -29,7 +29,7 @@ static char *resolveIncludePath(const char *includedFile, const char *includerPa
 
     /* Not found anywhere — let the caller decide. Returning a phantom
      * includer-relative path here would add a non-existent file to the
-     * file table and pollute the snapshot's include graph. */
+     * file table and pollute the include graph in the reference table. */
     return NULL;
 }
 
