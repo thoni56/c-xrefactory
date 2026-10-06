@@ -37,8 +37,12 @@ static void expectABuildOf(FileItem *fileItem, FileTimestamp *contentTime) {
     expect(editorFileModificationTime, will_return(contentTime));
 }
 
-static void expectAParse(void) {
-    expect(initializeFileProcessing, will_return(true));
+/* sideEffect, if not NULL, runs when the parse starts */
+static void expectAParseWithOptionalSideEffect(void (*sideEffect)(void *)) {
+    if (sideEffect != NULL)
+        expect(initializeFileProcessing, with_side_effect(sideEffect, NULL), will_return(true));
+    else
+        expect(initializeFileProcessing, will_return(true));
     expect(parseToCreateReferences, when(fileName, is_equal_to_string("test.c")));
     expect(closeCharacterBuffer);
 }
@@ -72,7 +76,7 @@ Ensure(ReferenceRefresh, buildKnowledgeOfCU_records_when_it_built_the_knowledge)
     FileItem fileItem = {.name = "test.c"};
     FileTimestamp contentTime = {.tv_sec = 1234, .tv_nsec = 5678};
     expectABuildOf(&fileItem, &contentTime);
-    expectAParse();
+    expectAParseWithOptionalSideEffect(NULL);
 
     FileTimestamp before = fileTimestampNow();
     ArgumentsVector baseArgs = {.argc = 0, .argv = NULL};
@@ -96,10 +100,7 @@ Ensure(ReferenceRefresh, buildKnowledgeOfCU_takes_the_knowledge_time_before_pars
     FileTimestamp contentTime = {.tv_sec = 1234, .tv_nsec = 5678};
     expectABuildOf(&fileItem, &contentTime);
 
-    expect(initializeFileProcessing, with_side_effect(recordParseStart, NULL),
-           will_return(true));
-    expect(parseToCreateReferences);
-    expect(closeCharacterBuffer);
+    expectAParseWithOptionalSideEffect(recordParseStart);
 
     ArgumentsVector baseArgs = {.argc = 0, .argv = NULL};
     buildKnowledgeOfCU(42, baseArgs);
