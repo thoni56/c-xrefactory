@@ -100,6 +100,7 @@ static void expectACursorParseOf(FileItem *fileItem, FileTimestamp *contentTime,
     expect(initializeFileProcessing, will_return(true));
     always_expect(getFileItemWithFileNumber, when(fileNumber, is_equal_to(42)), will_return(fileItem));
     always_expect(editorFileModificationTime, will_return(contentTime));
+    expect(isCompilationUnit, will_return(true));
     expect(removeReferenceableItemsForFile, when(fileNumber, is_equal_to(42)));
     expect(setupParsingConfig);
     if (sideEffect != NULL)

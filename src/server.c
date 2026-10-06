@@ -224,8 +224,11 @@ protected void singlePass(ArgumentsVector args, ArgumentsVector nargs) {
         bool parses = operationParsesRequestFile(options.serverOperation);
         /* If the content, preloaded or on disk, changed since the file was last
          * parsed, remove old references before parsing. A later pass over the same
-         * content finds it parsed and keeps what the earlier pass added. */
-        if (parses && fileNeedsParsing(getFileItemWithFileNumber(parsingConfig.fileNumber))) {
+         * content finds it parsed and keeps what the earlier pass added. Never for a
+         * header: its references were put there by its includers, and parsing it on
+         * its own cannot put them all back. */
+        FileItem *fileItem = getFileItemWithFileNumber(parsingConfig.fileNumber);
+        if (parses && isCompilationUnit(fileItem->name) && fileNeedsParsing(fileItem)) {
             log_debug("file has changed content, removing old references for file %d",
                       parsingConfig.fileNumber);
             removeReferenceableItemsForFile(parsingConfig.fileNumber);

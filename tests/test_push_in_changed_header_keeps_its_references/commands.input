@@ -1,0 +1,9 @@
+CXREF -server
+-getproject CURDIR/a.c
+<sync>
+-push -olcursor=32 CURDIR/a.c
+<sync>
+!cp CURDIR/a.h.v2 CURDIR/a.h
+-push -olcursor=3 CURDIR/a.h
+<sync>
+<exit>
