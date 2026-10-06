@@ -564,7 +564,6 @@ static void scanFunction_ReadFileName(int fileNameLength,
         if (fileTimestampIsZero(fileItem->lastParsedMtime))
             fileItem->lastParsedMtime=umtime;
     }
-    fileItem->isFromCxfile = true;
     fileNumberMapping[lastIncomingFileNumber]=fileNumber;
     log_trace("%d: '%s' scanned: added as %d", lastIncomingFileNumber, fileName, fileNumber);
 }
