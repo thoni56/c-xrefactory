@@ -27,6 +27,7 @@ typedef struct fileItem {	/* to be renamed to constant pool item TODO: Why?*/
     char *name;
     FileTimestamp lastModified;
     FileTimestamp lastParsedMtime;
+    FileTimestamp knowledgeTime;        // when the CU's knowledge was built (ADR-0032)
     FileTimestamp lastFullUpdateMtime;
     bool isArgument : 1;
     bool isScheduled : 1;

@@ -14,7 +14,8 @@
  * discovery, options, checkpoint) with multi-pass support.  Saves and
  * restores REQUEST-level option fields that initOptions() inside
  * initializeFileProcessing would otherwise wipe. */
-static void parseFileWithFullInit(char *fileName, ArgumentsVector baseArgs) {
+static bool parseFileWithFullInit(char *fileName, ArgumentsVector baseArgs) {
+    bool parsed = false;
     int savedCursorOffset = options.cursorOffset;
     bool savedNoErrors = options.noErrors;
     ServerOperation savedServerOperation = options.serverOperation;
@@ -27,6 +28,7 @@ static void parseFileWithFullInit(char *fileName, ArgumentsVector baseArgs) {
             options.cursorOffset = NO_CURSOR_OFFSET;
             options.noErrors = true;
             parseToCreateReferences(inputFileName);
+            parsed = true;
             closeCharacterBuffer(&currentFile.characterBuffer);
             currentFile.characterBuffer.file = stdin;
         }
@@ -36,6 +38,7 @@ static void parseFileWithFullInit(char *fileName, ArgumentsVector baseArgs) {
     options.cursorOffset = savedCursorOffset;
     options.noErrors = savedNoErrors;
     options.serverOperation = savedServerOperation;
+    return parsed;
 }
 
 void buildKnowledgeOfCU(int fileNumber, ArgumentsVector baseArgs) {
@@ -46,8 +49,13 @@ void buildKnowledgeOfCU(int fileNumber, ArgumentsVector baseArgs) {
         return;
     }
     removeReferenceableItemsForFile(fileNumber);
-    parseFileWithFullInit(fileName, baseArgs);
+    /* Taken before the content is read, so an edit during the parse makes the
+     * knowledge out of date. */
+    FileTimestamp knowledgeTime = fileTimestampNow();
+    bool parsed = parseFileWithFullInit(fileName, baseArgs);
     fileItem->lastParsedMtime = editorFileModificationTime(fileName);
+    if (parsed)
+        fileItem->knowledgeTime = knowledgeTime;
 }
 
 /* Mark every compilation unit unparsed so the next entry refresh reparses it.
