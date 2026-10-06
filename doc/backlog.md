@@ -52,6 +52,12 @@ graph from them on every push, linked at the end of this file, and `utils/backlo
    automatic `ProjectConfig` declared without `= {0}` would free garbage. A constructor
    makes "born empty" one expression instead of every declaration site remembering, and
    gives `makeOptionSets()` its first production caller.
+   A small first step: the global `inputFileName` is two things. It is the request file
+   for the cursor parse (`processFile`), for `-get` and for the refactorings
+   (`refactory.c`), and the file to parse when a CU is built (`parseFileWithFullInit`) or
+   a macro expanded (`singlePass`). The second becomes a parameter to
+   `initializeFileProcessing()`, the first goes to the `Request` (§17.4), or to the
+   `RefactoringRequest` for the refactorings.
 4. <a id="setup-ladder"></a>**The Setup Ladder, in this sequence**, each small once the partition lands
    (`doc/docs/10-roadmap.adoc`, Convergence: The Setup Ladder → Remaining):
    a. <a id="root-path-id"></a>**the server's project id is its root path** — ADR-0029. `lockedProject` becomes the
