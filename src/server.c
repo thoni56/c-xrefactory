@@ -238,9 +238,8 @@ protected void singlePass(ArgumentsVector args, ArgumentsVector nargs) {
         FileTimestamp knowledgeTime = fileTimestampNow();
         parseInputFile();
         if (parses) {
-            getFileItemWithFileNumber(parsingConfig.fileNumber)->lastParsedMtime =
-                editorFileModificationTime(inputFileName);
-            getFileItemWithFileNumber(parsingConfig.fileNumber)->knowledgeTime = knowledgeTime;
+            fileItem->lastParsedMtime = editorFileModificationTime(inputFileName);
+            fileItem->knowledgeTime = knowledgeTime;
         }
     }
     if (options.cursorOffset == 0) {
