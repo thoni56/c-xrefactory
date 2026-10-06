@@ -24,39 +24,40 @@ flowchart BT
   startup_command_line["§2 · 7 · Decide, and enforce, what the startup command line may carry"]
   mode_checks["§2 · 8a · fold the `options.mode` checks outside `src/yylex.c`"]
   remove_bridge["§2 · 9 · Remove the `parseBufferUsingServer` bridge"]
-  behind_the_back["§3 · 10 · Behind-the-back disk changes"]
-  extract_statics_by_value["§3 · 11 · Extract passes statics by value"]
-  token_pasting_trio["§3 · 12 · Token pasting trio"]
-  header_static_link_names["§3 · 13 · Header static: prototype and definition get different link names"]
-  correctness_by_cost["§3 · 14 · Then, roughly by cost"]
-  header_filtered_siblings["§4 · 15 · Header-filtered sibling parsing"]
-  scan_angle_includes["§4 · 16 · Extend the lightweight scan to `#lt;...#gt;` includes"]
-  lexing_cache["§4 · 17 · Lexing cache re-introduction"]
-  parallel_parsing["§4 · 18 · Parallel parsing"]
-  remove_references_stopgap["§5 · 19 · Take the client's #quot;Remove References and Restart Server#quot; back out"]
-  move_function_comment_prompt["§5 · 20 · Move Function comment y/n prompt"]
-  index_based_sessions["§5 · 21 · Index-based sessions"]
-  indexing_log_buffer["§5 · 22 · Indexing Log Buffer"]
-  retry_creating_request["§5 · 23 · Retry the request that created the project"]
-  lsp_tiers["§5 · 24 · LSP tiers 1–2"]
-  move_function_next["§5 · 25 · Move Function next steps"]
-  local_config_fragments["§5 · 26 · Local config fragments — the need, not a solution"]
-  chapter_17_hygiene["§5 · 27 · Chapter 17 hygiene, opportunistically"]
-  dump_reference_database["§5 · 28 · Dump Reference Database"]
-  macos_watchers["§6 · 29 · Two causes of watchers not firing on macOS, both found"]
-  flaky_preload_tests["§6 · 30 · Tests that copy a preload next to the file it replaces can be flaky"]
-  knowledge_time["§7 · 32 · A knowledge time per CU"]
-  cu_inputs["§7 · 33 · A CU's inputs"]
-  out_of_date["§7 · 34 · The one freshness predicate"]
-  request_target["§7 · 35 · What a request needs"]
-  passes_as_one["§7 · 36 · Pass 1, 2 and 3 become one"]
-  header_not_half["§7 · 37 · Pass 2 does not strip a header it cannot rebuild"]
-  time_budget["§7 · 38 · A time budget instead of the 128 CUs"]
-  freshness_docs["§7 · 39 · The docs follow"]
-  generations["§7 · 40 · Generations"]
-  sweep["§7 · 41 · Remove references no CU still emits"]
-  sweep_cost["§7 · 42 · What the sweep costs"]
-  snapshot_v2["§7 · 43 · Snapshot format 2.0.0"]
+  refactoring_refusals["§3 · 10 · What a refactoring refuses, spelled out and tested"]
+  behind_the_back["§3 · 11 · Behind-the-back disk changes"]
+  extract_statics_by_value["§3 · 12 · Extract passes statics by value"]
+  token_pasting_trio["§3 · 13 · Token pasting trio"]
+  header_static_link_names["§3 · 14 · Header static: prototype and definition get different link names"]
+  correctness_by_cost["§3 · 15 · Then, roughly by cost"]
+  header_filtered_siblings["§4 · 16 · Header-filtered sibling parsing"]
+  scan_angle_includes["§4 · 17 · Extend the lightweight scan to `#lt;...#gt;` includes"]
+  lexing_cache["§4 · 18 · Lexing cache re-introduction"]
+  parallel_parsing["§4 · 19 · Parallel parsing"]
+  remove_references_stopgap["§5 · 20 · Take the client's #quot;Remove References and Restart Server#quot; back out"]
+  move_function_comment_prompt["§5 · 21 · Move Function comment y/n prompt"]
+  index_based_sessions["§5 · 22 · Index-based sessions"]
+  indexing_log_buffer["§5 · 23 · Indexing Log Buffer"]
+  retry_creating_request["§5 · 24 · Retry the request that created the project"]
+  lsp_tiers["§5 · 25 · LSP tiers 1–2"]
+  move_function_next["§5 · 26 · Move Function next steps"]
+  local_config_fragments["§5 · 27 · Local config fragments — the need, not a solution"]
+  chapter_17_hygiene["§5 · 28 · Chapter 17 hygiene, opportunistically"]
+  dump_reference_database["§5 · 29 · Dump Reference Database"]
+  macos_watchers["§6 · 30 · Two causes of watchers not firing on macOS, both found"]
+  flaky_preload_tests["§6 · 31 · Tests that copy a preload next to the file it replaces can be flaky"]
+  knowledge_time["§7 · 33 · A knowledge time per CU"]
+  cu_inputs["§7 · 34 · A CU's inputs"]
+  out_of_date["§7 · 35 · The one freshness predicate"]
+  request_target["§7 · 36 · What a request needs"]
+  passes_as_one["§7 · 37 · Pass 1, 2 and 3 become one"]
+  header_not_half["§7 · 38 · Pass 2 does not strip a header it cannot rebuild"]
+  time_budget["§7 · 39 · A time budget instead of the 128 CUs"]
+  freshness_docs["§7 · 40 · The docs follow"]
+  generations["§7 · 41 · Generations"]
+  sweep["§7 · 42 · Remove references no CU still emits"]
+  sweep_cost["§7 · 43 · What the sweep costs"]
+  snapshot_v2["§7 · 44 · Snapshot format 2.0.0"]
   entry_refresh["Entry refresh before every request (ADR-0020)"]
   adr_0029["ADR-0029: the project's identity is its root path"]
   adr_0030["ADR-0030: opening a project and asking about a file are separate"]
@@ -94,14 +95,19 @@ flowchart BT
   client_stops_p -.- startup_command_line
   client_stops_p -.- project_extent
   mode_checks -.- report_errors_flag
+  refactoring_refusals -.- behind_the_back
+  refactoring_refusals -.- sweep
   correctness_by_cost -.- project_extent
   scan_angle_includes -.- project_extent
+  remove_references_stopgap -.- sweep
+  remove_references_stopgap -.- time_budget
   remove_references_stopgap -.- index_based_sessions
   local_config_fragments -.- project_extent
+  out_of_date -.- partition_options
   request_target -.- header_filtered_siblings
   freshness_docs -.- passes_as_one
   sweep_cost -.- sweep
-  linkStyle 28,29,30,31,32,33,34,35,36,37 stroke:#8a63d2,stroke-width:2px,stroke-dasharray:6 4
+  linkStyle 28,29,30,31,32,33,34,35,36,37,38,39,40,41,42 stroke:#8a63d2,stroke-width:2px,stroke-dasharray:6 4
   class cursor_parse_reuse blocked
   class compiler_asked_twice blocked
   class partition_options ready
@@ -114,6 +120,7 @@ flowchart BT
   class startup_command_line ready
   class mode_checks ready
   class remove_bridge ready
+  class refactoring_refusals ready
   class behind_the_back blocked
   class extract_statics_by_value ready
   class token_pasting_trio ready
