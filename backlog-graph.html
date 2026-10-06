@@ -15,10 +15,11 @@ flowchart BT
   cursor_parse_reuse["§0 · 1 · An operation's cursor parse re-parses a CU that Pass 3 already parsed"]
   compiler_asked_twice["§0 · 2 · A cold start interrogates the compiler twice"]
   partition_options["§1 · 3 · Partition `options` by lifetime"]
-  client_stops_p["§1 · 4a · the client stops sending `-p` on every request"]
-  setup_into_openproject["§1 · 4b · project setup moves into the future `-openproject`"]
-  openproject_tripwire["§1 · 4c · the assert that nothing before the future `-openproject` reads a project-scoped option"]
-  project_extent["§1 · 4d · what a project consists of"]
+  root_path_id["§1 · 4a · the server's project id is its root path"]
+  client_stops_p["§1 · 4b · the client stops sending `-p` on every request"]
+  setup_into_openproject["§1 · 4c · project setup moves into the future `-openproject`"]
+  openproject_tripwire["§1 · 4d · the assert that nothing before the future `-openproject` reads a project-scoped option"]
+  project_extent["§1 · 4e · what a project consists of"]
   drop_cxfi_refnum["§1 · 5 · Drop the `CXFI_REFNUM` record from the snapshot"]
   report_errors_flag["§2 · 6 · Re-key the 19 `options.mode != ServerMode` guards in `src/yylex.c`"]
   startup_command_line["§2 · 7 · Decide, and enforce, what the startup command line may carry"]
@@ -58,7 +59,6 @@ flowchart BT
   generations["§7 · 42 · Generations"]
   sweep["§7 · 43 · Remove references no CU still emits"]
   sweep_cost["§7 · 44 · What the sweep costs"]
-  snapshot_v2["§7 · 45 · Snapshot format 2.0.0"]
   entry_refresh["Entry refresh before every request (ADR-0020)"]
   adr_0029["ADR-0029: the project's identity is its root path"]
   adr_0030["ADR-0030: opening a project and asking about a file are separate"]
@@ -67,8 +67,10 @@ flowchart BT
   adr_0033["ADR-0033: references are removed when every reaching CU is parsed again"]
   out_of_date --&gt; cursor_parse_reuse
   partition_options --&gt; compiler_asked_twice
+  adr_0029 --&gt; root_path_id
   adr_0029 --&gt; client_stops_p
-  adr_0030 --&gt; client_stops_p
+  root_path_id --&gt; client_stops_p
+  project_extent --&gt; client_stops_p
   partition_options --&gt; setup_into_openproject
   setup_into_openproject --&gt; openproject_tripwire
   adr_0031 --&gt; project_extent
@@ -90,10 +92,8 @@ flowchart BT
   generations --&gt; sweep
   out_of_date --&gt; sweep
   include_edges --&gt; sweep
-  knowledge_time --&gt; snapshot_v2
-  drop_cxfi_refnum --&gt; snapshot_v2
   client_stops_p -.- startup_command_line
-  client_stops_p -.- project_extent
+  client_stops_p -.- adr_0030
   mode_checks -.- report_errors_flag
   refactoring_refusals -.- behind_the_back
   refactoring_refusals -.- sweep
@@ -113,7 +113,8 @@ flowchart BT
   class cursor_parse_reuse blocked
   class compiler_asked_twice blocked
   class partition_options ready
-  class client_stops_p ready
+  class root_path_id ready
+  class client_stops_p blocked
   class setup_into_openproject blocked
   class openproject_tripwire blocked
   class project_extent ready
@@ -156,7 +157,6 @@ flowchart BT
   class generations ready
   class sweep blocked
   class sweep_cost ready
-  class snapshot_v2 blocked
   class entry_refresh done
   class adr_0029 done
   class adr_0030 done
