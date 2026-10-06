@@ -208,7 +208,7 @@ void initServer(ArgumentsVector args) {
 
 static bool fileNeedsParsing(FileItem *fileItem);
 
-static void singlePass(ArgumentsVector args, ArgumentsVector nargs) {
+protected void singlePass(ArgumentsVector args, ArgumentsVector nargs) {
     bool inputOpened = false;
 
     inputOpened = initializeFileProcessing(args, nargs);
@@ -225,9 +225,12 @@ static void singlePass(ArgumentsVector args, ArgumentsVector nargs) {
             removeReferenceableItemsForFile(parsingConfig.fileNumber);
         }
 
+        /* Taken before the content is read, as in buildKnowledgeOfCU() */
+        FileTimestamp knowledgeTime = fileTimestampNow();
         parseInputFile();
         getFileItemWithFileNumber(parsingConfig.fileNumber)->lastParsedMtime =
             editorFileModificationTime(inputFileName);
+        getFileItemWithFileNumber(parsingConfig.fileNumber)->knowledgeTime = knowledgeTime;
     }
     if (options.cursorOffset == 0) {
         // special case, push the file as include reference
