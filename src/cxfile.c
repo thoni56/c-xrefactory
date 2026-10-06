@@ -499,24 +499,6 @@ static void scanFunction_CheckNumber(int size,
     }
 }
 
-static int fileItemShouldBeUpdatedFromCxFile(FileItem *fileItem) {
-    bool updateFromCxFile = true;
-
-    log_trace("re-read info from '%s' for '%s'?", options.cxFileLocation, fileItem->name);
-    if (options.mode == ServerMode) {
-        log_trace("last inspected == %d, start at %d\n", fileItem->lastInspected, fileProcessingStartTime);
-        if (fileTimestampIsLessThan(fileItem->lastInspected, fileProcessingStartTime)) {
-            updateFromCxFile = true;
-        } else {
-            updateFromCxFile = false;
-        }
-    }
-    log_trace("%s re-read info from '%s' for '%s'", updateFromCxFile?"yes,":"no, not necessary to",
-              options.cxFileLocation, fileItem->name);
-
-    return updateFromCxFile;
-}
-
 static void scanFunction_ReadFileName(int fileNameLength,
                                       int key,
                                       CharacterBuffer *cb,
@@ -552,10 +534,6 @@ static void scanFunction_ReadFileName(int fileNameLength,
     } else {
         fileNumber = getFileNumberFromFileName(fileName);
         fileItem = getFileItemWithFileNumber(fileNumber);
-        if (fileItemShouldBeUpdatedFromCxFile(fileItem)) {
-            // Set it to none, it will be updated by source item
-            fileItem->sourceFileNumber = NO_FILE_NUMBER;
-        }
         if (options.mode == ServerMode) {
             fileItem->isArgument = isArgument;
         }

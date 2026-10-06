@@ -26,16 +26,12 @@
 typedef struct fileItem {	/* to be renamed to constant pool item TODO: Why?*/
     char *name;
     FileTimestamp lastModified;
-    FileTimestamp lastInspected;
     FileTimestamp lastParsedMtime;
     FileTimestamp lastFullUpdateMtime;
     bool isArgument : 1;
     bool isScheduled : 1;
-    bool scheduledToUpdate : 1;
-    bool fullUpdateIncludesProcessed : 1;
     bool needsBrowsingStackRefresh : 1;  // entry-point reparsed this file, stack needs update
     bool isDeleted : 1;                 // file no longer exists on disk
-    unsigned sourceFileNumber : 20; // file number containing the class definition
     struct fileItem *next;
 } FileItem;
 

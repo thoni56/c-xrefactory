@@ -716,10 +716,6 @@ void totalTaskEntryInitialisations(void) {
     setOutOfMemoryErrorHandlerForMemory(fatalError);
     setInternalCheckFailHandlerForMemory(internalCheckFail);
 
-    // Start time
-    // just for very beginning
-    fileProcessingStartTime = fileTimestampNow();
-
     // Data structures
     resetAllCounters();
     options.includeDirs = NULL;
@@ -733,8 +729,6 @@ void totalTaskEntryInitialisations(void) {
 
 static void clearFileItem(FileItem *fileItem) {
     fileItem->isScheduled = false;
-    fileItem->scheduledToUpdate = false;
-    fileItem->fullUpdateIncludesProcessed = false;
     fileItem->needsBrowsingStackRefresh = false;
 }
 

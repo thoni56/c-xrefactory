@@ -149,8 +149,6 @@ protected void setRequestFileArgument(int fileNumber) {
  * session, not on a file - fall back to whatever happens to be scheduled.
  */
 protected bool prepareInputFileForRequest(void) {
-    fileProcessingStartTime = fileTimestampNow();
-
     int fileNumber = requestFileArgument;
     if (fileNumber == NO_FILE_NUMBER || !getFileItemWithFileNumber(fileNumber)->isScheduled) {
         fileNumber = 0;

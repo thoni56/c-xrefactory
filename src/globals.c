@@ -34,8 +34,6 @@ Completions collectedCompletions;
 
 /* **************** cached symbols ********************** */
 
-FileTimestamp fileProcessingStartTime;
-
 int currentPass;
 int maxPasses;
 

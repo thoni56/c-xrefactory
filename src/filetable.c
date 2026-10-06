@@ -43,7 +43,6 @@ static void fillFileItem(FileItem *item, char *name) {
     memset(item, 0, sizeof(FileItem));
     item->name = name;
     item->isArgument = false;
-    item->sourceFileNumber = NO_FILE_NUMBER;
 }
 
 
@@ -124,10 +123,7 @@ bool existsInFileTable(char *fileName) {
 }
 
 void updateFileModificationTracking(int fileNumber) {
-    FileTimestamp now = fileTimestampNow();
     FileItem *fileItem = getFileItemWithFileNumber(fileNumber);
-
-    fileItem->lastInspected = now;
 
     if (editorFileExists(fileItem->name)) {
         fileItem->lastModified = editorFileModificationTime(fileItem->name);

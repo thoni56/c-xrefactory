@@ -72,9 +72,6 @@ extern jmp_buf errorLongJumpBuffer;
 
 extern char *inputFileName;
 
-extern FileTimestamp fileProcessingStartTime;
-
-
 extern int currentPass;
 extern int maxPasses;
 
