@@ -54,7 +54,14 @@ graph from them on every push, linked at the end of this file, and `utils/backlo
    gives `makeOptionSets()` its first production caller.
 4. <a id="setup-ladder"></a>**The Setup Ladder, in this sequence**, each small once the partition lands
    (`doc/docs/10-roadmap.adoc`, Convergence: The Setup Ladder → Remaining):
-   a. <a id="client-stops-p"></a>**the client stops sending `-p` on every request** — ADR-0029: this is not tidying,
+   a. <a id="root-path-id"></a>**the server's project id is its root path** — ADR-0029. `lockedProject` becomes the
+      detected project root and `lockedProjectRoot` goes, so `SET_INFO` and
+      `PROJECT_MISMATCH` carry the path, not the `[section]` name. Test first:
+      `test_project_lock`'s `expected` gets the path, then the server, then the other
+      `expected` files with named sections (about 15). The client's half is in `e476e396`,
+      its project is only what `-getproject` answers;
+      Waits for: adr-0029
+   b. <a id="client-stops-p"></a>**the client stops sending `-p` on every request** — ADR-0029: this is not tidying,
       it is what re-enables `PPC_PROJECT_MISMATCH`, since `handleProject()`
       (`src/cxref.c:1805`) returns on its first line when `options.project` is set and
       never looks at the request's file
@@ -67,18 +74,20 @@ graph from them on every push, linked at the end of this file, and `utils/backlo
       membership query may reparse a changed preload of a file in the project, but not
       of one outside it. Today a `-getproject` from a modified buffer carries it as a
       preload (`c-xref-server-call-on-current-buffer-no-saves`, the "softsetup" hack in
-      `editors/emacs/c-xref.el`), and Pass 1-2 reparse it;
-      Waits for: adr-0029, adr-0030
-      Goes with: startup-command-line, project-extent
-   b. <a id="setup-into-openproject"></a>**project setup moves into the future `-openproject`** — discovery, config read, compiler
+      `editors/emacs/c-xref.el`), and Pass 1-2 reparse it. Once `-p` stops, membership
+      is answered for real, and today's rule (the root as a prefix, or under `-I`) is
+      wrong both ways, so it waits for the project's extent;
+      Waits for: adr-0029, root-path-id, project-extent
+      Goes with: startup-command-line, adr-0030
+   c. <a id="setup-into-openproject"></a>**project setup moves into the future `-openproject`** — discovery, config read, compiler
       interrogation, snapshot load;
       Waits for: partition-options
-   c. <a id="openproject-tripwire"></a>**the assert that nothing before the future `-openproject` reads a project-scoped option** — the
+   d. <a id="openproject-tripwire"></a>**the assert that nothing before the future `-openproject` reads a project-scoped option** — the
       tripwire, as the disk-read assert was for Memory as Truth;
       Waits for: setup-into-openproject
-   d. <a id="project-extent"></a>**what a project consists of** — ADR-0031 (accepted 2026-10-02). One definition of
+   e. <a id="project-extent"></a>**what a project consists of** — ADR-0031 (accepted 2026-10-02). One definition of
       *own* for scan and membership, *visible* through the include graph, *outside* saying
-      whether a project was found, the root path as the id (`lockedProjectRoot` goes).
+      whether a project was found.
       Pinned by three suspended tests: `test_server_refuse_project_switch`,
       `test_getproject_listed_dir_outside_root`, `test_getproject_pruned_file`. The
       membership query must stop registering its file first, which also unsuspends
@@ -90,7 +99,10 @@ graph from them on every push, linked at the end of this file, and `utils/backlo
 
 5. <a id="drop-cxfi-refnum"></a>**Drop the `CXFI_REFNUM` record from the snapshot** — it is always written as 1. A safe
    format change: a snapshot of another format version is ignored like no snapshot and
-   rewritten on exit, so it costs one cold start. Do it with the next format change.
+   rewritten on exit, so it costs one cold start, and a bump of its own is fine. `m`
+   (`lastFullUpdateMtime`) is only written and read back, and goes the same way. So may
+   `i` (`isArgument`), if it means nothing for a scanned project, and the usage
+   numbering, if `UsageMacroExpandingCU`, which nothing produces, goes.
 
 ## 2. After XrefMode
 
@@ -425,8 +437,8 @@ The order is roughly the numbers. `header-not-half` can be done any time; `knowl
 is the first step.
 
 33. <a id="knowledge-time"></a>**A knowledge time per CU** — recorded where the knowledge is
-    produced, beside `lastParsedMtime`, and kept in the snapshot. Knowledge from held
-    content is never written there.
+    produced, beside `lastParsedMtime`, and kept in the snapshot, with a format bump of
+    its own. Knowledge from held content is never written there.
     Waits for: adr-0032
 34. <a id="cu-inputs"></a>**A CU's inputs** — the CU, its include closure and the project
     config, put together where `out-of-date` uses them. The closure is
@@ -500,14 +512,6 @@ is the first step.
 44. <a id="sweep-cost"></a>**What the sweep costs** — memory and walk time on ffmpeg,
     whether the reverse walk can go uncapped, and how the mark is stored.
     Goes with: sweep
-45. <a id="snapshot-v2"></a>**Snapshot format 2.0.0** — one bump for the changes that make the
-    snapshot the make model's: the knowledge time, `n` gone, and `m`
-    (`lastFullUpdateMtime`, only written and read back) gone. Possibly also `i`
-    (`isArgument`), if it means nothing for a scanned project, and the usage numbering,
-    if `UsageMacroExpandingCU`, which nothing produces, goes. Whether c-xrefactory itself
-    becomes 2.0 with it is open.
-    Waits for: knowledge-time, drop-cxfi-refnum
-
 ## Foundation
 
 What the open items rest on, so that a `Waits for:` can name it. Not a record of what
