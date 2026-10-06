@@ -6,6 +6,9 @@ Date: 2026-10-03
 
 Accepted (2026-10-04)
 
+Amended (2026-10-06): what the refusal of ghosts covers, a missing include edge as a
+risk, and ghosts surviving a restart. The decision unchanged.
+
 Supersedes the include-structure reparse and fingerprint gate of
 [ADR-0025](0025-clean-stale-header-emissions-by-reparse-not-provenance.md), keeping its
 rejection of provenance
@@ -74,8 +77,11 @@ _we propose to_
 
 _disregarding the fact that_
 - between a change and the removal, references at old positions are still there and show
-  as ghosts. They are visible, and the rename precheck refuses them, where a lost
-  reference is neither,
+  as ghosts. They are visible, and a refactoring can refuse them, where a lost
+  reference is neither. Today rename and the parameter refactorings refuse a ghost only
+  when the text at its position no longer reads the name; one at a position that still
+  does is edited. Backlog item `refactoring-refusals` makes the refusal a tested
+  contract,
 - a CU that includes a header only under an `#ifdef` it does not take is still counted as
   reaching it, which delays the removal but loses nothing,
 
@@ -109,6 +115,17 @@ until the removal, out-of-date references show as ghosts.
 - *A missed refresh loses a live reference.* This rests on an invariant: every reference
   enters the table through `addToReferenceList()`. It holds today, with two callers, and
   should get a test so that it keeps holding.
+- *A missing include edge loses live references.* The removal is exact only if the
+  include graph has every CU that emitted into a file. A CU whose edge to the file is
+  missing is not waited for, so its references there are removed when the others have
+  been parsed again, silently, which is the failure this decision exists to avoid. Edges
+  come from the parse, the lightweight scan and the snapshot, and they can disagree
+  (`tests/test_restart_keeps_includes_as_parsed`); the scan records no `<...>` includes.
+  Which writer wins is backlog item `cu-inputs`.
+- *Ghosts survive a restart.* Generations are not in the snapshot, so ghosts are
+  written at exit and loaded again, and stay until every CU reaching their file has
+  been parsed in one session. For a header with hundreds of includers and a "no" to the
+  completeness question, that can be many sessions.
 - *The reverse walk is capped today* (`MAX_INCLUDE_WALK_FILES`, 256). An uncapped walk
   may cost on a large project; until it is measured, a capped walk means no removal in
   that file.
