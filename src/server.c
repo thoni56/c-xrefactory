@@ -179,6 +179,11 @@ static void closeInputFile(void) {
     }
 }
 
+/* Search and push by name answer from the table; the request file is not parsed */
+static bool operationParsesRequestFile(ServerOperation operation) {
+    return operation != OP_SEARCH && operation != OP_BROWSE_PUSH_NAME;
+}
+
 static void parseInputFile(void) {
     if (options.fileTrace)
         fprintf(stderr, "parseInputFile: '%s\n", currentFile.fileName);
@@ -186,7 +191,7 @@ static void parseInputFile(void) {
     /* Bridge: Sync parsingConfig for all operations using this entry point */
     setupParsingConfig(requestFileNumber);
 
-    if (options.serverOperation != OP_SEARCH && options.serverOperation != OP_BROWSE_PUSH_NAME) {
+    if (operationParsesRequestFile(options.serverOperation)) {
         log_debug("parse start");
         callParser(parsingConfig.fileNumber, parsingConfig.language);
         log_debug("parse end");
@@ -216,10 +221,11 @@ protected void singlePass(ArgumentsVector args, ArgumentsVector nargs) {
     parsingConfig.fileNumber = currentFile.characterBuffer.fileNumber;
 
     if (inputOpened) {
+        bool parses = operationParsesRequestFile(options.serverOperation);
         /* If the content, preloaded or on disk, changed since the file was last
          * parsed, remove old references before parsing. A later pass over the same
          * content finds it parsed and keeps what the earlier pass added. */
-        if (fileNeedsParsing(getFileItemWithFileNumber(parsingConfig.fileNumber))) {
+        if (parses && fileNeedsParsing(getFileItemWithFileNumber(parsingConfig.fileNumber))) {
             log_debug("file has changed content, removing old references for file %d",
                       parsingConfig.fileNumber);
             removeReferenceableItemsForFile(parsingConfig.fileNumber);
@@ -228,9 +234,11 @@ protected void singlePass(ArgumentsVector args, ArgumentsVector nargs) {
         /* Taken before the content is read, as in buildKnowledgeOfCU() */
         FileTimestamp knowledgeTime = fileTimestampNow();
         parseInputFile();
-        getFileItemWithFileNumber(parsingConfig.fileNumber)->lastParsedMtime =
-            editorFileModificationTime(inputFileName);
-        getFileItemWithFileNumber(parsingConfig.fileNumber)->knowledgeTime = knowledgeTime;
+        if (parses) {
+            getFileItemWithFileNumber(parsingConfig.fileNumber)->lastParsedMtime =
+                editorFileModificationTime(inputFileName);
+            getFileItemWithFileNumber(parsingConfig.fileNumber)->knowledgeTime = knowledgeTime;
+        }
     }
     if (options.cursorOffset == 0) {
         // special case, push the file as include reference

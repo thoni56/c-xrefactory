@@ -140,3 +140,26 @@ Ensure(Server, cursor_parse_takes_the_knowledge_time_before_parsing) {
 
     assert_false(fileTimestampIsLessThan(parseStart, fileItem.knowledgeTime));
 }
+
+Ensure(Server, cursor_parse_for_an_operation_that_does_not_parse_leaves_the_file_unparsed) {
+    FileItem      fileItem    = {.name = "test.c"};
+    FileTimestamp contentTime = {.tv_sec = 1234, .tv_nsec = 5678};
+    currentFile.characterBuffer.fileNumber = 42;
+    currentFile.characterBuffer.file = stdin;
+    inputFileName = fileItem.name;
+    options.serverOperation = OP_SEARCH;
+    options.cursorOffset = 1;
+
+    expect(initializeFileProcessing, will_return(true));
+    always_expect(getFileItemWithFileNumber, when(fileNumber, is_equal_to(42)), will_return(&fileItem));
+    always_expect(editorFileModificationTime, will_return(&contentTime));
+    never_expect(removeReferenceableItemsForFile);
+    expect(setupParsingConfig);
+    never_expect(callParser);
+
+    ArgumentsVector args = {.argc = 0, .argv = NULL};
+    singlePass(args, args);
+
+    assert_true(fileTimestampIsZero(fileItem.lastParsedMtime));
+    assert_true(fileTimestampIsZero(fileItem.knowledgeTime));
+}
