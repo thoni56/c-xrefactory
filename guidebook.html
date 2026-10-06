@@ -1565,6 +1565,12 @@ the traditional sense.</p>
 <p>A parse emits a reference that is already in the table, and the reference gets that
 parse&#8217;s generation (ADR-0033).</p>
 </dd>
+<dt class="hdlist1">Request file</dt>
+<dd>
+<p>The file a request names, usually the one the cursor is in. Most operations parse it.
+A search or a push by name answers from the reference table and does not.<br>
+<em>Avoid "input file"</em>, although the code still says it in places (<code>inputFileName</code>).</p>
+</dd>
 <dt class="hdlist1">Restoring</dt>
 <dd>
 <p>Loading a persisted snapshot into the reference table at startup. After restoration,
@@ -11975,7 +11981,7 @@ operation reads the in-memory table.</p>
 </div>
 <div id="footer">
 <div id="footer-text">
-Last updated 2026-10-06 16:47:58 UTC
+Last updated 2026-10-06 18:38:54 UTC
 </div>
 </div>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.18.3/highlight.min.js"></script>
