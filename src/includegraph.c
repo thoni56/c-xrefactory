@@ -13,11 +13,19 @@ typedef struct {
 } IncludedFiles;
 
 
+static int storedCount(IncludedFiles *included) {
+    return included->count < included->maxFileNumbers ? included->count : included->maxFileNumbers;
+}
+
 static bool isCollected(IncludedFiles *included, int fileNumber) {
-    for (int i = 0; i < included->count && i < included->maxFileNumbers; i++)
+    for (int i = 0; i < storedCount(included); i++)
         if (included->fileNumbers[i] == fileNumber)
             return true;
     return false;
+}
+
+static bool isIncludeFrom(Reference *reference, int includerFileNumber) {
+    return reference->position.file == includerFileNumber && reference->usage != UsageDefined;
 }
 
 static void collectIfIncludedBy(ReferenceableItem *item, void *includedFilesP) {
@@ -25,7 +33,7 @@ static void collectIfIncludedBy(ReferenceableItem *item, void *includedFilesP) {
         return;
     IncludedFiles *included = includedFilesP;
     for (Reference *r = item->references; r != NULL; r = r->next)
-        if (r->position.file == included->includerFileNumber && r->usage != UsageDefined
+        if (isIncludeFrom(r, included->includerFileNumber)
             && !isCollected(included, item->includeFileNumber)) {
             if (included->count < included->maxFileNumbers)
                 included->fileNumbers[included->count] = item->includeFileNumber;
@@ -37,7 +45,7 @@ int collectIncludeClosure(int fileNumber, int fileNumbers[], int maxFileNumbers)
     IncludedFiles included = {.includerFileNumber = fileNumber, .fileNumbers = fileNumbers,
                               .maxFileNumbers = maxFileNumbers};
     mapOverReferenceableItemTableWithPointer(collectIfIncludedBy, &included);
-    for (int i = 0; i < included.count && i < maxFileNumbers; i++) {
+    for (int i = 0; i < storedCount(&included); i++) {
         included.includerFileNumber = fileNumbers[i];
         mapOverReferenceableItemTableWithPointer(collectIfIncludedBy, &included);
     }

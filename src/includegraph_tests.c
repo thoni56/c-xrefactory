@@ -77,7 +77,7 @@ static void recordSymbolReference(char *linkName, int fileNumber) {
     addToReferenceableItemTable(item);
 }
 
-Ensure(IncludeGraph, does_not_take_other_symbols_for_includes) {
+Ensure(IncludeGraph, does_not_collect_other_symbols_for_includes) {
     recordSymbolReference("f", A_C);
 
     int closure[10];
@@ -94,7 +94,7 @@ static bool contains(int fileNumbers[], int count, int fileNumber) {
     return false;
 }
 
-Ensure(IncludeGraph, gives_also_the_files_an_included_file_includes) {
+Ensure(IncludeGraph, collects_also_the_files_an_included_file_includes) {
     recordInclude(A_C, A_H);
     recordInclude(A_H, DECL_H);
 
@@ -106,7 +106,7 @@ Ensure(IncludeGraph, gives_also_the_files_an_included_file_includes) {
     assert_true(contains(closure, count, DECL_H));
 }
 
-Ensure(IncludeGraph, gives_a_file_included_twice_once) {
+Ensure(IncludeGraph, collects_a_file_included_twice_once) {
     recordInclude(A_C, A_H);
     recordInclude(A_C, DECL_H);
     recordInclude(A_H, DECL_H);
@@ -117,7 +117,7 @@ Ensure(IncludeGraph, gives_a_file_included_twice_once) {
     assert_that(count, is_equal_to(2));
 }
 
-Ensure(IncludeGraph, does_not_give_the_file_itself) {
+Ensure(IncludeGraph, does_not_collect_the_file_itself) {
     recordFileItself(A_C);
     recordInclude(A_C, A_H);
 
@@ -128,7 +128,7 @@ Ensure(IncludeGraph, does_not_give_the_file_itself) {
     assert_that(closure[0], is_equal_to(A_H));
 }
 
-Ensure(IncludeGraph, gives_more_than_the_maximum_when_the_files_do_not_fit) {
+Ensure(IncludeGraph, collecting_can_signal_that_the_files_do_not_fit) {
     recordInclude(A_C, A_H);
     recordInclude(A_C, B_H);
     recordInclude(A_C, DECL_H);
