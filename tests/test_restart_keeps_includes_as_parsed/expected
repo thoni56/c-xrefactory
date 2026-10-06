@@ -1,0 +1,22 @@
+--- after session 1
+%%%i:x.h
+    @b.c:3:0
+    @x.h:1:0
+g
+    @b.c:5:4
+main
+    @a.c:5:4
+x
+    @b.c:6:11
+    @x.h:1:4
+--- after session 2
+%%%i:x.h
+    @b.c:3:0
+    @x.h:1:0
+g
+    @b.c:5:4
+main
+    @a.c:5:4
+x
+    @b.c:6:11
+    @x.h:1:4

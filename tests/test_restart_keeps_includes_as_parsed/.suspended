@@ -1,0 +1,19 @@
+Bug: after a restart the scan adds its includes to CUs that already have knowledge
+
+The scan records an include reference at line 1, column 0 of the includer for every
+#include "..." line it finds, whether an #ifdef takes it or not. Within a session that
+does no harm: parsing a CU removes the references in it first. But a new session loads
+the snapshot and then runs the scan again over every CU, and a CU that is current is not
+parsed, so the scan's references stay beside the parse's. Three effects:
+
+- the table after a restart differs from the one before, for the same sources,
+- a.c is recorded as including x.h, although its #ifdef does not take it,
+- b.c is recorded as including x.h twice, on line 1 and on line 3. Browsing the include
+  lists line 1 of b.c as an includer.
+
+Likely fix: the scan records include references only for a CU without knowledge, since
+a parse has already recorded better ones. Not checked: Rename Module and Move Function,
+which find #include lines through these references.
+
+Backlog item correctness-by-cost in doc/backlog.md. It does not block out-of-date, whose
+include closure only has to be a superset.

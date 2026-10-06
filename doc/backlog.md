@@ -176,7 +176,9 @@ graph from them on every push, linked at the end of this file, and `utils/backlo
     Waits for: startup-command-line
 14. <a id="correctness-by-cost"></a>**Then, roughly by cost** — each has a `.suspended` note or a `18-known-bugs.adoc` entry:
     `tests/test_getproject_unknown_cu_under_include_path` (any file under an `-I`
-    directory counts as project) · `tests/test_preprocess_edit_removes_ifdef_define` (CU
+    directory counts as project) · `tests/test_restart_keeps_includes_as_parsed` (after a
+    restart the scan adds its includes to CUs that have knowledge, so an include is listed
+    twice, once on line 1) · `tests/test_preprocess_edit_removes_ifdef_define` (CU
     reparse leaves a header declaration it no longer emits — ADR-0025 variant B, fixed by `sweep`) ·
     `tests/test_browsing_push_by_name` (needs decided behaviour when a name has several
     bindings) · GlobalUnused false positive for statics in `.y` files ·
