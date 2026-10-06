@@ -422,35 +422,27 @@ Pass 3 rounds 19s each, 42s total.
 ## 7. Freshness as make (ADR-0032, ADR-0033)
 
 The order is roughly the numbers. `header-not-half` can be done any time; `knowledge-time`
-and `cu-inputs` are the first steps and do not depend on each other.
+is the first step.
 
 33. <a id="knowledge-time"></a>**A knowledge time per CU** — recorded where the knowledge is
     produced, beside `lastParsedMtime`, and kept in the snapshot. Knowledge from held
     content is never written there.
     Waits for: adr-0032
-34. <a id="cu-inputs"></a>**A CU's inputs** — the CU, its forward include closure from the
-    `TypeCppInclude` references in the table, and the project config. The forward closure
-    is in `src/includegraph.c`.
-    The predicate needs the inputs only of a CU that has knowledge, i.e. one that was
-    parsed, so the include references positioned in it are the ones the parse recorded:
-    the `#include`s the preprocessor took, quoted and `<...>`, at their real lines. The
-    lightweight scan records every quoted `#include` instead, `#ifdef` or not, no
-    `<...>`, all at line 1, column 0 of the includer. Those matter for reach. A "defined"
-    reference at line 1 of a file marks the file itself and is not an edge.
-    Who may write an edge, and which writer wins, is decided here: today a scan after a
-    restart adds its edges to CUs that already have knowledge, so an include is listed
-    twice, once on line 1 (`tests/test_restart_keeps_includes_as_parsed`). It matters beyond freshness. The
-    sweep removes a file's references once every CU reaching it has been parsed again,
-    so an edge the graph lacks makes it remove live references, silently (ADR-0033).
-    Waits for: adr-0032
+34. <a id="cu-inputs"></a>**A CU's inputs** — the CU, its include closure and the project
+    config, put together where `out-of-date` uses them. The closure is
+    `collectIncludeClosure()` in `src/includegraph.c`. A count above its maximum means the
+    closure did not fit, and the CU is then out of date. `includegraph` goes into
+    `src/sources.mk` with it. The closure can hold the scan's includes beside the parse's,
+    which for the predicate only costs a parse.
+    Goes with: out-of-date
 35. <a id="out-of-date"></a>**The one freshness predicate** — no knowledge, or an input
     changed after the knowledge time, rounded down a tick. Replaces `fileNumberIsStale()`
     and `fileNeedsParsing()`; the config as an input replaces
     `markAllCompilationUnitsStale()`, and the zero sentinel goes. The config needs a change
     time, and who owns it depends on where the project config lives after the options
     partition.
-    Waits for: knowledge-time, cu-inputs
-    Goes with: partition-options
+    Waits for: knowledge-time
+    Goes with: partition-options, cu-inputs
 36. <a id="request-target"></a>**What a request needs** — the symbol's reach for an
     operation on a position, the whole project for one on a name. Pass 3 looks only one
     level today: with the request including `a.h`, `a.h` including `decl.h` and an unparsed
@@ -485,20 +477,30 @@ and `cu-inputs` are the first steps and do not depend on each other.
     `06-principles`, and `08-algorithms` loses "Dual Semantics". In `06-principles`, the
     part on why reparsing only a subset is safe also describes strip-then-reparse.
     Goes with: passes-as-one
-41. <a id="generations"></a>**Generations** — a counter per parse, a mark on every
+41. <a id="include-edges"></a>**Who writes include edges** — the parse and the lightweight
+    scan both do. The parse records the `#include`s the preprocessor took, quoted and
+    `<...>`, at their real lines. The scan records every quoted `#include`, `#ifdef` or
+    not, no `<...>`, all at line 1, column 0 of the includer. A "defined" reference at
+    line 1 of a file marks the file itself and is not an edge. Today the scan wins after a
+    restart: it adds its edges to CUs that already have knowledge, so an include is listed
+    twice, once on line 1 (`tests/test_restart_keeps_includes_as_parsed`). Decide who may
+    write an edge and which writer wins. The sweep needs it: it removes a file's
+    references once every CU reaching it has been parsed again, so an edge the graph
+    lacks makes it remove live references, silently (ADR-0033).
+42. <a id="generations"></a>**Generations** — a counter per parse, a mark on every
     reference, refreshed in `addToReferenceList()`, and a test that every reference
     enters the table there.
     Waits for: adr-0033
-42. <a id="sweep"></a>**Remove references no CU still emits** — after each request that
+43. <a id="sweep"></a>**Remove references no CU still emits** — after each request that
     parsed something, remove a reference older than every reaching CU's knowledge
-    generation, and drop the strips in advance in `reparseStaleFile()`, Pass 2 and
+    generation, and drop the strips in advance in `buildKnowledgeOfCU()`, Pass 2 and
     `singlePass()`. A capped reverse walk removes nothing in that file.
     `test_preprocess_edit_removes_ifdef_define` comes off suspension.
-    Waits for: generations, out-of-date
-43. <a id="sweep-cost"></a>**What the sweep costs** — memory and walk time on ffmpeg,
+    Waits for: generations, out-of-date, include-edges
+44. <a id="sweep-cost"></a>**What the sweep costs** — memory and walk time on ffmpeg,
     whether the reverse walk can go uncapped, and how the mark is stored.
     Goes with: sweep
-44. <a id="snapshot-v2"></a>**Snapshot format 2.0.0** — one bump for the changes that make the
+45. <a id="snapshot-v2"></a>**Snapshot format 2.0.0** — one bump for the changes that make the
     snapshot the make model's: the knowledge time, `n` gone, and `m`
     (`lastFullUpdateMtime`, only written and read back) gone. Possibly also `i`
     (`isArgument`), if it means nothing for a scanned project, and the usage numbering,

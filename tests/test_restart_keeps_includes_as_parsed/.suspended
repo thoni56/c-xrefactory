@@ -15,5 +15,5 @@ Likely fix: the scan records include references only for a CU without knowledge,
 a parse has already recorded better ones. Not checked: Rename Module and Move Function,
 which find #include lines through these references.
 
-Backlog item correctness-by-cost in doc/backlog.md. It does not block out-of-date, whose
+Backlog item include-edges in doc/backlog.md. It does not block out-of-date, whose
 include closure only has to be a superset.
