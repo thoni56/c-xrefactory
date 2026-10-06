@@ -54,10 +54,11 @@ flowchart BT
   header_not_half["§7 · 38 · Pass 2 does not strip a header it cannot rebuild"]
   time_budget["§7 · 39 · A time budget instead of the 128 CUs"]
   freshness_docs["§7 · 40 · The docs follow"]
-  generations["§7 · 41 · Generations"]
-  sweep["§7 · 42 · Remove references no CU still emits"]
-  sweep_cost["§7 · 43 · What the sweep costs"]
-  snapshot_v2["§7 · 44 · Snapshot format 2.0.0"]
+  include_edges["§7 · 41 · Who writes include edges"]
+  generations["§7 · 42 · Generations"]
+  sweep["§7 · 43 · Remove references no CU still emits"]
+  sweep_cost["§7 · 44 · What the sweep costs"]
+  snapshot_v2["§7 · 45 · Snapshot format 2.0.0"]
   entry_refresh["Entry refresh before every request (ADR-0020)"]
   adr_0029["ADR-0029: the project's identity is its root path"]
   adr_0030["ADR-0030: opening a project and asking about a file are separate"]
@@ -80,9 +81,7 @@ flowchart BT
   entry_refresh --&gt; index_based_sessions
   report_errors_flag --&gt; indexing_log_buffer
   adr_0032 --&gt; knowledge_time
-  adr_0032 --&gt; cu_inputs
   knowledge_time --&gt; out_of_date
-  cu_inputs --&gt; out_of_date
   adr_0032 --&gt; request_target
   out_of_date --&gt; passes_as_one
   request_target --&gt; passes_as_one
@@ -90,6 +89,7 @@ flowchart BT
   adr_0033 --&gt; generations
   generations --&gt; sweep
   out_of_date --&gt; sweep
+  include_edges --&gt; sweep
   knowledge_time --&gt; snapshot_v2
   drop_cxfi_refnum --&gt; snapshot_v2
   client_stops_p -.- startup_command_line
@@ -103,11 +103,13 @@ flowchart BT
   remove_references_stopgap -.- time_budget
   remove_references_stopgap -.- index_based_sessions
   local_config_fragments -.- project_extent
+  cu_inputs -.- out_of_date
   out_of_date -.- partition_options
+  out_of_date -.- cu_inputs
   request_target -.- header_filtered_siblings
   freshness_docs -.- passes_as_one
   sweep_cost -.- sweep
-  linkStyle 28,29,30,31,32,33,34,35,36,37,38,39,40,41,42 stroke:#8a63d2,stroke-width:2px,stroke-dasharray:6 4
+  linkStyle 27,28,29,30,31,32,33,34,35,36,37,38,39,40,41,42,43 stroke:#8a63d2,stroke-width:2px,stroke-dasharray:6 4
   class cursor_parse_reuse blocked
   class compiler_asked_twice blocked
   class partition_options ready
@@ -150,6 +152,7 @@ flowchart BT
   class header_not_half ready
   class time_budget blocked
   class freshness_docs ready
+  class include_edges ready
   class generations ready
   class sweep blocked
   class sweep_cost ready
