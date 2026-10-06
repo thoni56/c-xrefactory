@@ -117,7 +117,7 @@ graph from them on every push, linked at the end of this file, and `utils/backlo
    - **`-exactpositionresolve` has no strategy.** It is real: it changes link names
      (`src/semact.c`) and goes into the snapshot's check number (`src/cxfile.c`). Since it
      changes what a symbol is, it is probably project-scoped, although `options.h` marks it
-     REQUEST. Decide whether it belongs in the config or goes. Item 13 waits on the same
+     REQUEST. Decide whether it belongs in the config or goes. Item 14 waits on the same
      question.
    - **`-lsp` is a third mode and should be one.** `want_lsp_server()` (`src/lsp.c`) scans
      argv in `main()` and returns before `mainTaskEntryInitialisations()`, so it is a mode
@@ -153,32 +153,47 @@ graph from them on every push, linked at the end of this file, and `utils/backlo
 
 ## 3. Correctness, by (quiet × cheap)
 
-10. <a id="behind-the-back"></a>**Behind-the-back disk changes** — a header changed on
+10. <a id="refactoring-refusals"></a>**What a refactoring refuses, spelled out and tested** —
+    *no repo home yet.* ADR-0033 lets ghosts stay visible until the sweep, and relies on
+    refactorings refusing them. Today rename and the parameter refactorings compare only
+    the name at each stored position (`precheckThatSymbolRefsCorresponds`,
+    `validateReferencePointsToFunction`, `src/refactory.c`). A ghost whose position still
+    reads the name passes: a declaration in a branch no longer taken, or the same name
+    belonging to another symbol after a change on disk, which rename then edits. Rename
+    of an included file has no precheck, and a marker not on an `#include` is skipped
+    silently. Only rename and delete parameter have refusal tests
+    (`test_rename_aborts_on_name_mismatch`, `test_parameter_delete_aborts_on_name_mismatch`),
+    and both fake the ghost by editing the snapshot; add and move parameter have none.
+    Write the contract down in the docs — per refactoring, what is refused, what is
+    asked, what is edited anyway — and pin it with tests that make their ghosts for real,
+    by changing a shared header on disk. Ghosts can be made that way today, so this does
+    not wait for `sweep`. The message "try re-saving the file" no longer fits. Found by
+    reading the code (Mac, session `05984816`, 2026-10-06), not tested.
+    Goes with: behind-the-back, sweep
+11. <a id="behind-the-back"></a>**Behind-the-back disk changes** — a header changed on
     disk does not make its includers stale. Only the request file is parsed again, and
     every other includer keeps its references to the old header (ghosts). Pass 2 parses
     the includers of a header only when the header is edited. Changed CUs are picked up
     by their mtime. `tests/test_shared_header_changed_on_disk`. Fixed by passes-as-one.
     Waits for: passes-as-one
-11. <a id="extract-statics-by-value"></a>**Extract passes statics by value** — *no test pins it.* Since the gate fix this
+12. <a id="extract-statics-by-value"></a>**Extract passes statics by value** — *no test pins it.* Since the gate fix this
     compiles and silently does the wrong thing, where before it failed to compile.
     Liveness-after-the-region is the wrong question for static storage: treat
     static/thread-local as live after the region in `classifyVariableUsingDataFlow`
     (`src/extract.c`), which pushes it to `CLASSIFIED_AS_IN_OUT_ARGUMENT`. Failing system
     test first. Quietest bug on this list.
-12. <a id="token-pasting-trio"></a>**Token pasting trio**, in this order — the later two assume the first
+13. <a id="token-pasting-trio"></a>**Token pasting trio**, in this order — the later two assume the first
     (`doc/docs/18-known-bugs.adoc`): `tests/test_token_pasting_numbers` (changes the
     passing `test_collate_const_suffix_pasting`) → `tests/test_token_pasting_float` →
     `tests/test_collate_hex_prefix_pasting` (touches how every number is lexed).
-13. <a id="header-static-link-names"></a>**Header static: prototype and definition get different link names** —
+14. <a id="header-static-link-names"></a>**Header static: prototype and definition get different link names** —
     `setStaticFunctionLinkName` (`src/semact.c`); renames break the build today.
     `tests/test_static_declared_and_defined_in_header/.suspended` has the
     `exactPositionResolve` question to settle first, so it starts as a decision.
     Waits for: startup-command-line
-14. <a id="correctness-by-cost"></a>**Then, roughly by cost** — each has a `.suspended` note or a `18-known-bugs.adoc` entry:
+15. <a id="correctness-by-cost"></a>**Then, roughly by cost** — each has a `.suspended` note or a `18-known-bugs.adoc` entry:
     `tests/test_getproject_unknown_cu_under_include_path` (any file under an `-I`
-    directory counts as project) · `tests/test_restart_keeps_includes_as_parsed` (after a
-    restart the scan adds its includes to CUs that have knowledge, so an include is listed
-    twice, once on line 1) · `tests/test_preprocess_edit_removes_ifdef_define` (CU
+    directory counts as project) · `tests/test_preprocess_edit_removes_ifdef_define` (CU
     reparse leaves a header declaration it no longer emits — ADR-0025 variant B, fixed by `sweep`) ·
     `tests/test_browsing_push_by_name` (needs decided behaviour when a name has several
     bindings) · GlobalUnused false positive for statics in `.y` files ·
@@ -219,48 +234,53 @@ graph from them on every push, linked at the end of this file, and `utils/backlo
 Roadmap → Optimization. Baseline: cold-start PUSH on ffmpeg `af_afir.c` — scan 2.7s, two
 Pass 3 rounds 19s each, 42s total.
 
-15. <a id="header-filtered-siblings"></a>**Header-filtered sibling parsing** — 2481 sibling CUs → 2 for `AudioFIRContext`. The
+16. <a id="header-filtered-siblings"></a>**Header-filtered sibling parsing** — 2481 sibling CUs → 2 for `AudioFIRContext`. The
     design problem is that Pass 3 runs during sync and the symbol is only known during
     dispatch.
-16. <a id="scan-angle-includes"></a>**Extend the lightweight scan to `<...>` includes** — blocked on header-filtered
+17. <a id="scan-angle-includes"></a>**Extend the lightweight scan to `<...>` includes** — blocked on header-filtered
     sibling parsing, or ubiquitous system headers drag in nearly every CU. Also removes
     the cold-start double progress bar.
     Waits for: header-filtered-siblings
     Goes with: project-extent
-17. <a id="lexing-cache"></a>**Lexing cache re-introduction** — present in the original codebase, lost in
+18. <a id="lexing-cache"></a>**Lexing cache re-introduction** — present in the original codebase, lost in
     restructuring.
     Waits for: scan-angle-includes
-18. <a id="parallel-parsing"></a>**Parallel parsing** — last, and only if the three above leave `avcodec.h` (614 CUs) or
+19. <a id="parallel-parsing"></a>**Parallel parsing** — last, and only if the three above leave `avcodec.h` (614 CUs) or
     `internal.h` (1171 CUs) unacceptable. Global mutable parser state, a single CX arena
     and a shared file table are the obstacles.
     Waits for: lexing-cache
 
 ## 5. Features, by readiness
 
-19. <a id="remove-references-stopgap"></a>**Take the client's "Remove References and Restart Server" back out** — it landed
+20. <a id="remove-references-stopgap"></a>**Take the client's "Remove References and Restart Server" back out** — it landed
     2026-09-24 as a deliberate stopgap (`c-xref-project-remove-references-and-restart`,
     `editors/emacs/c-xref.el`), because discarding the database is the standing remedy for
     two unrelated symptoms: shadow occurrences after behind-the-back disk changes, and a
     stale snapshot outliving a visibility fix (both in `doc/docs/18-known-bugs.adoc`). The
     real work is making the database not need discarding — behind-the-back detection and
     entry refresh are probably most of it,
-    and item 21 dissolves another part. Remove the entry when they land, and check the
-    symptoms are gone rather than assuming it.
+    and item 22 dissolves another part. Remove the entry when they land, and check the
+    symptoms are gone rather than assuming it. Check a third case too: with `sweep`,
+    ghosts in a header are removed only when every CU reaching it has been parsed again,
+    and generations are not in the snapshot (ADR-0033). After a "no" to the completeness
+    question, ghosts in a header like ffmpeg's `avcodec.h` (614 CUs) are written at exit
+    and come back with the snapshot, session after session.
     Waits for: behind-the-back
+    Goes with: sweep, time-budget
     Goes with: index-based-sessions
 
-20. <a id="move-function-comment-prompt"></a>**Move Function comment y/n prompt** — replaces the `c-xref-comments-moving-level`
+21. <a id="move-function-comment-prompt"></a>**Move Function comment y/n prompt** — replaces the `c-xref-comments-moving-level`
     customization; collapse `CommentMovingMode` to a bool and stop the backward walk at a
     blank line (`src/options.h`, `src/move_function.c`). The TDD scaffolding already
     landed: four `tests/test_move_function_*comment*` tests; sweep
     `-commentmovinglevel=6` → `=1` in the three "with…" `commands.input` files and add
     `test_move_function_stops_at_blank_line` in the same change. Most shovel-ready item
     here.
-21. <a id="index-based-sessions"></a>**Index-based sessions** — dissolves stale-POP *and* lets an answer grow while you
+22. <a id="index-based-sessions"></a>**Index-based sessions** — dissolves stale-POP *and* lets an answer grow while you
     work. Roadmap → Memory as Truth → Remaining. Depends only on entry refresh, which is
     done.
     Waits for: entry-refresh
-22. <a id="indexing-log-buffer"></a>**Indexing Log Buffer** — Option A (`PPC_LOG` + a silent `*c-xref-log*` buffer),
+23. <a id="indexing-log-buffer"></a>**Indexing Log Buffer** — Option A (`PPC_LOG` + a silent `*c-xref-log*` buffer),
     `doc/docs/11-planned-features.adoc`. Follows the report-errors item. The client half
     does not have to be invented: `c-xref-tags-dispatch` and its two helpers in
     `editors/emacs/c-xref.el` rendered exactly this for the `-create` log — a stream of
@@ -268,13 +288,13 @@ Pass 3 rounds 19s each, 42s total.
     are kept, uncalled, for that reason. The viewer commands and keymap below them are
     still bound; only the producer is gone. Whether they stay is decided here.
     Waits for: report-errors-flag
-23. <a id="retry-creating-request"></a>**Retry the request that created the project** — small, and it becomes first contact
+24. <a id="retry-creating-request"></a>**Retry the request that created the project** — small, and it becomes first contact
     with every new project once auto-discovery is the only way in.
-24. <a id="lsp-tiers"></a>**LSP tiers 1–2** — code actions and `workspace/executeCommand` for extract, move
+25. <a id="lsp-tiers"></a>**LSP tiers 1–2** — code actions and `workspace/executeCommand` for extract, move
     function and the parameter refactorings. Stubs exist: `handle_code_action`,
     `handle_execute_command`, with `codeActionProvider` commented out in
     `src/lsp_handler.c`. Keep tier 3 (custom methods + per-editor extension code) small.
-25. <a id="move-function-next"></a>**Move Function next steps** — remove the source header's extern declaration, include
+26. <a id="move-function-next"></a>**Move Function next steps** — remove the source header's extern declaration, include
     management, helper-function detection, smarter header placement, preview — then
     **Delete Function**. Also **`-parse-all`, a request that parses every compilation
     unit the scan found and has not parsed** — what ADR-0024's CreateMode reduces to
@@ -300,7 +320,7 @@ Pass 3 rounds 19s each, 42s total.
     **semantic read-only files**, **rename handles `expect`**, **project-local
     config**, **Inline Function and Inline Macro**, **Extract an Expression as a
     Function**, **Unify Parameter Names**. All in `11-planned-features.adoc`.
-26. <a id="local-config-fragments"></a>**Local config fragments — the need, not a solution** — *no repo home yet.*
+27. <a id="local-config-fragments"></a>**Local config fragments — the need, not a solution** — *no repo home yet.*
     `.c-xrefrc` travels with the project and is checked in, which is why
     `11-planned-features.adoc` argues for it: "it will not contain absolute file paths".
     Some things are machine-specific and still have to be said somewhere — where the
@@ -325,10 +345,10 @@ Pass 3 rounds 19s each, 42s total.
     does not exist, silently. ADR-0031 makes directories outside the root more common
     and points here.
     Goes with: project-extent
-27. <a id="chapter-17-hygiene"></a>**Chapter 17 hygiene, opportunistically** — incremental `cxfile.c` cleanup, extract
+28. <a id="chapter-17-hygiene"></a>**Chapter 17 hygiene, opportunistically** — incremental `cxfile.c` cleanup, extract
     the macro expansion module, hashtab → hashlist, split the editor module, rename server
     operations, elisp recompiled and deleted on every build.
-28. <a id="dump-reference-database"></a>**Dump Reference Database** — *no repo home yet.* A request that answers with the
+29. <a id="dump-reference-database"></a>**Dump Reference Database** — *no repo home yet.* A request that answers with the
     in-memory table, and a client command for it, so you can see what the server thinks it
     knows without stopping it. The answer is enough to read, e.g. in `*Messages*`. It dumps
     memory, not the snapshot, which leaves out most of what is not visible outside a file,
@@ -343,7 +363,7 @@ Pass 3 rounds 19s each, 42s total.
 
 ## 6. Developer tooling
 
-29. <a id="macos-watchers"></a>**Two causes of watchers not firing on macOS, both found** — *no repo home yet.*
+30. <a id="macos-watchers"></a>**Two causes of watchers not firing on macOS, both found** — *no repo home yet.*
     Kept because the symptoms are absence and noise, which is what gets
     re-investigated from scratch. Diagnosed on the Mac, session `4e8903dc`,
     2026-09-30.
@@ -393,7 +413,7 @@ Pass 3 rounds 19s each, 42s total.
     can stay beside the sources where Emacs cov-mode reads them. Whether it works is
     the open question above; if it does not, moving the build output is what is left.
 
-30. <a id="flaky-preload-tests"></a>**Tests that copy a preload next to the file it replaces can be flaky** — the driver
+31. <a id="flaky-preload-tests"></a>**Tests that copy a preload next to the file it replaces can be flaky** — the driver
     refuses a preload that is not newer than its file, and two `cp`s in a row can get the
     same mtime from the kernel's coarse clock. `test_preload_pruned_after_close` failed so
     once. The fix is to make the replaced file older, `touch -t 200001010000 <file>`. About
@@ -404,28 +424,34 @@ Pass 3 rounds 19s each, 42s total.
 The order is roughly the numbers. `header-not-half` can be done any time; `knowledge-time`
 and `cu-inputs` are the first steps and do not depend on each other.
 
-32. <a id="knowledge-time"></a>**A knowledge time per CU** — recorded where the knowledge is
+33. <a id="knowledge-time"></a>**A knowledge time per CU** — recorded where the knowledge is
     produced, beside `lastParsedMtime`, and kept in the snapshot. Knowledge from held
     content is never written there.
     Waits for: adr-0032
-33. <a id="cu-inputs"></a>**A CU's inputs** — the CU, its forward include closure from the
-    `TypeCppInclude` references in the table, and the project config. Today there is only
-    the reverse walk, `collectCUsIncluding()`, and the forward one starts a new module.
+34. <a id="cu-inputs"></a>**A CU's inputs** — the CU, its forward include closure from the
+    `TypeCppInclude` references in the table, and the project config. The forward closure
+    is in `src/includegraph.c`.
     The predicate needs the inputs only of a CU that has knowledge, i.e. one that was
     parsed, so the include references positioned in it are the ones the parse recorded:
     the `#include`s the preprocessor took, quoted and `<...>`, at their real lines. The
     lightweight scan records every quoted `#include` instead, `#ifdef` or not, no
-    `<...>`, all at line 1, column 0 of the includer. Those matter for reach. A first test
-    should pin down whether a scan can add include references to a CU that already has
-    knowledge. A "defined" reference at line 1 of a file marks the file itself and is not
-    an edge.
+    `<...>`, all at line 1, column 0 of the includer. Those matter for reach. A "defined"
+    reference at line 1 of a file marks the file itself and is not an edge.
+    Who may write an edge, and which writer wins, is decided here: today a scan after a
+    restart adds its edges to CUs that already have knowledge, so an include is listed
+    twice, once on line 1 (`tests/test_restart_keeps_includes_as_parsed`). It matters beyond freshness. The
+    sweep removes a file's references once every CU reaching it has been parsed again,
+    so an edge the graph lacks makes it remove live references, silently (ADR-0033).
     Waits for: adr-0032
-34. <a id="out-of-date"></a>**The one freshness predicate** — no knowledge, or an input
+35. <a id="out-of-date"></a>**The one freshness predicate** — no knowledge, or an input
     changed after the knowledge time, rounded down a tick. Replaces `fileNumberIsStale()`
     and `fileNeedsParsing()`; the config as an input replaces
-    `markAllCompilationUnitsStale()`, and the zero sentinel goes.
+    `markAllCompilationUnitsStale()`, and the zero sentinel goes. The config needs a change
+    time, and who owns it depends on where the project config lives after the options
+    partition.
     Waits for: knowledge-time, cu-inputs
-35. <a id="request-target"></a>**What a request needs** — the symbol's reach for an
+    Goes with: partition-options
+36. <a id="request-target"></a>**What a request needs** — the symbol's reach for an
     operation on a position, the whole project for one on a name. Pass 3 looks only one
     level today: with the request including `a.h`, `a.h` including `decl.h` and an unparsed
     `z.c` including `decl.h`, a rename of a symbol from `decl.h` should miss `z.c` (from
@@ -435,7 +461,7 @@ and `cu-inputs` are the first steps and do not depend on each other.
     headers that way, reach misses CUs never parsed.
     Waits for: adr-0032
     Goes with: header-filtered-siblings
-36. <a id="passes-as-one"></a>**Pass 1, 2 and 3 become one** — bring the goal's
+37. <a id="passes-as-one"></a>**Pass 1, 2 and 3 become one** — bring the goal's
     out-of-date CUs up to date. `test_shared_header_changed_on_disk` comes off suspension.
     `countStalePreloadedFiles` and `reparseStalePreloadedFiles` (`src/server.c`) were left
     unrenamed for this, log texts included. They work on held buffers, not only preloaded
@@ -443,11 +469,11 @@ and `cu-inputs` are the first steps and do not depend on each other.
     Until `sweep` is in, a changed header is stripped only in the entry refresh that
     builds all of its includers, before them, or not at all (ADR-0032).
     Waits for: out-of-date, request-target
-37. <a id="header-not-half"></a>**Pass 2 does not strip a header it cannot rebuild** — it
+38. <a id="header-not-half"></a>**Pass 2 does not strip a header it cannot rebuild** — it
     strips the header's references and then reparses at most 128 includers, so the rest
     of their references are lost, not stale. Leave the header alone when the cap stops it.
     Not needed once `sweep` is in.
-38. <a id="time-budget"></a>**A time budget instead of the 128 CUs** — above it the question
+39. <a id="time-budget"></a>**A time budget instead of the 128 CUs** — above it the question
     with an estimate. Browsing remembers a "no" for the session, an operation that edits
     or works on a name is cancelled by it. Touches the client's question. Today's text
     says "need reparsing" also of CUs never parsed (`src/server.c:603`, and the `expected`
@@ -455,24 +481,24 @@ and `cu-inputs` are the first steps and do not depend on each other.
     that each request still parses a budget's worth? With `sweep` the second is safe, and
     is what lets every reaching CU finally have parsed.
     Waits for: passes-as-one
-39. <a id="freshness-docs"></a>**The docs follow** — *Out of date* replaces *Staleness* in
+40. <a id="freshness-docs"></a>**The docs follow** — *Out of date* replaces *Staleness* in
     `06-principles`, and `08-algorithms` loses "Dual Semantics". In `06-principles`, the
     part on why reparsing only a subset is safe also describes strip-then-reparse.
     Goes with: passes-as-one
-40. <a id="generations"></a>**Generations** — a counter per parse, a mark on every
+41. <a id="generations"></a>**Generations** — a counter per parse, a mark on every
     reference, refreshed in `addToReferenceList()`, and a test that every reference
     enters the table there.
     Waits for: adr-0033
-41. <a id="sweep"></a>**Remove references no CU still emits** — after each request that
+42. <a id="sweep"></a>**Remove references no CU still emits** — after each request that
     parsed something, remove a reference older than every reaching CU's knowledge
     generation, and drop the strips in advance in `reparseStaleFile()`, Pass 2 and
     `singlePass()`. A capped reverse walk removes nothing in that file.
     `test_preprocess_edit_removes_ifdef_define` comes off suspension.
     Waits for: generations, out-of-date
-42. <a id="sweep-cost"></a>**What the sweep costs** — memory and walk time on ffmpeg,
+43. <a id="sweep-cost"></a>**What the sweep costs** — memory and walk time on ffmpeg,
     whether the reverse walk can go uncapped, and how the mark is stored.
     Goes with: sweep
-43. <a id="snapshot-v2"></a>**Snapshot format 2.0.0** — one bump for the changes that make the
+44. <a id="snapshot-v2"></a>**Snapshot format 2.0.0** — one bump for the changes that make the
     snapshot the make model's: the knowledge time, `n` gone, and `m`
     (`lastFullUpdateMtime`, only written and read back) gone. Possibly also `i`
     (`isArgument`), if it means nothing for a scanned project, and the usage numbering,
