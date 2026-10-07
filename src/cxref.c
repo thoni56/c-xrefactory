@@ -2205,7 +2205,7 @@ void olSetCallerPosition(Position position) {
 void markPreloadedFilesAsAncient(void) {
     for (int i = getNextExistingEditorBufferIndex(0); i != -1; i = getNextExistingEditorBufferIndex(i+1)) {
         for (EditorBufferList *l = getEditorBufferListElementAt(i); l != NULL; l = l->next) {
-            if (isPreloaded(l->buffer)) {
+            if (holdsAuthoritativeContent(l->buffer)) {
                 FileItem *fileItem = getFileItemWithFileNumber(l->buffer->fileNumber);
                 fileItem->lastParsedMtime = NULL_TIMESTAMP;
                 fileItem->knowledgeTime = NULL_TIMESTAMP;

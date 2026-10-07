@@ -129,3 +129,18 @@ Ensure(CxRef, does_not_warn_when_request_names_the_locked_project) {
     options.project = NULL;
     lockedProject = NULL;
 }
+
+Ensure(CxRef, knowledge_built_from_content_the_server_edited_is_forgotten_before_the_snapshot) {
+    EditorBuffer buffer = {.fileNumber = 42, .modified = true};
+    EditorBufferList bufferList = {.buffer = &buffer, .next = NULL};
+    FileItem fileItem = {.name = "a.c", .knowledgeTime = {.tv_sec = 1234}};
+    expect(getNextExistingEditorBufferIndex, when(index, is_equal_to(0)), will_return(7));
+    expect(getEditorBufferListElementAt, when(index, is_equal_to(7)), will_return(&bufferList));
+    expect(holdsAuthoritativeContent, when(buffer, is_equal_to(&buffer)), will_return(true));
+    expect(getFileItemWithFileNumber, when(fileNumber, is_equal_to(42)), will_return(&fileItem));
+    expect(getNextExistingEditorBufferIndex, when(index, is_equal_to(8)), will_return(-1));
+
+    markPreloadedFilesAsAncient();
+
+    assert_that(fileItem.knowledgeTime.tv_sec, is_equal_to(0));
+}
