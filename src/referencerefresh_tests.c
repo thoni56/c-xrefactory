@@ -131,3 +131,15 @@ Ensure(ReferenceRefresh, buildKnowledgeOfCU_marks_a_file_gone_from_disk_as_delet
     ArgumentsVector baseArgs = {.argc = 0, .argv = NULL};
     buildKnowledgeOfCU(42, baseArgs);
 }
+
+Ensure(ReferenceRefresh, markAllCompilationUnitsStale_forgets_when_the_knowledge_was_built) {
+    FileItem fileItem = {.name = "test.c", .knowledgeTime = {.tv_sec = 1234}};
+    expect(getNextExistingFileNumber, when(fileNumber, is_equal_to(0)), will_return(42));
+    expect(getFileItemWithFileNumber, when(fileNumber, is_equal_to(42)), will_return(&fileItem));
+    expect(isCompilationUnit, when(fileName, is_equal_to_string("test.c")), will_return(true));
+    expect(getNextExistingFileNumber, when(fileNumber, is_equal_to(43)), will_return(-1));
+
+    markAllCompilationUnitsStale();
+
+    assert_that(fileTimestampIsZero(fileItem.knowledgeTime));
+}

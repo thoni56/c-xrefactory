@@ -77,8 +77,10 @@ void buildKnowledgeOfCU(int fileNumber, ArgumentsVector baseArgs) {
 void markAllCompilationUnitsStale(void) {
     for (int i = getNextExistingFileNumber(0); i != -1; i = getNextExistingFileNumber(i + 1)) {
         FileItem *fileItem = getFileItemWithFileNumber(i);
-        if (isCompilationUnit(fileItem->name))
+        if (isCompilationUnit(fileItem->name)) {
             fileItem->lastParsedMtime = NULL_TIMESTAMP;
+            fileItem->knowledgeTime = NULL_TIMESTAMP;
+        }
     }
 }
 
