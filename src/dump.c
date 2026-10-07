@@ -4,9 +4,11 @@
 #include <stdlib.h>
 #include <string.h>
 
+#include "commons.h"
 #include "constants.h"
 #include "filetable.h"
 #include "ppc.h"
+#include "proto.h"
 #include "protocol.h"
 #include "timestamp.h"
 
@@ -51,4 +53,10 @@ static void dumpKnowledge(void) {
 void dumpTable(char *selection) {
     if (strcmp(selection, "knowledge") == 0)
         dumpKnowledge();
+    else {
+        char message[MAX_PPC_RECORD_SIZE];
+        snprintf(message, sizeof(message), "Nothing to dump for '%s', the selections are: knowledge",
+                 selection);
+        errorMessage(ERR_ST, message);
+    }
 }

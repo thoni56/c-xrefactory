@@ -1,0 +1,15 @@
+CXREF -server -o server-buffer
+-getproject CURDIR/a.c
+end-of-options
+
+<sync>
+<set-info len=<n>>CURDIR</set-info>
+-dump=nonsense
+end-of-options
+
+<sync>
+<error len=<n>>Nothing to dump for 'nonsense', the selections are: knowledge
+</error>
+-exit
+end-of-options
+
