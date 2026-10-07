@@ -451,8 +451,9 @@ Pass 3 rounds 19s each, 42s total.
 
 ## 7. Freshness as make (ADR-0032, ADR-0033)
 
-The order is roughly the numbers. `header-not-half` can be done any time; `cu-inputs`
-and `out-of-date` are the next step, together.
+The order is roughly the numbers. `header-not-half` can be done any time. Next is a
+cheap way to find the out-of-date CUs, the edges once in `cu-inputs` or change first in
+`out-of-date`; the closure as it is makes every request slow.
 
 Performance, from reading the code (Mac, session `05984816`, 2026-10-08): at equal
 correctness the design costs the same or less. Parsing dominates, and what is parsed
@@ -463,23 +464,25 @@ sweep per request — is small beside what goes. The risks are in the implementa
 are noted in `cu-inputs`, `out-of-date`, `time-budget` and `sweep-cost`.
 
 35. <a id="cu-inputs"></a>**A CU's inputs** — the CU, its include closure and the project
-    config, put together where `out-of-date` uses them. The closure is
-    `collectIncludeClosure()` in `src/includegraph.c`. A count above its maximum means the
-    closure did not fit, and the CU is then out of date. `includegraph` goes into
-    `src/sources.mk` with it. The closure can hold the scan's includes beside the parse's,
-    which for the predicate only costs a parse.
-    Cost: `collectIncludeClosure()` walks the whole table once per file in the closure,
-    so a closure per CU per request is closure × table × CUs — on ffmpeg the slowest
-    thing in the server. Build the forward edges once per request from the
-    `TypeCppInclude` items alone (one per included file), or avoid forward closures with
-    the evaluation in `out-of-date`.
+    config, put together where `out-of-date` uses them, the CU first. The closure is
+    `collectIncludeClosure()` in `src/includegraph.c`, one pass over the whole table per
+    file in it. That is too slow: with Pass 3 asking `knowledgeIsOutOfDate()` (9a0f996c,
+    not pushed), every request on `src/` takes about 19 s without parsing anything, Next
+    and Pop included (WSL, session `d25255b8`, 2026-10-07). Confirm with a trace first.
+    Then build the forward edges once per request from the `TypeCppInclude` items alone
+    (one per included file), or avoid forward closures with the evaluation in
+    `out-of-date`. 9a0f996c is not pushed before that, since a push moves `stable`. The
+    closure can hold the scan's includes beside the parse's, which for the predicate only
+    costs a parse.
     Goes with: out-of-date
-36. <a id="out-of-date"></a>**The one freshness predicate** — no knowledge, or an input
-    changed after a tick before the knowledge time. Replaces `fileNumberIsStale()`
-    and `fileNeedsParsing()`; the config as an input replaces
+36. <a id="out-of-date"></a>**The one freshness predicate** — `knowledgeIsOutOfDate()` in
+    `src/freshness.c`: no knowledge, an input gone, or an input changed after a tick
+    before the knowledge time. Pass 3 uses it. Left: `singlePass()`, then Pass 1, which
+    builds a held CU whose header changed twice, with Pass 2, until `passes-as-one`. Then
+    `fileNumberIsStale()` and `fileNeedsParsing()` go. The config as an input replaces
     `markAllCompilationUnitsStale()`, and the zero sentinel goes. The config needs a change
     time, and who owns it depends on where the project config lives after the options
-    partition.
+    partition. `MAX_INCLUDE_CLOSURE` (1000) has no measured reason.
     Evaluate it change first: `stat` each known file once per request, take those that
     changed, and walk the reverse include graph (`collectCUsIncluding()`, a hash lookup
     per step) to the CUs whose knowledge time is older. That costs in proportion to what
