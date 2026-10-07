@@ -385,9 +385,15 @@ Pass 3 rounds 19s each, 42s total.
     taken afterwards had the reference, so it could not say whether the server knew it at
     the time of the rename.
 
+30. <a id="compile-commands"></a>**Read `-I` and `-D` from `compile_commands.json`** —
+    *no repo home yet.* Nothing reads it today. CMake and Meson write one, and `bear`
+    makes one for Make. It decides whether a stranger's first project works without
+    learning `.c-xrefrc` (section 8).
+    Goes with: project-extent, local-config-fragments, compiler-asked-twice
+
 ## 6. Developer tooling
 
-30. <a id="macos-watchers"></a>**Two causes of watchers not firing on macOS, both found** — *no repo home yet.*
+31. <a id="macos-watchers"></a>**Two causes of watchers not firing on macOS, both found** — *no repo home yet.*
     Kept because the symptoms are absence and noise, which is what gets
     re-investigated from scratch. Diagnosed on the Mac, session `4e8903dc`,
     2026-09-30.
@@ -437,7 +443,7 @@ Pass 3 rounds 19s each, 42s total.
     can stay beside the sources where Emacs cov-mode reads them. Whether it works is
     the open question above; if it does not, moving the build output is what is left.
 
-31. <a id="flaky-preload-tests"></a>**Tests that copy a preload next to the file it replaces can be flaky** — the driver
+32. <a id="flaky-preload-tests"></a>**Tests that copy a preload next to the file it replaces can be flaky** — the driver
     refuses a preload that is not newer than its file, and two `cp`s in a row can get the
     same mtime from the kernel's coarse clock. `test_preload_pruned_after_close` failed so
     once. The fix is to make the replaced file older, `touch -t 200001010000 <file>`. About
@@ -448,14 +454,14 @@ Pass 3 rounds 19s each, 42s total.
 The order is roughly the numbers. `header-not-half` can be done any time; `cu-inputs`
 and `out-of-date` are the next step, together.
 
-34. <a id="cu-inputs"></a>**A CU's inputs** — the CU, its include closure and the project
+35. <a id="cu-inputs"></a>**A CU's inputs** — the CU, its include closure and the project
     config, put together where `out-of-date` uses them. The closure is
     `collectIncludeClosure()` in `src/includegraph.c`. A count above its maximum means the
     closure did not fit, and the CU is then out of date. `includegraph` goes into
     `src/sources.mk` with it. The closure can hold the scan's includes beside the parse's,
     which for the predicate only costs a parse.
     Goes with: out-of-date
-35. <a id="out-of-date"></a>**The one freshness predicate** — no knowledge, or an input
+36. <a id="out-of-date"></a>**The one freshness predicate** — no knowledge, or an input
     changed after the knowledge time, rounded down a tick. Replaces `fileNumberIsStale()`
     and `fileNeedsParsing()`; the config as an input replaces
     `markAllCompilationUnitsStale()`, and the zero sentinel goes. The config needs a change
@@ -463,7 +469,7 @@ and `out-of-date` are the next step, together.
     partition.
     Waits for: adr-0032
     Goes with: partition-options, cu-inputs
-36. <a id="request-target"></a>**What a request needs** — the symbol's reach for an
+37. <a id="request-target"></a>**What a request needs** — the symbol's reach for an
     operation on a position, the whole project for one on a name. Pass 3 looks only one
     level today: with the request including `a.h`, `a.h` including `decl.h` and an unparsed
     `z.c` including `decl.h`, a rename of a symbol from `decl.h` should miss `z.c` (from
@@ -473,7 +479,7 @@ and `out-of-date` are the next step, together.
     headers that way, reach misses CUs never parsed.
     Waits for: adr-0032
     Goes with: header-filtered-siblings
-37. <a id="passes-as-one"></a>**Pass 1, 2 and 3 become one** — bring the goal's
+38. <a id="passes-as-one"></a>**Pass 1, 2 and 3 become one** — bring the goal's
     out-of-date CUs up to date. `test_shared_header_changed_on_disk` comes off suspension.
     `countStalePreloadedFiles` and `reparseStalePreloadedFiles` (`src/server.c`) were left
     unrenamed for this, log texts included. They work on held buffers, not only preloaded
@@ -481,11 +487,11 @@ and `out-of-date` are the next step, together.
     Until `sweep` is in, a changed header is stripped only in the entry refresh that
     builds all of its includers, before them, or not at all (ADR-0032).
     Waits for: out-of-date, request-target
-38. <a id="header-not-half"></a>**Pass 2 does not strip a header it cannot rebuild** — it
+39. <a id="header-not-half"></a>**Pass 2 does not strip a header it cannot rebuild** — it
     strips the header's references and then reparses at most 128 includers, so the rest
     of their references are lost, not stale. Leave the header alone when the cap stops it.
     Not needed once `sweep` is in.
-39. <a id="time-budget"></a>**A time budget instead of the 128 CUs** — above it the question
+40. <a id="time-budget"></a>**A time budget instead of the 128 CUs** — above it the question
     with an estimate. Browsing remembers a "no" for the session, an operation that edits
     or works on a name is cancelled by it. Touches the client's question. Today's text
     says "need reparsing" also of CUs never parsed (`src/server.c:603`, and the `expected`
@@ -493,11 +499,11 @@ and `out-of-date` are the next step, together.
     that each request still parses a budget's worth? With `sweep` the second is safe, and
     is what lets every reaching CU finally have parsed.
     Waits for: passes-as-one
-40. <a id="freshness-docs"></a>**The docs follow** — *Out of date* replaces *Staleness* in
+41. <a id="freshness-docs"></a>**The docs follow** — *Out of date* replaces *Staleness* in
     `06-principles`, and `08-algorithms` loses "Dual Semantics". In `06-principles`, the
     part on why reparsing only a subset is safe also describes strip-then-reparse.
     Goes with: passes-as-one
-41. <a id="include-edges"></a>**Who writes include edges** — the parse and the lightweight
+42. <a id="include-edges"></a>**Who writes include edges** — the parse and the lightweight
     scan both do. The parse records the `#include`s the preprocessor took, quoted and
     `<...>`, at their real lines. The scan records every quoted `#include`, `#ifdef` or
     not, no `<...>`, all at line 1, column 0 of the includer. A "defined" reference at
@@ -507,19 +513,55 @@ and `out-of-date` are the next step, together.
     write an edge and which writer wins. The sweep needs it: it removes a file's
     references once every CU reaching it has been parsed again, so an edge the graph
     lacks makes it remove live references, silently (ADR-0033).
-42. <a id="generations"></a>**Generations** — a counter per parse, a mark on every
+43. <a id="generations"></a>**Generations** — a counter per parse, a mark on every
     reference, refreshed in `addToReferenceList()`, and a test that every reference
     enters the table there.
     Waits for: adr-0033
-43. <a id="sweep"></a>**Remove references no CU still emits** — after each request that
+44. <a id="sweep"></a>**Remove references no CU still emits** — after each request that
     parsed something, remove a reference older than every reaching CU's knowledge
     generation, and drop the strips in advance in `buildKnowledgeOfCU()`, Pass 2 and
     `singlePass()`. A capped reverse walk removes nothing in that file.
     `test_preprocess_edit_removes_ifdef_define` comes off suspension.
     Waits for: generations, out-of-date, include-edges
-44. <a id="sweep-cost"></a>**What the sweep costs** — memory and walk time on ffmpeg,
+45. <a id="sweep-cost"></a>**What the sweep costs** — memory and walk time on ffmpeg,
     whether the reverse walk can go uncapped, and how the mark is stored.
     Goes with: sweep
+
+## 8. Real users: installing and being found
+
+Prepare the installation side whenever it suits; it depends on nothing above. Hold the
+announcement until branch switching is safe, since a wrong rename after a `git checkout`
+loses a first user. *No repo home yet* for any of these — discussed on WSL and on the
+Mac (session `05984816`), 2026-10-07.
+
+46. <a id="release-build"></a>**A lean release build** — no coverage, no unit tests, only
+    `c-xref`. The generated parsers are committed, so `cc` and `make` are enough.
+47. <a id="protocol-handshake"></a>**The client and the server check a protocol version** —
+    once the elisp and the binary are installed apart they drift (MELPA builds HEAD, the
+    binary is whatever was built). On a mismatch the client offers to rebuild, rather
+    than failing in some later request.
+48. <a id="install-server"></a>**`M-x c-xref-install-server`** — builds from source by
+    default, since every user of a C tool has a compiler; downloads a release binary as
+    the shortcut. The pattern of `pdf-tools-install` and `irony-install-server`. A binary
+    fetched by Emacs with `curl` is not quarantined by macOS Gatekeeper.
+    Waits for: release-build, protocol-handshake
+49. <a id="releases"></a>**Tagged releases** — semver tags from `stable`, GitHub Releases
+    with binaries, and through the tags MELPA Stable. A Homebrew tap and an AUR package
+    are cheap once releases exist.
+    Waits for: release-build
+50. <a id="melpa"></a>**The elisp on MELPA** — the package without binaries, which MELPA
+    forbids; the server comes from `install-server`. `el-get` and `load.el` stay.
+    Waits for: install-server, releases
+51. <a id="readme-first-screen"></a>**The README sells on its first screen** — a GIF or
+    asciinema of a parameter move across files; the Java section goes.
+52. <a id="announce"></a>**Announce** — positioned beside clangd, not against it: the
+    refactorings clangd does not have (parameters, move function, macros, Yacc). LSP
+    tier 2 is the shape of that, with clangd as the main server; lsp-mode takes add-on
+    servers, eglot needs a look. EmacsConf, Sacha Chua's Emacs News, Show HN. A stranger's
+    first project working without configuration matters here, see `compile-commands`.
+    Waits for: passes-as-one, sweep, refactoring-refusals, install-server, readme-first-screen
+    Goes with: lsp-tiers, retry-creating-request, compile-commands
+
 ## Foundation
 
 What the open items rest on, so that a `Waits for:` can name it. Not a record of what
