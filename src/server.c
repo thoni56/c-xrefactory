@@ -12,6 +12,7 @@
 #include "filedescriptor.h"
 #include "fileio.h"
 #include "filetable.h"
+#include "freshness.h"
 #include "globals.h"
 #include "head.h"
 #include "log.h"
@@ -417,7 +418,7 @@ static void parseUnparsedSiblingCUs(int requestFileNumber, ArgumentsVector baseA
             FileItem *siblingItem = getFileItemWithFileNumber(siblingFileNum);
             if (!isCompilationUnit(siblingItem->name))
                 continue;
-            if (!fileNeedsParsing(siblingItem)) {
+            if (!knowledgeIsOutOfDate(siblingFileNum)) {
                 skippedAlreadyParsed++;
                 continue;
             }

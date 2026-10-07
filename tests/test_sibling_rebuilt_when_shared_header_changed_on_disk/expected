@@ -1,0 +1,33 @@
+CXREF -server -o server-buffer
+-getproject CURDIR/a.c
+end-of-options
+
+<sync>
+<set-info len=<n>>CURDIR</set-info>
+-push -olcursor=45 CURDIR/a.c
+end-of-options
+
+<sync>
+<goto>
+ <position-lc line=3 col=4 len=<n>>CURDIR/a.c</position-lc>
+</goto>
+shell: cp CURDIR/x_v2.h CURDIR/x.h
+-push -olcursor=45 CURDIR/a.c
+end-of-options
+
+<sync>
+<goto>
+ <position-lc line=3 col=4 len=<n>>CURDIR/a.c</position-lc>
+</goto>
+-olcxfilter=0 -olcursor=0 nil
+end-of-options
+
+<sync>
+<reference-list val=0 symbol="g">
+<src-line refn=1 len=<n>>a.c:3:int g(void) { return 1; }</src-line>
+<src-line refn=1 len=<n>>x.h:2:int g(void);</src-line>
+<src-line refn=1 len=<n>>x.h:3:#define CALL g</src-line>
+</reference-list>
+-exit
+end-of-options
+

@@ -1,0 +1,8 @@
+/* -*- c -*-*/
+#include "freshness.h"
+#include <cgreen/mocks.h>
+
+
+bool knowledgeIsOutOfDate(int fileNumber) {
+    return (bool)mock(fileNumber);
+}

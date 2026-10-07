@@ -22,6 +22,7 @@
 #include "filedescriptor.mock"
 #include "fileio.mock"
 #include "filetable.mock"
+#include "freshness.mock"
 #include "globals.mock"
 #include "init.mock"
 #include "lexer.mock"
