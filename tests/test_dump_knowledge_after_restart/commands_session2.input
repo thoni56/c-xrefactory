@@ -1,0 +1,6 @@
+CXREF -server
+-getproject CURDIR/a.c
+<sync>
+-dump=knowledge
+<sync>
+<exit>

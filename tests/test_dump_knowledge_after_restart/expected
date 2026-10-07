@@ -1,0 +1,16 @@
+CXREF -server -o server-buffer
+-getproject CURDIR/a.c
+end-of-options
+
+<sync>
+<set-info len=<n>>CURDIR</set-info>
+-dump=knowledge
+end-of-options
+
+<sync>
+<information len=<n>>CURDIR/a.c: knowledge</information>
+<information len=<n>>CURDIR/b.c: no knowledge</information>
+<information len=<n>>CURDIR/x.h: no knowledge</information>
+-exit
+end-of-options
+

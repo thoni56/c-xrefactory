@@ -30,12 +30,14 @@
 
 /* *********************** INPUT/OUTPUT FIELD MARKERS ************************** */
 
-#define C_XREF_FILE_FORMAT_VERSION "1.11.0"
+#define C_XREF_FILE_FORMAT_VERSION "1.12.0"
 
 typedef enum {
     CXFI_FILE_FUMTIME          = 'm',     /* last full update mtime for file item (seconds) */
     CXFI_FILE_UMTIME           = 'p',     /* last update mtime for file item (seconds) */
     CXFI_FILE_UMTIME_NSEC      = 'q',     /* last update mtime nanoseconds */
+    CXFI_FILE_KNOWLEDGE_TIME   = 'w',     /* when the CU's knowledge was built (seconds) */
+    CXFI_FILE_KNOWLEDGE_TIME_NSEC = 'x',  /* knowledge time nanoseconds */
     CXFI_COMMAND_LINE_ARGUMENT = 'i',     /* file was introduced from command line */
 
     CXFI_FILE_NUMBER           = 'f',
@@ -73,6 +75,8 @@ static CxFieldTag generatedFieldKeyList[] = {
     CXFI_FILE_FUMTIME,
     CXFI_FILE_UMTIME,
     CXFI_FILE_UMTIME_NSEC,
+    CXFI_FILE_KNOWLEDGE_TIME,
+    CXFI_FILE_KNOWLEDGE_TIME_NSEC,
     CXFI_FILE_NUMBER,
     CXFI_SYMBOL_TYPE,
     CXFI_USAGE,
@@ -330,6 +334,8 @@ static void writeFileNumberItem(FileItem *fileItem, int number) {
     writeOptionalCompactRecord(CXFI_FILE_NUMBER, number, "\n");
     writeOptionalCompactRecord(CXFI_FILE_UMTIME, fileTimestampSeconds(fileItem->lastParsedMtime), " ");
     writeOptionalCompactRecord(CXFI_FILE_UMTIME_NSEC, fileTimestampNanoseconds(fileItem->lastParsedMtime), "");
+    writeOptionalCompactRecord(CXFI_FILE_KNOWLEDGE_TIME, fileTimestampSeconds(fileItem->knowledgeTime), "");
+    writeOptionalCompactRecord(CXFI_FILE_KNOWLEDGE_TIME_NSEC, fileTimestampNanoseconds(fileItem->knowledgeTime), "");
     writeOptionalCompactRecord(CXFI_FILE_FUMTIME, fileTimestampSeconds(fileItem->lastFullUpdateMtime), " ");
     writeOptionalCompactRecord(CXFI_COMMAND_LINE_ARGUMENT, fileItem->isArgument, "");
     writeStringRecord(CXFI_FILE_NAME, fileItem->name, " ");
@@ -508,12 +514,14 @@ static void scanFunction_ReadFileName(int fileNameLength,
     FileItem *fileItem;
     int fileNumber;
     bool isArgument;
-    FileTimestamp fumtime, umtime;
+    FileTimestamp fumtime, umtime, knowledgeTime;
 
     assert(key == CXFI_FILE_NAME);
     fumtime = makeFileTimestamp(lastIncomingData.data[CXFI_FILE_FUMTIME], 0);
     umtime = makeFileTimestamp(lastIncomingData.data[CXFI_FILE_UMTIME],
                                lastIncomingData.data[CXFI_FILE_UMTIME_NSEC]);
+    knowledgeTime = makeFileTimestamp(lastIncomingData.data[CXFI_FILE_KNOWLEDGE_TIME],
+                                      lastIncomingData.data[CXFI_FILE_KNOWLEDGE_TIME_NSEC]);
     isArgument = lastIncomingData.data[CXFI_COMMAND_LINE_ARGUMENT];
 
     assert(fileNameLength < MAX_FILE_NAME_SIZE);
@@ -530,6 +538,8 @@ static void scanFunction_ReadFileName(int fileNameLength,
             fileItem->lastFullUpdateMtime=fumtime;
         if (fileTimestampIsZero(fileItem->lastParsedMtime))
             fileItem->lastParsedMtime=umtime;
+        if (fileTimestampIsZero(fileItem->knowledgeTime))
+            fileItem->knowledgeTime=knowledgeTime;
         assert(options.mode);
     } else {
         fileNumber = getFileNumberFromFileName(fileName);
@@ -541,6 +551,8 @@ static void scanFunction_ReadFileName(int fileNameLength,
             fileItem->lastFullUpdateMtime=fumtime;
         if (fileTimestampIsZero(fileItem->lastParsedMtime))
             fileItem->lastParsedMtime=umtime;
+        if (fileTimestampIsZero(fileItem->knowledgeTime))
+            fileItem->knowledgeTime=knowledgeTime;
     }
     fileNumberMapping[lastIncomingFileNumber]=fileNumber;
     log_trace("%d: '%s' scanned: added as %d", lastIncomingFileNumber, fileName, fileNumber);
