@@ -58,6 +58,11 @@ graph from them on every push, linked at the end of this file, and `utils/backlo
    a macro expanded (`singlePass`). The second becomes a parameter to
    `initializeFileProcessing()`, the first goes to the `Request` (§17.4), or to the
    `RefactoringRequest` for the refactorings.
+   Today a CU built during entry refresh resets the request's options: the fast path of
+   `initializeFileProcessing()` copies `savedOptions`, taken at server start, over
+   `options`. `parseFileWithFullInit()` keeps only `cursorOffset`, `noErrors`,
+   `serverOperation` and, as a stopgap, `dumpSelection` (`test_dump_after_a_rebuild`).
+   Every other REQUEST option is lost when a rebuild comes before the dispatch.
 4. <a id="setup-ladder"></a>**The Setup Ladder, in this sequence**, each small once the partition lands
    (`doc/docs/10-roadmap.adoc`, Convergence: The Setup Ladder → Remaining):
    a. <a id="root-path-id"></a>**the server's project id is its root path** — ADR-0029. `lockedProject` becomes the
