@@ -31,3 +31,12 @@ long fileTimestampNanoseconds(FileTimestamp ts) {
 FileTimestamp makeFileTimestamp(long seconds, long nanoseconds) {
     return (FileTimestamp){ .tv_sec = seconds, .tv_nsec = nanoseconds };
 }
+
+FileTimestamp fileTimestampMinus(FileTimestamp ts, long nanoseconds) {
+    ts.tv_nsec -= nanoseconds;
+    if (ts.tv_nsec < 0) {
+        ts.tv_sec -= 1;
+        ts.tv_nsec += 1000000000L;
+    }
+    return ts;
+}

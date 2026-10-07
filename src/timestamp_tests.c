@@ -80,3 +80,13 @@ Ensure(Timestamp, equal_is_not_less_than) {
     FileTimestamp b = makeFileTimestamp(1000, 100);
     assert_that(fileTimestampIsLessThan(a, b), is_false);
 }
+
+Ensure(Timestamp, minus_takes_nanoseconds_within_the_second) {
+    FileTimestamp ts = fileTimestampMinus(makeFileTimestamp(1000, 300), 100);
+    assert_that(fileTimestampsEqual(ts, makeFileTimestamp(1000, 200)));
+}
+
+Ensure(Timestamp, minus_borrows_from_the_seconds) {
+    FileTimestamp ts = fileTimestampMinus(makeFileTimestamp(1000, 100), 200);
+    assert_that(fileTimestampsEqual(ts, makeFileTimestamp(999, 999999900)));
+}

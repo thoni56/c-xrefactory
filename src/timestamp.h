@@ -15,5 +15,6 @@ extern FileTimestamp fileTimestampNow(void);
 extern long fileTimestampSeconds(FileTimestamp ts);
 extern long fileTimestampNanoseconds(FileTimestamp ts);
 extern FileTimestamp makeFileTimestamp(long seconds, long nanoseconds);
+extern FileTimestamp fileTimestampMinus(FileTimestamp ts, long nanoseconds);
 
 #endif
