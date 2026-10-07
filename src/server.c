@@ -101,14 +101,16 @@ static bool requiresProcessingInputFile(ServerOperation operation) {
    parses nothing). */
 static bool answeredWithoutReferences(ServerOperation operation) {
     return operation == OP_GET_PROJECT
-        || operation == OP_GET_ENV_VALUE;
+        || operation == OP_GET_ENV_VALUE
+        || operation == OP_DUMP;     /* shows the table as it is, refreshing would change it */
 }
 
 /* -get answers from the locked project's variables. An input file only adds the
    ${__file} family of expansions to the value, so a request without one is
    answerable rather than an error. */
 static bool toleratesMissingInputFile(ServerOperation operation) {
-    return operation == OP_GET_ENV_VALUE;
+    return operation == OP_GET_ENV_VALUE
+        || operation == OP_DUMP;
 }
 
 

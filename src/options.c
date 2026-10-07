@@ -71,6 +71,7 @@ Options presetOptions = {
     .pushName = NULL,
     .browsedName = NULL,
     .variableToGet = "",
+    .dumpSelection = "",
     .searchString = "",
     .searchKind = SEARCH_FULL,
     .completionCaseSensitive = false,
@@ -1080,6 +1081,10 @@ static bool processDOption(int *argi, ArgumentsVector args) {
     if (0) {}                   /* For copy/paste/re-order convenience, all tests can start with "else if.." */
     else if (strncmp(args.argv[i], "-delay=", 7)==0)
         /* Startup delay already handled in main() */ ;
+    else if (strncmp(args.argv[i], "-dump=", 6)==0) {
+        options.dumpSelection = allocateStringForOption(&options.dumpSelection, &args.argv[i][6]);
+        options.serverOperation = OP_DUMP;
+    }
     else if (strcmp(args.argv[i], "-debug")==0)
         options.debug = true;
     else if (strncmp(args.argv[i], "-D",2)==0) {

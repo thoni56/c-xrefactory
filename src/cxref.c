@@ -10,6 +10,7 @@
 #include "complete.h"
 #include "constants.h"
 #include "cxfile.h"
+#include "dump.h"
 #include "editorbuffer.h"
 #include "editorbuffertable.h"
 #include "filedescriptor.h"
@@ -1878,6 +1879,10 @@ void answerEditorAction(void) {
 
     case OP_GET_ENV_VALUE:
         olcxProcessGetRequest();
+        break;
+
+    case OP_DUMP:
+        dumpTable(options.dumpSelection);
         break;
 
         /* COMPLETION */

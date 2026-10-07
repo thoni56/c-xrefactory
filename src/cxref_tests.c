@@ -11,6 +11,7 @@
 #include "commons.mock"
 #include "complete.mock"
 #include "completion.mock"
+#include "dump.mock"
 #include "cxfile.mock"
 #include "editor.mock"
 #include "editorbuffer.mock"

@@ -27,6 +27,7 @@
     ENUM(OP_COMPLETION_NEXT)                            \
     ENUM(OP_COMPLETION_PREVIOUS)                        \
     ENUM(OP_COMPLETION_SELECT)                          \
+    ENUM(OP_DUMP)                                       \
     ENUM(OP_FILTER_MINUS)                               \
     ENUM(OP_FILTER_PLUS)                                \
     ENUM(OP_FILTER_SET)                                 \

@@ -1,0 +1,7 @@
+/* -*- c -*-*/
+#include "dump.h"
+#include <cgreen/mocks.h>
+
+void dumpTable(char *selection) {
+    mock(selection);
+}

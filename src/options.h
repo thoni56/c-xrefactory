@@ -98,6 +98,7 @@ typedef struct options {
     char *pushName;                             /* REQUEST */
     char *browsedName;                          /* REQUEST */
     char *variableToGet;                        /* REQUEST */
+    char *dumpSelection;                        /* REQUEST, e.g. "knowledge" for -dump=knowledge */
     char *searchString;                         /* REQUEST */
     SearchKind searchKind;                      /* REQUEST */
     bool completionCaseSensitive;               /* REQUEST */
