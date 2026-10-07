@@ -47,7 +47,6 @@ flowchart BT
   dump_reference_database["§5 · 29 · Dump Reference Database"]
   macos_watchers["§6 · 30 · Two causes of watchers not firing on macOS, both found"]
   flaky_preload_tests["§6 · 31 · Tests that copy a preload next to the file it replaces can be flaky"]
-  knowledge_time["§7 · 33 · A knowledge time per CU"]
   cu_inputs["§7 · 34 · A CU's inputs"]
   out_of_date["§7 · 35 · The one freshness predicate"]
   request_target["§7 · 36 · What a request needs"]
@@ -82,8 +81,7 @@ flowchart BT
   behind_the_back --&gt; remove_references_stopgap
   entry_refresh --&gt; index_based_sessions
   report_errors_flag --&gt; indexing_log_buffer
-  adr_0032 --&gt; knowledge_time
-  knowledge_time --&gt; out_of_date
+  adr_0032 --&gt; out_of_date
   adr_0032 --&gt; request_target
   out_of_date --&gt; passes_as_one
   request_target --&gt; passes_as_one
@@ -109,7 +107,7 @@ flowchart BT
   request_target -.- header_filtered_siblings
   freshness_docs -.- passes_as_one
   sweep_cost -.- sweep
-  linkStyle 27,28,29,30,31,32,33,34,35,36,37,38,39,40,41,42,43 stroke:#8a63d2,stroke-width:2px,stroke-dasharray:6 4
+  linkStyle 26,27,28,29,30,31,32,33,34,35,36,37,38,39,40,41,42 stroke:#8a63d2,stroke-width:2px,stroke-dasharray:6 4
   class cursor_parse_reuse blocked
   class compiler_asked_twice blocked
   class partition_options ready
@@ -145,9 +143,8 @@ flowchart BT
   class dump_reference_database ready
   class macos_watchers ready
   class flaky_preload_tests ready
-  class knowledge_time ready
   class cu_inputs ready
-  class out_of_date blocked
+  class out_of_date ready
   class request_target ready
   class passes_as_one blocked
   class header_not_half ready
