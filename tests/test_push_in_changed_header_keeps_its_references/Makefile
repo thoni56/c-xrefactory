@@ -17,7 +17,7 @@ $(TEST): .c-xrefrc
 	@cp a.h.v1 a.h
 	@touch -t 200001010000 a.h a.c
 	@-$(SERVER_DRIVER) commands.input $(EXTRA) > output.tmp 2>&1
-	@../../utils/cxref_reader .c-xref/db | awk '/^[^ ]/ {symbol = $$0} /@a\.h:/ {print symbol}' | sort -u > output
+	@../../utils/cxref_reader .c-xref/db | awk '/^[^ ]/ {symbol = $$0} /@a\.h:/ {print symbol}' | LC_ALL=C sort -u > output
 	$(VERIFY)
 
 trace: EXTRA = --extra '-debug -log=trace'
