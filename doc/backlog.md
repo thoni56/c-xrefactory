@@ -371,18 +371,19 @@ Pass 3 rounds 19s each, 42s total.
 28. <a id="chapter-17-hygiene"></a>**Chapter 17 hygiene, opportunistically** — incremental `cxfile.c` cleanup, extract
     the macro expansion module, hashtab → hashlist, split the editor module, rename server
     operations, elisp recompiled and deleted on every build.
-29. <a id="dump-reference-database"></a>**Dump Reference Database** — *no repo home yet.* A request that answers with the
-    in-memory table, and a client command for it, so you can see what the server thinks it
-    knows without stopping it. The answer is enough to read, e.g. in `*Messages*`. It dumps
-    memory, not the snapshot, which leaves out most of what is not visible outside a file,
-    so it shows more. What it does not solve is realising you need the dump before the
-    state is gone. A rename missed `clearPreloadedThisRequestFlags` in `src/editor.mock`
-    (WSL, 2026-09-25), and the dump taken afterwards had the reference, so it could not say
-    whether the server knew it at the time of the rename.
-    It would also serve the tests. About 45 of them, mostly parsing and token pasting,
-    throw the protocol away and read the snapshot written at exit with `cxref_reader`, so
-    a parser test also tests writing the snapshot and a clean exit. With the dump in an
-    answer they compare output with expected like the others.
+29. <a id="dump-reference-database"></a>**Dump Reference Database** — `-dump=knowledge` answers from the
+    in-memory table (`src/dump.c`), one record per fact. The selection names which facts,
+    so a new kind of fact never changes the answer for an old one. Left are selections for
+    references and includes. With those, the about 45 tests that throw the protocol away
+    and read the snapshot written at exit with `cxref_reader`, mostly parsing and token
+    pasting, can compare the answer like the others, and a parser test stops also testing
+    the snapshot writer and a clean exit. Several selections in one request
+    (`-dump=knowledge,references`) when a test asks for two. A client command, so the
+    answer can be read in `*Messages*` without stopping the server. What it does not solve
+    is realising you need the dump before the state is gone. A rename missed
+    `clearPreloadedThisRequestFlags` in `src/editor.mock` (WSL, 2026-09-25), and the dump
+    taken afterwards had the reference, so it could not say whether the server knew it at
+    the time of the rename.
 
 ## 6. Developer tooling
 
@@ -444,13 +445,9 @@ Pass 3 rounds 19s each, 42s total.
 
 ## 7. Freshness as make (ADR-0032, ADR-0033)
 
-The order is roughly the numbers. `header-not-half` can be done any time; `knowledge-time`
-is the first step.
+The order is roughly the numbers. `header-not-half` can be done any time; `cu-inputs`
+and `out-of-date` are the next step, together.
 
-33. <a id="knowledge-time"></a>**A knowledge time per CU** — recorded where the knowledge is
-    produced, beside `lastParsedMtime`, and kept in the snapshot, with a format bump of
-    its own. Knowledge from held content is never written there.
-    Waits for: adr-0032
 34. <a id="cu-inputs"></a>**A CU's inputs** — the CU, its include closure and the project
     config, put together where `out-of-date` uses them. The closure is
     `collectIncludeClosure()` in `src/includegraph.c`. A count above its maximum means the
@@ -464,7 +461,7 @@ is the first step.
     `markAllCompilationUnitsStale()`, and the zero sentinel goes. The config needs a change
     time, and who owns it depends on where the project config lives after the options
     partition.
-    Waits for: knowledge-time
+    Waits for: adr-0032
     Goes with: partition-options, cu-inputs
 36. <a id="request-target"></a>**What a request needs** — the symbol's reach for an
     operation on a position, the whole project for one on a name. Pass 3 looks only one
