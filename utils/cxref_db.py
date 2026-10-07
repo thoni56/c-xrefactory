@@ -116,6 +116,16 @@ def unpack_references(string):
 FileReference = namedtuple(
     'FileReference', ['fileid', 'update', 'access', 'filename'])
 
+# The name is the one field written as <strlen+1>:<name>. Finding it by that form,
+# not by its position, keeps the reader working when a field is added before it.
+FILE_NAME_FIELD = re.compile(r' (\d+):')
+
+
+def file_name_in(line):
+    match = FILE_NAME_FIELD.search(line)
+    start = match.end()
+    return line[start:start + int(match.group(1)) - 1]
+
 
 def unpack_xfiles(lines):
     filerefs = []
@@ -130,11 +140,7 @@ def unpack_xfiles(lines):
                             pass  # for now
                         else:
                             # Remove trailing 'f' and turn fileid into an int
-                            # Writer stores strlen+1, so subtract 1.  Use length
-                            # to bound extraction (same issue as unpack_file_lines).
-                            name_field = segments[3].split(':', 1)
-                            name_length = int(name_field[0]) - 1
-                            filename = name_field[1][:name_length]
+                            filename = file_name_in(line)
                             filerefs.append(FileReference(int(segments[0][:-1]),
                                                           segments[1],
                                                           segments[2],
@@ -157,12 +163,7 @@ def unpack_file_lines(lines):
                         pass  # for now
                     else:
                         # Remove trailing 'f' and turn fileid into an int
-                        # Writer stores strlen+1, so subtract 1.  Use length
-                        # to bound extraction since the compact format may
-                        # append marker chars after the name without separator.
-                        name_field = segments[3].split(':', 1)
-                        name_length = int(name_field[0]) - 1
-                        filename = name_field[1][:name_length]
+                        filename = file_name_in(line)
                         filerefs.append(FileReference(int(segments[0][:-1]),
                                                       segments[1],
                                                       segments[2],
