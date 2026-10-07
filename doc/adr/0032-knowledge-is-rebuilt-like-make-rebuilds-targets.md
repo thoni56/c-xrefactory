@@ -128,8 +128,8 @@ _disregarding the fact that_
   as `markPreloadedFilesAsAncient()` arranges today, and is forgotten when the buffer is
   dropped,
 - the filesystem stamps modification times from a coarse clock that lags the system
-  clock, so a write just after a parse can get a time before it. The knowledge time is
-  rounded down a tick, accepting an occasional extra parse,
+  clock, so a write just after a parse can get a time before it. The comparison moves the
+  knowledge time a tick back, accepting an occasional extra parse,
 - a "no" leaves out-of-date knowledge for the rest of the session, until an operation
   that goes through the completeness question completes it. When the "no" should be forgotten is left for later,
 

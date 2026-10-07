@@ -475,7 +475,7 @@ are noted in `cu-inputs`, `out-of-date`, `time-budget` and `sweep-cost`.
     the evaluation in `out-of-date`.
     Goes with: out-of-date
 36. <a id="out-of-date"></a>**The one freshness predicate** — no knowledge, or an input
-    changed after the knowledge time, rounded down a tick. Replaces `fileNumberIsStale()`
+    changed after a tick before the knowledge time. Replaces `fileNumberIsStale()`
     and `fileNeedsParsing()`; the config as an input replaces
     `markAllCompilationUnitsStale()`, and the zero sentinel goes. The config needs a change
     time, and who owns it depends on where the project config lives after the options
