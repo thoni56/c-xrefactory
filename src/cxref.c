@@ -2208,6 +2208,7 @@ void markPreloadedFilesAsAncient(void) {
             if (isPreloaded(l->buffer)) {
                 FileItem *fileItem = getFileItemWithFileNumber(l->buffer->fileNumber);
                 fileItem->lastParsedMtime = NULL_TIMESTAMP;
+                fileItem->knowledgeTime = NULL_TIMESTAMP;
             }
         }
     }
