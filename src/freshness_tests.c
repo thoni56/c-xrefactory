@@ -8,6 +8,7 @@
 
 #include "editor.mock"
 #include "filetable.mock"
+#include "includegraph.mock"
 
 
 Describe(Freshness);
@@ -18,6 +19,7 @@ AfterEach(Freshness) {}
 
 
 #define A_C 1
+#define A_H 2
 
 static FileItem fileItem;
 
@@ -47,6 +49,7 @@ Ensure(Freshness, compilation_unit_changed_after_its_knowledge_is_out_of_date) {
 Ensure(Freshness, compilation_unit_not_changed_since_its_knowledge_is_not_out_of_date) {
     FileTimestamp changeTime = makeFileTimestamp(1000, 0);
     expectACUWithKnowledgeAt(makeFileTimestamp(2000, 0), &changeTime);
+    expect(collectIncludeClosure, when(fileNumber, is_equal_to(A_C)), will_return(0));
 
     assert_that(knowledgeIsOutOfDate(A_C), is_false);
 }
@@ -63,6 +66,54 @@ Ensure(Freshness, compilation_unit_stamped_in_the_gap_before_its_knowledge_is_ou
 Ensure(Freshness, the_gap_is_taken_from_the_knowledge_time_not_rounded_to_a_tick) {
     FileTimestamp changeTime = makeFileTimestamp(1999, 995000000);
     expectACUWithKnowledgeAt(makeFileTimestamp(2000, 1000000), &changeTime);
+
+    assert_that(knowledgeIsOutOfDate(A_C));
+}
+
+Ensure(Freshness, compilation_unit_with_a_header_changed_after_its_knowledge_is_out_of_date) {
+    FileTimestamp cuChangeTime = makeFileTimestamp(1000, 0);
+    expectACUWithKnowledgeAt(makeFileTimestamp(2000, 0), &cuChangeTime);
+
+    int closure[] = {A_H};
+    expect(collectIncludeClosure, when(fileNumber, is_equal_to(A_C)),
+           will_set_contents_of_parameter(fileNumbers, closure, sizeof(closure)),
+           will_return(1));
+    FileItem headerItem = {.name = "a.h"};
+    FileTimestamp headerChangeTime = makeFileTimestamp(3000, 0);
+    expect(getFileItemWithFileNumber, when(fileNumber, is_equal_to(A_H)),
+           will_return(&headerItem));
+    expect(editorFileModificationTime, when(path, is_equal_to_string("a.h")),
+           will_return(&headerChangeTime));
+
+    assert_that(knowledgeIsOutOfDate(A_C));
+}
+
+Ensure(Freshness, compilation_unit_with_a_header_not_changed_since_its_knowledge_is_not_out_of_date) {
+    FileTimestamp cuChangeTime = makeFileTimestamp(1000, 0);
+    expectACUWithKnowledgeAt(makeFileTimestamp(2000, 0), &cuChangeTime);
+
+    int closure[] = {A_H};
+    expect(collectIncludeClosure, when(fileNumber, is_equal_to(A_C)),
+           will_set_contents_of_parameter(fileNumbers, closure, sizeof(closure)),
+           will_return(1));
+    FileItem headerItem = {.name = "a.h"};
+    FileTimestamp headerChangeTime = makeFileTimestamp(1000, 0);
+    expect(getFileItemWithFileNumber, when(fileNumber, is_equal_to(A_H)),
+           will_return(&headerItem));
+    expect(editorFileModificationTime, when(path, is_equal_to_string("a.h")),
+           will_return(&headerChangeTime));
+
+    assert_that(knowledgeIsOutOfDate(A_C), is_false);
+}
+
+/* The closure counts what it found, also beyond what fits; what did not fit
+ * could have changed */
+Ensure(Freshness, compilation_unit_whose_include_closure_did_not_fit_is_out_of_date) {
+    FileTimestamp cuChangeTime = makeFileTimestamp(1000, 0);
+    expectACUWithKnowledgeAt(makeFileTimestamp(2000, 0), &cuChangeTime);
+
+    expect(collectIncludeClosure, when(fileNumber, is_equal_to(A_C)),
+           will_return(1000000));
 
     assert_that(knowledgeIsOutOfDate(A_C));
 }

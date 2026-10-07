@@ -1,0 +1,8 @@
+/* -*- c -*-*/
+#include "includegraph.h"
+#include <cgreen/mocks.h>
+
+
+int collectIncludeClosure(int fileNumber, int fileNumbers[], int maxFileNumbers) {
+    return (int)mock(fileNumber, fileNumbers, maxFileNumbers);
+}
