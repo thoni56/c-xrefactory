@@ -45,19 +45,27 @@ flowchart BT
   local_config_fragments["§5 · 27 · Local config fragments — the need, not a solution"]
   chapter_17_hygiene["§5 · 28 · Chapter 17 hygiene, opportunistically"]
   dump_reference_database["§5 · 29 · Dump Reference Database"]
-  macos_watchers["§6 · 30 · Two causes of watchers not firing on macOS, both found"]
-  flaky_preload_tests["§6 · 31 · Tests that copy a preload next to the file it replaces can be flaky"]
-  cu_inputs["§7 · 34 · A CU's inputs"]
-  out_of_date["§7 · 35 · The one freshness predicate"]
-  request_target["§7 · 36 · What a request needs"]
-  passes_as_one["§7 · 37 · Pass 1, 2 and 3 become one"]
-  header_not_half["§7 · 38 · Pass 2 does not strip a header it cannot rebuild"]
-  time_budget["§7 · 39 · A time budget instead of the 128 CUs"]
-  freshness_docs["§7 · 40 · The docs follow"]
-  include_edges["§7 · 41 · Who writes include edges"]
-  generations["§7 · 42 · Generations"]
-  sweep["§7 · 43 · Remove references no CU still emits"]
-  sweep_cost["§7 · 44 · What the sweep costs"]
+  compile_commands["§5 · 30 · Read `-I` and `-D` from `compile_commands.json`"]
+  macos_watchers["§6 · 31 · Two causes of watchers not firing on macOS, both found"]
+  flaky_preload_tests["§6 · 32 · Tests that copy a preload next to the file it replaces can be flaky"]
+  cu_inputs["§7 · 35 · A CU's inputs"]
+  out_of_date["§7 · 36 · The one freshness predicate"]
+  request_target["§7 · 37 · What a request needs"]
+  passes_as_one["§7 · 38 · Pass 1, 2 and 3 become one"]
+  header_not_half["§7 · 39 · Pass 2 does not strip a header it cannot rebuild"]
+  time_budget["§7 · 40 · A time budget instead of the 128 CUs"]
+  freshness_docs["§7 · 41 · The docs follow"]
+  include_edges["§7 · 42 · Who writes include edges"]
+  generations["§7 · 43 · Generations"]
+  sweep["§7 · 44 · Remove references no CU still emits"]
+  sweep_cost["§7 · 45 · What the sweep costs"]
+  release_build["§8 · 46 · A lean release build"]
+  protocol_handshake["§8 · 47 · The client and the server check a protocol version"]
+  install_server["§8 · 48 · `M-x c-xref-install-server`"]
+  releases["§8 · 49 · Tagged releases"]
+  melpa["§8 · 50 · The elisp on MELPA"]
+  readme_first_screen["§8 · 51 · The README sells on its first screen"]
+  announce["§8 · 52 · Announce"]
   entry_refresh["Entry refresh before every request (ADR-0020)"]
   adr_0029["ADR-0029: the project's identity is its root path"]
   adr_0030["ADR-0030: opening a project and asking about a file are separate"]
@@ -90,6 +98,16 @@ flowchart BT
   generations --&gt; sweep
   out_of_date --&gt; sweep
   include_edges --&gt; sweep
+  release_build --&gt; install_server
+  protocol_handshake --&gt; install_server
+  release_build --&gt; releases
+  install_server --&gt; melpa
+  releases --&gt; melpa
+  passes_as_one --&gt; announce
+  sweep --&gt; announce
+  refactoring_refusals --&gt; announce
+  install_server --&gt; announce
+  readme_first_screen --&gt; announce
   client_stops_p -.- startup_command_line
   client_stops_p -.- adr_0030
   mode_checks -.- report_errors_flag
@@ -101,13 +119,19 @@ flowchart BT
   remove_references_stopgap -.- time_budget
   remove_references_stopgap -.- index_based_sessions
   local_config_fragments -.- project_extent
+  compile_commands -.- project_extent
+  compile_commands -.- local_config_fragments
+  compile_commands -.- compiler_asked_twice
   cu_inputs -.- out_of_date
   out_of_date -.- partition_options
   out_of_date -.- cu_inputs
   request_target -.- header_filtered_siblings
   freshness_docs -.- passes_as_one
   sweep_cost -.- sweep
-  linkStyle 26,27,28,29,30,31,32,33,34,35,36,37,38,39,40,41,42 stroke:#8a63d2,stroke-width:2px,stroke-dasharray:6 4
+  announce -.- lsp_tiers
+  announce -.- retry_creating_request
+  announce -.- compile_commands
+  linkStyle 36,37,38,39,40,41,42,43,44,45,46,47,48,49,50,51,52,53,54,55,56,57,58 stroke:#8a63d2,stroke-width:2px,stroke-dasharray:6 4
   class cursor_parse_reuse blocked
   class compiler_asked_twice blocked
   class partition_options ready
@@ -141,6 +165,7 @@ flowchart BT
   class local_config_fragments ready
   class chapter_17_hygiene ready
   class dump_reference_database ready
+  class compile_commands ready
   class macos_watchers ready
   class flaky_preload_tests ready
   class cu_inputs ready
@@ -154,6 +179,13 @@ flowchart BT
   class generations ready
   class sweep blocked
   class sweep_cost ready
+  class release_build ready
+  class protocol_handshake ready
+  class install_server blocked
+  class releases blocked
+  class melpa blocked
+  class readme_first_screen ready
+  class announce blocked
   class entry_refresh done
   class adr_0029 done
   class adr_0030 done
