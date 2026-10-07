@@ -19,8 +19,11 @@ static bool changedAfter(FileTimestamp changeTime, FileTimestamp knowledgeTime) 
                                    changeTime);
 }
 
+/* An input that no longer exists has no modification time, and the knowledge
+ * of it is out of date as well */
 static bool fileChangedAfter(FileItem *input, FileTimestamp knowledgeTime) {
-    return changedAfter(editorFileModificationTime(input->name), knowledgeTime);
+    FileTimestamp changeTime = editorFileModificationTime(input->name);
+    return fileTimestampIsZero(changeTime) || changedAfter(changeTime, knowledgeTime);
 }
 
 bool knowledgeIsOutOfDate(int fileNumber) {

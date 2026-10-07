@@ -117,3 +117,11 @@ Ensure(Freshness, compilation_unit_whose_include_closure_did_not_fit_is_out_of_d
 
     assert_that(knowledgeIsOutOfDate(A_C));
 }
+
+/* A file that no longer exists has no modification time */
+Ensure(Freshness, compilation_unit_that_no_longer_exists_is_out_of_date) {
+    FileTimestamp noChangeTime = NULL_TIMESTAMP;
+    expectACUWithKnowledgeAt(makeFileTimestamp(2000, 0), &noChangeTime);
+
+    assert_that(knowledgeIsOutOfDate(A_C));
+}
