@@ -1,0 +1,8 @@
+CXREF -server
+-getproject CURDIR/a.c
+<sync>
+-push -olcursor=20 -preload CURDIR/a.c CURDIR/a.preload CURDIR/a.c
+<sync>
+-dump=knowledge
+<sync>
+<exit>

@@ -1,5 +1,8 @@
 #include "referencerefresh.h"
 
+#include <stdlib.h>
+#include <string.h>
+
 #include "editor.h"
 #include "filedescriptor.h"
 #include "filetable.h"
@@ -19,6 +22,10 @@ static bool parseFileWithFullInit(char *fileName, ArgumentsVector baseArgs) {
     int savedCursorOffset = options.cursorOffset;
     bool savedNoErrors = options.noErrors;
     ServerOperation savedServerOperation = options.serverOperation;
+    /* A string option lives in the options' own memory, which the reset frees, so it is
+     * copied out and allocated again. A stopgap until the options partition: every other
+     * REQUEST option is reset here too. */
+    char *savedDumpSelection = options.dumpSelection != NULL ? strdup(options.dumpSelection) : NULL;
 
     inputFileName = fileName;
     ArgumentsVector emptyArgs = {.argc = 0, .argv = NULL};
@@ -38,6 +45,10 @@ static bool parseFileWithFullInit(char *fileName, ArgumentsVector baseArgs) {
     options.cursorOffset = savedCursorOffset;
     options.noErrors = savedNoErrors;
     options.serverOperation = savedServerOperation;
+    if (savedDumpSelection != NULL) {
+        allocateStringForOption(&options.dumpSelection, savedDumpSelection);
+        free(savedDumpSelection);
+    }
     return parsed;
 }
 
