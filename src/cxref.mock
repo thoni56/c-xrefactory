@@ -115,7 +115,7 @@ bool sessionHasReferencesValidForOperation(SessionStackEntry **entryP, int check
     return (bool)mock(entryP, checkNull);
 }
 
-void markPreloadedFilesAsAncient(void) {
+void forgetKnowledgeForHeldContent(void) {
     mock();
 }
 

@@ -140,7 +140,7 @@ Ensure(CxRef, knowledge_built_from_content_the_server_edited_is_forgotten_before
     expect(getFileItemWithFileNumber, when(fileNumber, is_equal_to(42)), will_return(&fileItem));
     expect(getNextExistingEditorBufferIndex, when(index, is_equal_to(8)), will_return(-1));
 
-    markPreloadedFilesAsAncient();
+    forgetKnowledgeForHeldContent();
 
     assert_that(fileItem.knowledgeTime.tv_sec, is_equal_to(0));
 }

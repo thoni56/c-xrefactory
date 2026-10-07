@@ -152,7 +152,7 @@ bool fileNumberIsStale(int fileNumber) {
         return false;
 
     // Explicitly marked stale via NEVER_PARSED_TIMESTAMP (see
-    // markPreloadedFilesAsAncient for the snapshot-save case).
+    // forgetKnowledgeForHeldContent() for the snapshot-save case).
     if (fileTimestampIsZero(fileItem->lastParsedMtime))
         return true;
 

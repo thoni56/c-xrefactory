@@ -1107,7 +1107,7 @@ static bool processEOption(int *argi, ArgumentsVector args) {
         options.errors = true;
         logging_selected.errors = true;
     } else if (strcmp(args.argv[i], "-exit")==0) {
-        markPreloadedFilesAsAncient();
+        forgetKnowledgeForHeldContent();
         saveReferences();
         log_debug("Exiting");
         exit(EXIT_SUCCESS);

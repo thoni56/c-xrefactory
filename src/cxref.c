@@ -2202,7 +2202,7 @@ void olSetCallerPosition(Position position) {
 }
 
 
-void markPreloadedFilesAsAncient(void) {
+void forgetKnowledgeForHeldContent(void) {
     for (int i = getNextExistingEditorBufferIndex(0); i != -1; i = getNextExistingEditorBufferIndex(i+1)) {
         for (EditorBufferList *l = getEditorBufferListElementAt(i); l != NULL; l = l->next) {
             if (holdsAuthoritativeContent(l->buffer)) {
