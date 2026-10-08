@@ -3,6 +3,9 @@
 
 #include <stdbool.h>
 
-extern bool knowledgeIsOutOfDate(int fileNumber);
+#include "includegraph.h"
+
+
+extern bool knowledgeIsOutOfDate(IncludeGraph *graph, int fileNumber);
 
 #endif

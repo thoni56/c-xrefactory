@@ -418,7 +418,7 @@ static void parseUnparsedSiblingCUs(int requestFileNumber, ArgumentsVector baseA
             FileItem *siblingItem = getFileItemWithFileNumber(siblingFileNum);
             if (!isCompilationUnit(siblingItem->name))
                 continue;
-            if (!knowledgeIsOutOfDate(siblingFileNum)) {
+            if (!knowledgeIsOutOfDate(NULL, siblingFileNum)) {
                 skippedAlreadyParsed++;
                 continue;
             }

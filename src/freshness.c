@@ -26,7 +26,7 @@ static bool fileChangedAfter(FileItem *input, FileTimestamp knowledgeTime) {
     return fileTimestampIsZero(changeTime) || changedAfter(changeTime, knowledgeTime);
 }
 
-bool knowledgeIsOutOfDate(int fileNumber) {
+bool knowledgeIsOutOfDate(IncludeGraph *graph, int fileNumber) {
     FileItem *fileItem = getFileItemWithFileNumber(fileNumber);
     if (fileTimestampIsZero(fileItem->knowledgeTime))
         return true;

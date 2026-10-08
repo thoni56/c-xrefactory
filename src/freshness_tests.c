@@ -36,14 +36,14 @@ Ensure(Freshness, compilation_unit_without_knowledge_is_out_of_date) {
     expect(getFileItemWithFileNumber, when(fileNumber, is_equal_to(A_C)),
            will_return(&fileItem));
 
-    assert_that(knowledgeIsOutOfDate(A_C));
+    assert_that(knowledgeIsOutOfDate(NULL, A_C));
 }
 
 Ensure(Freshness, compilation_unit_changed_after_its_knowledge_is_out_of_date) {
     FileTimestamp changeTime = makeFileTimestamp(2000, 0);
     expectACUWithKnowledgeAt(makeFileTimestamp(1000, 0), &changeTime);
 
-    assert_that(knowledgeIsOutOfDate(A_C));
+    assert_that(knowledgeIsOutOfDate(NULL, A_C));
 }
 
 Ensure(Freshness, compilation_unit_not_changed_since_its_knowledge_is_not_out_of_date) {
@@ -51,7 +51,7 @@ Ensure(Freshness, compilation_unit_not_changed_since_its_knowledge_is_not_out_of
     expectACUWithKnowledgeAt(makeFileTimestamp(2000, 0), &changeTime);
     expect(collectIncludeClosure, when(fileNumber, is_equal_to(A_C)), will_return(0));
 
-    assert_that(knowledgeIsOutOfDate(A_C), is_false);
+    assert_that(knowledgeIsOutOfDate(NULL, A_C), is_false);
 }
 
 /* The filesystem stamps modification times from a coarse clock, so a write just
@@ -60,14 +60,14 @@ Ensure(Freshness, compilation_unit_stamped_in_the_gap_before_its_knowledge_is_ou
     FileTimestamp changeTime = makeFileTimestamp(1999, 995000000);
     expectACUWithKnowledgeAt(makeFileTimestamp(2000, 0), &changeTime);
 
-    assert_that(knowledgeIsOutOfDate(A_C));
+    assert_that(knowledgeIsOutOfDate(NULL, A_C));
 }
 
 Ensure(Freshness, the_gap_is_taken_from_the_knowledge_time_not_rounded_to_a_tick) {
     FileTimestamp changeTime = makeFileTimestamp(1999, 995000000);
     expectACUWithKnowledgeAt(makeFileTimestamp(2000, 1000000), &changeTime);
 
-    assert_that(knowledgeIsOutOfDate(A_C));
+    assert_that(knowledgeIsOutOfDate(NULL, A_C));
 }
 
 Ensure(Freshness, compilation_unit_with_a_header_changed_after_its_knowledge_is_out_of_date) {
@@ -85,7 +85,7 @@ Ensure(Freshness, compilation_unit_with_a_header_changed_after_its_knowledge_is_
     expect(editorFileModificationTime, when(path, is_equal_to_string("a.h")),
            will_return(&headerChangeTime));
 
-    assert_that(knowledgeIsOutOfDate(A_C));
+    assert_that(knowledgeIsOutOfDate(NULL, A_C));
 }
 
 Ensure(Freshness, compilation_unit_with_a_header_not_changed_since_its_knowledge_is_not_out_of_date) {
@@ -103,7 +103,7 @@ Ensure(Freshness, compilation_unit_with_a_header_not_changed_since_its_knowledge
     expect(editorFileModificationTime, when(path, is_equal_to_string("a.h")),
            will_return(&headerChangeTime));
 
-    assert_that(knowledgeIsOutOfDate(A_C), is_false);
+    assert_that(knowledgeIsOutOfDate(NULL, A_C), is_false);
 }
 
 /* The closure counts what it found, also beyond what fits; what did not fit
@@ -115,7 +115,7 @@ Ensure(Freshness, compilation_unit_whose_include_closure_did_not_fit_is_out_of_d
     expect(collectIncludeClosure, when(fileNumber, is_equal_to(A_C)),
            will_return(1000000));
 
-    assert_that(knowledgeIsOutOfDate(A_C));
+    assert_that(knowledgeIsOutOfDate(NULL, A_C));
 }
 
 /* A file that no longer exists has no modification time */
@@ -123,5 +123,5 @@ Ensure(Freshness, compilation_unit_that_no_longer_exists_is_out_of_date) {
     FileTimestamp noChangeTime = NULL_TIMESTAMP;
     expectACUWithKnowledgeAt(makeFileTimestamp(2000, 0), &noChangeTime);
 
-    assert_that(knowledgeIsOutOfDate(A_C));
+    assert_that(knowledgeIsOutOfDate(NULL, A_C));
 }
