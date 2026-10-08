@@ -454,12 +454,25 @@ Pass 3 rounds 19s each, 42s total.
 The order is roughly the numbers. `header-not-half` can be done any time; `cu-inputs`
 and `out-of-date` are the next step, together.
 
+Performance, from reading the code (Mac, session `05984816`, 2026-10-08): at equal
+correctness the design costs the same or less. Parsing dominates, and what is parsed
+follows the request rather than triggers: an edited header no longer parses up to 128
+includers at once, only the goal's. More is parsed only where the old answer was
+incomplete (deeper reach, disk changes). The bookkeeping added — a `stat` per input, a
+sweep per request — is small beside what goes. The risks are in the implementation, and
+are noted in `cu-inputs`, `out-of-date`, `time-budget` and `sweep-cost`.
+
 35. <a id="cu-inputs"></a>**A CU's inputs** — the CU, its include closure and the project
     config, put together where `out-of-date` uses them. The closure is
     `collectIncludeClosure()` in `src/includegraph.c`. A count above its maximum means the
     closure did not fit, and the CU is then out of date. `includegraph` goes into
     `src/sources.mk` with it. The closure can hold the scan's includes beside the parse's,
     which for the predicate only costs a parse.
+    Cost: `collectIncludeClosure()` walks the whole table once per file in the closure,
+    so a closure per CU per request is closure × table × CUs — on ffmpeg the slowest
+    thing in the server. Build the forward edges once per request from the
+    `TypeCppInclude` items alone (one per included file), or avoid forward closures with
+    the evaluation in `out-of-date`.
     Goes with: out-of-date
 36. <a id="out-of-date"></a>**The one freshness predicate** — no knowledge, or an input
     changed after the knowledge time, rounded down a tick. Replaces `fileNumberIsStale()`
@@ -467,6 +480,13 @@ and `out-of-date` are the next step, together.
     `markAllCompilationUnitsStale()`, and the zero sentinel goes. The config needs a change
     time, and who owns it depends on where the project config lives after the options
     partition.
+    Evaluate it change first: `stat` each known file once per request, take those that
+    changed, and walk the reverse include graph (`collectCUsIncluding()`, a hash lookup
+    per step) to the CUs whose knowledge time is older. That costs in proportion to what
+    changed, like the old triggers, without missing one. A few thousand `stat`s on ffmpeg
+    are tens of milliseconds natively; old Pass 3 already stats every sibling CU. On WSL,
+    a tree under `/mnt/c` goes through 9P at about a millisecond per `stat`, so measure
+    there too.
     Waits for: adr-0032
     Goes with: partition-options, cu-inputs
 37. <a id="request-target"></a>**What a request needs** — the symbol's reach for an
@@ -498,6 +518,9 @@ and `out-of-date` are the next step, together.
     of about 9 tests). Open: does a remembered "no" stop parsing, or only the asking, so
     that each request still parses a budget's worth? With `sweep` the second is safe, and
     is what lets every reaching CU finally have parsed.
+    Before `sweep`, ADR-0032 rebuilds a changed header with all its includers or none,
+    which can parse more than today's cap. Keep the cap until this item is in, or make
+    the window between them short.
     Waits for: passes-as-one
 41. <a id="freshness-docs"></a>**The docs follow** — *Out of date* replaces *Staleness* in
     `06-principles`, and `08-algorithms` loses "Dual Semantics". In `06-principles`, the
@@ -524,7 +547,15 @@ and `out-of-date` are the next step, together.
     `test_preprocess_edit_removes_ifdef_define` comes off suspension.
     Waits for: generations, out-of-date, include-edges
 45. <a id="sweep-cost"></a>**What the sweep costs** — memory and walk time on ffmpeg,
-    whether the reverse walk can go uncapped, and how the mark is stored.
+    whether the reverse walk can go uncapped, and how the mark is stored. The baseline
+    to time against: `removeReferenceableItemsForFile()` walks the whole table, and today
+    runs before every CU reparse and for every changed header in Pass 2, so parsing 128
+    CUs on ffmpeg is 128 walks over 1.24 million references. The sweep is one walk per
+    request that parsed, none for navigation. A stripped reference is also only
+    unlinked, never freed (`cxAlloc`), so every reparse leaves its CU's references behind
+    as dead memory; refreshing in place stops that. For the sweep itself, compute the
+    oldest knowledge generation of a file's reaching CUs once per file, not per
+    reference.
     Goes with: sweep
 
 ## 8. Real users: installing and being found
