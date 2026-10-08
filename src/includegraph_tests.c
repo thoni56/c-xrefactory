@@ -48,6 +48,13 @@ static void recordInclude(int includerFileNumber, int includedFileNumber) {
     recordIncludeReference(includerFileNumber, includedFileNumber, UsageUsed);
 }
 
+static int closureOf(int fileNumber, int fileNumbers[], int maxFileNumbers) {
+    IncludeGraph *graph = buildIncludeGraph();
+    int count = collectIncludeClosureInGraph(graph, fileNumber, fileNumbers, maxFileNumbers);
+    freeIncludeGraph(graph);
+    return count;
+}
+
 /* As addFileAsIncludeReference() records it: a "defined" reference at line 1
  * of the file itself, marking the file, not an include. */
 static void recordFileItself(int fileNumber) {
@@ -59,7 +66,7 @@ Ensure(IncludeGraph, gives_the_file_a_compilation_unit_includes) {
     recordInclude(A_C, A_H);
 
     int closure[10];
-    int count = collectIncludeClosure(A_C, closure, 10);
+    int count = closureOf(A_C, closure, 10);
 
     assert_that(count, is_equal_to(1));
     assert_that(closure[0], is_equal_to(A_H));
@@ -81,7 +88,7 @@ Ensure(IncludeGraph, does_not_collect_other_symbols_for_includes) {
     recordSymbolReference("f", A_C);
 
     int closure[10];
-    int count = collectIncludeClosure(A_C, closure, 10);
+    int count = closureOf(A_C, closure, 10);
 
     assert_that(count, is_equal_to(0));
 }
@@ -99,7 +106,7 @@ Ensure(IncludeGraph, collects_also_the_files_an_included_file_includes) {
     recordInclude(A_H, DECL_H);
 
     int closure[10];
-    int count = collectIncludeClosure(A_C, closure, 10);
+    int count = closureOf(A_C, closure, 10);
 
     assert_that(count, is_equal_to(2));
     assert_true(contains(closure, count, A_H));
@@ -112,7 +119,7 @@ Ensure(IncludeGraph, collects_a_file_included_twice_once) {
     recordInclude(A_H, DECL_H);
 
     int closure[10];
-    int count = collectIncludeClosure(A_C, closure, 10);
+    int count = closureOf(A_C, closure, 10);
 
     assert_that(count, is_equal_to(2));
 }
@@ -122,7 +129,7 @@ Ensure(IncludeGraph, does_not_collect_the_file_itself) {
     recordInclude(A_C, A_H);
 
     int closure[10];
-    int count = collectIncludeClosure(A_C, closure, 10);
+    int count = closureOf(A_C, closure, 10);
 
     assert_that(count, is_equal_to(1));
     assert_that(closure[0], is_equal_to(A_H));
@@ -134,8 +141,21 @@ Ensure(IncludeGraph, collecting_can_signal_that_the_files_do_not_fit) {
     recordInclude(A_C, DECL_H);
 
     int closure[3] = {-1, -1, -1};
-    int count = collectIncludeClosure(A_C, closure, 2);
+    int count = closureOf(A_C, closure, 2);
 
     assert_that(count, is_greater_than(2));
     assert_that(closure[2], is_equal_to(-1));
+}
+
+Ensure(IncludeGraph, closure_is_taken_from_the_graph_as_it_was_built) {
+    recordInclude(A_C, A_H);
+    IncludeGraph *graph = buildIncludeGraph();
+    recordInclude(A_H, DECL_H);
+
+    int closure[10];
+    int count = collectIncludeClosureInGraph(graph, A_C, closure, 10);
+    freeIncludeGraph(graph);
+
+    assert_that(count, is_equal_to(1));
+    assert_that(closure[0], is_equal_to(A_H));
 }
