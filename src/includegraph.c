@@ -76,8 +76,8 @@ static void collectIncludedBy(IncludeGraph *graph, IncludedFiles *included) {
     }
 }
 
-int collectIncludeClosureInGraph(IncludeGraph *graph, int fileNumber, int fileNumbers[],
-                                 int maxFileNumbers) {
+int collectIncludeClosure(IncludeGraph *graph, int fileNumber, int fileNumbers[],
+                          int maxFileNumbers) {
     IncludedFiles included = {.includerFileNumber = fileNumber, .fileNumbers = fileNumbers,
                               .maxFileNumbers = maxFileNumbers};
     collectIncludedBy(graph, &included);
@@ -86,11 +86,4 @@ int collectIncludeClosureInGraph(IncludeGraph *graph, int fileNumber, int fileNu
         collectIncludedBy(graph, &included);
     }
     return included.count;
-}
-
-int collectIncludeClosure(int fileNumber, int fileNumbers[], int maxFileNumbers) {
-    IncludeGraph *graph = buildIncludeGraph();
-    int count = collectIncludeClosureInGraph(graph, fileNumber, fileNumbers, maxFileNumbers);
-    freeIncludeGraph(graph);
-    return count;
 }

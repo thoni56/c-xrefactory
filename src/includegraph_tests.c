@@ -50,7 +50,7 @@ static void recordInclude(int includerFileNumber, int includedFileNumber) {
 
 static int closureOf(int fileNumber, int fileNumbers[], int maxFileNumbers) {
     IncludeGraph *graph = buildIncludeGraph();
-    int count = collectIncludeClosureInGraph(graph, fileNumber, fileNumbers, maxFileNumbers);
+    int count = collectIncludeClosure(graph, fileNumber, fileNumbers, maxFileNumbers);
     freeIncludeGraph(graph);
     return count;
 }
@@ -153,7 +153,7 @@ Ensure(IncludeGraph, closure_is_taken_from_the_graph_as_it_was_built) {
     recordInclude(A_H, DECL_H);
 
     int closure[10];
-    int count = collectIncludeClosureInGraph(graph, A_C, closure, 10);
+    int count = collectIncludeClosure(graph, A_C, closure, 10);
     freeIncludeGraph(graph);
 
     assert_that(count, is_equal_to(1));
