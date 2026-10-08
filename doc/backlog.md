@@ -452,9 +452,8 @@ Pass 3 rounds 19s each, 42s total.
 
 ## 7. Freshness as make (ADR-0032, ADR-0033)
 
-The order is roughly the numbers. `header-not-half` can be done any time. Next is a
-cheap way to find the out-of-date CUs, the edges once in `cu-inputs` or change first in
-`out-of-date`; the closure as it is makes every request slow.
+The order is roughly the numbers. `header-not-half` can be done any time. Next is
+`singlePass()` and Pass 1 in `out-of-date`.
 
 Performance, from reading the code (Mac, session `05984816`, 2026-10-08): at equal
 correctness the design costs the same or less. Parsing dominates, and what is parsed
@@ -465,16 +464,13 @@ sweep per request — is small beside what goes. The risks are in the implementa
 are noted in `cu-inputs`, `out-of-date`, `time-budget` and `sweep-cost`.
 
 35. <a id="cu-inputs"></a>**A CU's inputs** — the CU, its include closure and the project
-    config, put together where `out-of-date` uses them, the CU first. The closure is
-    `collectIncludeClosure()` in `src/includegraph.c`, one pass over the whole table per
-    file in it. That is too slow: with Pass 3 asking `knowledgeIsOutOfDate()` (9a0f996c,
-    not pushed), every request on `src/` takes about 19 s without parsing anything, Next
-    and Pop included (WSL, session `d25255b8`, 2026-10-07). Confirm with a trace first.
-    Then build the forward edges once per request from the `TypeCppInclude` items alone
-    (one per included file), or avoid forward closures with the evaluation in
-    `out-of-date`. 9a0f996c is not pushed before that, since a push moves `stable`. The
-    closure can hold the scan's includes beside the parse's, which for the predicate only
-    costs a parse.
+    config, put together where `out-of-date` uses them, the CU first. Pass 3 builds the
+    include graph once per request (`buildIncludeGraph()`, `src/includegraph.c`) and every
+    check walks it. Left: Pass 3 asks before it deduplicates, about 3.5 times per CU on
+    `src/`, and each closure step scans all edges. Neither was noticeable in use (WSL,
+    session `d25255b8`, 2026-10-08). A change-time memo per request only if a measurement
+    asks for it. The closure can hold the scan's includes beside the parse's, which for the
+    predicate only costs a parse.
     Goes with: out-of-date
 36. <a id="out-of-date"></a>**The one freshness predicate** — `knowledgeIsOutOfDate()` in
     `src/freshness.c`: no knowledge, an input gone, or an input changed after a tick
