@@ -34,7 +34,7 @@ bool knowledgeIsOutOfDate(IncludeGraph *graph, int fileNumber) {
         return true;
 
     int closure[MAX_INCLUDE_CLOSURE];
-    int count = collectIncludeClosure(fileNumber, closure, MAX_INCLUDE_CLOSURE);
+    int count = collectIncludeClosureInGraph(graph, fileNumber, closure, MAX_INCLUDE_CLOSURE);
     if (count > MAX_INCLUDE_CLOSURE)
         return true;
     for (int i = 0; i < count; i++) {

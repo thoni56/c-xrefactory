@@ -49,9 +49,20 @@ Ensure(Freshness, compilation_unit_changed_after_its_knowledge_is_out_of_date) {
 Ensure(Freshness, compilation_unit_not_changed_since_its_knowledge_is_not_out_of_date) {
     FileTimestamp changeTime = makeFileTimestamp(1000, 0);
     expectACUWithKnowledgeAt(makeFileTimestamp(2000, 0), &changeTime);
-    expect(collectIncludeClosure, when(fileNumber, is_equal_to(A_C)), will_return(0));
+    expect(collectIncludeClosureInGraph, when(fileNumber, is_equal_to(A_C)), will_return(0));
 
     assert_that(knowledgeIsOutOfDate(NULL, A_C), is_false);
+}
+
+Ensure(Freshness, the_include_closure_is_taken_from_the_graph_it_is_given) {
+    FileTimestamp changeTime = makeFileTimestamp(1000, 0);
+    expectACUWithKnowledgeAt(makeFileTimestamp(2000, 0), &changeTime);
+    static int aGraph;
+    IncludeGraph *graph = (IncludeGraph *)&aGraph;
+    expect(collectIncludeClosureInGraph, when(graph, is_equal_to(graph)),
+           when(fileNumber, is_equal_to(A_C)), will_return(0));
+
+    assert_that(knowledgeIsOutOfDate(graph, A_C), is_false);
 }
 
 /* The filesystem stamps modification times from a coarse clock, so a write just
@@ -75,7 +86,7 @@ Ensure(Freshness, compilation_unit_with_a_header_changed_after_its_knowledge_is_
     expectACUWithKnowledgeAt(makeFileTimestamp(2000, 0), &cuChangeTime);
 
     int closure[] = {A_H};
-    expect(collectIncludeClosure, when(fileNumber, is_equal_to(A_C)),
+    expect(collectIncludeClosureInGraph, when(fileNumber, is_equal_to(A_C)),
            will_set_contents_of_parameter(fileNumbers, closure, sizeof(closure)),
            will_return(1));
     FileItem headerItem = {.name = "a.h"};
@@ -93,7 +104,7 @@ Ensure(Freshness, compilation_unit_with_a_header_not_changed_since_its_knowledge
     expectACUWithKnowledgeAt(makeFileTimestamp(2000, 0), &cuChangeTime);
 
     int closure[] = {A_H};
-    expect(collectIncludeClosure, when(fileNumber, is_equal_to(A_C)),
+    expect(collectIncludeClosureInGraph, when(fileNumber, is_equal_to(A_C)),
            will_set_contents_of_parameter(fileNumbers, closure, sizeof(closure)),
            will_return(1));
     FileItem headerItem = {.name = "a.h"};
@@ -112,7 +123,7 @@ Ensure(Freshness, compilation_unit_whose_include_closure_did_not_fit_is_out_of_d
     FileTimestamp cuChangeTime = makeFileTimestamp(1000, 0);
     expectACUWithKnowledgeAt(makeFileTimestamp(2000, 0), &cuChangeTime);
 
-    expect(collectIncludeClosure, when(fileNumber, is_equal_to(A_C)),
+    expect(collectIncludeClosureInGraph, when(fileNumber, is_equal_to(A_C)),
            will_return(1000000));
 
     assert_that(knowledgeIsOutOfDate(NULL, A_C));

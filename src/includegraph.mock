@@ -6,3 +6,15 @@
 int collectIncludeClosure(int fileNumber, int fileNumbers[], int maxFileNumbers) {
     return (int)mock(fileNumber, fileNumbers, maxFileNumbers);
 }
+
+int collectIncludeClosureInGraph(IncludeGraph *graph, int fileNumber, int fileNumbers[], int maxFileNumbers) {
+    return (int)mock(graph, fileNumber, fileNumbers, maxFileNumbers);
+}
+
+IncludeGraph *buildIncludeGraph(void) {
+    return (IncludeGraph *)mock();
+}
+
+void freeIncludeGraph(IncludeGraph *graph) {
+    mock(graph);
+}
