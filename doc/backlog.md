@@ -524,6 +524,10 @@ are noted in `cu-inputs`, `out-of-date`, `time-budget` and `sweep-cost`.
     Before `sweep`, ADR-0032 rebuilds a changed header with all its includers or none,
     which can parse more than today's cap. Keep the cap until this item is in, or make
     the window between them short.
+    The estimate needs how many CUs are out of date in the whole project. That can be
+    found change first (`out-of-date`): `stat` every known file once and walk the reverse
+    include graph to the CUs. Then project-wide goals use that and the rest ask
+    `knowledgeIsOutOfDate()` per CU, with a test that the two agree for every CU.
     Waits for: passes-as-one
 41. <a id="freshness-docs"></a>**The docs follow** — *Out of date* replaces *Staleness* in
     `06-principles`, and `08-algorithms` loses "Dual Semantics". In `06-principles`, the
