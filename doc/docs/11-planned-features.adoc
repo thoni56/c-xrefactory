@@ -447,6 +447,45 @@ In a definition that is a rename of the parameter, uses included.
 In a declaration it is only the name in the parameter list.
 A declaration that has no name for the parameter could get one, or be left as it is.
 
+=== Introduce Parameter Object
+
+**Status**: Not implemented.
+
+==== Background
+
+Extract Function gives one parameter for each local the region uses, and an in/out pointer for each one it changes.
+When the region works on a group of locals that always go together, the parameter list gets long.
+The case that asked for it was the loop in `parseUnparsedSiblingCUs()` (`server.c`) that collects the sibling CUs.
+Extracting it gave seven parameters.
+Four of them were the selection being built, i.e. the array of file numbers, its count and two counters for what was skipped.
+
+==== Proposed Behaviour
+
+With some locals marked, *Introduce Parameter Object* (or *Group Locals into Struct*) asks for a type name, declares a struct with those locals as fields, and replaces them with one local of that type.
+Every use becomes a field access, e.g. `selection.count`.
+An Extract Function after that passes one pointer instead of four.
+
+The same for a group of parameters that always go together is Fowler's original, and should probably work the same way.
+
+=== Inline Output Parameter
+
+**Status**: Not implemented.
+
+==== Background
+
+For each local the region changes, Extract Function copies it in from a pointer parameter at the start of the new function and back at the end, e.g. `int cuCount = *_cuCount;` and `*_cuCount = cuCount;`.
+That is safe, but the copies are usually the first thing you want gone.
+
+==== Proposed Behaviour
+
+With the cursor on such a parameter, *Inline Output Parameter* replaces every read of the local with `*_cuCount`, every write with an assignment through the pointer, and removes both copies.
+It should refuse if the address of the local is taken, or if not every return writes it back.
+
+The steps for one parameter have to be applied together.
+Done one at a time, the local is set but never read in between, and `-Werror` stops the build.
+
+Turning a single in/out parameter into the return value is the natural next step, and could be a refactoring of its own.
+
 === Background Work
 
 **Status**: Possible. Waits for the sweep (ADR-0033, `sweep` in `doc/backlog.md`).

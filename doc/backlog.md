@@ -342,7 +342,8 @@ Pass 3 rounds 19s each, 42s total.
     Also **unused-detection exclude patterns**, **browsing includes**,
     **semantic read-only files**, **rename handles `expect`**, **project-local
     config**, **Inline Function and Inline Macro**, **Extract an Expression as a
-    Function**, **Unify Parameter Names**. All in `11-planned-features.adoc`.
+    Function**, **Unify Parameter Names**, **Introduce Parameter Object**, **Inline Output
+    Parameter**. All in `11-planned-features.adoc`.
 27. <a id="local-config-fragments"></a>**Local config fragments — the need, not a solution** — *no repo home yet.*
     `.c-xrefrc` travels with the project and is checked in, which is why
     `11-planned-features.adoc` argues for it: "it will not contain absolute file paths".
