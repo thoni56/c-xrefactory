@@ -30,7 +30,7 @@
 
 /* *********************** INPUT/OUTPUT FIELD MARKERS ************************** */
 
-#define C_XREF_FILE_FORMAT_VERSION "1.12.0"
+#define C_XREF_FILE_FORMAT_VERSION "1.13.0"
 
 typedef enum {
     CXFI_FILE_FUMTIME          = 'm',     /* last full update mtime for file item (seconds) */
