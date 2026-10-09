@@ -4,6 +4,14 @@
 #include <cgreen/mocks.h>
 
 
-bool knowledgeIsOutOfDate(IncludeGraph *graph, int fileNumber) {
-    return (bool)mock(graph, fileNumber);
+bool knowledgeIsOutOfDate(Inputs *inputs, int fileNumber) {
+    return (bool)mock(inputs, fileNumber);
+}
+
+Inputs *collectInputs(void) {
+    return (Inputs *)mock();
+}
+
+void freeInputs(Inputs *inputs) {
+    mock(inputs);
 }

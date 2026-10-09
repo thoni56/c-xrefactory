@@ -382,7 +382,7 @@ static void parseUnparsedSiblingCUs(int requestFileNumber, ArgumentsVector baseA
     log_info("Pass 3: request file '%s' (fileNumber=%d)",
              getFileItemWithFileNumber(requestFileNumber)->name, requestFileNumber);
 
-    IncludeGraph *includeGraph = buildIncludeGraph();
+    Inputs *inputs = collectInputs();
     bool *asked = calloc(MAX_FILES, sizeof(bool));  /* A sibling shares many headers */
     for (int i = getNextExistingFileNumber(0); i != -1; i = getNextExistingFileNumber(i + 1)) {
         FileItem *fi = getFileItemWithFileNumber(i);
@@ -423,7 +423,7 @@ static void parseUnparsedSiblingCUs(int requestFileNumber, ArgumentsVector baseA
             if (asked[siblingFileNum])
                 continue;
             asked[siblingFileNum] = true;
-            if (!knowledgeIsOutOfDate(includeGraph, siblingFileNum)) {
+            if (!knowledgeIsOutOfDate(inputs, siblingFileNum)) {
                 skippedAlreadyParsed++;
                 continue;
             }
@@ -439,7 +439,7 @@ static void parseUnparsedSiblingCUs(int requestFileNumber, ArgumentsVector baseA
     }
 
     free(asked);
-    freeIncludeGraph(includeGraph);
+    freeInputs(inputs);
 
     log_info("Pass 3: %d to parse, %d skipped (already parsed), %d skipped (cap %d)",
              cuCount, skippedAlreadyParsed, skippedCapped, MAX_CUS_TO_REPARSE);

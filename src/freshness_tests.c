@@ -31,6 +31,11 @@ static void expectACUWithKnowledgeAt(FileTimestamp knowledgeTime, FileTimestamp 
            will_return(changeTime));
 }
 
+static Inputs *inputsWithGraph(IncludeGraph *graph) {
+    expect(buildIncludeGraph, will_return(graph));
+    return collectInputs();
+}
+
 Ensure(Freshness, compilation_unit_without_knowledge_is_out_of_date) {
     FileItem fileItem = {.name = "a.c", .knowledgeTime = NULL_TIMESTAMP};
     expect(getFileItemWithFileNumber, when(fileNumber, is_equal_to(A_C)),
@@ -51,10 +56,10 @@ Ensure(Freshness, compilation_unit_not_changed_since_its_knowledge_is_not_out_of
     expectACUWithKnowledgeAt(makeFileTimestamp(2000, 0), &changeTime);
     expect(collectIncludeClosure, when(fileNumber, is_equal_to(A_C)), will_return(0));
 
-    assert_that(knowledgeIsOutOfDate(NULL, A_C), is_false);
+    assert_that(knowledgeIsOutOfDate(inputsWithGraph(NULL), A_C), is_false);
 }
 
-Ensure(Freshness, the_include_closure_is_taken_from_the_graph_it_is_given) {
+Ensure(Freshness, the_include_closure_is_taken_from_the_inputs_it_is_given) {
     FileTimestamp changeTime = makeFileTimestamp(1000, 0);
     expectACUWithKnowledgeAt(makeFileTimestamp(2000, 0), &changeTime);
     static int aGraph;
@@ -62,7 +67,7 @@ Ensure(Freshness, the_include_closure_is_taken_from_the_graph_it_is_given) {
     expect(collectIncludeClosure, when(graph, is_equal_to(graph)),
            when(fileNumber, is_equal_to(A_C)), will_return(0));
 
-    assert_that(knowledgeIsOutOfDate(graph, A_C), is_false);
+    assert_that(knowledgeIsOutOfDate(inputsWithGraph(graph), A_C), is_false);
 }
 
 /* The filesystem stamps modification times from a coarse clock, so a write just
@@ -96,7 +101,7 @@ Ensure(Freshness, compilation_unit_with_a_header_changed_after_its_knowledge_is_
     expect(editorFileModificationTime, when(path, is_equal_to_string("a.h")),
            will_return(&headerChangeTime));
 
-    assert_that(knowledgeIsOutOfDate(NULL, A_C));
+    assert_that(knowledgeIsOutOfDate(inputsWithGraph(NULL), A_C));
 }
 
 Ensure(Freshness, compilation_unit_with_a_header_not_changed_since_its_knowledge_is_not_out_of_date) {
@@ -114,7 +119,7 @@ Ensure(Freshness, compilation_unit_with_a_header_not_changed_since_its_knowledge
     expect(editorFileModificationTime, when(path, is_equal_to_string("a.h")),
            will_return(&headerChangeTime));
 
-    assert_that(knowledgeIsOutOfDate(NULL, A_C), is_false);
+    assert_that(knowledgeIsOutOfDate(inputsWithGraph(NULL), A_C), is_false);
 }
 
 /* The closure counts what it found, also beyond what fits; what did not fit
@@ -126,7 +131,7 @@ Ensure(Freshness, compilation_unit_whose_include_closure_did_not_fit_is_out_of_d
     expect(collectIncludeClosure, when(fileNumber, is_equal_to(A_C)),
            will_return(1000000));
 
-    assert_that(knowledgeIsOutOfDate(NULL, A_C));
+    assert_that(knowledgeIsOutOfDate(inputsWithGraph(NULL), A_C));
 }
 
 /* A file that no longer exists has no modification time */

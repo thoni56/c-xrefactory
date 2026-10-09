@@ -1,10 +1,27 @@
 #include "freshness.h"
 
+#include <stdlib.h>
+
 #include "editor.h"
 #include "filetable.h"
 #include "includegraph.h"
 #include "timestamp.h"
 
+
+struct inputs {
+    IncludeGraph *includeGraph;
+};
+
+Inputs *collectInputs(void) {
+    Inputs *inputs = malloc(sizeof(Inputs));
+    inputs->includeGraph = buildIncludeGraph();
+    return inputs;
+}
+
+void freeInputs(Inputs *inputs) {
+    freeIncludeGraph(inputs->includeGraph);
+    free(inputs);
+}
 
 /* The filesystem stamps modification times from a coarse clock that lags the
  * system clock, so a write just after the knowledge time can get a time up to
@@ -26,7 +43,7 @@ static bool fileChangedAfter(FileItem *input, FileTimestamp knowledgeTime) {
     return fileTimestampIsZero(changeTime) || changedAfter(changeTime, knowledgeTime);
 }
 
-bool knowledgeIsOutOfDate(IncludeGraph *graph, int fileNumber) {
+bool knowledgeIsOutOfDate(Inputs *inputs, int fileNumber) {
     FileItem *fileItem = getFileItemWithFileNumber(fileNumber);
     if (fileTimestampIsZero(fileItem->knowledgeTime))
         return true;
@@ -34,7 +51,7 @@ bool knowledgeIsOutOfDate(IncludeGraph *graph, int fileNumber) {
         return true;
 
     int closure[MAX_INCLUDE_CLOSURE];
-    int count = collectIncludeClosure(graph, fileNumber, closure, MAX_INCLUDE_CLOSURE);
+    int count = collectIncludeClosure(inputs->includeGraph, fileNumber, closure, MAX_INCLUDE_CLOSURE);
     if (count > MAX_INCLUDE_CLOSURE)
         return true;
     for (int i = 0; i < count; i++) {
