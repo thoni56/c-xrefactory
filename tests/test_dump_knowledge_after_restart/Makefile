@@ -9,7 +9,7 @@ include ../Makefile.server
 # And x.h and b.c have none
 
 $(TEST): .c-xrefrc
-	@rm -rf .c-xref output output.tmp server-buffer
+	@rm -rf output output.tmp server-buffer
 	@-$(SERVER_DRIVER) commands_session1.input $(EXTRA1) > session1.output 2>&1
 	@-$(SERVER_DRIVER) commands_session2.input $(EXTRA2) > output.tmp 2>&1
 	@$(NORMALIZE) output.tmp > output

@@ -13,7 +13,7 @@
 include ../Makefile.server
 
 $(TEST): .c-xrefrc
-	@rm -rf .c-xref output output.tmp
+	@rm -rf output output.tmp
 	@$(SERVER_DRIVER) query.input > no-snapshot.tmp
 	@$(NORMALIZE) no-snapshot.tmp > no-snapshot.output
 	@rm -rf .c-xref

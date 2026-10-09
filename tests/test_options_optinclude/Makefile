@@ -10,7 +10,7 @@ include ../Makefile.server
 # line on every run, and left the option in place even when the recipe dropped it.
 
 $(TEST): .c-xrefrc
-	@rm -rf .c-xref output output.tmp server-buffer
+	@rm -rf output output.tmp server-buffer
 	@$(SERVER_DRIVER) commands.input $(EXTRA) > /dev/null
 	@../../utils/cxref_reader .c-xref/db > output
 	$(VERIFY)

@@ -8,7 +8,6 @@ include ../Makefile.server
 # And nothing that only a parse would find, like g or the call of f in b.c
 
 $(TEST): .c-xrefrc
-	@rm -rf .c-xref
 	@$(SERVER_DRIVER) commands.input $(EXTRA) > output.tmp
 	@../../utils/cxref_reader .c-xref/db >> output.tmp
 	@$(NORMALIZE) output.tmp > output

@@ -8,7 +8,7 @@
 include ../Makefile.server
 
 $(TEST): .c-xrefrc
-	@rm -rf .c-xref output output.tmp server-buffer driver.err
+	@rm -rf output output.tmp server-buffer driver.err
 	@-$(SERVER_DRIVER) commands.input $(EXTRA) > output.tmp 2> driver.err; echo "exit=$$?" >> output.tmp
 	@cat driver.err >> output.tmp
 	@$(NORMALIZE) output.tmp > output

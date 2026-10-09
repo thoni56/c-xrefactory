@@ -9,7 +9,6 @@ include ../Makefile.server
 # And the snapshot holds the files and their includes from the scan, nothing parsed
 
 $(TEST): .c-xrefrc
-	@rm -rf .c-xref
 	@$(SERVER_DRIVER) commands.input $(EXTRA) > output.tmp
 	@../../utils/cxref_reader .c-xref/db >> output.tmp
 	@$(NORMALIZE) output.tmp > output

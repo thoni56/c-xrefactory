@@ -5,7 +5,6 @@
 include ../Makefile.cli
 
 $(TEST):
-	@rm -rf .c-xref
 	@$(CXREF_PROGRAM) -create2 > output.tmp 2>&1 || true
 	@../../utils/cxref_reader .c-xref/db >> output.tmp 2>&1 || true
 	$(NORMALIZE) output.tmp > output

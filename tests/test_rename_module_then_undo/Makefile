@@ -5,7 +5,6 @@ include ../Makefile.server
 # contain file entries for the renamed (target) files.
 
 $(TEST):
-	@-rm -rf .c-xref
 	@-rm -f target.c target.h
 	@cp main.c.original main.c
 	@cp source.c.original source.c

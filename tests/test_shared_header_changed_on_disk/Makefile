@@ -11,7 +11,6 @@ include ../Makefile.server
 # stays. Pass 2 parses the includers of a header only when the header is edited.
 
 $(TEST): .c-xrefrc
-	@rm -rf .c-xref
 	@cp header_v1.h header.h
 	@-$(SERVER_DRIVER) commands.input $(EXTRA) > output.tmp 2>&1
 	@$(NORMALIZE) output.tmp > output

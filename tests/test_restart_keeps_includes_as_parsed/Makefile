@@ -12,7 +12,7 @@ include ../Makefile.server
 # The second session's scan adds an include at line 1, column 0 of both CUs.
 
 $(TEST): .c-xrefrc
-	@rm -rf .c-xref output output.tmp server-buffer
+	@rm -rf output output.tmp server-buffer
 	@-$(SERVER_DRIVER) commands.input $(EXTRA1) > session1.output 2>&1
 	@echo "--- after session 1" > output
 	@../../utils/cxref_reader .c-xref/db >> output

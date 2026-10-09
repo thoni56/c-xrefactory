@@ -9,7 +9,6 @@ include ../Makefile.server
 # Then the use of g in the macro body, which only b.c puts there, is among its references
 
 $(TEST): .c-xrefrc
-	@rm -rf .c-xref
 	@cp x_v1.h x.h
 	@-$(SERVER_DRIVER) commands.input $(EXTRA) > output.tmp 2>&1
 	@$(NORMALIZE) output.tmp > output

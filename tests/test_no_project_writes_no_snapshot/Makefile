@@ -11,7 +11,7 @@ include ../Makefile.server
 
 $(TEST):
 	@rm -f .c-xrefrc
-	@rm -rf .c-xref CXrefs
+	@rm -rf CXrefs
 	@$(SERVER_DRIVER) commands.input $(EXTRA) > output.tmp
 	@ls -d CXrefs .c-xref >> output.tmp 2>/dev/null || true
 	@$(NORMALIZE) output.tmp > output

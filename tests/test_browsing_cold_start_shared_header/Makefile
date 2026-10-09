@@ -13,7 +13,6 @@ include ../Makefile.server
 
 $(TEST):
 # No -create: the server must discover and parse CUs on-demand
-	@-rm -rf .c-xref 2>&1 > /dev/null
 	@$(SERVER_DRIVER) $(EXTRA) commands.input > output.tmp
 	@$(NORMALIZE) output.tmp > output
 	$(VERIFY)

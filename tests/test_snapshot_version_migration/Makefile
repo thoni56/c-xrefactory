@@ -4,7 +4,6 @@ include ../Makefile.server
 # ignore it and create a new one with the current version on exit.
 
 $(TEST):
-	@-rm -rf .c-xref
 	@mkdir -p .c-xref/db
 	@cp old_snapshot .c-xref/db
 	@$(SERVER_DRIVER) commands.input $(EXTRA) > /dev/null

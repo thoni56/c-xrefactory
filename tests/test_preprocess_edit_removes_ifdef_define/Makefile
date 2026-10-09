@@ -15,7 +15,7 @@ include ../Makefile.server
 
 
 $(TEST):
-	@rm -rf CXrefs .c-xref output output.tmp server-buffer
+	@rm -rf CXrefs output output.tmp server-buffer
 	@cp with_feature.preload source.c
 	@$(SERVER_DRIVER) $(EXTRA1) commands_phase1.input > phase1.output
 	@$(SERVER_DRIVER) $(EXTRA2) commands_phase2.input > phase2.output

@@ -7,7 +7,7 @@ include ../Makefile.server
 # Then the server answers with its definition
 
 $(TEST): .c-xrefrc
-	@rm -rf .c-xref output output.tmp server-buffer
+	@rm -rf output output.tmp server-buffer
 	@-$(SERVER_DRIVER) commands.input --answer-timeout=10 $(EXTRA) > output.tmp 2>&1
 	@$(NORMALIZE) output.tmp > output
 	$(VERIFY)

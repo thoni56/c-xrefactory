@@ -7,7 +7,6 @@
 include ../Makefile.server
 
 $(TEST):
-	@rm -rf .c-xref
 	@$(SERVER_DRIVER) $(EXTRA) commands.input > output.tmp
 	ls .c-xref/db >> output.tmp
 	$(NORMALIZE) output.tmp > output

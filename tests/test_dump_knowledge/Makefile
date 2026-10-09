@@ -8,7 +8,7 @@ include ../Makefile.server
 # And x.h, a header, and b.c, never parsed, have none
 
 $(TEST): .c-xrefrc
-	@rm -rf .c-xref output output.tmp server-buffer
+	@rm -rf output output.tmp server-buffer
 	@-$(SERVER_DRIVER) commands.input $(EXTRA) > output.tmp 2>&1
 	@$(NORMALIZE) output.tmp > output
 	$(VERIFY)

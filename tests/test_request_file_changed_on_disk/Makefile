@@ -9,7 +9,6 @@ include ../Makefile.server
 # Then f is defined on line 4 only
 
 $(TEST): .c-xrefrc
-	@rm -rf .c-xref
 	@cp definer.c.v1 definer.c
 	@-$(SERVER_DRIVER) commands.input $(EXTRA) > output.tmp 2>&1
 	@$(NORMALIZE) output.tmp > output

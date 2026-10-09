@@ -9,7 +9,6 @@ include ../Makefile.server
 # Then the saved db should contain correct references for all symbols
 
 $(TEST):
-	@rm -rf .c-xref
 	@$(SERVER_DRIVER) $(EXTRA) session1.input > /dev/null 2>&1
 	@sleep 2 && touch other.c
 	@$(SERVER_DRIVER) $(EXTRA) session2.input > /dev/null 2>&1

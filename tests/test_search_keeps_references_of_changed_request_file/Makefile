@@ -10,7 +10,7 @@ include ../Makefile.server
 # A search does not parse the request file, so it must not remove its references either.
 
 $(TEST): .c-xrefrc
-	@rm -rf .c-xref output output.tmp server-buffer
+	@rm -rf output output.tmp server-buffer
 	@cp a.v1 a.c
 	@touch -t 200001010000 a.c
 	@-$(SERVER_DRIVER) commands.input $(EXTRA) > output.tmp 2>&1

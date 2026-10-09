@@ -9,7 +9,7 @@ include ../Makefile.server
 # And the snapshot is the single .c-xref/db file
 
 $(TEST):
-	@rm -rf .c-xref elsewhere
+	@rm -rf elsewhere
 	@$(SERVER_DRIVER) commands.input $(EXTRA) > output.tmp
 	@ls .c-xref/db >> output.tmp
 	@$(NORMALIZE) output.tmp > output

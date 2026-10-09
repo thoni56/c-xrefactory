@@ -4,7 +4,7 @@ include ../Makefile.cli
 # longer a mode, and c-xref says that no mode was given.
 
 $(TEST):
-	@rm -rf CXrefs .c-xref
+	@rm -rf CXrefs
 	@-$(CXREF_PROGRAM) -xref source.c > output.tmp 2>&1; echo "exit=$$?" >> output.tmp
 	@$(NORMALIZE) output.tmp > output
 	$(VERIFY)

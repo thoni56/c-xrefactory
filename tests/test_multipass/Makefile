@@ -9,7 +9,7 @@ include ../Makefile.server
 # drops the position in server mode.
 
 $(TEST): .c-xrefrc
-	@rm -rf .c-xref output output.tmp server-buffer
+	@rm -rf output output.tmp server-buffer
 	@$(SERVER_DRIVER) commands.input $(EXTRA) > /dev/null
 	@../../utils/cxref_reader .c-xref/db > output
 	$(VERIFY)

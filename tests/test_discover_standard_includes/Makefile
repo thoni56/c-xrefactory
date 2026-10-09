@@ -8,7 +8,7 @@ include ../Makefile.server
 # differ between machines and compiler versions; the names do not.
 
 $(TEST): .c-xrefrc
-	@rm -rf .c-xref output output.tmp server-buffer
+	@rm -rf output output.tmp server-buffer
 	@$(SERVER_DRIVER) commands.input $(EXTRA) > /dev/null
 	@../../utils/cxref_reader .c-xref/db | grep -xE 'bool|true|false' | sort > output
 	$(VERIFY)

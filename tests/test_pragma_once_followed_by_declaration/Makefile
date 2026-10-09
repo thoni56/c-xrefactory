@@ -15,7 +15,6 @@
 include ../Makefile.server
 
 $(TEST): .c-xrefrc
-	@-rm -rf .c-xref
 	@$(SERVER_DRIVER) $(EXTRA) commands.input > output.tmp
 	@if grep -q 'header\.h' output.tmp; then \
 	   echo 'rename reaches the declaration in the #pragma once header'; \

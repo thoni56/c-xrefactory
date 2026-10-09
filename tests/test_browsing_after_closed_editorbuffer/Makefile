@@ -12,7 +12,6 @@ include ../Makefile.server
 # source.c, and target's use ref is lost.
 
 $(TEST):
-	@-rm -rf .c-xref
 	@mkdir -p .c-xref
 	@$(SERVER_DRIVER) setup.input > /dev/null
 	@cp source.c source.preload

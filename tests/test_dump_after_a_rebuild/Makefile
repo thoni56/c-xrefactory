@@ -9,7 +9,7 @@ include ../Makefile.server
 # The rebuild resets the request's options, and the dump lost what it was asked for.
 
 $(TEST): .c-xrefrc
-	@rm -rf .c-xref output output.tmp server-buffer
+	@rm -rf output output.tmp server-buffer
 	@touch -t 200001010000 a.c
 	@-$(SERVER_DRIVER) commands.input $(EXTRA) > output.tmp 2>&1
 	@$(NORMALIZE) output.tmp > output

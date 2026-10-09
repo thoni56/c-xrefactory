@@ -6,7 +6,6 @@ include ../Makefile.server
 # file.
 
 $(TEST):
-	@-rm -rf .c-xref
 	@mkdir -p .c-xref
 	# Populate a real snapshot with F's references
 	@$(SERVER_DRIVER) setup.input > /dev/null

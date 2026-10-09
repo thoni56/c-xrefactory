@@ -8,7 +8,7 @@
 include ../Makefile.server
 
 $(TEST): .c-xrefrc
-	@rm -rf .c-xref output output.tmp
+	@rm -rf output output.tmp
 	@$(SERVER_DRIVER) commands.input > output.tmp
 	@../../utils/cxref_reader .c-xref/db > output
 	$(VERIFY)

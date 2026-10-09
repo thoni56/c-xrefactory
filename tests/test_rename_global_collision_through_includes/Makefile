@@ -17,7 +17,7 @@
 include ../Makefile.server
 
 $(TEST): .c-xrefrc
-	@rm -rf .c-xref output output.tmp server-buffer
+	@rm -rf output output.tmp server-buffer
 	@$(SERVER_DRIVER) sibling.input $(EXTRA) > output.tmp
 	@rm -rf .c-xref
 	@$(SERVER_DRIVER) unrelated.input $(EXTRA) >> output.tmp

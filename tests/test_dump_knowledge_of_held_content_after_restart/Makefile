@@ -8,7 +8,7 @@ include ../Makefile.server
 # Then a.c has no knowledge, since the content it was built from was never saved
 
 $(TEST): .c-xrefrc
-	@rm -rf .c-xref output output.tmp server-buffer
+	@rm -rf output output.tmp server-buffer
 	@touch -t 200001010000 a.c
 	@-$(SERVER_DRIVER) commands_session1.input $(EXTRA1) > output.tmp 2>&1
 	@-$(SERVER_DRIVER) commands_session2.input $(EXTRA2) >> output.tmp 2>&1

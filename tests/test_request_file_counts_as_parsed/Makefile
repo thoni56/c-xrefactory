@@ -8,7 +8,6 @@ include ../Makefile.server
 # Then nothing needs reparsing, so there is no question and it goes to f
 
 $(TEST): .c-xrefrc
-	@rm -rf .c-xref
 	@$(SERVER_DRIVER) commands.input $(EXTRA) > output.tmp
 	@$(NORMALIZE) output.tmp > output
 	$(VERIFY)

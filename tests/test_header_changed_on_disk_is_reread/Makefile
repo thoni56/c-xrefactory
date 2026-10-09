@@ -11,7 +11,6 @@ include ../Makefile.server
 # hold are closed after each request, so header.h is read from disk again.
 
 $(TEST): .c-xrefrc
-	@rm -rf .c-xref
 	@cp header_v1.h header.h
 	@-$(SERVER_DRIVER) commands.input $(EXTRA) > output.tmp 2>&1
 	@$(NORMALIZE) output.tmp > output

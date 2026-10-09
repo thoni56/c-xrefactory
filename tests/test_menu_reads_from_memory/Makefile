@@ -8,7 +8,6 @@ include ../Makefile.server
 # into the rename occurrences list and the validation pass aborts.
 
 $(TEST):
-	@-rm -rf .c-xref
 	@mkdir -p .c-xref
 	# Populate a real snapshot with F's references
 	@$(SERVER_DRIVER) setup.input > /dev/null

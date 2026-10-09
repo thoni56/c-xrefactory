@@ -1,7 +1,7 @@
 include ../Makefile.server
 
 $(TEST): include.h
-	@-rm -rf include2.h* .c-xref
+	@-rm -rf include2.h*
 	@-$(SERVER_DRIVER) commands.input $(EXTRA) > output.tmp
 	@$(NORMALIZE) output.tmp > output
 	$(VERIFY)

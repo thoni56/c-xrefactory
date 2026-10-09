@@ -12,7 +12,6 @@
 include ../Makefile.server
 
 $(TEST):
-	-rm -rf .c-xref
 	touch source.preload
 	$(SERVER_DRIVER) $(SERVER_EXTRA) commands.input > output.tmp
 	$(NORMALIZE) output.tmp > output

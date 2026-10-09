@@ -8,7 +8,7 @@ include ../Makefile.server
 # Then the table has pass1 from the first pass and pass2 from the second
 
 $(TEST): .c-xrefrc
-	@rm -rf .c-xref output output.tmp server-buffer
+	@rm -rf output output.tmp server-buffer
 	@touch source.preload   # a real client's preload is newer than the file
 	@$(SERVER_DRIVER) commands.input $(EXTRA) > /dev/null
 	@../../utils/cxref_reader .c-xref/db > output

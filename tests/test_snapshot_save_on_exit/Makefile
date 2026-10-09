@@ -8,7 +8,6 @@ include ../Makefile.server
 # Then .c-xref/db should exist on disk
 
 $(TEST):
-	@rm -rf .c-xref
 	@$(SERVER_DRIVER) $(EXTRA) commands.input > output.tmp
 	@if test -f .c-xref/db ; then \
 		$(OK) ; \

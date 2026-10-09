@@ -14,7 +14,7 @@ include ../Makefile.server
 # it is started in says nothing about the project it will be asked about.
 
 $(TEST): .c-xrefrc
-	@rm -rf .c-xref projectB/.c-xref
+	@rm -rf projectB/.c-xref
 	@printf '[projectB]\n  %s/projectB\n' '$(CURDIR)' > projectB/.c-xrefrc
 	@$(SERVER_DRIVER) commands.input $(EXTRA) > output.tmp
 	@$(NORMALIZE) output.tmp > output

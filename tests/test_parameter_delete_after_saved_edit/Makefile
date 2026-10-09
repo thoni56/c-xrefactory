@@ -7,7 +7,7 @@
 include ../Makefile.server
 
 $(TEST): .c-xrefrc
-	@rm -rf .c-xref output output.tmp server-buffer
+	@rm -rf output output.tmp server-buffer
 	@cp source.c.original source.c
 	@$(SERVER_DRIVER) commands.input $(EXTRA) > output.tmp
 	@$(NORMALIZE) output.tmp > output

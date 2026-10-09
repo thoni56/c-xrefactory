@@ -8,7 +8,7 @@
 include ../Makefile.server
 
 $(TEST): .c-xrefrc
-	@rm -rf .c-xref output output.tmp server-buffer compiler.log
+	@rm -rf output output.tmp server-buffer compiler.log
 	@$(SERVER_DRIVER) commands.input $(EXTRA) > output.tmp
 	@cat compiler.log >> output.tmp 2>/dev/null || echo "the compiler was never called" >> output.tmp
 	@$(NORMALIZE) output.tmp > output

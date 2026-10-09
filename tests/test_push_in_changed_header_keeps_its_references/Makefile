@@ -13,7 +13,7 @@ include ../Makefile.server
 # until the includers are parsed again.
 
 $(TEST): .c-xrefrc
-	@rm -rf .c-xref output output.tmp server-buffer
+	@rm -rf output output.tmp server-buffer
 	@cp a.h.v1 a.h
 	@touch -t 200001010000 a.h a.c
 	@-$(SERVER_DRIVER) commands.input $(EXTRA) > output.tmp 2>&1
