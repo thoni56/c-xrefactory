@@ -5,7 +5,7 @@
 <meta http-equiv="X-UA-Compatible" content="IE=edge">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <meta name="generator" content="Asciidoctor 2.0.26">
-<meta name="author" content="v{VERSION} - Generated 2026-10-08">
+<meta name="author" content="v{VERSION} - Generated 2026-10-09">
 <title>C-xrefactory - a C/Yacc refactoring and code browsing tool - Design Documentation</title>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Open+Sans:300,300italic,400,400italic,600,600italic%7CNoto+Serif:400,400italic,700,700italic%7CDroid+Sans+Mono:400,700">
 <style>
@@ -441,7 +441,7 @@ body.book #toc,body.book #preamble,body.book h1.sect0,body.book .sect1>h2{page-b
 <div id="header">
 <h1>C-xrefactory - a C/Yacc refactoring and code browsing tool - Design Documentation</h1>
 <div class="details">
-<span id="author" class="author">v{VERSION} - Generated 2026-10-08</span><br>
+<span id="author" class="author">v{VERSION} - Generated 2026-10-09</span><br>
 </div>
 <div id="toc" class="toc2">
 <div id="toctitle">Table of Contents</div>
@@ -5708,6 +5708,36 @@ The snapshot still records the partition count, always as 1.</p>
 <div class="paragraph">
 <p>Some fields carry a length prefix: filenames use <code>&lt;length&gt;:&lt;path&gt;</code> (e.g. <code>84:/home/&#8230;&#8203;/file.c</code>), version strings use <code>&lt;length&gt;v</code>.</p>
 </div>
+</div>
+<div class="sect3">
+<h4 id="_format_version">12.10.4. Format Version</h4>
+<div class="paragraph">
+<p>The snapshot starts with its format version, <code>C_XREF_FILE_FORMAT_VERSION</code> in <code>cxfile.c</code>.
+A snapshot of any other version is ignored like no snapshot, and rewritten on exit, so a
+bump costs one cold start.</p>
+</div>
+<div class="paragraph">
+<p>The version is a promise about what the snapshot means, not only about its syntax. Bump
+it whenever a snapshot written before a change could be read after it and give a wrong
+answer, also when every record still parses:</p>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p>1.11.0: the link names of statics and of what a <code>.y</code> file defines changed, so an older
+snapshot held names the parser no longer makes.</p>
+</li>
+<li>
+<p>1.13.0: knowledge built from content the server edited, e.g. by a rename, stopped being
+written. A 1.12.0 snapshot can hold a knowledge time that makes a CU look current while
+its references are not the ones on disk, and the freshness test trusts the knowledge
+time.</p>
+</li>
+</ul>
+</div>
+<div class="paragraph">
+<p>Each bump comes with a <code>test_snapshot_from_&lt;version&gt;_is_ignored</code>.</p>
+</div>
 <div class="paragraph">
 <p>Example file information line:</p>
 </div>
@@ -5731,7 +5761,7 @@ The snapshot still records the partition count, always as 1.</p>
 </div>
 </div>
 <div class="sect3">
-<h4 id="_reading">12.10.4. Reading</h4>
+<h4 id="_reading">12.10.5. Reading</h4>
 <div class="paragraph">
 <p>Reading is controlled by <code>scanFunctionTable</code> arrays. Each entry maps a record key to a handler function. As the reader encounters a key in the file, it looks up the handler and calls it. This table-driven approach allows different consumers to register for different record types — for example, loading only symbol names vs. loading full reference lists.</p>
 </div>
@@ -12037,7 +12067,7 @@ operation reads the in-memory table.</p>
 </div>
 <div id="footer">
 <div id="footer-text">
-Last updated 2026-10-08 21:15:22 UTC
+Last updated 2026-10-09 11:29:40 UTC
 </div>
 </div>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.18.3/highlight.min.js"></script>
