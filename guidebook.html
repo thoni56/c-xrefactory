@@ -4312,7 +4312,19 @@ a user asks whether the project is configured correctly.</p>
 </div>
 </div>
 <div class="sect3">
-<h4 id="_design_options">11.6.5. Design Options</h4>
+<h4 id="_suggesting_a_fix">11.6.5. Suggesting a fix</h4>
+<div class="paragraph">
+<p>An include that is not found often has a file with that name somewhere in the project.
+The report could then ask whether that is the one, and offer to add the <code>-I</code> for it to the
+config, i.e. "`foo/bar.h` was not found, there is one under <code>lib/include/</code>. Add
+<code>-Ilib/include</code>?".
+After that the CUs that wanted it are out of date, since the config changed, and get
+parsed again when needed.
+More than one candidate is a menu, and none is just the report.</p>
+</div>
+</div>
+<div class="sect3">
+<h4 id="_design_options">11.6.6. Design Options</h4>
 <div class="paragraph">
 <p><strong>Option A: New protocol record type</strong> (recommended) — Add a <code>PPC_LOG</code> record that the Emacs client silently appends to a <code><strong>c-xref-log</strong></code> buffer. The count accumulates over the session, and a <code>PPC_BOTTOM_INFORMATION</code> reports it — "N warnings (see <strong>c-xref-log</strong>)" — after a parse-all, or when asked. Clean separation, no modals, inspectable at leisure. Touches protocol definition, C server code, and Emacs client.</p>
 </div>
@@ -12067,7 +12079,7 @@ operation reads the in-memory table.</p>
 </div>
 <div id="footer">
 <div id="footer-text">
-Last updated 2026-10-09 11:29:40 UTC
+Last updated 2026-10-09 15:38:57 UTC
 </div>
 </div>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.18.3/highlight.min.js"></script>
