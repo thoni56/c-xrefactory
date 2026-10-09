@@ -20,6 +20,7 @@ AfterEach(Freshness) {}
 
 #define A_C 1
 #define A_H 2
+#define B_C 3
 
 static FileItem fileItem;
 
@@ -140,4 +141,34 @@ Ensure(Freshness, compilation_unit_that_no_longer_exists_is_out_of_date) {
     expectACUWithKnowledgeAt(makeFileTimestamp(2000, 0), &noChangeTime);
 
     assert_that(knowledgeIsOutOfDate(NULL, A_C));
+}
+
+/* Each input is asked for its change time once per request, however many CUs
+ * include it */
+Ensure(Freshness, a_header_two_compilation_units_include_is_asked_for_its_change_time_once) {
+    FileTimestamp cuChangeTime = makeFileTimestamp(1000, 0);
+    expectACUWithKnowledgeAt(makeFileTimestamp(2000, 0), &cuChangeTime);
+    int closure[] = {A_H};
+    expect(collectIncludeClosure, when(fileNumber, is_equal_to(A_C)),
+           will_set_contents_of_parameter(fileNumbers, closure, sizeof(closure)),
+           will_return(1));
+    FileItem headerItem = {.name = "a.h"};
+    FileTimestamp headerChangeTime = makeFileTimestamp(1000, 0);
+    expect(getFileItemWithFileNumber, when(fileNumber, is_equal_to(A_H)),
+           will_return(&headerItem));
+    expect(editorFileModificationTime, when(path, is_equal_to_string("a.h")),
+           will_return(&headerChangeTime));
+
+    FileItem otherCUItem = {.name = "b.c", .knowledgeTime = makeFileTimestamp(2000, 0)};
+    expect(getFileItemWithFileNumber, when(fileNumber, is_equal_to(B_C)),
+           will_return(&otherCUItem));
+    expect(editorFileModificationTime, when(path, is_equal_to_string("b.c")),
+           will_return(&cuChangeTime));
+    expect(collectIncludeClosure, when(fileNumber, is_equal_to(B_C)),
+           will_set_contents_of_parameter(fileNumbers, closure, sizeof(closure)),
+           will_return(1));
+
+    Inputs *inputs = inputsWithGraph(NULL);
+    assert_that(knowledgeIsOutOfDate(inputs, A_C), is_false);
+    assert_that(knowledgeIsOutOfDate(inputs, B_C), is_false);
 }
