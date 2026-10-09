@@ -214,13 +214,6 @@ void initServer(ArgumentsVector args) {
 }
 
 
-static bool knowledgeOfRequestFileIsOutOfDate(int fileNumber) {
-    Inputs *inputs = collectInputs();
-    bool outOfDate = knowledgeIsOutOfDate(inputs, fileNumber);
-    freeInputs(inputs);
-    return outOfDate;
-}
-
 protected void singlePass(Inputs *inputs, ArgumentsVector args, ArgumentsVector nargs) {
     bool inputOpened = false;
 
@@ -237,7 +230,7 @@ protected void singlePass(Inputs *inputs, ArgumentsVector args, ArgumentsVector 
          * by its includers, and parsing it on its own cannot put them all back. */
         FileItem *fileItem = getFileItemWithFileNumber(parsingConfig.fileNumber);
         if (parses && isCompilationUnit(fileItem->name)
-            && knowledgeOfRequestFileIsOutOfDate(parsingConfig.fileNumber)) {
+            && knowledgeIsOutOfDate(inputs, parsingConfig.fileNumber)) {
             log_debug("file has changed content, removing old references for file %d",
                       parsingConfig.fileNumber);
             removeReferenceableItemsForFile(parsingConfig.fileNumber);
