@@ -47,6 +47,7 @@ Options presetOptions = {
     .lexemTrace = false,
     .fileTrace = false,
     .statistics = false,
+    .progressUnthrottled = false,
 
     /* --- PROJECT --- */
     .compiler = "gcc",
@@ -1444,6 +1445,9 @@ static bool processPOption(int *argi, ArgumentsVector args) {
     else if (strcmp(args.argv[i], "-prune")==0) {
         ensureThereIsAnotherArgument(&i, args);
         addToStringListOption(&options.pruneNames, args.argv[i]);
+    }
+    else if (strcmp(args.argv[i], "-progress-unthrottled")==0) {
+        options.progressUnthrottled = true;
     }
     else return false;
     *argi = i;

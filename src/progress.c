@@ -4,6 +4,7 @@
 #include <stdbool.h>
 #include <stdio.h>
 
+#include "options.h"
 #include "protocol.h"
 
 int progressOffset=0;
@@ -31,7 +32,9 @@ void writeProgressInformation(int value) {
 
     const char *format = messageFormat ? messageFormat : "progress %d%%";
 
-    if (!dialogDisplayed) {
+    if (options.progressUnthrottled) {
+        dialogDisplayed = true;
+    } else if (!dialogDisplayed) {
         if (elapsedSeconds(&timeZero, &now) <= 1.0)
             return;
         dialogDisplayed = true;

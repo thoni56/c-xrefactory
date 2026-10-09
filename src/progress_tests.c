@@ -5,6 +5,8 @@
 
 #include "log.h"
 
+#include "options.mock"
+
 Describe(Progress);
 BeforeEach(Progress) {
     log_set_level(LOG_ERROR);

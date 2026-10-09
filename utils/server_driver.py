@@ -101,7 +101,10 @@ def read_answer_line(p):
 def wait_for_sync(p):
     line = read_answer_line(p)
     while line != '<sync>' and line != '':
-        if not line.startswith("<progress>"):
+        if line.startswith("<progress>"):
+            if args.show_progress:
+                print(line)
+        else:
             eprint("Waiting for <sync>, got: '{0}'".format(line))
         line = read_answer_line(p)
     if line == '':
@@ -189,6 +192,7 @@ if __name__ == "__main__":
     parser.add_argument('--extra', dest='extra_options', help="Extra options to the c-xref startup command", default="")
     parser.add_argument('--exit-timeout', type=int, dest='exit_timeout', help="Seconds to wait for server shutdown, 0 for no timeout, default 5", default=5)
     parser.add_argument('--answer-timeout', type=int, dest='answer_timeout', help="Seconds the server may stay silent while answering a request, 0 for no timeout, default 60", default=60)
+    parser.add_argument('--show-progress', dest='show_progress', action='store_true', help="Print the <progress> records the server sends while it answers")
     parser.add_argument('--cxref', dest='cxref_program', help="Which c-xref program to use, default is to use the one in PATH. Only applies if the command file starts with 'CXREF'", default="c-xref")
     args = parser.parse_args()
 

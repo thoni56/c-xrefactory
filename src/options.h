@@ -78,6 +78,7 @@ typedef struct options {
     bool lexemTrace;                            /* SESSION */
     bool fileTrace;                             /* SESSION */
     bool statistics;                            /* SESSION */
+    bool progressUnthrottled;                   /* SESSION, so a test sees every progress record */
 
     /* --- PROJECT: From .c-xrefrc config file, cached via checkpoint --- */
     char *compiler;                             /* PROJECT */
