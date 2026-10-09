@@ -575,6 +575,25 @@ The coding often starts with a number followed by a character key: `4l` means li
 
 Some fields carry a length prefix: filenames use `<length>:<path>` (e.g. `84:/home/.../file.c`), version strings use `<length>v`.
 
+==== Format Version
+
+The snapshot starts with its format version, `C_XREF_FILE_FORMAT_VERSION` in `cxfile.c`.
+A snapshot of any other version is ignored like no snapshot, and rewritten on exit, so a
+bump costs one cold start.
+
+The version is a promise about what the snapshot means, not only about its syntax. Bump
+it whenever a snapshot written before a change could be read after it and give a wrong
+answer, also when every record still parses:
+
+* 1.11.0: the link names of statics and of what a `.y` file defines changed, so an older
+  snapshot held names the parser no longer makes.
+* 1.13.0: knowledge built from content the server edited, e.g. by a rename, stopped being
+  written. A 1.12.0 snapshot can hold a knowledge time that makes a CU look current while
+  its references are not the ones on disk, and the freshness test trusts the knowledge
+  time.
+
+Each bump comes with a `test_snapshot_from_<version>_is_ignored`.
+
 Example file information line:
 
     32571f  1715027668m 21:/usr/include/ctype.h
