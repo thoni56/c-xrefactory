@@ -214,7 +214,12 @@ void initServer(ArgumentsVector args) {
 }
 
 
-static bool fileNeedsParsing(FileItem *fileItem);
+static bool knowledgeOfRequestFileIsOutOfDate(int fileNumber) {
+    Inputs *inputs = collectInputs();
+    bool outOfDate = knowledgeIsOutOfDate(inputs, fileNumber);
+    freeInputs(inputs);
+    return outOfDate;
+}
 
 protected void singlePass(ArgumentsVector args, ArgumentsVector nargs) {
     bool inputOpened = false;
@@ -225,13 +230,14 @@ protected void singlePass(ArgumentsVector args, ArgumentsVector nargs) {
 
     if (inputOpened) {
         bool parses = operationParsesRequestFile(options.serverOperation);
-        /* If the content, preloaded or on disk, changed since the file was last
-         * parsed, remove old references before parsing. A later pass over the same
-         * content finds it parsed and keeps what the earlier pass added. Never for a
-         * header: its references were put there by its includers, and parsing it on
-         * its own cannot put them all back. */
+        /* If the content, preloaded or on disk, or a header it includes changed
+         * since the knowledge was built, remove old references before parsing. A
+         * later pass over the same content finds the knowledge fresh and keeps what
+         * the earlier pass added. Never for a header: its references were put there
+         * by its includers, and parsing it on its own cannot put them all back. */
         FileItem *fileItem = getFileItemWithFileNumber(parsingConfig.fileNumber);
-        if (parses && isCompilationUnit(fileItem->name) && fileNeedsParsing(fileItem)) {
+        if (parses && isCompilationUnit(fileItem->name)
+            && knowledgeOfRequestFileIsOutOfDate(parsingConfig.fileNumber)) {
             log_debug("file has changed content, removing old references for file %d",
                       parsingConfig.fileNumber);
             removeReferenceableItemsForFile(parsingConfig.fileNumber);
@@ -546,11 +552,6 @@ static void reparseStalePreloadedFiles(ArgumentsVector baseArgs) {
                 writeProgressInformation(cuCount - i - 1);
         }
     }
-}
-
-static bool fileNeedsParsing(FileItem *fileItem) {
-    return fileTimestampIsZero(fileItem->lastParsedMtime)
-        || !fileTimestampsEqual(editorFileModificationTime(fileItem->name), fileItem->lastParsedMtime);
 }
 
 static bool waitForUserConfirmation(char *message) {

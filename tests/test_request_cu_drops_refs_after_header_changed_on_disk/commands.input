@@ -1,0 +1,11 @@
+CXREF -server
+-getproject CURDIR/c.c
+<sync>
+-push -olcursor=20 CURDIR/c.c
+<sync>
+!cp CURDIR/a_v2.h CURDIR/a.h
+-push -olcursor=20 CURDIR/c.c
+<sync>
+-olcxfilter=0 -olcursor=0 nil
+<sync>
+<exit>
