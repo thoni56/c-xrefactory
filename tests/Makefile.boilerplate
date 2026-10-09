@@ -22,7 +22,15 @@ COMMAND = $(CXREF) $(ARGUMENTS)
 TEST = $(shell basename '$(CURDIR)')
 
 all: .c-xrefrc $(TEST)
-$(TEST): .c-xrefrc
+$(TEST): .c-xrefrc | cold-start
+
+# Every test starts cold. The server writes .c-xref/db on exit, so without this a
+# test would read the snapshot its previous run left, written by whatever binary ran
+# then. A test that needs a warm start builds it in its own recipe, which runs after
+# this. Compatibility with older snapshots has tests of its own.
+.PHONY: cold-start
+cold-start:
+	@rm -rf .c-xref
 
 # Make all testcases silent by default. Use VERBOSE=1 to revert
 $(VERBOSE).SILENT:
