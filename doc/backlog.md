@@ -253,6 +253,15 @@ graph from them on every push, linked at the end of this file, and `utils/backlo
     "utf-16" as the default, which agrees with code points outside the astral planes.
     From reading the code (Mac, session `36694da1`, 2026-10-02), not tested.
 
+    Also *without a repo home yet*: **a relative `-I` in `.c-xrefrc` resolves against
+    the working directory of the server process** (`doc/c-xrefrc.man`), while a directory
+    line resolves against the config's directory and `-prune` against the root. With the
+    config in `tests/test_ffmpeg/ffmpeg`, `-Iffmpeg` found nothing and the absolute path
+    did (WSL, session `d25255b8`, 2026-10-09). Probably the config's general path rule
+    that ADR-0031 proposes for `-prune` should cover `-I` too. The same config had
+    `-prune ffmpeg/compat/atomics`, which with `ffmpeg/` as root names a directory that
+    does not exist, silently.
+
 ## 4. Performance, in strict dependency order
 
 Roadmap → Optimization. Baseline: cold-start PUSH on ffmpeg `af_afir.c` — scan 2.7s, two

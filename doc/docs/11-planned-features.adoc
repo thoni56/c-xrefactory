@@ -226,6 +226,16 @@ The set of names is short even in a badly configured project.
 Two triggers for the same report: after a whole-project parse, and on demand, which is how
 a user asks whether the project is configured correctly.
 
+==== Suggesting a fix
+
+An include that is not found often has a file with that name somewhere in the project.
+The report could then ask whether that is the one, and offer to add the `-I` for it to the
+config, i.e. "`foo/bar.h` was not found, there is one under `lib/include/`. Add
+`-Ilib/include`?".
+After that the CUs that wanted it are out of date, since the config changed, and get
+parsed again when needed.
+More than one candidate is a menu, and none is just the report.
+
 ==== Design Options
 
 **Option A: New protocol record type** (recommended) — Add a `PPC_LOG` record that the Emacs client silently appends to a `*c-xref-log*` buffer. The count accumulates over the session, and a `PPC_BOTTOM_INFORMATION` reports it — "N warnings (see *c-xref-log*)" — after a parse-all, or when asked. Clean separation, no modals, inspectable at leisure. Touches protocol definition, C server code, and Emacs client.
