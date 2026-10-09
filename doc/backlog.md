@@ -463,7 +463,7 @@ Pass 3 rounds 19s each, 42s total.
 ## 7. Freshness as make (ADR-0032, ADR-0033)
 
 The order is roughly the numbers. `header-not-half` can be done any time. Next is
-`singlePass()` and Pass 1 in `out-of-date`.
+Pass 1 in `out-of-date`.
 
 Performance, from reading the code (Mac, session `05984816`, 2026-10-08): at equal
 correctness the design costs the same or less. Parsing dominates, and what is parsed
@@ -482,9 +482,9 @@ are noted in `cu-inputs`, `out-of-date`, `time-budget` and `sweep-cost`.
     Goes with: out-of-date
 36. <a id="out-of-date"></a>**The one freshness predicate** — `knowledgeIsOutOfDate()` in
     `src/freshness.c`: no knowledge, an input gone, or an input changed after a tick
-    before the knowledge time. Pass 3 uses it. Left: `singlePass()`, then Pass 1, which
+    before the knowledge time. Pass 3 and `singlePass()` use it. Left: Pass 1, which
     builds a held CU whose header changed twice, with Pass 2, until `passes-as-one`. Then
-    `fileNumberIsStale()` and `fileNeedsParsing()` go. The config as an input replaces
+    `fileNumberIsStale()` goes. The config as an input replaces
     `markAllCompilationUnitsStale()`, and the zero sentinel goes. The config needs a change
     time, and who owns it depends on where the project config lives after the options
     partition. `MAX_INCLUDE_CLOSURE` (1000) has no measured reason.
