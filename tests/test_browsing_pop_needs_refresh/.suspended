@@ -16,3 +16,12 @@ second c-xref with -fastupdate and no mode, which became an error in
 Every request now goes to the one server process, and the -xref -create prime
 is gone - verified from clean, the server parses on demand and the failure is
 unchanged.
+
+A second defect was found by running this test twice without `make clean`: the
+second run started from the first run's `.c-xref` snapshot and died on
+`FATAL cxref.c:1494: 'browsingStack.top' is not true` (WSL, 2026-09-25, in
+`doc/backlog.md` under correctness-by-cost). That reproduction no longer works.
+Since `cbb2fc11` every test starts cold (`cold-start` in
+`tests/Makefile.boilerplate`), so a warm start has to be built inside the test:
+run the commands once, then run them again in the same recipe, against the
+snapshot the first run left.

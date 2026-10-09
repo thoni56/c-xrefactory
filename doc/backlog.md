@@ -228,10 +228,11 @@ graph from them on every push, linked at the end of this file, and `utils/backlo
     Goes with: project-extent
 
     Also here, and *without a repo home yet*: **a warm start trips
-    `FATAL cxref.c:1494: 'browsingStack.top' is not true`**. Run
-    `tests/test_browsing_pop_needs_refresh` twice without `make clean`. The second run
-    starts from the first run's `.c-xref` snapshot and dies on the assert, so the same
-    requests crash a server in the editor. Seen on WSL, 2026-09-25.
+    `FATAL cxref.c:1494: 'browsingStack.top' is not true`**. Running
+    `tests/test_browsing_pop_needs_refresh` a second time from the first run's `.c-xref`
+    snapshot dies on the assert, so the same requests crash a server in the editor. Seen
+    on WSL, 2026-09-25. Tests start cold now, so the warm start has to be built inside a
+    test; see that test's `.suspended`.
 
     Also *without a repo home yet*: **`-getproject` for a file outside any project
     answers `<no-project-found>` twice.** `tests/test_no_project_writes_no_snapshot`
