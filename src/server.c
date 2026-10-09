@@ -221,7 +221,7 @@ static bool knowledgeOfRequestFileIsOutOfDate(int fileNumber) {
     return outOfDate;
 }
 
-protected void singlePass(ArgumentsVector args, ArgumentsVector nargs) {
+protected void singlePass(Inputs *inputs, ArgumentsVector args, ArgumentsVector nargs) {
     bool inputOpened = false;
 
     inputOpened = initializeFileProcessing(args, nargs);
@@ -278,7 +278,7 @@ protected void singlePass(ArgumentsVector args, ArgumentsVector nargs) {
     }
 }
 
-static void processFile(ArgumentsVector baseArgs, ArgumentsVector requestArgs) {
+static void processFile(Inputs *inputs, ArgumentsVector baseArgs, ArgumentsVector requestArgs) {
     FileItem *fileItem = getFileItemWithFileNumber(requestFileNumber);
 
     assert(fileItem->isScheduled);
@@ -286,7 +286,7 @@ static void processFile(ArgumentsVector baseArgs, ArgumentsVector requestArgs) {
     for (currentPass=1; currentPass<=maxPasses; currentPass++) {
         inputFileName = fileItem->name;
         assert(inputFileName!=NULL);
-        singlePass(baseArgs, requestArgs);
+        singlePass(inputs, baseArgs, requestArgs);
         if (options.serverOperation==OP_INTERNAL_PARSE_TO_EXTRACT || (completionStringServed && !opensBrowsingSession(options.serverOperation)))
             break;
     }
@@ -379,7 +379,7 @@ static void setupProgress(int cuCount, int skippedCapped) {
  *
  * Uses brute-force forward-include lookup: iterates all headers in the
  * file table and checks if the request file is among their includers. */
-static void parseUnparsedSiblingCUs(int requestFileNumber, ArgumentsVector baseArgs) {
+static void parseUnparsedSiblingCUs(Inputs *inputs, int requestFileNumber, ArgumentsVector baseArgs) {
     int cuFileNumbers[MAX_CUS_TO_REPARSE];
     int cuCount = 0;
     int skippedAlreadyParsed = 0;
@@ -388,7 +388,6 @@ static void parseUnparsedSiblingCUs(int requestFileNumber, ArgumentsVector baseA
     log_info("Pass 3: request file '%s' (fileNumber=%d)",
              getFileItemWithFileNumber(requestFileNumber)->name, requestFileNumber);
 
-    Inputs *inputs = collectInputs();
     bool *asked = calloc(MAX_FILES, sizeof(bool));  /* A sibling shares many headers */
     int *siblingCUs = malloc(MAX_FILES * sizeof(int));
     for (int i = getNextExistingFileNumber(0); i != -1; i = getNextExistingFileNumber(i + 1)) {
@@ -447,7 +446,6 @@ static void parseUnparsedSiblingCUs(int requestFileNumber, ArgumentsVector baseA
 
     free(siblingCUs);
     free(asked);
-    freeInputs(inputs);
 
     log_info("Pass 3: %d to parse, %d skipped (already parsed), %d skipped (cap %d)",
              cuCount, skippedAlreadyParsed, skippedCapped, MAX_CUS_TO_REPARSE);
@@ -712,11 +710,13 @@ void callServer(ArgumentsVector baseArgs, ArgumentsVector requestArgs) {
         }
     }
 
+    Inputs *inputs = collectInputs();
+
     /* Entry refresh pass 3: parse sibling CUs that share headers with
      * the request file but haven't been parsed yet (e.g. cold start). */
     if (projectContextInitialized && hasInputFile && !answeredWithoutReferences(options.serverOperation)
         && options.detectedProjectRoot != NULL && options.detectedProjectRoot[0] != '\0') {
-        parseUnparsedSiblingCUs(requestFileNumber, baseArgs);
+        parseUnparsedSiblingCUs(inputs, requestFileNumber, baseArgs);
     }
 
     /* Completeness for name-based operations: if unparsed CUs still exist, ask user
@@ -734,7 +734,7 @@ void callServer(ArgumentsVector baseArgs, ArgumentsVector requestArgs) {
 
     if (requiresProcessingInputFile(options.serverOperation)) {
         if (hasInputFile) {
-            processFile(baseArgs, requestArgs);
+            processFile(inputs, baseArgs, requestArgs);
             projectContextInitialized = true;
         } else if (!toleratesMissingInputFile(options.serverOperation)) {
             errorMessage(ERR_ST, "No input file");
@@ -747,6 +747,8 @@ void callServer(ArgumentsVector baseArgs, ArgumentsVector requestArgs) {
             inputFileName = options.serverOperation == OP_GET_ENV_VALUE ? requestFile->name : NULL;
         }
     }
+    freeInputs(inputs);
+
 done:
     LEAVE();
 }
