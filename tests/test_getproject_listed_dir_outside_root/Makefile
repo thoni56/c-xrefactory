@@ -3,6 +3,7 @@ include ../Makefile.server
 $(TEST):
 	@# Test: a directory the config lists outside the project root is scanned,
 	@# so its files belong to the project and -getproject accepts them
+	@rm -rf project/.c-xref
 	@-$(SERVER_DRIVER) commands.input $(EXTRA) > output.tmp
 	@$(NORMALIZE) output.tmp > output
 	@$(VERIFY)

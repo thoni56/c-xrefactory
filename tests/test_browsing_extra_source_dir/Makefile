@@ -15,6 +15,7 @@ project/.c-xrefrc:
 	@echo "  -I $(CURDIR)/library" >> $@
 
 $(TEST): project/.c-xrefrc
+	@rm -rf project/.c-xref
 	@-$(SERVER_DRIVER) commands.input $(EXTRA) > output.tmp
 	@$(NORMALIZE) output.tmp > output
 	$(VERIFY)
