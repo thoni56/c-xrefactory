@@ -474,13 +474,11 @@ sweep per request — is small beside what goes. The risks are in the implementa
 are noted in `cu-inputs`, `out-of-date`, `time-budget` and `sweep-cost`.
 
 35. <a id="cu-inputs"></a>**A CU's inputs** — the CU, its include closure and the project
-    config, put together where `out-of-date` uses them, the CU first. Pass 3 builds the
-    include graph once per request (`buildIncludeGraph()`, `src/includegraph.c`) and every
-    check walks it. Left: Pass 3 asks before it deduplicates, about 3.5 times per CU on
-    `src/`, and each closure step scans all edges. Neither was noticeable in use (WSL,
-    session `d25255b8`, 2026-10-08). A change-time memo per request only if a measurement
-    asks for it. The closure can hold the scan's includes beside the parse's, which for the
-    predicate only costs a parse.
+    config, put together where `out-of-date` uses them, the CU first. `Inputs`
+    (`src/freshness.c`) holds them for one request: the include graph and each file's
+    change time, asked for once. Left: the config's change time, whose owner depends on
+    `partition-options`. The closure can hold the scan's includes beside the parse's,
+    which for the predicate only costs a parse.
     Goes with: out-of-date
 36. <a id="out-of-date"></a>**The one freshness predicate** — `knowledgeIsOutOfDate()` in
     `src/freshness.c`: no knowledge, an input gone, or an input changed after a tick
@@ -503,7 +501,10 @@ are noted in `cu-inputs`, `out-of-date`, `time-budget` and `sweep-cost`.
     operation on a position, the whole project for one on a name. Pass 3 looks only one
     level today: with the request including `a.h`, `a.h` including `decl.h` and an unparsed
     `z.c` including `decl.h`, a rename of a symbol from `decl.h` should miss `z.c` (from
-    reading the code, WSL session `76735541`, not tested; test first). The hard part is
+    reading the code, WSL session `76735541`). A spike confirms a variant: a test CU that
+    includes only `f.mock`, which includes `f.h`, is never parsed by a push from `f.c`, so
+    the mock's definition and the test's calls are missing (WSL, session `d25255b8`,
+    2026-10-09). Every mock in this repo is that shape. Test first. The hard part is
     the one header-filtered sibling parsing has: the symbol is known only at dispatch.
     The scan does not record `<...>` includes, so for a project that includes its own
     headers that way, reach misses CUs never parsed.
