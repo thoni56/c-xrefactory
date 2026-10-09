@@ -1,0 +1,8 @@
+CXREF -server
+-getproject CURDIR/f.c
+<sync>
+-push -olcursor=19 CURDIR/f.c
+<sync>
+-olcxfilter=0 -olcursor=0 nil
+<sync>
+<exit>

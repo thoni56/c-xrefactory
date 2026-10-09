@@ -384,6 +384,7 @@ static void parseUnparsedSiblingCUs(int requestFileNumber, ArgumentsVector baseA
 
     Inputs *inputs = collectInputs();
     bool *asked = calloc(MAX_FILES, sizeof(bool));  /* A sibling shares many headers */
+    int *siblingCUs = malloc(MAX_FILES * sizeof(int));
     for (int i = getNextExistingFileNumber(0); i != -1; i = getNextExistingFileNumber(i + 1)) {
         FileItem *fi = getFileItemWithFileNumber(i);
         if (isCompilationUnit(fi->name))
@@ -411,15 +412,15 @@ static void parseUnparsedSiblingCUs(int requestFileNumber, ArgumentsVector baseA
         if (!requestIncludesThis)
             continue;
 
-        /* Collect sibling CUs that include this header and need parsing */
-        for (Reference *r = found->references; r != NULL; r = r->next) {
-            int siblingFileNum = r->position.file;
+        /* Collect sibling CUs that include this header and need parsing, also
+         * through a file that is not a CU, such as a mock or another header */
+        int siblingCount = collectCUsIncluding(i, siblingCUs, 0, MAX_FILES);
+        for (int j = 0; j < siblingCount; j++) {
+            int siblingFileNum = siblingCUs[j];
             if (siblingFileNum == requestFileNumber)
                 continue;
 
             FileItem *siblingItem = getFileItemWithFileNumber(siblingFileNum);
-            if (!isCompilationUnit(siblingItem->name))
-                continue;
             if (asked[siblingFileNum])
                 continue;
             asked[siblingFileNum] = true;
@@ -438,6 +439,7 @@ static void parseUnparsedSiblingCUs(int requestFileNumber, ArgumentsVector baseA
         }
     }
 
+    free(siblingCUs);
     free(asked);
     freeInputs(inputs);
 
