@@ -383,6 +383,7 @@ static void parseUnparsedSiblingCUs(int requestFileNumber, ArgumentsVector baseA
              getFileItemWithFileNumber(requestFileNumber)->name, requestFileNumber);
 
     IncludeGraph *includeGraph = buildIncludeGraph();
+    bool *asked = calloc(MAX_FILES, sizeof(bool));  /* A sibling shares many headers */
     for (int i = getNextExistingFileNumber(0); i != -1; i = getNextExistingFileNumber(i + 1)) {
         FileItem *fi = getFileItemWithFileNumber(i);
         if (isCompilationUnit(fi->name))
@@ -419,31 +420,25 @@ static void parseUnparsedSiblingCUs(int requestFileNumber, ArgumentsVector baseA
             FileItem *siblingItem = getFileItemWithFileNumber(siblingFileNum);
             if (!isCompilationUnit(siblingItem->name))
                 continue;
+            if (asked[siblingFileNum])
+                continue;
+            asked[siblingFileNum] = true;
             if (!knowledgeIsOutOfDate(includeGraph, siblingFileNum)) {
                 skippedAlreadyParsed++;
                 continue;
             }
 
-            /* Deduplicate */
-            bool alreadyCollected = false;
-            for (int j = 0; j < cuCount; j++) {
-                if (cuFileNumbers[j] == siblingFileNum) {
-                    alreadyCollected = true;
-                    break;
-                }
-            }
-            if (!alreadyCollected) {
-                if (cuCount < MAX_CUS_TO_REPARSE) {
-                    cuFileNumbers[cuCount++] = siblingFileNum;
-                    log_debug("Sibling CU '%s' shares header with request file",
-                              siblingItem->name);
-                } else {
-                    skippedCapped++;
-                }
+            if (cuCount < MAX_CUS_TO_REPARSE) {
+                cuFileNumbers[cuCount++] = siblingFileNum;
+                log_debug("Sibling CU '%s' shares header with request file",
+                          siblingItem->name);
+            } else {
+                skippedCapped++;
             }
         }
     }
 
+    free(asked);
     freeIncludeGraph(includeGraph);
 
     log_info("Pass 3: %d to parse, %d skipped (already parsed), %d skipped (cap %d)",
