@@ -1,6 +1,6 @@
 # Backlog
 
-What to work on next, and in what order. As of 2026-10-02.
+What to work on next, and in what order. As of 2026-10-09.
 
 The *descriptions* live in the guidebook (`doc/docs/`), in the `.suspended` notes and in
 the ADRs. This file carries only the **order** and the **dependencies**, which are
@@ -336,13 +336,13 @@ Pass 3 rounds 19s each, 42s total.
     `-continue`. The concrete cost of not having it: a Delete Parameter on
     `saveReferencesToStore` rewrote `cxfile.c`, `cxfile.h` and `cxref.c` but left
     `src/cxfile.mock`, which declares the same function for the unit tests, so the
-    unit build would not compile. Whether that is ADR-0013's caveat — references are
-    only guaranteed found once every CU is parsed — was *not* established: the snapshot
-    did know `cxfile.mock` and the test CUs that include it, yet held only two
-    references to the symbol. A possible explanation, not tested: a `.mock` is never a
-    CU, so it has references only where a test CU including it was parsed, and a CU
-    known only from the scan has none. Worth a test either way; no test pins mock-reaching
-    refactorings today. Observed on the Mac, session `3af59d00`, 2026-09-25. If it becomes something a user asks for, it needs to say how long
+    unit build would not compile. Observed on the Mac, session `3af59d00`, 2026-09-25.
+    Browsing now reaches a test CU through its mock
+    (`tests/test_push_reaches_a_test_that_includes_only_the_mock`). Whether a refactoring
+    does is not tested: a Delete Parameter on `knowledgeIsOutOfDate` said the parameter
+    was used in `freshness.mock` after that use had been removed and saved, so it read
+    older knowledge of the mock (WSL, session `d25255b8`, 2026-10-09). No test pins
+    mock-reaching refactorings today. If it becomes something a user asks for, it needs to say how long
     it will take: `src/progress.c` already keeps `timeZero` and a monotonic clock,
     and the parse loops already count down, so the missing part is the division and
     a format that says "4 min left" rather than a remaining count. Decide the unit
@@ -498,13 +498,13 @@ are noted in `cu-inputs`, `out-of-date`, `time-budget` and `sweep-cost`.
     Waits for: adr-0032
     Goes with: partition-options, cu-inputs
 37. <a id="request-target"></a>**What a request needs** — the symbol's reach for an
-    operation on a position, the whole project for one on a name. Pass 3 looks only one
-    level today: with the request including `a.h`, `a.h` including `decl.h` and an unparsed
-    `z.c` including `decl.h`, a rename of a symbol from `decl.h` should miss `z.c` (from
-    reading the code, WSL session `76735541`). A spike confirms a variant: a test CU that
-    includes only `f.mock`, which includes `f.h`, is never parsed by a push from `f.c`, so
-    the mock's definition and the test's calls are missing (WSL, session `d25255b8`,
-    2026-10-09). Every mock in this repo is that shape. Test first. The hard part is
+    operation on a position, the whole project for one on a name. Pass 3 takes the CUs
+    that reach a header the request file includes directly, through a mock or another
+    header too (`collectCUsIncluding()`). It does not go further down: with the request
+    including `a.h`, `a.h` including `decl.h` and an unparsed `z.c` including `decl.h`, a
+    rename of a symbol from `decl.h` should miss `z.c` (from reading the code, WSL session
+    `76735541`; test first). `collectCUsIncluding()` stops walking after 256 files,
+    silently, which on ffmpeg cuts a widely included header short. The hard part is
     the one header-filtered sibling parsing has: the symbol is known only at dispatch.
     The scan does not record `<...>` includes, so for a project that includes its own
     headers that way, reach misses CUs never parsed.
