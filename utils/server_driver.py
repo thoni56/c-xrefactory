@@ -189,7 +189,7 @@ if __name__ == "__main__":
     parser.add_argument('--curdir', dest='CURDIR', help="The value to replace CURDIR in command file, default '" + os.getcwd()+"'", default=os.getcwd())
     parser.add_argument('--delay', type=int, dest='delay', help="How many seconds to sleep before starting the c-xref server process", default=0)
     parser.add_argument('--buffer', dest='server_buffer_filename', help="Name of file to use as communication buffer, default 'server-buffer'", default="server-buffer")
-    parser.add_argument('--extra', dest='extra_options', help="Extra options to the c-xref startup command", default="")
+    parser.add_argument('--extra', dest='extra_options', action='append', default=[], help="Extra options to the c-xref startup command, can be given more than once")
     parser.add_argument('--exit-timeout', type=int, dest='exit_timeout', help="Seconds to wait for server shutdown, 0 for no timeout, default 5", default=5)
     parser.add_argument('--answer-timeout', type=int, dest='answer_timeout', help="Seconds the server may stay silent while answering a request, 0 for no timeout, default 60", default=60)
     parser.add_argument('--show-progress', dest='show_progress', action='store_true', help="Print the <progress> records the server sends while it answers")
@@ -206,7 +206,7 @@ if __name__ == "__main__":
         print(invocation)
 
         invocation = invocation.replace("CURDIR", args.CURDIR).replace("CXREF", cxref_program)
-        arguments = shlex.split(invocation+" "+args.extra_options)
+        arguments = shlex.split(invocation+" "+" ".join(args.extra_options))
         if args.delay > 0:
             arguments = [arguments[0]] + [f"-delay={args.delay}"] + arguments[1:]
 
