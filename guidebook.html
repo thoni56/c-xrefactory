@@ -1937,11 +1937,11 @@ buffer wins, see <a href="06-principles.html">Principles</a> (Editor Buffers Are
 <div class="ulist">
 <ul>
 <li>
-<p><strong>Buffer-driven refresh</strong> (Passes 1 and 2) handles modifications the client has
-signaled via preload — any preloaded editor buffer whose <code>modificationTime</code> has
-advanced past <code>lastParsedMtime</code>. It iterates the editor-buffer table. Pass 1
-reparses stale CU buffers; Pass 2 cascades from stale header buffers to their
-includer CUs.</p>
+<p><strong>Buffer-driven refresh</strong> (Passes 1 and 2, <code>bringHeldFilesUpToDate()</code>) handles the
+files the client holds. It iterates the editor-buffer table. Pass 1 takes the held
+CUs whose knowledge is out of date (ADR-0032), which includes a header they include
+having changed on disk. Pass 2 strips the held headers that changed and takes the CUs
+that include them. Then each CU taken is built once.</p>
 </li>
 <li>
 <p><strong>Request-relative coverage</strong> (Pass 3) handles what the request needs to see.
@@ -1952,8 +1952,8 @@ parsing — either never parsed yet, or stale on disk.</p>
 </div>
 <div class="paragraph">
 <p>Both run before the operation dispatches, but they&#8217;re answering different questions
-and live in separate calls. Within buffer-driven refresh, Pass 1 must precede Pass 2;
-see Pass 2 for the rationale.</p>
+and live in separate calls. Within buffer-driven refresh, every strip comes before any
+build; see Pass 2 for the rationale.</p>
 </div>
 <div class="listingblock">
 <div class="content">
@@ -1963,24 +1963,23 @@ see Pass 2 for the rationale.</p>
   ├─ closeEditorBuffersNoLongerHeld()        ← ghost buffer pruning
   │
   ├─ IF projectContextInitialized:
-  │   reparseStalePreloadedFiles(baseArgs)            ← buffer-driven
+  │   bringHeldFilesUpToDate(baseArgs)                ← buffer-driven
   │   │
-  │   ├─ Pass 1: reparse stale edited CUs
-  │   │   FOR each editor buffer WHERE fileNumberIsStale():
-  │   │     IF isCompilationUnit: reparseStaleFile()
+  │   ├─ Pass 1: collectOutOfDateHeldCUs() → list of CU file numbers
+  │   │   FOR each held CU WHERE knowledgeIsOutOfDate()
   │   │
-  │   └─ Pass 2: reparse includers of stale edited headers
-  │       FOR each editor buffer WHERE fileNumberIsStale():
-  │         IF NOT isCompilationUnit (i.e. header):
-  │           collectIncludersOfStaleHeader() → list of CU file numbers
-  │       FOR each collected CU: reparseStaleFile()
+  │   ├─ Pass 2: stripChangedHeldHeaders() → adds to the list
+  │   │   FOR each held header WHERE fileNumberIsStale():
+  │   │     collectCUsIncluding(), then strip the header
+  │   │
+  │   └─ FOR each CU in the list, once: buildKnowledgeOfCU()
   │
   ├─ IF projectContextInitialized AND hasInputFile AND auto-detect path:
   │   parseUnparsedSiblingCUs(requestFileNumber, baseArgs)   ← request-relative (Pass 3)
   │   │
   │   └─ Find CUs sharing headers with the request file that need parsing
-  │       (never parsed, or mtime past lastParsedMtime)
-  │       FOR each: reparseStaleFile()
+  │       (knowledgeIsOutOfDate())
+  │       FOR each: buildKnowledgeOfCU()
   │
   └─ dispatch operation</code></pre>
 </div>
@@ -2008,7 +2007,7 @@ can change from one request to the next:</p>
 <tbody>
 <tr>
 <td class="tableblock halign-left valign-top"><p class="tableblock">Edited CU body (no preprocessor change)</p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">Pass 1 — mtime stale</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Pass 1 — knowledge out of date</p></td>
 <td class="tableblock halign-left valign-top"><p class="tableblock">the CU&#8217;s own strip + rebuild</p></td>
 </tr>
 <tr>
@@ -2028,7 +2027,7 @@ can change from one request to the next:</p>
 </tr>
 <tr>
 <td class="tableblock halign-left valign-top"><p class="tableblock"><strong>Includer toggles a macro gating a header declaration</strong></p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">Pass 1 — the CU is stale</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Pass 1 — knowledge out of date</p></td>
 <td class="tableblock halign-left valign-top"><p class="tableblock"><strong>not covered — see Cleaning Stale Emissions</strong></p></td>
 </tr>
 </tbody>
@@ -2039,45 +2038,39 @@ gap the next section addresses.</p>
 </div>
 </div>
 <div class="sect3">
-<h4 id="entry-refresh-pass-1">8.2.3. Pass 1: Reparse Stale Edited CUs</h4>
+<h4 id="entry-refresh-pass-1">8.2.3. Pass 1: Held CUs Whose Knowledge Is Out of Date</h4>
 <div class="paragraph">
-<p>The simplest case: the user edited and saved a <code>.c</code> file, or the client sent a
-<code>-preload</code> with newer content. The CU itself is stale.</p>
+<p>The simplest case: the user edited a <code>.c</code> file, or the client sent a <code>-preload</code> with
+newer content.
+It is also the case when a header the CU includes changed on disk.</p>
 </div>
 <div class="paragraph">
-<p><strong>Detection:</strong> <code>fileNumberIsStale()</code> returns true when:</p>
-</div>
-<div class="ulist">
-<ul>
-<li>
-<p><code>lastParsedMtime == 0</code> — explicitly marked stale (e.g. after refactoring), OR</p>
-</li>
-<li>
-<p>The file has a preloaded editor buffer whose <code>modificationTime</code> exceeds
-<code>lastParsedMtime</code></p>
-</li>
-</ul>
+<p><strong>Detection:</strong> <code>collectOutOfDateHeldCUs()</code> takes each held CU for which
+<code>knowledgeIsOutOfDate()</code> is true, i.e. it has no knowledge, an input is gone, or an
+input changed after its knowledge was built (ADR-0032).
+A held CU that is gone from disk is marked as deleted instead.</p>
 </div>
 <div class="paragraph">
-<p><strong>Action:</strong> <code>reparseStaleFile()</code> removes all existing references for the file
-(<code>removeReferenceableItemsForFile</code>), then parses it fresh (<code>parseFileWithFullInit</code>).</p>
+<p><strong>Action:</strong> none yet.
+The CU is put on the list, and is built after Pass 2, together with the includers.</p>
 </div>
 <div class="paragraph">
-<p><strong>Side effect:</strong> Reparsing a CU also refreshes its <code>TypeCppInclude</code> references (the
-include edges). This is essential for Pass 2.</p>
+<p><strong>Side effect:</strong> Building a CU also refreshes its <code>TypeCppInclude</code> references (the
+include edges).</p>
 </div>
 </div>
 <div class="sect3">
-<h4 id="entry-refresh-pass-2">8.2.4. Pass 2: Reparse Includers of Stale Edited Headers</h4>
+<h4 id="entry-refresh-pass-2">8.2.4. Pass 2: Strip Changed Held Headers, Take Their Includers</h4>
 <div class="paragraph">
 <p>If the user edited a header file, all CUs that include it (transitively) have stale
 references — even though those CUs themselves haven&#8217;t changed.</p>
 </div>
 <div class="paragraph">
-<p><strong>Detection:</strong> Same <code>fileNumberIsStale()</code> check, but filtered to non-CU files (headers).</p>
+<p><strong>Detection:</strong> <code>stripChangedHeldHeaders()</code> takes each held header for which
+<code>fileNumberIsStale()</code> is true, i.e. its buffer is newer than when it was last parsed.</p>
 </div>
 <div class="paragraph">
-<p><strong>Discovery:</strong> <code>collectIncludersOfStaleHeader()</code> walks the reverse include graph:</p>
+<p><strong>Discovery:</strong> <code>collectCUsIncluding()</code> walks the reverse include graph:</p>
 </div>
 <div class="olist arabic">
 <ol class="arabic">
@@ -2094,11 +2087,17 @@ references — even though those CUs themselves haven&#8217;t changed.</p>
 </ol>
 </div>
 <div class="paragraph">
-<p><strong>Why Pass 1 must come first:</strong> When a user adds a new <code>#include "foo.h"</code> to <code>bar.c</code>,
-both <code>bar.c</code> (the includer) and <code>foo.h</code> (the includee) may be stale. Pass 1 reparses
-<code>bar.c</code>, which creates the new <code>TypeCppInclude</code> reference for the <code>bar.c → foo.h</code> edge.
-Pass 2 can then find this edge when looking for includers of <code>foo.h</code>. Without Pass 1
-first, the edge wouldn&#8217;t exist yet.</p>
+<p>The header&#8217;s own references are then stripped, and building the includers puts them
+back.
+The includers are added to the list from Pass 1, without duplicates, so a CU that is
+both out of date and an includer is built once.</p>
+</div>
+<div class="paragraph">
+<p><strong>Why every strip comes before any build:</strong> A CU built before a header it includes is
+stripped would lose its part of that header.
+The include edges used are the ones from before the request.
+When a user adds a new <code>#include "foo.h"</code> to <code>bar.c</code>, the <code>bar.c → foo.h</code> edge is not
+there yet, but <code>bar.c</code> is held and out of date, so it is built anyway.</p>
 </div>
 </div>
 <div class="sect3">
@@ -2124,7 +2123,7 @@ the definition, not all usage sites.</p>
 <p>If so, collect CUs that also include the same headers ("siblings")</p>
 </li>
 <li>
-<p>Filter to CUs with <code>lastParsedMtime == 0</code> (never parsed)</p>
+<p>Filter to CUs whose knowledge is out of date (<code>knowledgeIsOutOfDate()</code>)</p>
 </li>
 </ol>
 </div>
@@ -4163,7 +4162,7 @@ include structure. Care: reconcile the overlapping init with <code>initializePar
 </li>
 <li>
 <p><strong>Reparse on document events</strong> — <code>didOpen</code> / <code>didChange</code> reparse the file; <code>didSave</code>
-triggers <a href="08-algorithms.html#entry-refresh-pass-2">Pass 2</a> (reverse-include reparse). Same <code>reparseStalePreloadedFiles</code> logic, but
+triggers <a href="08-algorithms.html#entry-refresh-pass-2">Pass 2</a> (reverse-include reparse). Same <code>bringHeldFilesUpToDate</code> logic, but
 changes arrive in real time.</p>
 </li>
 <li>
@@ -12092,7 +12091,7 @@ operation reads the in-memory table.</p>
 </div>
 <div id="footer">
 <div id="footer-text">
-Last updated 2026-10-10 19:22:07 UTC
+Last updated 2026-10-10 20:19:40 UTC
 </div>
 </div>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.18.3/highlight.min.js"></script>

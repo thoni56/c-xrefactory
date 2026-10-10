@@ -79,6 +79,7 @@ flowchart BT
   root_path_id --&gt; client_stops_p
   project_extent --&gt; client_stops_p
   partition_options --&gt; setup_into_openproject
+  adr_0030 --&gt; setup_into_openproject
   setup_into_openproject --&gt; openproject_tripwire
   adr_0031 --&gt; project_extent
   passes_as_one --&gt; behind_the_back
@@ -107,30 +108,6 @@ flowchart BT
   refactoring_refusals --&gt; announce
   install_server --&gt; announce
   readme_first_screen --&gt; announce
-  client_stops_p -.- startup_command_line
-  client_stops_p -.- adr_0030
-  mode_checks -.- report_errors_flag
-  refactoring_refusals -.- behind_the_back
-  refactoring_refusals -.- sweep
-  correctness_by_cost -.- project_extent
-  scan_angle_includes -.- project_extent
-  remove_references_stopgap -.- sweep
-  remove_references_stopgap -.- time_budget
-  remove_references_stopgap -.- index_based_sessions
-  local_config_fragments -.- project_extent
-  compile_commands -.- project_extent
-  compile_commands -.- local_config_fragments
-  compile_commands -.- compiler_asked_twice
-  cu_inputs -.- out_of_date
-  out_of_date -.- partition_options
-  out_of_date -.- cu_inputs
-  request_target -.- header_filtered_siblings
-  freshness_docs -.- passes_as_one
-  sweep_cost -.- sweep
-  announce -.- lsp_tiers
-  announce -.- retry_creating_request
-  announce -.- compile_commands
-  linkStyle 35,36,37,38,39,40,41,42,43,44,45,46,47,48,49,50,51,52,53,54,55,56,57 stroke:#8a63d2,stroke-width:2px,stroke-dasharray:6 4
   class cursor_parse_reuse blocked
   class compiler_asked_twice blocked
   class partition_options ready
@@ -193,8 +170,10 @@ flowchart BT
   class adr_0033 done
 </pre>
 <script type="module">
-import mermaid from 'https://cdn.jsdelivr.net/npm/mermaid@11/dist/mermaid.esm.min.mjs';
-mermaid.initialize({ startOnLoad: false, flowchart: { useMaxWidth: false } });
+import mermaid from 'https://cdn.jsdelivr.net/npm/mermaid@11.17.2/dist/mermaid.esm.min.mjs';
+import elkLayouts from 'https://cdn.jsdelivr.net/npm/@mermaid-js/layout-elk@0.2.3/dist/mermaid-layout-elk.esm.min.mjs';
+mermaid.registerLayoutLoaders(elkLayouts);
+mermaid.initialize({ startOnLoad: false, layout: 'elk', flowchart: { useMaxWidth: false } });
 await mermaid.run();
 // Drag to pan and scroll to zoom, as in mermaid.live, over the whole window
 const svg = document.querySelector('pre.mermaid svg');
