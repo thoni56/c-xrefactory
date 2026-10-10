@@ -86,6 +86,8 @@ HEADER = ["flowchart BT",
 
 
 def node_lines(work, foundation):
+    # ELK starts from the order the nodes come in, and the backlog's own order keeps
+    # related items together
     lines = []
     for item in work:
         text = f"§{item['section']} · {item['number']} · {item['title']}"
@@ -96,16 +98,9 @@ def node_lines(work, foundation):
 
 
 def edge_lines(work):
-    waits = [f"  {node_id(waited)} --> {node_id(item['slug'])}"
-             for item in work for waited in item['waits']]
-    goes_with = [f"  {node_id(item['slug'])} -.- {node_id(other)}"
-                 for item in work for other in item['goes_with']]
-    lines = waits + goes_with
-    # Goes with is not waits for, so it must not look like it even when drawn small
-    if goes_with:
-        indexes = ','.join(str(i) for i in range(len(waits), len(lines)))
-        lines.append(f"  linkStyle {indexes} stroke:#8a63d2,stroke-width:2px,stroke-dasharray:6 4")
-    return lines
+    # Goes with is not drawn: the layout would take it as an edge to rank by
+    return [f"  {node_id(waited)} --> {node_id(item['slug'])}"
+            for item in work for waited in item['waits']]
 
 
 def state_lines(work, items, foundation):
@@ -144,8 +139,10 @@ PAGE = '''<!doctype html>
 {graph}
 </pre>
 <script type="module">
-import mermaid from 'https://cdn.jsdelivr.net/npm/mermaid@11/dist/mermaid.esm.min.mjs';
-mermaid.initialize({{ startOnLoad: false, flowchart: {{ useMaxWidth: false }} }});
+import mermaid from 'https://cdn.jsdelivr.net/npm/mermaid@11.17.2/dist/mermaid.esm.min.mjs';
+import elkLayouts from 'https://cdn.jsdelivr.net/npm/@mermaid-js/layout-elk@0.2.3/dist/mermaid-layout-elk.esm.min.mjs';
+mermaid.registerLayoutLoaders(elkLayouts);
+mermaid.initialize({{ startOnLoad: false, layout: 'elk', flowchart: {{ useMaxWidth: false }} }});
 await mermaid.run();
 // Drag to pan and scroll to zoom, as in mermaid.live, over the whole window
 const svg = document.querySelector('pre.mermaid svg');

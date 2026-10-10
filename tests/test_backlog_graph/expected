@@ -11,9 +11,6 @@ flowchart BT
   groundwork --> first_item
   first_item --> second_item
   rung_a --> rung_b
-  second_item -.- rung_b
-  odd_title -.- first_item
-  linkStyle 3,4 stroke:#8a63d2,stroke-width:2px,stroke-dasharray:6 4
   class first_item ready
   class second_item blocked
   class rung_a ready

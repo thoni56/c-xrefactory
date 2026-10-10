@@ -679,5 +679,5 @@ was done.
   no `Makefile` reads as a failure.
 
 [Open the dependency graph](https://thoni56.github.io/c-xrefactory/backlog-graph.html),
-drawn from the `Waits for:` and `Goes with:` lines above when a push reaches the docs site.
+drawn from the `Waits for:` lines above when a push reaches the docs site.
 For changes not pushed yet, `make -C doc dist/backlog-graph.html` draws it locally.
