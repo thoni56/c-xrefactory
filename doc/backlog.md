@@ -491,9 +491,11 @@ are noted in `cu-inputs`, `out-of-date`, `time-budget` and `sweep-cost`.
     Goes with: out-of-date
 36. <a id="out-of-date"></a>**The one freshness predicate** — `knowledgeIsOutOfDate()` in
     `src/freshness.c`: no knowledge, an input gone, or an input changed after a tick
-    before the knowledge time. Pass 3 and `singlePass()` use it. Left: Pass 1, which
-    builds a held CU whose header changed twice, with Pass 2, until `passes-as-one`. Then
-    `fileNumberIsStale()` goes. The config as an input replaces
+    before the knowledge time. Pass 1, Pass 3 and `singlePass()` use it. Left: Pass 2,
+    which builds a held includer of a changed held header again after Pass 1. As one step
+    the changed headers are stripped first and each CU is built once, and Pass 1 stops
+    collecting `Inputs` of its own. `fileNumberIsStale()` then only picks the held
+    headers to strip, until `sweep`. The config as an input replaces
     `markAllCompilationUnitsStale()`, and the zero sentinel goes. The config needs a change
     time, and who owns it depends on where the project config lives after the options
     partition. `MAX_INCLUDE_CLOSURE` (1000) has no measured reason.
