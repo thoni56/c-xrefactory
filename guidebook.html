@@ -5809,7 +5809,10 @@ time.</p>
 <p>To give the server access to unsaved content the client sends <code>-preload &lt;file&gt; &lt;tmpfile&gt;</code> for modified editor. On PUSH, NEXT, and PREVIOUS, all modified buffers (including the current one if modified) are preloaded. Unmodified buffers are not preloaded — the server reads the disk file directly.</p>
 </div>
 <div class="paragraph">
-<p>The preload mechanism writes the buffer content to a temporary file and passes both the original filename and the temp file path. The server creates an <code>EditorBuffer</code> with the content and the temp file&#8217;s modification time. Preloaded buffers persist across requests as long as the client keeps sending them. On each preload, the server compares the new temp file&#8217;s mtime against the existing buffer&#8217;s; if advanced, the buffer is reloaded with the new content, and the per-request entry refresh reparses it before the operation runs. When the client stops sending a preload (because the user saved or closed the file), the server detects this and prunes the now-stale buffer (ghost-buffer cleanup).
+<p>The preload mechanism writes the buffer content to a temporary file and passes both the original filename and the temp file path. The server creates an <code>EditorBuffer</code> with the content and the temp file&#8217;s modification time. Preloaded buffers persist across requests as long as the client keeps sending them. On each preload, the server compares the new temp file&#8217;s mtime against the existing buffer&#8217;s; if advanced, the buffer is reloaded with the new content, and the per-request entry refresh reparses it before the operation runs. When the client stops sending a preload (because the user saved or closed the file), the server detects this and prunes the now-stale buffer (ghost-buffer cleanup).</p>
+</div>
+<div class="paragraph">
+<p>A preload means that the editor has newer content than the file. The temp file is written when the content changes, so it is newer than the file on disk and newer than anything the server knew before the request that carries it. The server relies on this when it decides whether its knowledge is out of date (ADR-0032). A client that sends an older temp file has a bug.
 == Data Structures</p>
 </div>
 <div class="paragraph">
@@ -12079,7 +12082,7 @@ operation reads the in-memory table.</p>
 </div>
 <div id="footer">
 <div id="footer-text">
-Last updated 2026-10-10 09:52:30 UTC
+Last updated 2026-10-10 12:10:06 UTC
 </div>
 </div>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.18.3/highlight.min.js"></script>
