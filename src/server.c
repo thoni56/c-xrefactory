@@ -475,7 +475,7 @@ static int collectOutOfDateHeldCUs(int cuFileNumbers[], int cuCount, Inputs *inp
             FileItem *fileItem = getFileItemWithFileNumber(fileNumber);
             if (heldCUIsOutOfDate(inputs, l->buffer)) {
                 if (!editorFileExists(fileItem->name)) {
-                    log_debug("Stale CU '%s' no longer exists, marking as deleted", fileItem->name);
+                    log_debug("Out-of-date CU '%s' no longer exists, marking as deleted", fileItem->name);
                     markFileAsDeleted(fileNumber);
                 } else if (cuCount < MAX_CUS_TO_REPARSE) {
                     cuFileNumbers[cuCount++] = fileNumber;
@@ -494,7 +494,7 @@ static int stripChangedHeldHeaders(int cuFileNumbers[], int cuCount) {
             FileItem *fileItem = getFileItemWithFileNumber(fileNumber);
             if (fileNumberIsStale(fileNumber) && !isCompilationUnit(fileItem->name)) {
                 if (!editorFileExists(fileItem->name)) {
-                    log_debug("Stale header '%s' no longer exists, marking as deleted", fileItem->name);
+                    log_debug("Changed header '%s' no longer exists, marking as deleted", fileItem->name);
                     markFileAsDeleted(fileNumber);
                 } else {
                     cuCount =
@@ -532,7 +532,7 @@ static void bringHeldFilesUpToDate(ArgumentsVector baseArgs) {
     cuCount = stripChangedHeldHeaders(cuFileNumbers, cuCount);
 
     if (cuCount > 0) {
-        log_info("Reparsing %d CU(s) for stale preloaded files", cuCount);
+        log_info("Building %d CU(s) to bring held files up to date", cuCount);
         if (options.cxrefProtocol) {
             static char progressFormat[128];
             snprintf(progressFormat, sizeof(progressFormat),

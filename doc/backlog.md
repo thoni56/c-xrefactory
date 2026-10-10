@@ -523,9 +523,8 @@ are noted in `cu-inputs`, `out-of-date`, `time-budget` and `sweep-cost`.
     Goes with: header-filtered-siblings
 38. <a id="passes-as-one"></a>**Pass 1, 2 and 3 become one** — bring the goal's
     out-of-date CUs up to date. `test_shared_header_changed_on_disk` comes off suspension.
-    `reparseStalePreloadedFiles` (`src/server.c`) was left unrenamed for this, log texts
-    included. It works on held buffers, not only preloaded ones, and a changed header is
-    not parsed but stripped, with its includers parsed.
+    `bringHeldFilesUpToDate()` (`src/server.c`) does it for the held files. A changed
+    header is not parsed but stripped, with its includers parsed.
     Until `sweep` is in, a changed header is stripped only in the entry refresh that
     builds all of its includers, before them, or not at all (ADR-0032).
     Waits for: out-of-date

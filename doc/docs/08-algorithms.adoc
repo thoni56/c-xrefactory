@@ -116,19 +116,19 @@ buffer wins, see <<06-principles.adoc#,Principles>> (Editor Buffers Are the Cont
 
 The refresh covers two distinct concerns:
 
-* **Buffer-driven refresh** (Passes 1 and 2) handles modifications the client has
-  signaled via preload — any preloaded editor buffer whose `modificationTime` has
-  advanced past `lastParsedMtime`. It iterates the editor-buffer table. Pass 1
-  reparses stale CU buffers; Pass 2 cascades from stale header buffers to their
-  includer CUs.
+* **Buffer-driven refresh** (Passes 1 and 2, `bringHeldFilesUpToDate()`) handles the
+  files the client holds. It iterates the editor-buffer table. Pass 1 takes the held
+  CUs whose knowledge is out of date (ADR-0032), which includes a header they include
+  having changed on disk. Pass 2 strips the held headers that changed and takes the CUs
+  that include them. Then each CU taken is built once.
 
 * **Request-relative coverage** (Pass 3) handles what the request needs to see.
   It iterates the file table to find sibling CUs of the request file that need
   parsing — either never parsed yet, or stale on disk.
 
 Both run before the operation dispatches, but they're answering different questions
-and live in separate calls. Within buffer-driven refresh, Pass 1 must precede Pass 2;
-see Pass 2 for the rationale.
+and live in separate calls. Within buffer-driven refresh, every strip comes before any
+build; see Pass 2 for the rationale.
 
 [source]
 ----
@@ -138,24 +138,23 @@ callServer():
   ├─ closeEditorBuffersNoLongerHeld()        ← ghost buffer pruning
   │
   ├─ IF projectContextInitialized:
-  │   reparseStalePreloadedFiles(baseArgs)            ← buffer-driven
+  │   bringHeldFilesUpToDate(baseArgs)                ← buffer-driven
   │   │
-  │   ├─ Pass 1: reparse stale edited CUs
-  │   │   FOR each editor buffer WHERE fileNumberIsStale():
-  │   │     IF isCompilationUnit: reparseStaleFile()
+  │   ├─ Pass 1: collectOutOfDateHeldCUs() → list of CU file numbers
+  │   │   FOR each held CU WHERE knowledgeIsOutOfDate()
   │   │
-  │   └─ Pass 2: reparse includers of stale edited headers
-  │       FOR each editor buffer WHERE fileNumberIsStale():
-  │         IF NOT isCompilationUnit (i.e. header):
-  │           collectIncludersOfStaleHeader() → list of CU file numbers
-  │       FOR each collected CU: reparseStaleFile()
+  │   ├─ Pass 2: stripChangedHeldHeaders() → adds to the list
+  │   │   FOR each held header WHERE fileNumberIsStale():
+  │   │     collectCUsIncluding(), then strip the header
+  │   │
+  │   └─ FOR each CU in the list, once: buildKnowledgeOfCU()
   │
   ├─ IF projectContextInitialized AND hasInputFile AND auto-detect path:
   │   parseUnparsedSiblingCUs(requestFileNumber, baseArgs)   ← request-relative (Pass 3)
   │   │
   │   └─ Find CUs sharing headers with the request file that need parsing
-  │       (never parsed, or mtime past lastParsedMtime)
-  │       FOR each: reparseStaleFile()
+  │       (knowledgeIsOutOfDate())
+  │       FOR each: buildKnowledgeOfCU()
   │
   └─ dispatch operation
 ----
@@ -170,7 +169,7 @@ can change from one request to the next:
 |Change since last request |Detected by |Stale references cleaned by
 
 |Edited CU body (no preprocessor change)
-|Pass 1 — mtime stale
+|Pass 1 — knowledge out of date
 |the CU's own strip + rebuild
 
 |Edited header (declaration added / changed / removed)
@@ -186,7 +185,7 @@ can change from one request to the next:
 |`removeReferenceableItemsForFile`
 
 |*Includer toggles a macro gating a header declaration*
-|Pass 1 — the CU is stale
+|Pass 1 — knowledge out of date
 |*not covered — see Cleaning Stale Emissions*
 |===
 
@@ -194,43 +193,49 @@ Every row but the last fits the invalidate-then-rebuild model cleanly. The last 
 gap the next section addresses.
 
 [[entry-refresh-pass-1]]
-==== Pass 1: Reparse Stale Edited CUs
+==== Pass 1: Held CUs Whose Knowledge Is Out of Date
 
-The simplest case: the user edited and saved a `.c` file, or the client sent a
-`-preload` with newer content. The CU itself is stale.
+The simplest case: the user edited a `.c` file, or the client sent a `-preload` with
+newer content.
+It is also the case when a header the CU includes changed on disk.
 
-**Detection:** `fileNumberIsStale()` returns true when:
+**Detection:** `collectOutOfDateHeldCUs()` takes each held CU for which
+`knowledgeIsOutOfDate()` is true, i.e. it has no knowledge, an input is gone, or an
+input changed after its knowledge was built (ADR-0032).
+A held CU that is gone from disk is marked as deleted instead.
 
-* `lastParsedMtime == 0` — explicitly marked stale (e.g. after refactoring), OR
-* The file has a preloaded editor buffer whose `modificationTime` exceeds
-  `lastParsedMtime`
+**Action:** none yet.
+The CU is put on the list, and is built after Pass 2, together with the includers.
 
-**Action:** `reparseStaleFile()` removes all existing references for the file
-(`removeReferenceableItemsForFile`), then parses it fresh (`parseFileWithFullInit`).
-
-**Side effect:** Reparsing a CU also refreshes its `TypeCppInclude` references (the
-include edges). This is essential for Pass 2.
+**Side effect:** Building a CU also refreshes its `TypeCppInclude` references (the
+include edges).
 
 [[entry-refresh-pass-2]]
-==== Pass 2: Reparse Includers of Stale Edited Headers
+==== Pass 2: Strip Changed Held Headers, Take Their Includers
 
 If the user edited a header file, all CUs that include it (transitively) have stale
 references — even though those CUs themselves haven't changed.
 
-**Detection:** Same `fileNumberIsStale()` check, but filtered to non-CU files (headers).
+**Detection:** `stripChangedHeldHeaders()` takes each held header for which
+`fileNumberIsStale()` is true, i.e. its buffer is newer than when it was last parsed.
 
-**Discovery:** `collectIncludersOfStaleHeader()` walks the reverse include graph:
+**Discovery:** `collectCUsIncluding()` walks the reverse include graph:
 
 1. Find all `TypeCppInclude` references where `usage == UsageUsed` and
    `position.file == includerFileNumber` — these are include edges
 2. For each includer, if it's a CU, add it to the reparse list
 3. If it's another header, recurse (transitive closure)
 
-**Why Pass 1 must come first:** When a user adds a new `#include "foo.h"` to `bar.c`,
-both `bar.c` (the includer) and `foo.h` (the includee) may be stale. Pass 1 reparses
-`bar.c`, which creates the new `TypeCppInclude` reference for the `bar.c → foo.h` edge.
-Pass 2 can then find this edge when looking for includers of `foo.h`. Without Pass 1
-first, the edge wouldn't exist yet.
+The header's own references are then stripped, and building the includers puts them
+back.
+The includers are added to the list from Pass 1, without duplicates, so a CU that is
+both out of date and an includer is built once.
+
+**Why every strip comes before any build:** A CU built before a header it includes is
+stripped would lose its part of that header.
+The include edges used are the ones from before the request.
+When a user adds a new `#include "foo.h"` to `bar.c`, the `bar.c → foo.h` edge is not
+there yet, but `bar.c` is held and out of date, so it is built anyway.
 
 [[entry-refresh-pass-3]]
 ==== Pass 3: Parse Unparsed Sibling CUs
@@ -245,7 +250,7 @@ the definition, not all usage sites.
 1. Iterate all files in the file table that have `TypeCppInclude` references
 2. For each, check if the request file is among its includers
 3. If so, collect CUs that also include the same headers ("siblings")
-4. Filter to CUs with `lastParsedMtime == 0` (never parsed)
+4. Filter to CUs whose knowledge is out of date (`knowledgeIsOutOfDate()`)
 
 **Scope control:** Only CUs sharing headers with the _request file_ are parsed — not
 the entire project. This keeps cold-start latency proportional to the local
