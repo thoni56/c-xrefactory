@@ -92,7 +92,6 @@ flowchart BT
   adr_0032 --&gt; out_of_date
   adr_0032 --&gt; request_target
   out_of_date --&gt; passes_as_one
-  request_target --&gt; passes_as_one
   passes_as_one --&gt; time_budget
   adr_0033 --&gt; generations
   generations --&gt; sweep
@@ -131,7 +130,7 @@ flowchart BT
   announce -.- lsp_tiers
   announce -.- retry_creating_request
   announce -.- compile_commands
-  linkStyle 36,37,38,39,40,41,42,43,44,45,46,47,48,49,50,51,52,53,54,55,56,57,58 stroke:#8a63d2,stroke-width:2px,stroke-dasharray:6 4
+  linkStyle 35,36,37,38,39,40,41,42,43,44,45,46,47,48,49,50,51,52,53,54,55,56,57 stroke:#8a63d2,stroke-width:2px,stroke-dasharray:6 4
   class cursor_parse_reuse blocked
   class compiler_asked_twice blocked
   class partition_options ready
