@@ -459,23 +459,36 @@ static void parseUnparsedSiblingCUs(Inputs *inputs, int requestFileNumber, Argum
     }
 }
 
-static int countStalePreloadedFiles(void) {
+/* Only what the client holds, as for a stale header */
+static bool heldCUIsOutOfDate(Inputs *inputs, EditorBuffer *buffer) {
+    if (!holdsAuthoritativeContent(buffer))
+        return false;
+    FileItem *fileItem = getFileItemWithFileNumber(buffer->fileNumber);
+    return !fileItem->isDeleted && isCompilationUnit(fileItem->name)
+        && knowledgeIsOutOfDate(inputs, buffer->fileNumber);
+}
+
+static int countStalePreloadedFiles(Inputs *inputs) {
     int count = 0;
     for (int i = 0; i != -1; i = getNextExistingEditorBufferIndex(i + 1))
         for (EditorBufferList *l = getEditorBufferListElementAt(i); l != NULL; l = l->next)
-            if (fileNumberIsStale(l->buffer->fileNumber))
+            if (fileNumberIsStale(l->buffer->fileNumber) || heldCUIsOutOfDate(inputs, l->buffer))
                 count++;
     return count;
 }
 
 static void reparseStalePreloadedFiles(ArgumentsVector baseArgs) {
-    int staleCount = countStalePreloadedFiles();
-    if (staleCount == 0)
+    /* Its own, because the request's are collected after this has parsed */
+    Inputs *inputs = collectInputs();
+    int staleCount = countStalePreloadedFiles(inputs);
+    if (staleCount == 0) {
+        freeInputs(inputs);
         return;
+    }
 
     log_info("Refreshing %d stale preloaded file(s)", staleCount);
 
-    /* Pass 1: Reparse stale CUs directly. This also refreshes their
+    /* Pass 1: Reparse held CUs whose knowledge is out of date. This also refreshes their
      * TypeCppInclude references, which Pass 2 depends on.
      * No progress reporting here — Pass 1 is fast (only directly
      * preloaded CUs, typically 1-2 files). */
@@ -483,7 +496,7 @@ static void reparseStalePreloadedFiles(ArgumentsVector baseArgs) {
         for (EditorBufferList *l = getEditorBufferListElementAt(i); l != NULL; l = l->next) {
             int fileNumber = l->buffer->fileNumber;
             FileItem *fileItem = getFileItemWithFileNumber(fileNumber);
-            if (fileNumberIsStale(fileNumber) && isCompilationUnit(fileItem->name)) {
+            if (heldCUIsOutOfDate(inputs, l->buffer)) {
                 if (!editorFileExists(fileItem->name)) {
                     log_debug("Stale CU '%s' no longer exists, marking as deleted", fileItem->name);
                     markFileAsDeleted(fileNumber);
@@ -543,6 +556,7 @@ static void reparseStalePreloadedFiles(ArgumentsVector baseArgs) {
                 writeProgressInformation(cuCount - i - 1);
         }
     }
+    freeInputs(inputs);
 }
 
 static bool waitForUserConfirmation(char *message) {
