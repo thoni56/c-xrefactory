@@ -472,7 +472,7 @@ Pass 3 rounds 19s each, 42s total.
 ## 7. Freshness as make (ADR-0032, ADR-0033)
 
 The order is roughly the numbers. `header-not-half` can be done any time. Next is
-Pass 1 and 2 as one step in `out-of-date`, which `passes-as-one` then builds on.
+what is left of `out-of-date`, then `passes-as-one`.
 
 Performance, from reading the code (Mac, session `05984816`, 2026-10-08): at equal
 correctness the design costs the same or less. Parsing dominates, and what is parsed
@@ -491,11 +491,10 @@ are noted in `cu-inputs`, `out-of-date`, `time-budget` and `sweep-cost`.
     Goes with: out-of-date
 36. <a id="out-of-date"></a>**The one freshness predicate** — `knowledgeIsOutOfDate()` in
     `src/freshness.c`: no knowledge, an input gone, or an input changed after a tick
-    before the knowledge time. Pass 1, Pass 3 and `singlePass()` use it. Left: Pass 2,
-    which builds a held includer of a changed held header again after Pass 1. As one step
-    the changed headers are stripped first and each CU is built once, and Pass 1 stops
-    collecting `Inputs` of its own. `fileNumberIsStale()` then only picks the held
-    headers to strip, until `sweep`. The config as an input replaces
+    before the knowledge time. The held CUs, Pass 3 and `singlePass()` use it.
+    `fileNumberIsStale()` only picks the held headers to strip, until `sweep`. Left: the
+    held CUs are asked with `Inputs` of their own, collected again for the request after
+    they are built. The config as an input replaces
     `markAllCompilationUnitsStale()`, and the zero sentinel goes. The config needs a change
     time, and who owns it depends on where the project config lives after the options
     partition. `MAX_INCLUDE_CLOSURE` (1000) has no measured reason.
@@ -524,9 +523,9 @@ are noted in `cu-inputs`, `out-of-date`, `time-budget` and `sweep-cost`.
     Goes with: header-filtered-siblings
 38. <a id="passes-as-one"></a>**Pass 1, 2 and 3 become one** — bring the goal's
     out-of-date CUs up to date. `test_shared_header_changed_on_disk` comes off suspension.
-    `countStalePreloadedFiles` and `reparseStalePreloadedFiles` (`src/server.c`) were left
-    unrenamed for this, log texts included. They work on held buffers, not only preloaded
-    ones, and a changed header is not parsed but stripped, with its includers parsed.
+    `reparseStalePreloadedFiles` (`src/server.c`) was left unrenamed for this, log texts
+    included. It works on held buffers, not only preloaded ones, and a changed header is
+    not parsed but stripped, with its includers parsed.
     Until `sweep` is in, a changed header is stripped only in the entry refresh that
     builds all of its includers, before them, or not at all (ADR-0032).
     Waits for: out-of-date
