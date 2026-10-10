@@ -269,7 +269,8 @@ Pass 3 rounds 19s each, 42s total.
 
 16. <a id="header-filtered-siblings"></a>**Header-filtered sibling parsing** — 2481 sibling CUs → 2 for `AudioFIRContext`. The
     design problem is that Pass 3 runs during sync and the symbol is only known during
-    dispatch.
+    dispatch. It narrows what `request-target` widens: the reach of the symbol, not of
+    the request file's closure.
 17. <a id="scan-angle-includes"></a>**Extend the lightweight scan to `<...>` includes** — blocked on header-filtered
     sibling parsing, or ubiquitous system headers drag in nearly every CU. Also removes
     the cold-start double progress bar.
@@ -463,7 +464,7 @@ Pass 3 rounds 19s each, 42s total.
 ## 7. Freshness as make (ADR-0032, ADR-0033)
 
 The order is roughly the numbers. `header-not-half` can be done any time. Next is
-Pass 1 in `out-of-date`.
+Pass 1 and 2 as one step in `out-of-date`, which `passes-as-one` then builds on.
 
 Performance, from reading the code (Mac, session `05984816`, 2026-10-08): at equal
 correctness the design costs the same or less. Parsing dominates, and what is parsed
@@ -497,17 +498,18 @@ are noted in `cu-inputs`, `out-of-date`, `time-budget` and `sweep-cost`.
     there too.
     Waits for: adr-0032
     Goes with: partition-options, cu-inputs
-37. <a id="request-target"></a>**What a request needs** — the symbol's reach for an
-    operation on a position, the whole project for one on a name. Pass 3 takes the CUs
+37. <a id="request-target"></a>**What a request needs** — the CUs that reach the request
+    file's closure, and the whole project for an operation on a name. Pass 3 takes the CUs
     that reach a header the request file includes directly, through a mock or another
     header too (`collectCUsIncluding()`). It does not go further down: with the request
     including `a.h`, `a.h` including `decl.h` and an unparsed `z.c` including `decl.h`, a
     rename of a symbol from `decl.h` should miss `z.c` (from reading the code, WSL session
-    `76735541`; test first). `collectCUsIncluding()` stops walking after 256 files,
-    silently, which on ffmpeg cuts a widely included header short. The hard part is
-    the one header-filtered sibling parsing has: the symbol is known only at dispatch.
-    The scan does not record `<...>` includes, so for a project that includes its own
-    headers that way, reach misses CUs never parsed.
+    `76735541`; test first). Taking every header in the closure needs only files. On
+    ffmpeg it reaches almost every CU, which the cap already stops, and `time-budget`
+    after it. `collectCUsIncluding()` stops walking after 256 files, silently, which on
+    ffmpeg cuts a widely included header short. The scan does not record `<...>`
+    includes, so for a project that includes its own headers that way, reach misses CUs
+    never parsed.
     Waits for: adr-0032
     Goes with: header-filtered-siblings
 38. <a id="passes-as-one"></a>**Pass 1, 2 and 3 become one** — bring the goal's
@@ -517,7 +519,7 @@ are noted in `cu-inputs`, `out-of-date`, `time-budget` and `sweep-cost`.
     ones, and a changed header is not parsed but stripped, with its includers parsed.
     Until `sweep` is in, a changed header is stripped only in the entry refresh that
     builds all of its includers, before them, or not at all (ADR-0032).
-    Waits for: out-of-date, request-target
+    Waits for: out-of-date
 39. <a id="header-not-half"></a>**Pass 2 does not strip a header it cannot rebuild** — it
     strips the header's references and then reparses at most 128 includers, so the rest
     of their references are lost, not stale. Leave the header alone when the cap stops it.
