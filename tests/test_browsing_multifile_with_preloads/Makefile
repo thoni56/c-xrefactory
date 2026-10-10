@@ -1,10 +1,6 @@
 include ../Makefile.server
 
 $(TEST):
-	sleep 2
-	touch common.preload1
-	sleep 2
-	touch common.preload2
 	@$(SERVER_DRIVER) $(EXTRA) commands.input > output.tmp
 	@$(NORMALIZE) output.tmp > output
 	$(VERIFY)

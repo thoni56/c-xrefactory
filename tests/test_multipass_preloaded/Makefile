@@ -9,7 +9,6 @@ include ../Makefile.server
 
 $(TEST): .c-xrefrc
 	@rm -rf output output.tmp server-buffer
-	@touch source.preload   # a real client's preload is newer than the file
 	@$(SERVER_DRIVER) commands.input $(EXTRA) > /dev/null
 	@../../utils/cxref_reader .c-xref/db > output
 	$(VERIFY)

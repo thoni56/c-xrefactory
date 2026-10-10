@@ -14,7 +14,6 @@ $(TEST):
 	# Corrupt the call-site ref: line 6 col 11 -> line 5 col 4
 	@sed -i.bak '/2\/F/s/5u6l11cr/5u5l4cr/' .c-xref/db
 	# Ensure preload mtime > source.c mtime so Pass 1 considers it stale
-	@touch source.preload
 	@-$(SERVER_DRIVER) commands.input $(EXTRA) > output.tmp
 	@$(NORMALIZE) output.tmp > output
 	$(VERIFY)

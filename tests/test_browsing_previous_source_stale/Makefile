@@ -11,9 +11,6 @@ $(TEST):
 # Create preloads for original content
 	cp header.h header.preload
 	cp source.c source.preload
-# Ensure source.modified has newer timestamp than source.preload
-	sleep 2
-	touch source.modified
 	@$(SERVER_DRIVER) $(EXTRA) commands.input > output.tmp
 	@$(NORMALIZE) output.tmp > output
 	$(VERIFY)

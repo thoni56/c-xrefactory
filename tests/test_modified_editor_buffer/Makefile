@@ -4,7 +4,6 @@ include ../Makefile.server
 # Current implementation cannot handle that so this test is suspended
 
 $(TEST):
-	touch source.preload # ensure the preloaded buffer has a more recent timestamp
 	@$(SERVER_DRIVER) commands.input $(EXTRA) > output.tmp
 	@$(NORMALIZE) output.tmp > output
 	$(VERIFY)

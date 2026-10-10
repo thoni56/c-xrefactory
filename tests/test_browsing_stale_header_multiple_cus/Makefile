@@ -13,9 +13,6 @@ $(TEST):
 # Create preloads for original content
 	cp a.c a.preload
 	cp common.h common.preload
-# Ensure common.modified has newer timestamp than common.preload
-	sleep 2
-	touch common.modified
 	@$(SERVER_DRIVER) $(EXTRA) commands.input > output.tmp
 	@$(NORMALIZE) output.tmp > output
 	$(VERIFY)

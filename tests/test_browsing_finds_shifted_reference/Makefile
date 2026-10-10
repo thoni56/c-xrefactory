@@ -7,10 +7,8 @@ include ../Makefile.server
 
 prepare:
 	@-rm -rf .c-xref server-buffer output.tmp output trace.log
-	@touch source.preload
 
 $(TEST): prepare
-	sleep 2
 	@$(SERVER_DRIVER) $(EXTRA) commands.input > output.tmp
 	@$(NORMALIZE) output.tmp > output
 	$(VERIFY)

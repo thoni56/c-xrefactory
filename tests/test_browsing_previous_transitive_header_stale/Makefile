@@ -13,9 +13,6 @@ $(TEST):
 # Create preloads for original content
 	cp inner.h inner.preload
 	cp source.c source.preload
-# Ensure inner.modified has newer timestamp than inner.preload
-	sleep 2
-	touch inner.modified
 	@$(SERVER_DRIVER) $(EXTRA) commands.input > output.tmp
 	@$(NORMALIZE) output.tmp > output
 	$(VERIFY)

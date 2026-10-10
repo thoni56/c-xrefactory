@@ -169,6 +169,9 @@ def check_client_holds_edits(command, edited, p):
 # anything the server knew before the request that carries it. The driver is
 # that client, and gives a preload the time of the request that first sends its
 # content. Content sent again keeps its time, as the client's tmp file does.
+# The driver remembers that for one run only. A test that runs it again, as a
+# server restart, and sends the same preload gets it touched again, while the
+# client would keep its tmp file and send the old time.
 PRELOAD = re.compile(r'-preload\s+"?([^"\s]+)"?\s+"?([^"\s]+)"?')
 
 def touch_preloads(command, sent):

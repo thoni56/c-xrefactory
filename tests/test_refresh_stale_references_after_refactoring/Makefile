@@ -11,7 +11,6 @@ include ../Makefile.server
 # Then we should land on target()'s new position, not the old one
 
 $(TEST):
-	@touch source_a.c.moved   # a real client's preload is newer than the file's last parse
 	@-$(SERVER_DRIVER) commands.input $(EXTRA) > output.tmp
 	@$(NORMALIZE) output.tmp > output
 	$(VERIFY)

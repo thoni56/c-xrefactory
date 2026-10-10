@@ -1,7 +1,6 @@
 include ../Makefile.server
 
 $(TEST):
-	@touch source.preload   # a real client's preload is newer than the file
 	@-$(SERVER_DRIVER) commands.input $(EXTRA) > output.tmp
 	@$(NORMALIZE) output.tmp > output
 	$(VERIFY)
