@@ -92,7 +92,7 @@ graph from them on every push, linked at the end of this file, and `utils/backlo
       Goes with: startup-command-line, adr-0030
    c. <a id="setup-into-openproject"></a>**project setup moves into the future `-openproject`** — discovery, config read, compiler
       interrogation, snapshot load;
-      Waits for: partition-options
+      Waits for: partition-options, adr-0030
    d. <a id="openproject-tripwire"></a>**the assert that nothing before the future `-openproject` reads a project-scoped option** — the
       tripwire, as the disk-read assert was for Memory as Truth;
       Waits for: setup-into-openproject
