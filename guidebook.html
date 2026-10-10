@@ -4659,7 +4659,17 @@ Every use becomes a field access, e.g. <code>selection.count</code>.
 An Extract Function after that passes one pointer instead of four.</p>
 </div>
 <div class="paragraph">
-<p>The same for a group of parameters that always go together is Fowler&#8217;s original, and should probably work the same way.</p>
+<p>The same for a group of parameters that always go together is Fowler&#8217;s original.
+With the cursor in a parameter list and some parameters marked, it asks for a type name, declares a struct with those parameters as fields, and replaces them with one parameter of that type.
+In the function body every use becomes a field access.
+The simplest thing at the call sites is to pack the arguments there, since they are probably separate variables on the outside, e.g. <code>collectCUsIncluding(fileNumber, (CUList){cuFileNumbers, cuCount}, maxCUs)</code>.
+Turning the variables at a call site into one struct as well is then the locals variant above.</p>
+</div>
+<div class="paragraph">
+<p>A second case was <code>cuFileNumbers</code> and <code>cuCount</code>, which go together through <code>collectOutOfDateHeldCUs()</code>, <code>stripChangedHeldHeaders()</code> and <code>collectCUsIncluding()</code> (<code>server.c</code>).
+There the count also comes back as the return value, so packing a copy at the call site is not enough.
+Passing a pointer to the packed struct, and reading the count back after the call, would work, but is not pretty.
+How the UI marks the parameters, and what to do with such a count, is not decided.</p>
 </div>
 </div>
 </div>
@@ -12082,7 +12092,7 @@ operation reads the in-memory table.</p>
 </div>
 <div id="footer">
 <div id="footer-text">
-Last updated 2026-10-10 12:10:06 UTC
+Last updated 2026-10-10 19:22:07 UTC
 </div>
 </div>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.18.3/highlight.min.js"></script>
