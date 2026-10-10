@@ -468,30 +468,14 @@ static bool heldCUIsOutOfDate(Inputs *inputs, EditorBuffer *buffer) {
         && knowledgeIsOutOfDate(inputs, buffer->fileNumber);
 }
 
-static int countStalePreloadedFiles(Inputs *inputs) {
-    int count = 0;
-    for (int i = 0; i != -1; i = getNextExistingEditorBufferIndex(i + 1))
-        for (EditorBufferList *l = getEditorBufferListElementAt(i); l != NULL; l = l->next)
-            if (fileNumberIsStale(l->buffer->fileNumber) || heldCUIsOutOfDate(inputs, l->buffer))
-                count++;
-    return count;
-}
-
 static void reparseStalePreloadedFiles(ArgumentsVector baseArgs) {
-    /* Its own, because the request's are collected after this has parsed */
+    int cuFileNumbers[MAX_CUS_TO_REPARSE];
+    int cuCount = 0;
+
+    /* Held CUs whose knowledge is out of date. They go first, so the cap
+     * never leaves one of them out. Inputs of its own, because the
+     * request's are collected after this has parsed. */
     Inputs *inputs = collectInputs();
-    int staleCount = countStalePreloadedFiles(inputs);
-    if (staleCount == 0) {
-        freeInputs(inputs);
-        return;
-    }
-
-    log_info("Refreshing %d stale preloaded file(s)", staleCount);
-
-    /* Pass 1: Reparse held CUs whose knowledge is out of date. This also refreshes their
-     * TypeCppInclude references, which Pass 2 depends on.
-     * No progress reporting here — Pass 1 is fast (only directly
-     * preloaded CUs, typically 1-2 files). */
     for (int i = 0; i != -1; i = getNextExistingEditorBufferIndex(i + 1)) {
         for (EditorBufferList *l = getEditorBufferListElementAt(i); l != NULL; l = l->next) {
             int fileNumber = l->buffer->fileNumber;
@@ -500,25 +484,18 @@ static void reparseStalePreloadedFiles(ArgumentsVector baseArgs) {
                 if (!editorFileExists(fileItem->name)) {
                     log_debug("Stale CU '%s' no longer exists, marking as deleted", fileItem->name);
                     markFileAsDeleted(fileNumber);
-                } else {
-                    log_debug("Reparsing stale CU '%s'", fileItem->name);
-                    buildKnowledgeOfCU(fileNumber, baseArgs);
-                    fileItem->needsBrowsingStackRefresh = true;
+                } else if (cuCount < MAX_CUS_TO_REPARSE) {
+                    cuFileNumbers[cuCount++] = fileNumber;
                 }
             }
         }
     }
+    freeInputs(inputs);
 
-    /* Pass 2: For stale headers, find CUs that include them and reparse.
-     * Must come after Pass 1: Pass 1 reparses stale CUs, refreshing their
-     * TypeCppInclude references. Pass 2 queries those references to find
-     * which CUs include the stale header (transitively).
-     *
-     * First collect all CUs across all stale headers (deduplicated),
-     * then reparse with per-CU progress reporting. */
-    int cuFileNumbers[MAX_CUS_TO_REPARSE];
-    int cuCount = 0;
-
+    /* Stale held headers are stripped before any CU is built, so each CU
+     * that includes one is built once and puts its part of the header
+     * back. The includers are found through the include references as
+     * they were before this request. */
     for (int i = 0; i != -1; i = getNextExistingEditorBufferIndex(i + 1)) {
         for (EditorBufferList *l = getEditorBufferListElementAt(i); l != NULL; l = l->next) {
             int fileNumber = l->buffer->fileNumber;
@@ -529,7 +506,7 @@ static void reparseStalePreloadedFiles(ArgumentsVector baseArgs) {
                     markFileAsDeleted(fileNumber);
                 } else {
                     cuCount = collectCUsIncluding(fileNumber, cuFileNumbers, cuCount, MAX_CUS_TO_REPARSE);
-                    /* The stale header's own references go now; reparsing the CUs
+                    /* The stale header's own references go now; building the CUs
                      * above re-emits them. */
                     removeReferenceableItemsForFile(fileNumber);
                     EditorBuffer *buffer = getOpenedAndLoadedEditorBuffer(fileItem->name);
@@ -542,11 +519,11 @@ static void reparseStalePreloadedFiles(ArgumentsVector baseArgs) {
     }
 
     if (cuCount > 0) {
-        log_info("Reparsing %d CU(s) for stale header includers", cuCount);
+        log_info("Reparsing %d CU(s) for stale preloaded files", cuCount);
         if (options.cxrefProtocol) {
             static char progressFormat[128];
             snprintf(progressFormat, sizeof(progressFormat),
-                     "Updating %d header includers... %%d remaining", cuCount);
+                     "Updating %d compilation units... %%d remaining", cuCount);
             initProgress(progressFormat);
         }
         for (int i = 0; i < cuCount; i++) {
@@ -556,7 +533,6 @@ static void reparseStalePreloadedFiles(ArgumentsVector baseArgs) {
                 writeProgressInformation(cuCount - i - 1);
         }
     }
-    freeInputs(inputs);
 }
 
 static bool waitForUserConfirmation(char *message) {
