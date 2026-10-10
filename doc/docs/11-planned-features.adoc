@@ -475,7 +475,16 @@ With some locals marked, *Introduce Parameter Object* (or *Group Locals into Str
 Every use becomes a field access, e.g. `selection.count`.
 An Extract Function after that passes one pointer instead of four.
 
-The same for a group of parameters that always go together is Fowler's original, and should probably work the same way.
+The same for a group of parameters that always go together is Fowler's original.
+With the cursor in a parameter list and some parameters marked, it asks for a type name, declares a struct with those parameters as fields, and replaces them with one parameter of that type.
+In the function body every use becomes a field access.
+The simplest thing at the call sites is to pack the arguments there, since they are probably separate variables on the outside, e.g. `collectCUsIncluding(fileNumber, (CUList){cuFileNumbers, cuCount}, maxCUs)`.
+Turning the variables at a call site into one struct as well is then the locals variant above.
+
+A second case was `cuFileNumbers` and `cuCount`, which go together through `collectOutOfDateHeldCUs()`, `stripChangedHeldHeaders()` and `collectCUsIncluding()` (`server.c`).
+There the count also comes back as the return value, so packing a copy at the call site is not enough.
+Passing a pointer to the packed struct, and reading the count back after the call, would work, but is not pretty.
+How the UI marks the parameters, and what to do with such a count, is not decided.
 
 === Inline Output Parameter
 
