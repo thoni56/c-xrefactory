@@ -262,6 +262,14 @@ graph from them on every push, linked at the end of this file, and `utils/backlo
     `-prune ffmpeg/compat/atomics`, which with `ffmpeg/` as root names a directory that
     does not exist, silently.
 
+    Also *without a repo home yet*: **a preload sent again with the same content and a
+    newer time loses a later change.** A real client does that after a modify and an
+    undo. `tests/test_browsing_previous_header_stale` with a `!touch` of both preloads
+    before its second and third request answers the PREVIOUS with `header.h:7`, the old
+    content, not `:10` from `header.modified`. Each touch reloads both buffers and runs
+    Pass 1 and 2 again. Seen once, from a trace (WSL, session `d25255b8`, 2026-10-10), not
+    understood.
+
 ## 4. Performance, in strict dependency order
 
 Roadmap → Optimization. Baseline: cold-start PUSH on ffmpeg `af_afir.c` — scan 2.7s, two
