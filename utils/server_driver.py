@@ -164,18 +164,20 @@ def check_client_holds_edits(command, edited, p):
             sys.exit(1)
     edited.clear()
 
-# A real client writes a preload when it sends the request, so it is always newer
-# than the file it stands in for. A test preloading a checked-in file without
-# touching it depends on the mtimes a checkout happened to give, and a preload
-# no newer than the last parse does not look changed to the server.
+# A preload means that the editor has newer content than the file. A real client
+# writes it when the content changes, so it is newer than the file and than
+# anything the server knew before the request that carries it. The driver is
+# that client, and gives a preload the time of the request that first sends its
+# content. Content sent again keeps its time, as the client's tmp file does.
 PRELOAD = re.compile(r'-preload\s+"?([^"\s]+)"?\s+"?([^"\s]+)"?')
 
-def check_preloads_are_newer(command, p):
+def touch_preloads(command, sent):
     for name, preload in PRELOAD.findall(command):
-        if os.path.exists(name) and os.path.getmtime(preload) <= os.path.getmtime(name):
-            eprint(f"ERROR: the preload {preload} is not newer than {name}, so a real client could not have sent it; touch it first")
-            p.kill()
-            sys.exit(1)
+        with open(preload, 'rb') as f:
+            content = f.read()
+        if sent.get(name) != content:
+            os.utime(preload)
+            sent[name] = content
 
 def read_command(file):
     line = file.readline()
@@ -221,6 +223,7 @@ if __name__ == "__main__":
             read_output(args.server_buffer_filename)
 
         edited = {}                     # files the last answer edited, with their mtimes
+        sent = {}                       # the content last preloaded for each file
         in_request = False
         command = read_command(file)
         while command != '':
@@ -240,7 +243,7 @@ if __name__ == "__main__":
                     if not in_request:
                         check_client_holds_edits(request_line, edited, p)
                         in_request = True
-                    check_preloads_are_newer(request_line, p)
+                    touch_preloads(request_line, sent)
                     send_command(p, request_line)
                     command = read_command(file)
 
