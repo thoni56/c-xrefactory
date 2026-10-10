@@ -468,14 +468,7 @@ static bool heldCUIsOutOfDate(Inputs *inputs, EditorBuffer *buffer) {
         && knowledgeIsOutOfDate(inputs, buffer->fileNumber);
 }
 
-static void reparseStalePreloadedFiles(ArgumentsVector baseArgs) {
-    int cuFileNumbers[MAX_CUS_TO_REPARSE];
-    int cuCount = 0;
-
-    /* Held CUs whose knowledge is out of date. They go first, so the cap
-     * never leaves one of them out. Inputs of its own, because the
-     * request's are collected after this has parsed. */
-    Inputs *inputs = collectInputs();
+static int collectOutOfDateHeldCUs(int cuFileNumbers[], int cuCount, Inputs *inputs) {
     for (int i = 0; i != -1; i = getNextExistingEditorBufferIndex(i + 1)) {
         for (EditorBufferList *l = getEditorBufferListElementAt(i); l != NULL; l = l->next) {
             int fileNumber = l->buffer->fileNumber;
@@ -490,12 +483,11 @@ static void reparseStalePreloadedFiles(ArgumentsVector baseArgs) {
             }
         }
     }
-    freeInputs(inputs);
 
-    /* Stale held headers are stripped before any CU is built, so each CU
-     * that includes one is built once and puts its part of the header
-     * back. The includers are found through the include references as
-     * they were before this request. */
+    return cuCount;
+}
+
+static int stripChangedHeldHeaders(int cuFileNumbers[], int cuCount) {
     for (int i = 0; i != -1; i = getNextExistingEditorBufferIndex(i + 1)) {
         for (EditorBufferList *l = getEditorBufferListElementAt(i); l != NULL; l = l->next) {
             int fileNumber = l->buffer->fileNumber;
@@ -505,7 +497,8 @@ static void reparseStalePreloadedFiles(ArgumentsVector baseArgs) {
                     log_debug("Stale header '%s' no longer exists, marking as deleted", fileItem->name);
                     markFileAsDeleted(fileNumber);
                 } else {
-                    cuCount = collectCUsIncluding(fileNumber, cuFileNumbers, cuCount, MAX_CUS_TO_REPARSE);
+                    cuCount =
+                        collectCUsIncluding(fileNumber, cuFileNumbers, cuCount, MAX_CUS_TO_REPARSE);
                     /* The stale header's own references go now; building the CUs
                      * above re-emits them. */
                     removeReferenceableItemsForFile(fileNumber);
@@ -517,6 +510,26 @@ static void reparseStalePreloadedFiles(ArgumentsVector baseArgs) {
             }
         }
     }
+
+    return cuCount;
+}
+
+static void bringHeldFilesUpToDate(ArgumentsVector baseArgs) {
+    int cuFileNumbers[MAX_CUS_TO_REPARSE];
+    int cuCount = 0;
+
+    /* Held CUs whose knowledge is out of date. They go first, so the cap
+     * never leaves one of them out. Inputs of its own, because the
+     * request's are collected after this has parsed. */
+    Inputs *inputs = collectInputs();
+    cuCount = collectOutOfDateHeldCUs(cuFileNumbers, cuCount, inputs);
+    freeInputs(inputs);
+
+    /* Stale held headers are stripped before any CU is built, so each CU
+     * that includes one is built once and puts its part of the header
+     * back. The includers are found through the include references as
+     * they were before this request. */
+    cuCount = stripChangedHeldHeaders(cuFileNumbers, cuCount);
 
     if (cuCount > 0) {
         log_info("Reparsing %d CU(s) for stale preloaded files", cuCount);
@@ -650,7 +663,7 @@ void callServer(ArgumentsVector baseArgs, ArgumentsVector requestArgs) {
          * assertions) before the operation has set things up. */
         int savedCursorOffset = options.cursorOffset;
         options.cursorOffset = NO_CURSOR_OFFSET;
-        reparseStalePreloadedFiles(baseArgs);
+        bringHeldFilesUpToDate(baseArgs);
         options.cursorOffset = savedCursorOffset;
     }
 
