@@ -517,25 +517,26 @@ body.book #toc,body.book #preamble,body.book h1.sect0,body.book .sect1>h2{page-b
 <li><a href="#_planned_features">11. Planned Features</a>
 <ul class="sectlevel2">
 <li><a href="#move-function-refactoring">11.1. Move Function Between Files</a></li>
-<li><a href="#_lsp_integration">11.2. LSP Integration</a></li>
-<li><a href="#_rename_function_handles_expect">11.3. Rename function handles <code>expect</code></a></li>
-<li><a href="#_migrate_to_project_local_config">11.4. Migrate to project local config</a></li>
-<li><a href="#_retry_the_request_that_created_the_project">11.5. Retry the request that created the project</a></li>
-<li><a href="#_indexing_log_buffer">11.6. Indexing Log Buffer</a></li>
-<li><a href="#_unused_detection_exclude_patterns">11.7. Unused Detection: Exclude Patterns</a></li>
-<li><a href="#_browsing_includes">11.8. Browsing includes</a></li>
-<li><a href="#_semantic_read_only_files_include_path_ownership">11.9. Semantic Read-only Files (Include Path Ownership)</a></li>
-<li><a href="#generic-selection">11.10. C11 <code>_Generic</code></a></li>
-<li><a href="#_inline_function_and_inline_macro">11.11. Inline Function and Inline Macro</a></li>
-<li><a href="#_extract_an_expression_as_a_function">11.12. Extract an Expression as a Function</a></li>
-<li><a href="#_modernize_function">11.13. Modernize Function</a></li>
-<li><a href="#_unify_parameter_names">11.14. Unify Parameter Names</a></li>
-<li><a href="#_introduce_parameter_object">11.15. Introduce Parameter Object</a></li>
-<li><a href="#_inline_output_parameter">11.16. Inline Output Parameter</a></li>
-<li><a href="#_finish_extract_variable">11.17. Finish Extract Variable</a></li>
-<li><a href="#_inline_variable">11.18. Inline Variable</a></li>
-<li><a href="#_name_and_define_constant">11.19. Name and Define Constant</a></li>
-<li><a href="#_background_work">11.20. Background Work</a></li>
+<li><a href="#make-static">11.2. Make Static</a></li>
+<li><a href="#_lsp_integration">11.3. LSP Integration</a></li>
+<li><a href="#_rename_function_handles_expect">11.4. Rename function handles <code>expect</code></a></li>
+<li><a href="#_migrate_to_project_local_config">11.5. Migrate to project local config</a></li>
+<li><a href="#_retry_the_request_that_created_the_project">11.6. Retry the request that created the project</a></li>
+<li><a href="#_indexing_log_buffer">11.7. Indexing Log Buffer</a></li>
+<li><a href="#_unused_detection_exclude_patterns">11.8. Unused Detection: Exclude Patterns</a></li>
+<li><a href="#_browsing_includes">11.9. Browsing includes</a></li>
+<li><a href="#_semantic_read_only_files_include_path_ownership">11.10. Semantic Read-only Files (Include Path Ownership)</a></li>
+<li><a href="#generic-selection">11.11. C11 <code>_Generic</code></a></li>
+<li><a href="#_inline_function_and_inline_macro">11.12. Inline Function and Inline Macro</a></li>
+<li><a href="#_extract_an_expression_as_a_function">11.13. Extract an Expression as a Function</a></li>
+<li><a href="#_modernize_function">11.14. Modernize Function</a></li>
+<li><a href="#_unify_parameter_names">11.15. Unify Parameter Names</a></li>
+<li><a href="#_introduce_parameter_object">11.16. Introduce Parameter Object</a></li>
+<li><a href="#_inline_output_parameter">11.17. Inline Output Parameter</a></li>
+<li><a href="#_finish_extract_variable">11.18. Finish Extract Variable</a></li>
+<li><a href="#_inline_variable">11.19. Inline Variable</a></li>
+<li><a href="#_name_and_define_constant">11.20. Name and Define Constant</a></li>
+<li><a href="#_background_work">11.21. Background Work</a></li>
 </ul>
 </li>
 <li><a href="#components">12. Components</a>
@@ -3988,12 +3989,18 @@ is a standing source of value. Several candidates are specified in
 <p>Adds extern declaration to target file&#8217;s header</p>
 </li>
 <li>
-<p>Preserves comments and function decorations</p>
+<p>Adds an <code>#include</code> of the target&#8217;s header to the source, unless it is already there</p>
+</li>
+<li>
+<p>Moves function decorations</p>
 </li>
 <li>
 <p>Works for both C and Yacc files</p>
 </li>
 </ul>
+</div>
+<div class="paragraph">
+<p>Comments are moved only if <code>c-xref-comments-moving-level</code> is set, and it is 0 by default.</p>
 </div>
 </div>
 <div class="sect3">
@@ -4003,7 +4010,19 @@ is a standing source of value. Several candidates are specified in
   header file for the source, if the function was not static.</p>
 </div>
 <div class="paragraph">
-<p><strong>Include management</strong>: Automatically add necessary <code>#include</code> directives based on dependencies.</p>
+<p><strong>Remove the forward declaration</strong>: Remove a declaration of the moved function from the
+  source file. A <code>static</code> one left behind breaks the build.</p>
+</div>
+<div class="paragraph">
+<p><strong>Include management</strong>: Add the <code>#include</code> directives the moved function needs to the target.</p>
+</div>
+<div class="paragraph">
+<p><strong>Move Function to New Module</strong>: Create the target <code>.c</code> and <code>.h</code>, with an include guard
+  and the includes, and add the module to the build (and a mock for the unit tests).</p>
+</div>
+<div class="paragraph">
+<p><strong>Move several functions at once</strong>: Functions that move together, e.g. a function and its
+  helpers, can stay <code>static</code>.</p>
 </div>
 <div class="paragraph">
 <p><strong>Helper function detection</strong>: Identify and optionally move static helper functions that
@@ -4017,25 +4036,40 @@ is a standing source of value. Several candidates are specified in
 <p><strong>Preview</strong>: Show what will be changed before applying the refactoring.</p>
 </div>
 <div class="paragraph">
+<p><strong>Show the target and the source afterwards</strong>: Today the target is shown in both windows.</p>
+</div>
+<div class="paragraph">
 <p><strong>Delete Function</strong>: Remove a function definition and its declaration. Safety check warns
   if callers exist. Reuses the function boundary detection from Move Function and the
   unused detection logic to verify no references remain.</p>
 </div>
 <div class="paragraph">
-<p><strong>Comment handling customization</strong>: The server supports <code>-commentmovinglevel=N</code> controlling
+<p><strong>Ask whether to move the comment</strong>: The server supports <code>-commentmovinglevel=N</code> controlling
   how comments adjacent to a moved function are handled (none, single slashed/starred,
-  all). This is implemented but not exposed as an Emacs customization variable — currently
-  hardcoded to 0 (no comments moved). Should be added as a <code>defcustom</code>.</p>
+  all). The client sends <code>c-xref-comments-moving-level</code>, 0 by default, so no comment is
+  moved. A y/n question when there is a comment should replace the customization.</p>
 </div>
 </div>
 </div>
 <div class="sect2">
-<h3 id="_lsp_integration">11.2. LSP Integration</h3>
+<h3 id="make-static">11.2. Make Static</h3>
+<div class="paragraph">
+<p>Make a function <code>static</code> if nothing outside its file refers to it, and remove its
+declaration from the header. The check is unused detection, but only counting references
+from other files.</p>
+</div>
+<div class="paragraph">
+<p>A report of all such functions in the project would give the candidates. After a Move
+Function the helpers that moved along are typical ones.</p>
+</div>
+</div>
+<div class="sect2">
+<h3 id="_lsp_integration">11.3. LSP Integration</h3>
 <div class="paragraph">
 <p><strong>Status</strong>: EXPERIMENTAL (January 2026)</p>
 </div>
 <div class="sect3">
-<h4 id="_use_case_2">11.2.1. Use Case</h4>
+<h4 id="_use_case_2">11.3.1. Use Case</h4>
 <div class="listingblock">
 <div class="content">
 <pre class="highlightjs highlight"><code class="language-plantuml hljs" data-lang="plantuml">@startuml
@@ -4048,7 +4082,7 @@ Bob -&gt; Alice : hello
 </div>
 </div>
 <div class="sect3">
-<h4 id="_what_works">11.2.2. What Works</h4>
+<h4 id="_what_works">11.3.2. What Works</h4>
 <div class="paragraph">
 <p><strong>Go to Definition</strong> (<code>textDocument/definition</code>):</p>
 </div>
@@ -4080,7 +4114,7 @@ Bob -&gt; Alice : hello
 </div>
 </div>
 <div class="sect3">
-<h4 id="_current_limitations">11.2.3. Current Limitations</h4>
+<h4 id="_current_limitations">11.3.3. Current Limitations</h4>
 <div class="paragraph">
 <p><strong>Single-file scope</strong>: Only symbols in the currently opened file are accessible. To navigate to a function in another file, you must first open that file.</p>
 </div>
@@ -4111,7 +4145,7 @@ Bob -&gt; Alice : hello
 </div>
 </div>
 <div class="sect3">
-<h4 id="_how_to_use">11.2.4. How to Use</h4>
+<h4 id="_how_to_use">11.3.4. How to Use</h4>
 <div class="paragraph">
 <p>See the README for LSP client configuration examples. Basic setup:</p>
 </div>
@@ -4133,7 +4167,7 @@ Bob -&gt; Alice : hello
 </div>
 </div>
 <div class="sect3">
-<h4 id="_related_work">11.2.5. Related Work</h4>
+<h4 id="_related_work">11.3.5. Related Work</h4>
 <div class="ulist">
 <ul>
 <li>
@@ -4146,7 +4180,7 @@ Bob -&gt; Alice : hello
 </div>
 </div>
 <div class="sect3">
-<h4 id="_implementation_path">11.2.6. Implementation Path</h4>
+<h4 id="_implementation_path">11.3.6. Implementation Path</h4>
 <div class="paragraph">
 <p>The LSP path reuses the native architecture rather than inventing its own — document
 events are entry-refresh sync points (<a href="08-algorithms.html">Algorithms</a>). The steps:</p>
@@ -4186,7 +4220,7 @@ an operation needs interaction during the operation itself.</p>
 </div>
 </div>
 <div class="sect2">
-<h3 id="_rename_function_handles_expect">11.3. Rename function handles <code>expect</code></h3>
+<h3 id="_rename_function_handles_expect">11.4. Rename function handles <code>expect</code></h3>
 <div class="paragraph">
 <p>Many unittest frameworks have a feature for isolating a unit, often referred to as
 "mocks", in C the "unit" of mocking/stubbing/doubling is almost always a function. These
@@ -4210,7 +4244,7 @@ magic and replace them too.</p>
 </div>
 </div>
 <div class="sect2">
-<h3 id="_migrate_to_project_local_config">11.4. Migrate to project local config</h3>
+<h3 id="_migrate_to_project_local_config">11.5. Migrate to project local config</h3>
 <div class="paragraph">
 <p>Previously <code>c-xrefactory</code> promoted a user-central config file, <code>~/.c-xrefrc</code> which
 contained the config for all projects by containing a section for each project. The "New
@@ -4234,18 +4268,18 @@ current file, and if found, offer to migrate that section to a project-local <co
 </div>
 </div>
 <div class="sect2">
-<h3 id="_retry_the_request_that_created_the_project">11.5. Retry the request that created the project</h3>
+<h3 id="_retry_the_request_that_created_the_project">11.6. Retry the request that created the project</h3>
 <div class="paragraph">
 <p><strong>Status</strong>: Planned</p>
 </div>
 <div class="sect3">
-<h4 id="_background_2">11.5.1. Background</h4>
+<h4 id="_background_2">11.6.1. Background</h4>
 <div class="paragraph">
 <p>When no <code>.c-xrefrc</code> covers the file, the server answers <code>PPC_NO_PROJECT</code> and the client asks "No project covers &lt;file&gt;, create new project?". Answering yes runs <code>c-xref-project-new</code>, which writes a <code>.c-xrefrc</code> in the project root, auto-detected from <code>.git</code>.</p>
 </div>
 </div>
 <div class="sect3">
-<h4 id="_problem">11.5.2. Problem</h4>
+<h4 id="_problem">11.6.2. Problem</h4>
 <div class="paragraph">
 <p>The operation that asked the question is then thrown away. <code>c-xref-server-dispatch-no-project</code> ends with <code>(error "Project created")</code> — flow control by error, as the comment there says — so the goto-definition or completion the user asked for never happens, and they have to repeat it.</p>
 </div>
@@ -4254,19 +4288,19 @@ current file, and if found, offer to migrate that section to a project-local <co
 </div>
 </div>
 <div class="sect3">
-<h4 id="_design">11.5.3. Design</h4>
+<h4 id="_design">11.6.3. Design</h4>
 <div class="paragraph">
 <p>Keep the dialog and re-send the original request once the config is written, rather than unwinding. The request&#8217;s dispatch data is still in hand at that point, so this should not need new plumbing — worth confirming before committing to it.</p>
 </div>
 </div>
 </div>
 <div class="sect2">
-<h3 id="_indexing_log_buffer">11.6. Indexing Log Buffer</h3>
+<h3 id="_indexing_log_buffer">11.7. Indexing Log Buffer</h3>
 <div class="paragraph">
 <p><strong>Status</strong>: Planned</p>
 </div>
 <div class="sect3">
-<h4 id="_background_3">11.6.1. Background</h4>
+<h4 id="_background_3">11.7.1. Background</h4>
 <div class="paragraph">
 <p>The server parses a compilation unit when a request needs it. An operation that is project-wide asks before parsing the rest, and entry refresh reparses what has changed before every operation. Parsing is therefore spread through a session instead of happening once. During this parsing, warnings and errors may occur (e.g., missing include files, syntax errors from missing <code>-D</code> defines). These are expected and harmless — <code>c-xrefactory</code> continues best-effort — but users benefit from seeing them to tune their <code>.c-xrefrc</code> (adding <code>-I</code> paths, <code>-D</code> defines, etc.).</p>
 </div>
@@ -4278,7 +4312,7 @@ current file, and if found, offer to migrate that section to a project-local <co
 </div>
 </div>
 <div class="sect3">
-<h4 id="_problem_2">11.6.2. Problem</h4>
+<h4 id="_problem_2">11.7.2. Problem</h4>
 <div class="paragraph">
 <p>The current protocol has no non-modal message channel. Every message type either shows a modal dialog (<code>PPC_WARNING</code>, <code>PPC_ERROR</code>, <code>PPC_INFORMATION</code>) requiring "Press a key to continue", or writes a transient line to the minibuffer (<code>PPC_BOTTOM_INFORMATION</code>). Sending per-file warnings during cold start floods the user with one modal per warning, effectively locking up the editor.</p>
 </div>
@@ -4292,7 +4326,7 @@ user should see is a protocol record, which settles the choice below.</p>
 </div>
 </div>
 <div class="sect3">
-<h4 id="_what_works_now_2">11.6.3. What works now</h4>
+<h4 id="_what_works_now_2">11.7.3. What works now</h4>
 <div class="paragraph">
 <p>An unresolved <code>#include</code> reaches the client as a <code>&lt;warning&gt;</code> record when reporting is
 asked for. <code>test_parsing_include_error</code> holds it. Two pieces are missing: <code>formatMessage()</code>
@@ -4302,7 +4336,7 @@ reporting on for the duration of its own parse instead.</p>
 </div>
 </div>
 <div class="sect3">
-<h4 id="_what_the_report_should_contain">11.6.4. What the report should contain</h4>
+<h4 id="_what_the_report_should_contain">11.7.4. What the report should contain</h4>
 <div class="paragraph">
 <p>Distinct unresolved include names, each with a count of how many places wanted it. The
 same missing header is reported once per compilation unit that includes it, so a generated
@@ -4315,7 +4349,7 @@ a user asks whether the project is configured correctly.</p>
 </div>
 </div>
 <div class="sect3">
-<h4 id="_suggesting_a_fix">11.6.5. Suggesting a fix</h4>
+<h4 id="_suggesting_a_fix">11.7.5. Suggesting a fix</h4>
 <div class="paragraph">
 <p>An include that is not found often has a file with that name somewhere in the project.
 The report could then ask whether that is the one, and offer to add the <code>-I</code> for it to the
@@ -4327,7 +4361,7 @@ More than one candidate is a menu, and none is just the report.</p>
 </div>
 </div>
 <div class="sect3">
-<h4 id="_design_options">11.6.6. Design Options</h4>
+<h4 id="_design_options">11.7.6. Design Options</h4>
 <div class="paragraph">
 <p><strong>Option A: New protocol record type</strong> (recommended) — Add a <code>PPC_LOG</code> record that the Emacs client silently appends to a <code><strong>c-xref-log</strong></code> buffer. The count accumulates over the session, and a <code>PPC_BOTTOM_INFORMATION</code> reports it — "N warnings (see <strong>c-xref-log</strong>)" — after a parse-all, or when asked. Clean separation, no modals, inspectable at leisure. Touches protocol definition, C server code, and Emacs client.</p>
 </div>
@@ -4340,9 +4374,9 @@ More than one candidate is a menu, and none is just the report.</p>
 </div>
 </div>
 <div class="sect2">
-<h3 id="_unused_detection_exclude_patterns">11.7. Unused Detection: Exclude Patterns</h3>
+<h3 id="_unused_detection_exclude_patterns">11.8. Unused Detection: Exclude Patterns</h3>
 <div class="sect3">
-<h4 id="_background_4">11.7.1. Background</h4>
+<h4 id="_background_4">11.8.1. Background</h4>
 <div class="paragraph">
 <p>The "Browse Global Unused" feature reports symbols that are defined but never used. In
 practice, certain files produce noise that hides genuinely unused symbols:</p>
@@ -4369,7 +4403,7 @@ production but did not show up, because <code>xref_tests.c</code> still called i
 </div>
 </div>
 <div class="sect3">
-<h4 id="_proposed_behaviour">11.7.2. Proposed Behaviour</h4>
+<h4 id="_proposed_behaviour">11.8.2. Proposed Behaviour</h4>
 <div class="paragraph">
 <p>Support exclude patterns in the project configuration to suppress unused detection for
 matching files:</p>
@@ -4392,7 +4426,7 @@ called only from <code>*_tests.c</code> would be reported as unused in the produ
 </div>
 </div>
 <div class="sect3">
-<h4 id="_design_2">11.7.3. Design</h4>
+<h4 id="_design_2">11.8.3. Design</h4>
 <div class="paragraph">
 <p>The exclude patterns would be stored as a <code>StringList</code> in <code>ProjectConfig</code> (or <code>options</code>)
 and checked during the <code>mapAddGlobalUnusedSymbolsToHkSelection</code> iteration. The check
@@ -4402,9 +4436,9 @@ the existing shell-glob matching logic.</p>
 </div>
 </div>
 <div class="sect2">
-<h3 id="_browsing_includes">11.8. Browsing includes</h3>
+<h3 id="_browsing_includes">11.9. Browsing includes</h3>
 <div class="sect3">
-<h4 id="_background_5">11.8.1. Background</h4>
+<h4 id="_background_5">11.9.1. Background</h4>
 <div class="paragraph">
 <p>The <code>#include</code> preprocessor statments are referenceable items just like typenames and
 variables. That means it is logical to expect that placing the cursor on an <code>#include</code>
@@ -4417,16 +4451,16 @@ this case would be the next #include statement for that file.</p>
 </div>
 </div>
 <div class="sect3">
-<h4 id="_design_3">11.8.2. Design</h4>
+<h4 id="_design_3">11.9.2. Design</h4>
 <div class="paragraph">
 <p>This needs to be investigated and understood before an attempt to design a solution can be made.</p>
 </div>
 </div>
 </div>
 <div class="sect2">
-<h3 id="_semantic_read_only_files_include_path_ownership">11.9. Semantic Read-only Files (Include Path Ownership)</h3>
+<h3 id="_semantic_read_only_files_include_path_ownership">11.10. Semantic Read-only Files (Include Path Ownership)</h3>
 <div class="sect3">
-<h4 id="_background_6">11.9.1. Background</h4>
+<h4 id="_background_6">11.10.1. Background</h4>
 <div class="paragraph">
 <p>Files discovered through <code>-I</code> include paths are currently treated the same as project-owned
 files for navigation purposes. However, these files typically belong to external libraries
@@ -4446,7 +4480,7 @@ self-contained, but with the modern include-path-based project scope (see
 </div>
 </div>
 <div class="sect3">
-<h4 id="_proposed_behaviour_2">11.9.2. Proposed Behaviour</h4>
+<h4 id="_proposed_behaviour_2">11.10.2. Proposed Behaviour</h4>
 <div class="paragraph">
 <p>Files discovered through <code>-I</code> paths (but not listed as source directories in the
 configuration file) would be marked as <strong>read-only for refactoring purposes</strong>:</p>
@@ -4469,7 +4503,7 @@ cross-boundary refactoring for specific operations</p>
 </div>
 </div>
 <div class="sect3">
-<h4 id="_design_4">11.9.3. Design</h4>
+<h4 id="_design_4">11.10.3. Design</h4>
 <div class="paragraph">
 <p>This requires a per-file or per-directory ownership flag in the file table, checked by
 the refactoring engine before applying edits. The flag would be set during the lightweight
@@ -4482,12 +4516,12 @@ include path (read-only).</p>
 </div>
 </div>
 <div class="sect2">
-<h3 id="generic-selection">11.10. C11 <code>_Generic</code></h3>
+<h3 id="generic-selection">11.11. C11 <code>_Generic</code></h3>
 <div class="paragraph">
 <p><strong>Status</strong>: Not implemented. Pinned by the suspended <code>test_parsing_generics</code>.</p>
 </div>
 <div class="sect3">
-<h4 id="_use_case_3">11.10.1. Use Case</h4>
+<h4 id="_use_case_3">11.11.1. Use Case</h4>
 <div class="paragraph">
 <p><code>_Generic</code> selects an expression by the type of a controlling expression, most often to
 pick one of several functions, as in <code>&lt;tgmath.h&gt;</code>:</p>
@@ -4504,7 +4538,7 @@ loses others, such as the <code>default:</code> branch and a typedef used as an 
 </div>
 </div>
 <div class="sect3">
-<h4 id="_design_5">11.10.2. Design</h4>
+<h4 id="_design_5">11.11.2. Design</h4>
 <div class="paragraph">
 <p>Parse every association and record the references in all of them. Do <strong>not</strong> select the
 branch the controlling expression&#8217;s type would pick.</p>
@@ -4535,12 +4569,12 @@ result (<code>_Generic(&#8230;&#8203;).field</code>), which is rare.</p>
 </div>
 </div>
 <div class="sect2">
-<h3 id="_inline_function_and_inline_macro">11.11. Inline Function and Inline Macro</h3>
+<h3 id="_inline_function_and_inline_macro">11.12. Inline Function and Inline Macro</h3>
 <div class="paragraph">
 <p><strong>Status</strong>: Not implemented.</p>
 </div>
 <div class="sect3">
-<h4 id="_background_7">11.11.1. Background</h4>
+<h4 id="_background_7">11.12.1. Background</h4>
 <div class="paragraph">
 <p>There is no way to inline a function or a macro. The case that asked for it was two
 wrappers in <code>startup.c</code>, <code>saveMemoryCheckPoint()</code> and <code>restoreMemoryCheckPoint()</code>, that
@@ -4550,7 +4584,7 @@ the stub in <code>startup.mock</code>.</p>
 </div>
 </div>
 <div class="sect3">
-<h4 id="_proposed_behaviour_3">11.11.2. Proposed Behaviour</h4>
+<h4 id="_proposed_behaviour_3">11.12.2. Proposed Behaviour</h4>
 <div class="paragraph">
 <p>With the cursor on a function, or on a call to it, <strong>Inline Function</strong> replaces each call
 with the body, the arguments substituted for the parameters, and removes the definition.
@@ -4566,12 +4600,12 @@ call site. Refusing with a reason is fine there.</p>
 </div>
 </div>
 <div class="sect2">
-<h3 id="_extract_an_expression_as_a_function">11.12. Extract an Expression as a Function</h3>
+<h3 id="_extract_an_expression_as_a_function">11.13. Extract an Expression as a Function</h3>
 <div class="paragraph">
 <p><strong>Status</strong>: Not implemented. Issue #28.</p>
 </div>
 <div class="sect3">
-<h4 id="_background_8">11.12.1. Background</h4>
+<h4 id="_background_8">11.13.1. Background</h4>
 <div class="paragraph">
 <p>Extract Function only works on statements.
 Marking part of an expression, e.g. one operand of <code>||</code> in an <code>if</code> condition, gives a <code>void</code> function, which is not what you wanted.
@@ -4579,7 +4613,7 @@ The case that asked for it was <code>isPreloaded(buffer) || buffer&#8594;modifie
 </div>
 </div>
 <div class="sect3">
-<h4 id="_proposed_behaviour_4">11.12.2. Proposed Behaviour</h4>
+<h4 id="_proposed_behaviour_4">11.13.2. Proposed Behaviour</h4>
 <div class="paragraph">
 <p>When the marked text is an expression, extract a function that returns it, with the type of the expression, and replace the text with a call.</p>
 </div>
@@ -4591,19 +4625,19 @@ That probably covers most of the cases that come up.</p>
 </div>
 </div>
 <div class="sect2">
-<h3 id="_modernize_function">11.13. Modernize Function</h3>
+<h3 id="_modernize_function">11.14. Modernize Function</h3>
 <div class="paragraph">
 <p><strong>Status</strong>: Not implemented.</p>
 </div>
 <div class="sect3">
-<h4 id="_background_9">11.13.1. Background</h4>
+<h4 id="_background_9">11.14.1. Background</h4>
 <div class="paragraph">
 <p>Old C code often has K&amp;R function definitions, where the parameter types are declared between the parameter list and the body.
 There is no way to turn such a definition into one with a prototype.</p>
 </div>
 </div>
 <div class="sect3">
-<h4 id="_proposed_behaviour_5">11.13.2. Proposed Behaviour</h4>
+<h4 id="_proposed_behaviour_5">11.14.2. Proposed Behaviour</h4>
 <div class="paragraph">
 <p>With the cursor on a K&amp;R function definition, <strong>Modernize Function</strong> (or <strong>Prototype Function</strong>) moves the parameter declarations into the parameter list.
 A declaration without parameters elsewhere, e.g. <code>int f();</code> in a header, gets the same parameter list.
@@ -4617,12 +4651,12 @@ Refusing, or at least warning, is probably right there.</p>
 </div>
 </div>
 <div class="sect2">
-<h3 id="_unify_parameter_names">11.14. Unify Parameter Names</h3>
+<h3 id="_unify_parameter_names">11.15. Unify Parameter Names</h3>
 <div class="paragraph">
 <p><strong>Status</strong>: Not implemented.</p>
 </div>
 <div class="sect3">
-<h4 id="_background_10">11.14.1. Background</h4>
+<h4 id="_background_10">11.15.1. Background</h4>
 <div class="paragraph">
 <p>A parameter&#8217;s name is given again in every declaration of its function, i.e. in the header, in a forward declaration, in the definition and in a mock.
 Each is a symbol of its own, so Rename changes one of them.
@@ -4630,7 +4664,7 @@ Giving a parameter the same new name everywhere means one Rename for each defini
 </div>
 </div>
 <div class="sect3">
-<h4 id="_proposed_behaviour_6">11.14.2. Proposed Behaviour</h4>
+<h4 id="_proposed_behaviour_6">11.15.2. Proposed Behaviour</h4>
 <div class="paragraph">
 <p>With the cursor on a parameter, <strong>Unify Parameter Name</strong> asks for a name and gives the parameter that name in every declaration and definition of the function.
 In a definition that is a rename of the parameter, uses included.
@@ -4640,12 +4674,12 @@ A declaration that has no name for the parameter could get one, or be left as it
 </div>
 </div>
 <div class="sect2">
-<h3 id="_introduce_parameter_object">11.15. Introduce Parameter Object</h3>
+<h3 id="_introduce_parameter_object">11.16. Introduce Parameter Object</h3>
 <div class="paragraph">
 <p><strong>Status</strong>: Not implemented.</p>
 </div>
 <div class="sect3">
-<h4 id="_background_11">11.15.1. Background</h4>
+<h4 id="_background_11">11.16.1. Background</h4>
 <div class="paragraph">
 <p>Extract Function gives one parameter for each local the region uses, and an in/out pointer for each one it changes.
 When the region works on a group of locals that always go together, the parameter list gets long.
@@ -4655,7 +4689,7 @@ Four of them were the selection being built, i.e. the array of file numbers, its
 </div>
 </div>
 <div class="sect3">
-<h4 id="_proposed_behaviour_7">11.15.2. Proposed Behaviour</h4>
+<h4 id="_proposed_behaviour_7">11.16.2. Proposed Behaviour</h4>
 <div class="paragraph">
 <p>With some locals marked, <strong>Introduce Parameter Object</strong> (or <strong>Group Locals into Struct</strong>) asks for a type name, declares a struct with those locals as fields, and replaces them with one local of that type.
 Every use becomes a field access, e.g. <code>selection.count</code>.
@@ -4677,19 +4711,19 @@ How the UI marks the parameters, and what to do with such a count, is not decide
 </div>
 </div>
 <div class="sect2">
-<h3 id="_inline_output_parameter">11.16. Inline Output Parameter</h3>
+<h3 id="_inline_output_parameter">11.17. Inline Output Parameter</h3>
 <div class="paragraph">
 <p><strong>Status</strong>: Not implemented.</p>
 </div>
 <div class="sect3">
-<h4 id="_background_12">11.16.1. Background</h4>
+<h4 id="_background_12">11.17.1. Background</h4>
 <div class="paragraph">
 <p>For each local the region changes, Extract Function copies it in from a pointer parameter at the start of the new function and back at the end, e.g. <code>int cuCount = *_cuCount;</code> and <code>*_cuCount = cuCount;</code>.
 That is safe, but the copies are usually the first thing you want gone.</p>
 </div>
 </div>
 <div class="sect3">
-<h4 id="_proposed_behaviour_8">11.16.2. Proposed Behaviour</h4>
+<h4 id="_proposed_behaviour_8">11.17.2. Proposed Behaviour</h4>
 <div class="paragraph">
 <p>With the cursor on such a parameter, <strong>Inline Output Parameter</strong> replaces every read of the local with <code>*_cuCount</code>, every write with an assignment through the pointer, and removes both copies.
 It should refuse if the address of the local is taken, or if not every return writes it back.</p>
@@ -4704,12 +4738,12 @@ Done one at a time, the local is set but never read in between, and <code>-Werro
 </div>
 </div>
 <div class="sect2">
-<h3 id="_finish_extract_variable">11.17. Finish Extract Variable</h3>
+<h3 id="_finish_extract_variable">11.18. Finish Extract Variable</h3>
 <div class="paragraph">
 <p><strong>Status</strong>: Partially implemented.</p>
 </div>
 <div class="sect3">
-<h4 id="_background_13">11.17.1. Background</h4>
+<h4 id="_background_13">11.18.1. Background</h4>
 <div class="paragraph">
 <p><strong>Extract Variable</strong> replaces the marked expression with a new variable and declares it, initialized to the expression.
 The declaration is always <code>int</code>, since the type of the expression is not known (<code>generateNewVariableDeclaration()</code> in <code>extract.c</code>).
@@ -4723,7 +4757,7 @@ The case was <code>handle_invalid_request()</code> and <code>handle_method_not_f
 </div>
 </div>
 <div class="sect3">
-<h4 id="_proposed_behaviour_9">11.17.2. Proposed Behaviour</h4>
+<h4 id="_proposed_behaviour_9">11.18.2. Proposed Behaviour</h4>
 <div class="paragraph">
 <p>The declaration gets the type of the expression, and goes in before the statement that held it.
 This is the same type that <strong>Extract an Expression as a Function</strong> needs, so the two probably share it.</p>
@@ -4731,18 +4765,18 @@ This is the same type that <strong>Extract an Expression as a Function</strong> 
 </div>
 </div>
 <div class="sect2">
-<h3 id="_inline_variable">11.18. Inline Variable</h3>
+<h3 id="_inline_variable">11.19. Inline Variable</h3>
 <div class="paragraph">
 <p><strong>Status</strong>: Not implemented.</p>
 </div>
 <div class="sect3">
-<h4 id="_background_14">11.18.1. Background</h4>
+<h4 id="_background_14">11.19.1. Background</h4>
 <div class="paragraph">
 <p>The generalization above ended with inlining the extracted variables again at the first call site, by hand.</p>
 </div>
 </div>
 <div class="sect3">
-<h4 id="_proposed_behaviour_10">11.18.2. Proposed Behaviour</h4>
+<h4 id="_proposed_behaviour_10">11.19.2. Proposed Behaviour</h4>
 <div class="paragraph">
 <p>With the cursor on a local that is assigned once, <strong>Inline Variable</strong> replaces each use with its initializer and removes the declaration.
 It should refuse if the variable is assigned again, or if its address is taken.
@@ -4751,19 +4785,19 @@ An initializer with side effects, or one that reads something changed between th
 </div>
 </div>
 <div class="sect2">
-<h3 id="_name_and_define_constant">11.19. Name and Define Constant</h3>
+<h3 id="_name_and_define_constant">11.20. Name and Define Constant</h3>
 <div class="paragraph">
 <p><strong>Status</strong>: Not implemented.</p>
 </div>
 <div class="sect3">
-<h4 id="_background_15">11.19.1. Background</h4>
+<h4 id="_background_15">11.20.1. Background</h4>
 <div class="paragraph">
 <p>A literal that means something, e.g. an exit code the protocol prescribes, is better as a name.
 Today that is a <code>#define</code>, or an enum member, written by hand and then a search for the other occurrences.</p>
 </div>
 </div>
 <div class="sect3">
-<h4 id="_proposed_behaviour_11">11.19.2. Proposed Behaviour</h4>
+<h4 id="_proposed_behaviour_11">11.20.2. Proposed Behaviour</h4>
 <div class="paragraph">
 <p>With the cursor on a literal, <strong>Name and Define Constant</strong> asks for a name, defines it, and replaces the literal with the name.
 Other occurrences of the same literal could be offered, but only the user can tell which of them mean the same thing.
@@ -4772,12 +4806,12 @@ Where the definition goes, i.e. in the file or in a header, and as a <code>#defi
 </div>
 </div>
 <div class="sect2">
-<h3 id="_background_work">11.20. Background Work</h3>
+<h3 id="_background_work">11.21. Background Work</h3>
 <div class="paragraph">
 <p><strong>Status</strong>: Possible. Waits for the sweep (ADR-0033, <code>sweep</code> in <code>doc/backlog.md</code>).</p>
 </div>
 <div class="sect3">
-<h4 id="_background_16">11.20.1. Background</h4>
+<h4 id="_background_16">11.21.1. Background</h4>
 <div class="paragraph">
 <p>The server only works when a request arrives, and then the user waits.
 Out-of-date knowledge outside every request&#8217;s goal is never brought up to date, and on a large project the first request carries the whole initialization.
@@ -4785,7 +4819,7 @@ With the sweep, bringing knowledge up to date a part at a time is safe, since ea
 </div>
 </div>
 <div class="sect3">
-<h4 id="_proposed_behaviour_12">11.20.2. Proposed Behaviour</h4>
+<h4 id="_proposed_behaviour_12">11.21.2. Proposed Behaviour</h4>
 <div class="paragraph">
 <p>When no request is waiting, the server does one unit of work, e.g. builds the knowledge of one out-of-date CU, and then checks for a request again.
 Answers fill in while you work, and a cold start answers what it knows at once.
@@ -4793,7 +4827,7 @@ Other candidates are the sweep itself, saving the snapshot, and checking the cha
 </div>
 </div>
 <div class="sect3">
-<h4 id="_design_6">11.20.3. Design</h4>
+<h4 id="_design_6">11.21.3. Design</h4>
 <div class="paragraph">
 <p>The server has no threads and blocks in <code>readOptionsFromPipe()</code> until the next request.
 With all its global state, threads are not an option, so the work would be cooperative: wait for input with a timeout, and work when it expires.
@@ -12243,7 +12277,7 @@ operation reads the in-memory table.</p>
 </div>
 <div id="footer">
 <div id="footer-text">
-Last updated 2026-10-11 11:34:38 UTC
+Last updated 2026-10-11 19:45:57 UTC
 </div>
 </div>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.18.3/highlight.min.js"></script>
