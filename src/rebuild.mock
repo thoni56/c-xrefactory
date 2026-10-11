@@ -1,0 +1,18 @@
+#include "rebuild.h"
+
+#include <cgreen/cgreen.h>
+
+
+int collectCUsIncluding(int fileNumber, int cuFileNumbers[], int cuCount, int maxCUs) {
+    return (int)mock(fileNumber, cuFileNumbers, cuCount, maxCUs);
+}
+
+void parseUnparsedSiblingCUs(Inputs *inputs, int requestFileNumber, ArgumentsVector baseArgs_) {
+    ArgumentsVector *baseArgs = &baseArgs_;
+    mock(inputs, requestFileNumber, baseArgs);
+}
+
+void bringHeldFilesUpToDate(ArgumentsVector baseArgs_) {
+    ArgumentsVector *baseArgs = &baseArgs_;
+    mock(baseArgs);
+}
