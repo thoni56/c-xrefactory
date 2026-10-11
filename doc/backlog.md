@@ -252,6 +252,17 @@ graph from them on every push, linked at the end of this file, and `utils/backlo
     the protocol also lets a server pick only an encoding the client offered, with
     "utf-16" as the default, which agrees with code points outside the astral planes.
     From reading the code (Mac, session `36694da1`, 2026-10-02), not tested.
+    It is also in the wrong place: at the top level of the `initialize` response, where
+    the protocol has it in `result.capabilities`, so a client ignores it and assumes
+    "utf-16". `test_lsp_simple_lifecycle` pins it there (WSL, session `d25255b8`,
+    2026-10-10).
+
+    Also *without a repo home yet*: **the LSP server exits as a JSON parse error when its
+    input ends** (`src/lsp.c`). At end of file the header reader returns a length of 0,
+    the empty content does not parse, and the exit code is
+    `LSP_RETURN_ERROR_JSON_PARSE_ERROR`. The protocol does not say what an ending input
+    means, but a client that died without `exit` should not look like a parse error.
+    From reading the code (WSL, session `d25255b8`, 2026-10-10), not tested.
 
     Also *without a repo home yet*: **a relative `-I` in `.c-xrefrc` resolves against
     the working directory of the server process** (`doc/c-xrefrc.man`), while a directory
