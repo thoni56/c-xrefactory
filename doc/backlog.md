@@ -538,6 +538,9 @@ are noted in `cu-inputs`, `out-of-date`, `time-budget` and `sweep-cost`.
     header is not parsed but stripped, with its includers parsed.
     Until `sweep` is in, a changed header is stripped only in the entry refresh that
     builds all of its includers, before them, or not at all (ADR-0032).
+    Opens with moving the rebuild out of `server.c`, as a refactoring commit of its own,
+    when it can be seen what that module is (`doc/docs/17-major-codebase-improvements.adoc`,
+    Partition the Rebuild Like Make).
     Waits for: out-of-date
 39. <a id="header-not-half"></a>**Pass 2 does not strip a header it cannot rebuild** — it
     strips the header's references and then reparses at most 128 includers, so the rest

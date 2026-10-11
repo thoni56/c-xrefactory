@@ -618,6 +618,56 @@ None of these are about the external editor. They're the server's internal text 
 * The misleading "Editor" prefix on types (`EditorMarker`, `EditorUndo`, etc.) is a separate concern. Renaming those types has large cascading effects and is not worth doing until the refactoring performance issue is resolved (currently each rename requires two full project parses via `callXref`).
 * `editor.h` currently re-exports headers for `contentbuffer.h`, `editormarker.h`, `undo.h` -- after the split, callers would include the specific headers they need.
 
+[[rebuild-partition]]
+=== Partition the Rebuild Like Make
+
+==== Problem Statement
+
+ADR-0032 keeps knowledge up to date the way make keeps targets up to date.
+The code has the parts, but the names do not show which part of make each one is.
+`freshness.c` answers whether the knowledge of a CU is out of date, and nothing else.
+Running the rebuild is in `server.c`: the entry refresh with its passes, the held files and the sibling parsing.
+That is most of `server.c` today, and `callServer()` mixes it with setting up the request.
+(CodeScene's code health for `server.c` went from 8.41 to 4.11 as this moved in.)
+
+==== Wanted Partition
+
+[cols="1,2,2"]
+|===
+|Make |Here |Module
+
+|The goal
+|What a request needs, the backlog's `request-target`
+|No home yet. Today `collectCUsIncluding()` and the cap, inside the rebuild
+
+|Prerequisites
+|The include graph
+|`includegraph.c`
+
+|Recipe
+|Parse a CU with its options
+|The parser, with options from the blob until the backlog's `partition-options`
+
+|Is the target up to date
+|`knowledgeIsOutOfDate()`
+|`freshness.c`
+
+|Running it
+|Strip and build what is out of date
+|A new module, e.g. `rebuild.c`
+|===
+
+`callServer()` would then read as setting up, rebuilding, and running the operation.
+
+==== Notes
+
+* The rebuild gets the list of CUs to build, and does not choose it.
+  If `request-target` grows the goal, the goal may want a module of its own.
+* The steps of a rebuild can be separated.
+  The one constraint between them is that every strip comes before any build (Chapter 8, Entry Refresh).
+* The first step is a move, with no other change, opening the backlog's `passes-as-one`.
+  Before that it would move three passes into a module where they are about to become one.
+
 [[rename-operations]]
 === Rename Server Operations
 
