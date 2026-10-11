@@ -193,10 +193,10 @@ graph from them on every push, linked at the end of this file, and `utils/backlo
     reading the code (Mac, session `05984816`, 2026-10-06), not tested.
     Goes with: behind-the-back, sweep
 11. <a id="behind-the-back"></a>**Behind-the-back disk changes** — a header changed on
-    disk does not make its includers stale. Only the request file is parsed again, and
-    every other includer keeps its references to the old header (ghosts). Pass 2 parses
-    the includers of a header only when the header is edited. Changed CUs are picked up
-    by their mtime. `tests/test_shared_header_changed_on_disk`. Fixed by passes-as-one.
+    disk is stripped only by Pass 3, i.e. when the request includes it directly and every
+    includer is built again. Otherwise its includers keep their references to the old
+    header (ghosts). From reading the code (WSL, session `d25255b8`, 2026-10-11), not
+    tested.
     Waits for: passes-as-one
 12. <a id="extract-statics-by-value"></a>**Extract passes statics by value** — *no test pins it.* Since the gate fix this
     compiles and silently does the wrong thing, where before it failed to compile.

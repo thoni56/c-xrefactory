@@ -7,8 +7,8 @@ include ../Makefile.server
 # And f is pushed on in definer.c
 # Then the declaration is on line 3 only
 #
-# definer.c is parsed again, but user.c is not, and its reference to line 1 of header.h
-# stays. Pass 2 parses the includers of a header only when the header is edited.
+# Both includers are built again, so the references in header.h are stripped before
+# them (ADR-0032).
 
 $(TEST): .c-xrefrc
 	@cp header_v1.h header.h
