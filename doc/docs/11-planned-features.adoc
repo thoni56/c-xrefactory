@@ -505,6 +505,55 @@ Done one at a time, the local is set but never read in between, and `-Werror` st
 
 Turning a single in/out parameter into the return value is the natural next step, and could be a refactoring of its own.
 
+=== Finish Extract Variable
+
+**Status**: Partially implemented.
+
+==== Background
+
+*Extract Variable* replaces the marked expression with a new variable and declares it, initialized to the expression.
+The declaration is always `int`, since the type of the expression is not known (`generateNewVariableDeclaration()` in `extract.c`).
+It also goes in at the wrong place.
+The line it is given is `currentFile.lineNumber`, i.e. probably wherever parsing was, not the start of the statement that held the expression.
+
+Even so it was an immense help when generalizing a function.
+Extracting the varying parts of a function body as variables first, and then extracting the function, gives them as parameters.
+The case was `handle_invalid_request()` and `handle_method_not_found()` in `lsp_handler.c`, which differed only in an error code and a message.
+
+==== Proposed Behaviour
+
+The declaration gets the type of the expression, and goes in before the statement that held it.
+This is the same type that *Extract an Expression as a Function* needs, so the two probably share it.
+
+=== Inline Variable
+
+**Status**: Not implemented.
+
+==== Background
+
+The generalization above ended with inlining the extracted variables again at the first call site, by hand.
+
+==== Proposed Behaviour
+
+With the cursor on a local that is assigned once, *Inline Variable* replaces each use with its initializer and removes the declaration.
+It should refuse if the variable is assigned again, or if its address is taken.
+An initializer with side effects, or one that reads something changed between the declaration and a use, makes the result differ, and is probably reason to refuse too.
+
+=== Name and Define Constant
+
+**Status**: Not implemented.
+
+==== Background
+
+A literal that means something, e.g. an exit code the protocol prescribes, is better as a name.
+Today that is a `#define`, or an enum member, written by hand and then a search for the other occurrences.
+
+==== Proposed Behaviour
+
+With the cursor on a literal, *Name and Define Constant* asks for a name, defines it, and replaces the literal with the name.
+Other occurrences of the same literal could be offered, but only the user can tell which of them mean the same thing.
+Where the definition goes, i.e. in the file or in a header, and as a `#define` or an enum member, is not decided.
+
 === Background Work
 
 **Status**: Possible. Waits for the sweep (ADR-0033, `sweep` in `doc/backlog.md`).
