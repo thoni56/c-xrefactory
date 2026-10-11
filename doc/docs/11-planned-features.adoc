@@ -22,15 +22,27 @@ Reorganize code by moving function definitions between source files while mainta
 * Move a function from one source file to another
 * Automatically removes possible `static` keyword (makes function externally accessible)
 * Adds extern declaration to target file's header
-* Preserves comments and function decorations
+* Adds an `#include` of the target's header to the source, unless it is already there
+* Moves function decorations
 * Works for both C and Yacc files
+
+Comments are moved only if `c-xref-comments-moving-level` is set, and it is 0 by default.
 
 ==== Next steps
 
 **Remove extern declaration**: Remove the moved functions extern declaration from the
   header file for the source, if the function was not static.
 
-**Include management**: Automatically add necessary `#include` directives based on dependencies.
+**Remove the forward declaration**: Remove a declaration of the moved function from the
+  source file. A `static` one left behind breaks the build.
+
+**Include management**: Add the `#include` directives the moved function needs to the target.
+
+**Move Function to New Module**: Create the target `.c` and `.h`, with an include guard
+  and the includes, and add the module to the build (and a mock for the unit tests).
+
+**Move several functions at once**: Functions that move together, e.g. a function and its
+  helpers, can stay `static`.
 
 **Helper function detection**: Identify and optionally move static helper functions that
   the moved function depends on. Prevents broken builds.
@@ -40,14 +52,26 @@ Reorganize code by moving function definitions between source files while mainta
 
 **Preview**: Show what will be changed before applying the refactoring.
 
+**Show the target and the source afterwards**: Today the target is shown in both windows.
+
 **Delete Function**: Remove a function definition and its declaration. Safety check warns
   if callers exist. Reuses the function boundary detection from Move Function and the
   unused detection logic to verify no references remain.
 
-**Comment handling customization**: The server supports `-commentmovinglevel=N` controlling
+**Ask whether to move the comment**: The server supports `-commentmovinglevel=N` controlling
   how comments adjacent to a moved function are handled (none, single slashed/starred,
-  all). This is implemented but not exposed as an Emacs customization variable — currently
-  hardcoded to 0 (no comments moved). Should be added as a `defcustom`.
+  all). The client sends `c-xref-comments-moving-level`, 0 by default, so no comment is
+  moved. A y/n question when there is a comment should replace the customization.
+
+[[make-static]]
+=== Make Static
+
+Make a function `static` if nothing outside its file refers to it, and remove its
+declaration from the header. The check is unused detection, but only counting references
+from other files.
+
+A report of all such functions in the project would give the candidates. After a Move
+Function the helpers that moved along are typical ones.
 
 === LSP Integration
 

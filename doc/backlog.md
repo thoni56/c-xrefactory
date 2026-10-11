@@ -343,9 +343,7 @@ Pass 3 rounds 19s each, 42s total.
     function and the parameter refactorings. Stubs exist: `handle_code_action`,
     `handle_execute_command`, with `codeActionProvider` commented out in
     `src/lsp_handler.c`. Keep tier 3 (custom methods + per-editor extension code) small.
-26. <a id="move-function-next"></a>**Move Function next steps** — remove the source header's extern declaration, include
-    management, helper-function detection, smarter header placement, preview — then
-    **Delete Function**. Also **`-parse-all`, a request that parses every compilation
+26. <a id="move-function-next"></a>**Move Function next steps**, then **Delete Function**. Also **`-parse-all`, a request that parses every compilation
     unit the scan found and has not parsed** — what ADR-0024's CreateMode reduces to
     once the priming is a request rather than a mode; `test_ffmpeg` and
     `test_systemd` ask for it today by searching a name nobody defines and answering
@@ -367,7 +365,7 @@ Pass 3 rounds 19s each, 42s total.
     steadier and both are known before parsing starts.
     Also **unused-detection exclude patterns**, **browsing includes**,
     **semantic read-only files**, **rename handles `expect`**, **project-local
-    config**, **Inline Function and Inline Macro**, **Extract an Expression as a
+    config**, **Inline Function and Inline Macro**, **Make Static**, **Extract an Expression as a
     Function**, **Unify Parameter Names**, **Introduce Parameter Object**, **Inline Output
     Parameter**, **Finish Extract Variable**, **Inline Variable**, **Name and Define
     Constant**, **C11 `_Generic`** (`tests/test_parsing_generics`). All in
