@@ -28,6 +28,15 @@ static void setupProgress(int cuCount, int skippedCapped) {
     initProgress(progressFormat);
 }
 
+static bool everyIncluderIsRebuilt(int includers[], int includerCount, bool rebuilt[]) {
+    for (int i = 0; i < includerCount; i++) {
+        if (!rebuilt[includers[i]])
+            return false;
+    }
+
+    return includerCount > 0;
+}
+
 /* Entry refresh Pass 3: Find CUs that share headers with the request file
  * but haven't been parsed yet. On cold start without preloads, only the
  * request file gets parsed (by processFile). This pass ensures sibling CUs
@@ -45,13 +54,14 @@ void parseUnparsedSiblingCUs(Inputs *inputs, int requestFileNumber, bool request
     log_info("Pass 3: request file '%s' (fileNumber=%d)",
              getFileItemWithFileNumber(requestFileNumber)->name, requestFileNumber);
 
-    /* The request is parsed by the operation itself, not here */
-    bool requestIsRebuilt = requestIsParsed
-                            && isCompilationUnit(getFileItemWithFileNumber(requestFileNumber)->name)
-                            && knowledgeIsOutOfDate(inputs, requestFileNumber);
-
     bool *asked = calloc(MAX_FILES, sizeof(bool)); /* A sibling shares many headers */
     bool *rebuilt = calloc(MAX_FILES, sizeof(bool));
+
+    /* The request is parsed by the operation itself, not here */
+    rebuilt[requestFileNumber] = requestIsParsed
+        && isCompilationUnit(getFileItemWithFileNumber(requestFileNumber)->name)
+        && knowledgeIsOutOfDate(inputs, requestFileNumber);
+
     int *siblingCUs = malloc(MAX_FILES * sizeof(int));
     for (int i = getNextExistingFileNumber(0); i != -1; i = getNextExistingFileNumber(i + 1)) {
         FileItem *fi = getFileItemWithFileNumber(i);
@@ -107,13 +117,7 @@ void parseUnparsedSiblingCUs(Inputs *inputs, int requestFileNumber, bool request
 
         /* The references in a header are all or nothing (ADR-0032): strip them
          * only when every CU that includes it is built again, before any is */
-        bool everyIncluderIsRebuilt = siblingCount > 0;
-        for (int j = 0; j < siblingCount; j++) {
-            int includer = siblingCUs[j];
-            if (!(includer == requestFileNumber ? requestIsRebuilt : rebuilt[includer]))
-                everyIncluderIsRebuilt = false;
-        }
-        if (everyIncluderIsRebuilt) {
+        if (everyIncluderIsRebuilt(siblingCUs, siblingCount, rebuilt)) {
             log_debug("Every includer of '%s' is built again, stripping it", fi->name);
             removeReferenceableItemsForFile(i);
         }
