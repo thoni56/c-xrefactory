@@ -372,30 +372,10 @@ Pass 3 rounds 19s each, 42s total.
     Parameter**, **Finish Extract Variable**, **Inline Variable**, **Name and Define
     Constant**, **C11 `_Generic`** (`tests/test_parsing_generics`). All in
     `11-planned-features.adoc`.
-27. <a id="local-config-fragments"></a>**Local config fragments — the need, not a solution** — *no repo home yet.*
-    `.c-xrefrc` travels with the project and is checked in, which is why
-    `11-planned-features.adoc` argues for it: "it will not contain absolute file paths".
-    Some things are machine-specific and still have to be said somewhere — where the
-    source of a library you want to navigate into actually lives, an `-I` into a local
-    toolchain — and today there is nowhere to say them.
-    Two directions, neither chosen, and the point of this entry is the need rather than
-    either of them. `-optinclude` already reads another options file, but it processes it
-    with `PROCESS_FILE_ARGUMENTS_NO` (`handleIncludeOption`, `src/options.c`), so an
-    included file cannot contribute source directories — the main thing this need wants —
-    and `readOptionsFromFile` makes a missing file fatal, where absent is the normal case
-    for a machine-specific fragment. The other direction is a sibling file picked up
-    automatically, where absent is normal by construction and nothing checked in refers
-    to it. Either way, decide whether a fragment extends or replaces the project config.
-    A leading direction (Mac, session `36694da1`, 2026-10-02): **the config names, the
-    fragment binds.** The checked-in config says `-I ${FFMPEG}` or lists
-    `${FFMPEG}/libavcodec`; the fragment only does `-set FFMPEG /home/...`. Then it
-    neither extends nor replaces, and the `PROCESS_FILE_ARGUMENTS_NO` limit stops
-    mattering, since the fragment never contributes directories itself. Half of it works
-    today: `${NAME}` expands `-set` variables and then environment variables
-    (`expandEnvironmentVariables`, `src/options.c`), but a GUI Emacs often lacks the
-    shell's environment, and an unbound name is left as written and becomes a path that
-    does not exist, silently. ADR-0031 makes directories outside the root more common
-    and points here.
+27. <a id="local-config-fragments"></a>**Local config fragments: the config names, the fragment binds** —
+    ADR-0034, proposed. Decide it, with where the fragment lives and the syntax of a
+    default. Then: expand defaults, report an unbound name, read the fragment before the
+    environment, and ignore the personal options in a config, with a warning.
     Goes with: project-extent
 28. <a id="chapter-17-hygiene"></a>**Chapter 17 hygiene, opportunistically** — incremental `cxfile.c` cleanup, extract
     the macro expansion module, hashtab → hashlist, split the editor module, rename server
