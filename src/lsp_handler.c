@@ -151,15 +151,20 @@ void handle_exit(JSON *request) {
     log_trace("LSP: Handling 'exit'");
 }
 
+static JSON *create_error_response(JSON *request, int code, char *message) {
+    JSON *response = create_lsp_message_with_id(id_of_request(request));
+    JSON *error = cJSON_CreateObject();
+    cJSON_AddNumberToObject(error, "code", code);
+    cJSON_AddStringToObject(error, "message", message);
+    cJSON_AddItemToObject(response, "error", error);
+
+    return response;
+}
+
 void handle_method_not_found(JSON *request) {
     log_trace("LSP: Handling 'method not found'");
 
-    JSON *response = create_lsp_message_with_id(id_of_request(request));
-
-    JSON *error = cJSON_CreateObject();
-    cJSON_AddNumberToObject(error, "code", -32601);
-    cJSON_AddStringToObject(error, "message", "Method not found");
-    cJSON_AddItemToObject(response, "error", error);
+    JSON *response = create_error_response(request, -32601, "Method not found");
 
     send_response_and_delete(response);
 }
@@ -167,12 +172,7 @@ void handle_method_not_found(JSON *request) {
 void handle_invalid_request(JSON *request) {
     log_trace("LSP: Handling 'invalid request'");
 
-    JSON *response = create_lsp_message_with_id(id_of_request(request));
-
-    JSON *error = cJSON_CreateObject();
-    cJSON_AddNumberToObject(error, "code", -32600);
-    cJSON_AddStringToObject(error, "message", "Server has been shut down");
-    cJSON_AddItemToObject(response, "error", error);
+    JSON *response = create_error_response(request, -32600, "Server has been shut down");
 
     send_response_and_delete(response);
 }
