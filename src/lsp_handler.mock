@@ -42,3 +42,7 @@ void handle_shutdown(JSON *request) {
 void handle_method_not_found(JSON *request) {
     mock(request);
 }
+
+void handle_invalid_request(JSON *request) {
+    mock(request);
+}

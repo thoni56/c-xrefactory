@@ -78,6 +78,8 @@ int lsp_server(FILE *input_stream) {
     }
     if (result == LSP_RETURN_EXIT)
         return LSP_RETURN_OK;
+    else if (result == LSP_RETURN_EXIT_WITHOUT_SHUTDOWN)
+        return 1;
     else
         return result;
 }

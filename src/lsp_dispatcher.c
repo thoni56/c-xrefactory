@@ -1,5 +1,6 @@
 #include "lsp_dispatcher.h"
 
+#include <stdbool.h>
 #include <string.h>
 #include <stdio.h>
 
@@ -31,15 +32,24 @@ DispatchEntry dispatch[] = {
 
 #define ARRAY_SIZE(table) sizeof(table) / sizeof(table[0])
 
+static bool shutdownRequested = false;
+
 LspReturnCode dispatch_lsp_message(JSON *message) {
 
     const char *method = get_json_string_item(message, "method");
+    if (shutdownRequested && strcmp(method, "exit") != 0) {
+        if (get_json_item(message, "id") != NULL)
+            handle_invalid_request(message);
+        return LSP_RETURN_OK;
+    }
     for (int i=0; i < ARRAY_SIZE(dispatch); i++) {
         if (strcmp(method, dispatch[i].method) == 0) {
             log_trace("LSP: Dispatched '%s'", method);
             dispatch[i].handler(message);
+            if (strcmp(method, "shutdown") == 0)
+                shutdownRequested = true;
             if (strcmp(method, "exit") == 0)
-                return LSP_RETURN_EXIT;
+                return shutdownRequested ? LSP_RETURN_EXIT : LSP_RETURN_EXIT_WITHOUT_SHUTDOWN;
             else
                 return LSP_RETURN_OK;
         }

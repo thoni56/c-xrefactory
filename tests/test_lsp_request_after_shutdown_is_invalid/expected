@@ -1,0 +1,6 @@
+Content-Length: 38
+
+{"jsonrpc":"2.0","id":2,"result":null}
+Content-Length: 86
+
+{"jsonrpc":"2.0","id":3,"error":{"code":-32600,"message":"Server has been shut down"}}

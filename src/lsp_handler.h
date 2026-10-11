@@ -29,5 +29,6 @@ extern void handle_cancel(JSON *notification);
 extern void handle_shutdown(JSON *request);
 extern void handle_exit(JSON *request);
 extern void handle_method_not_found(JSON *request);
+extern void handle_invalid_request(JSON *request);
 
 #endif

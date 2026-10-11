@@ -163,3 +163,16 @@ void handle_method_not_found(JSON *request) {
 
     send_response_and_delete(response);
 }
+
+void handle_invalid_request(JSON *request) {
+    log_trace("LSP: Handling 'invalid request'");
+
+    JSON *response = create_lsp_message_with_id(id_of_request(request));
+
+    JSON *error = cJSON_CreateObject();
+    cJSON_AddNumberToObject(error, "code", -32600);
+    cJSON_AddStringToObject(error, "message", "Server has been shut down");
+    cJSON_AddItemToObject(response, "error", error);
+
+    send_response_and_delete(response);
+}
