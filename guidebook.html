@@ -5,7 +5,7 @@
 <meta http-equiv="X-UA-Compatible" content="IE=edge">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <meta name="generator" content="Asciidoctor 2.0.26">
-<meta name="author" content="v{VERSION} - Generated 2026-10-10">
+<meta name="author" content="v{VERSION} - Generated 2026-10-11">
 <title>C-xrefactory - a C/Yacc refactoring and code browsing tool - Design Documentation</title>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Open+Sans:300,300italic,400,400italic,600,600italic%7CNoto+Serif:400,400italic,700,700italic%7CDroid+Sans+Mono:400,700">
 <style>
@@ -441,7 +441,7 @@ body.book #toc,body.book #preamble,body.book h1.sect0,body.book .sect1>h2{page-b
 <div id="header">
 <h1>C-xrefactory - a C/Yacc refactoring and code browsing tool - Design Documentation</h1>
 <div class="details">
-<span id="author" class="author">v{VERSION} - Generated 2026-10-10</span><br>
+<span id="author" class="author">v{VERSION} - Generated 2026-10-11</span><br>
 </div>
 <div id="toc" class="toc2">
 <div id="toctitle">Table of Contents</div>
@@ -532,7 +532,10 @@ body.book #toc,body.book #preamble,body.book h1.sect0,body.book .sect1>h2{page-b
 <li><a href="#_unify_parameter_names">11.14. Unify Parameter Names</a></li>
 <li><a href="#_introduce_parameter_object">11.15. Introduce Parameter Object</a></li>
 <li><a href="#_inline_output_parameter">11.16. Inline Output Parameter</a></li>
-<li><a href="#_background_work">11.17. Background Work</a></li>
+<li><a href="#_finish_extract_variable">11.17. Finish Extract Variable</a></li>
+<li><a href="#_inline_variable">11.18. Inline Variable</a></li>
+<li><a href="#_name_and_define_constant">11.19. Name and Define Constant</a></li>
+<li><a href="#_background_work">11.20. Background Work</a></li>
 </ul>
 </li>
 <li><a href="#components">12. Components</a>
@@ -597,8 +600,9 @@ body.book #toc,body.book #preamble,body.book h1.sect0,body.book .sect1>h2{page-b
 <li><a href="#typed-requests">16.4. Replace Global <code>options</code> with Typed Requests</a></li>
 <li><a href="#remove-hashtab">16.5. Remove Hashtab by Migrating to Hashlist</a></li>
 <li><a href="#split-editor-module">16.6. Split the Editor Module</a></li>
-<li><a href="#rename-operations">16.7. Rename Server Operations</a></li>
-<li><a href="#_elisp_compiled_and_deleted_on_every_build">16.8. Elisp Compiled and Deleted on Every Build</a></li>
+<li><a href="#rebuild-partition">16.7. Partition the Rebuild Like Make</a></li>
+<li><a href="#rename-operations">16.8. Rename Server Operations</a></li>
+<li><a href="#_elisp_compiled_and_deleted_on_every_build">16.9. Elisp Compiled and Deleted on Every Build</a></li>
 </ul>
 </li>
 <li><a href="#_known_bugs">17. Known Bugs</a>
@@ -4700,12 +4704,80 @@ Done one at a time, the local is set but never read in between, and <code>-Werro
 </div>
 </div>
 <div class="sect2">
-<h3 id="_background_work">11.17. Background Work</h3>
+<h3 id="_finish_extract_variable">11.17. Finish Extract Variable</h3>
+<div class="paragraph">
+<p><strong>Status</strong>: Partially implemented.</p>
+</div>
+<div class="sect3">
+<h4 id="_background_13">11.17.1. Background</h4>
+<div class="paragraph">
+<p><strong>Extract Variable</strong> replaces the marked expression with a new variable and declares it, initialized to the expression.
+The declaration is always <code>int</code>, since the type of the expression is not known (<code>generateNewVariableDeclaration()</code> in <code>extract.c</code>).
+It also goes in at the wrong place.
+The line it is given is <code>currentFile.lineNumber</code>, i.e. probably wherever parsing was, not the start of the statement that held the expression.</p>
+</div>
+<div class="paragraph">
+<p>Even so it was an immense help when generalizing a function.
+Extracting the varying parts of a function body as variables first, and then extracting the function, gives them as parameters.
+The case was <code>handle_invalid_request()</code> and <code>handle_method_not_found()</code> in <code>lsp_handler.c</code>, which differed only in an error code and a message.</p>
+</div>
+</div>
+<div class="sect3">
+<h4 id="_proposed_behaviour_9">11.17.2. Proposed Behaviour</h4>
+<div class="paragraph">
+<p>The declaration gets the type of the expression, and goes in before the statement that held it.
+This is the same type that <strong>Extract an Expression as a Function</strong> needs, so the two probably share it.</p>
+</div>
+</div>
+</div>
+<div class="sect2">
+<h3 id="_inline_variable">11.18. Inline Variable</h3>
+<div class="paragraph">
+<p><strong>Status</strong>: Not implemented.</p>
+</div>
+<div class="sect3">
+<h4 id="_background_14">11.18.1. Background</h4>
+<div class="paragraph">
+<p>The generalization above ended with inlining the extracted variables again at the first call site, by hand.</p>
+</div>
+</div>
+<div class="sect3">
+<h4 id="_proposed_behaviour_10">11.18.2. Proposed Behaviour</h4>
+<div class="paragraph">
+<p>With the cursor on a local that is assigned once, <strong>Inline Variable</strong> replaces each use with its initializer and removes the declaration.
+It should refuse if the variable is assigned again, or if its address is taken.
+An initializer with side effects, or one that reads something changed between the declaration and a use, makes the result differ, and is probably reason to refuse too.</p>
+</div>
+</div>
+</div>
+<div class="sect2">
+<h3 id="_name_and_define_constant">11.19. Name and Define Constant</h3>
+<div class="paragraph">
+<p><strong>Status</strong>: Not implemented.</p>
+</div>
+<div class="sect3">
+<h4 id="_background_15">11.19.1. Background</h4>
+<div class="paragraph">
+<p>A literal that means something, e.g. an exit code the protocol prescribes, is better as a name.
+Today that is a <code>#define</code>, or an enum member, written by hand and then a search for the other occurrences.</p>
+</div>
+</div>
+<div class="sect3">
+<h4 id="_proposed_behaviour_11">11.19.2. Proposed Behaviour</h4>
+<div class="paragraph">
+<p>With the cursor on a literal, <strong>Name and Define Constant</strong> asks for a name, defines it, and replaces the literal with the name.
+Other occurrences of the same literal could be offered, but only the user can tell which of them mean the same thing.
+Where the definition goes, i.e. in the file or in a header, and as a <code>#define</code> or an enum member, is not decided.</p>
+</div>
+</div>
+</div>
+<div class="sect2">
+<h3 id="_background_work">11.20. Background Work</h3>
 <div class="paragraph">
 <p><strong>Status</strong>: Possible. Waits for the sweep (ADR-0033, <code>sweep</code> in <code>doc/backlog.md</code>).</p>
 </div>
 <div class="sect3">
-<h4 id="_background_13">11.17.1. Background</h4>
+<h4 id="_background_16">11.20.1. Background</h4>
 <div class="paragraph">
 <p>The server only works when a request arrives, and then the user waits.
 Out-of-date knowledge outside every request&#8217;s goal is never brought up to date, and on a large project the first request carries the whole initialization.
@@ -4713,7 +4785,7 @@ With the sweep, bringing knowledge up to date a part at a time is safe, since ea
 </div>
 </div>
 <div class="sect3">
-<h4 id="_proposed_behaviour_9">11.17.2. Proposed Behaviour</h4>
+<h4 id="_proposed_behaviour_12">11.20.2. Proposed Behaviour</h4>
 <div class="paragraph">
 <p>When no request is waiting, the server does one unit of work, e.g. builds the knowledge of one out-of-date CU, and then checks for a request again.
 Answers fill in while you work, and a cold start answers what it knows at once.
@@ -4721,7 +4793,7 @@ Other candidates are the sweep itself, saving the snapshot, and checking the cha
 </div>
 </div>
 <div class="sect3">
-<h4 id="_design_6">11.17.3. Design</h4>
+<h4 id="_design_6">11.20.3. Design</h4>
 <div class="paragraph">
 <p>The server has no threads and blocks in <code>readOptionsFromPipe()</code> until the next request.
 With all its global state, threads are not an option, so the work would be cooperative: wait for input with a timeout, and work when it expires.
@@ -8363,7 +8435,7 @@ setup.</p>
 <div class="sect2">
 <h3 id="_incremental_cxfile_c_cleanup">16.1. Incremental <code>cxfile.c</code> Cleanup</h3>
 <div class="sect3">
-<h4 id="_background_14">16.1.1. Background</h4>
+<h4 id="_background_17">16.1.1. Background</h4>
 <div class="paragraph">
 <p>The <code>cxfile</code> module was designed when the <code>.cx</code> files on disk were the reference database. Operations like "show all references to symbol X" or "find unused symbols" were table-driven scans over the disk format — hash the symbol name, stream the right partition, apply a per-operation filter. This was efficient for the batch cross-referencer that <code>c-xrefactory</code> evolved from, where the workflow was <code>c-xref -create</code> → <code>c-xref -update</code> → query the on-disk database.</p>
 </div>
@@ -9607,9 +9679,89 @@ result.valid = parsedInfo.moveTargetAccepted;</code></pre>
 </div>
 </div>
 <div class="sect2">
-<h3 id="rename-operations">16.7. Rename Server Operations</h3>
+<h3 id="rebuild-partition">16.7. Partition the Rebuild Like Make</h3>
 <div class="sect3">
 <h4 id="_problem_statement_4">16.7.1. Problem Statement</h4>
+<div class="paragraph">
+<p>ADR-0032 keeps knowledge up to date the way make keeps targets up to date.
+The code has the parts, but the names do not show which part of make each one is.
+<code>freshness.c</code> answers whether the knowledge of a CU is out of date, and nothing else.
+Running the rebuild is in <code>server.c</code>: the entry refresh with its passes, the held files and the sibling parsing.
+That is most of <code>server.c</code> today, and <code>callServer()</code> mixes it with setting up the request.
+(CodeScene&#8217;s code health for <code>server.c</code> went from 8.41 to 4.11 as this moved in.)</p>
+</div>
+</div>
+<div class="sect3">
+<h4 id="_wanted_partition">16.7.2. Wanted Partition</h4>
+<table class="tableblock frame-all grid-all stretch">
+<colgroup>
+<col style="width: 20%;">
+<col style="width: 40%;">
+<col style="width: 40%;">
+</colgroup>
+<thead>
+<tr>
+<th class="tableblock halign-left valign-top">Make</th>
+<th class="tableblock halign-left valign-top">Here</th>
+<th class="tableblock halign-left valign-top">Module</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">The goal</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">What a request needs, the backlog&#8217;s <code>request-target</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">No home yet. Today <code>collectCUsIncluding()</code> and the cap, inside the rebuild</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Prerequisites</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">The include graph</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>includegraph.c</code></p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Recipe</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Parse a CU with its options</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">The parser, with options from the blob until the backlog&#8217;s <code>partition-options</code></p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Is the target up to date</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>knowledgeIsOutOfDate()</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>freshness.c</code></p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Running it</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Strip and build what is out of date</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">A new module, e.g. <code>rebuild.c</code></p></td>
+</tr>
+</tbody>
+</table>
+<div class="paragraph">
+<p><code>callServer()</code> would then read as setting up, rebuilding, and running the operation.</p>
+</div>
+</div>
+<div class="sect3">
+<h4 id="_notes_4">16.7.3. Notes</h4>
+<div class="ulist">
+<ul>
+<li>
+<p>The rebuild gets the list of CUs to build, and does not choose it.
+If <code>request-target</code> grows the goal, the goal may want a module of its own.</p>
+</li>
+<li>
+<p>The steps of a rebuild can be separated.
+The one constraint between them is that every strip comes before any build (Chapter 8, Entry Refresh).</p>
+</li>
+<li>
+<p>The first step is a move, with no other change, opening the backlog&#8217;s <code>passes-as-one</code>.
+Before that it would move three passes into a module where they are about to become one.</p>
+</li>
+</ul>
+</div>
+</div>
+</div>
+<div class="sect2">
+<h3 id="rename-operations">16.8. Rename Server Operations</h3>
+<div class="sect3">
+<h4 id="_problem_statement_5">16.8.1. Problem Statement</h4>
 <div class="paragraph">
 <p>Server operations use the prefix <code>olcx</code> (likely "on-line cross-references"), a legacy abbreviation that conveys no meaning to anyone reading the code or protocol today. Option names like <code>-olcxpush</code>, <code>-olcxtagsearch</code>, <code>-getproject are opaque compared to what they could be: `-push</code>, <code>-search</code>, <code>-get-project-name</code>.</p>
 </div>
@@ -9618,7 +9770,7 @@ result.valid = parsedInfo.moveTargetAccepted;</code></pre>
 </div>
 </div>
 <div class="sect3">
-<h4 id="_scope">16.7.2. Scope</h4>
+<h4 id="_scope">16.8.2. Scope</h4>
 <div class="paragraph">
 <p>The rename touches three layers:</p>
 </div>
@@ -9633,7 +9785,7 @@ result.valid = parsedInfo.moveTargetAccepted;</code></pre>
 </div>
 </div>
 <div class="sect3">
-<h4 id="_design_decisions">16.7.3. Design Decisions</h4>
+<h4 id="_design_decisions">16.8.3. Design Decisions</h4>
 <div class="paragraph">
 <p><strong>Shortest clear name</strong>: Prefer <code>-push</code> over <code>-browse-push</code>. Stack operations (push, pop) are domain concepts — without understanding them you can&#8217;t understand browsing anyway. No grouping prefix needed.</p>
 </div>
@@ -9658,22 +9810,22 @@ result.valid = parsedInfo.moveTargetAccepted;</code></pre>
 </div>
 </div>
 <div class="sect3">
-<h4 id="_implementation">16.7.4. Implementation</h4>
+<h4 id="_implementation">16.8.4. Implementation</h4>
 <div class="paragraph">
 <p>Support both old and new names in the option parser temporarily (two <code>strcmp</code> entries per option). Rename everywhere else (client, tests, docs). Remove the old names in a later commit. This eliminates any breakage window.</p>
 </div>
 </div>
 <div class="sect3">
-<h4 id="_priority">16.7.5. Priority</h4>
+<h4 id="_priority">16.8.5. Priority</h4>
 <div class="paragraph">
 <p>Low urgency, high value for readability. Can be done incrementally — start with the "tag" removal (search-related names only), then expand to the full <code>olcx</code> rename later.</p>
 </div>
 </div>
 </div>
 <div class="sect2">
-<h3 id="_elisp_compiled_and_deleted_on_every_build">16.8. Elisp Compiled and Deleted on Every Build</h3>
+<h3 id="_elisp_compiled_and_deleted_on_every_build">16.9. Elisp Compiled and Deleted on Every Build</h3>
 <div class="sect3">
-<h4 id="_problem_statement_5">16.8.1. Problem Statement</h4>
+<h4 id="_problem_statement_6">16.9.1. Problem Statement</h4>
 <div class="paragraph">
 <p>Building <code>c-xref</code> runs <code>$(MAKE) -C ../editors/emacs</code> from the <code>c-xref</code> recipe, and
 that Makefile&#8217;s <code>all</code> target does this:</p>
@@ -9703,7 +9855,7 @@ real product.</p>
 </div>
 </div>
 <div class="sect3">
-<h4 id="_scope_2">16.8.2. Scope</h4>
+<h4 id="_scope_2">16.9.2. Scope</h4>
 <div class="paragraph">
 <p>Decide what the step is for and make it say so:</p>
 </div>
@@ -12091,7 +12243,7 @@ operation reads the in-memory table.</p>
 </div>
 <div id="footer">
 <div id="footer-text">
-Last updated 2026-10-10 20:19:40 UTC
+Last updated 2026-10-11 09:30:37 UTC
 </div>
 </div>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.18.3/highlight.min.js"></script>
