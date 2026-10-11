@@ -213,72 +213,69 @@ graph from them on every push, linked at the end of this file, and `utils/backlo
     `tests/test_static_declared_and_defined_in_header/.suspended` has the
     `exactPositionResolve` question to settle first, so it starts as a decision.
     Waits for: startup-command-line
-15. <a id="correctness-by-cost"></a>**Then, roughly by cost** — each has a `.suspended` note or a `18-known-bugs.adoc` entry:
-    `tests/test_getproject_unknown_cu_under_include_path` (any file under an `-I`
-    directory counts as project) · `tests/test_preprocess_edit_removes_ifdef_define` (CU
-    reparse leaves a header declaration it no longer emits — ADR-0025 variant B, fixed by `sweep`) ·
-    `tests/test_browsing_push_by_name` (needs decided behaviour when a name has several
-    bindings) · GlobalUnused false positive for statics in `.y` files ·
-    `tests/test_parsing_generics` (`_Generic` not parsed) · **a refactoring can see a
-    truncated reference set** (`18-known-bugs.adoc`) — severe where it bites, rewriting 13
-    of 25 occurrences on ffmpeg, but it needs a header included by more than ~130 CUs, and
-    c-xrefactory has 79 with a worst fan-in of 39, so it cannot happen here. That, and
-    not its severity, is why it sits in this bucket.
-    Goes with: project-extent
-
-    Also here, and *without a repo home yet*: **a warm start trips
-    `FATAL cxref.c:1494: 'browsingStack.top' is not true`**. Running
-    `tests/test_browsing_pop_needs_refresh` a second time from the first run's `.c-xref`
-    snapshot dies on the assert, so the same requests crash a server in the editor. Seen
-    on WSL, 2026-09-25. Tests start cold now, so the warm start has to be built inside a
-    test; see that test's `.suspended`.
-
-    Also *without a repo home yet*: **`-getproject` for a file outside any project
-    answers `<no-project-found>` twice.** `tests/test_no_project_writes_no_snapshot`
-    shows it, and its `expected` keeps both for now, so that test is only about the
-    snapshot. Seen on WSL, 2026-09-27.
-
-    **A Latin-1 character swallows the characters after it** —
-    `tests/test_latin1_character_does_not_swallow_what_follows/.suspended`. Quiet and
-    cheap, so first in this bucket: legacy C with Latin-1 comments loses a `*/` and the
-    rest of the file silently. Fixed by checking UTF-8 continuation bytes, not by
-    bringing `-encoding` back.
-
-    Also *without a repo home yet*: **the LSP server announces `positionEncoding:
-    "utf-8"` but counts code points** (`src/lsp_handler.c`). In LSP 3.17 "utf-8" means
-    columns in bytes, while the encoding collapse makes every server column a character
-    column, so on a line with non-ASCII the two disagree. The honest value is "utf-32";
-    the protocol also lets a server pick only an encoding the client offered, with
-    "utf-16" as the default, which agrees with code points outside the astral planes.
-    From reading the code (Mac, session `36694da1`, 2026-10-02), not tested.
-    It is also in the wrong place: at the top level of the `initialize` response, where
-    the protocol has it in `result.capabilities`, so a client ignores it and assumes
-    "utf-16". `test_lsp_simple_lifecycle` pins it there (WSL, session `d25255b8`,
-    2026-10-10).
-
-    Also *without a repo home yet*: **the LSP server exits as a JSON parse error when its
-    input ends** (`src/lsp.c`). At end of file the header reader returns a length of 0,
-    the empty content does not parse, and the exit code is
-    `LSP_RETURN_ERROR_JSON_PARSE_ERROR`. The protocol does not say what an ending input
-    means, but a client that died without `exit` should not look like a parse error.
-    From reading the code (WSL, session `d25255b8`, 2026-10-10), not tested.
-
-    Also *without a repo home yet*: **a relative `-I` in `.c-xrefrc` resolves against
-    the working directory of the server process** (`doc/c-xrefrc.man`), while a directory
-    line resolves against the config's directory and `-prune` against the root. With the
-    config in `tests/test_ffmpeg/ffmpeg`, `-Iffmpeg` found nothing and the absolute path
-    did (WSL, session `d25255b8`, 2026-10-09). Probably the config's general path rule
-    that ADR-0031 proposes for `-prune` should cover `-I` too. The same config had
-    `-prune ffmpeg/compat/atomics`, which with `ffmpeg/` as root names a directory that
-    does not exist, silently.
-
-    Also *without a repo home yet*: **a preload sent again with the same content and a
-    newer time loses a later change.** A real client does that after a modify and an
-    undo. `tests/test_browsing_previous_header_stale` with a `!touch` of both preloads
-    before its second and third request answers the PREVIOUS with `header.h:7`, the old
-    content, not `:10` from `header.modified`. Each touch reloads both buffers and runs
-    Pass 1 and 2 again. Seen once, from a trace (WSL, session `d25255b8`, 2026-10-10), not
-    understood.
+15. <a id="correctness-by-cost"></a>**The other correctness bugs**, Latin-1 first; the order of
+    the rest is not known. Each has a `.suspended` note or a `18-known-bugs.adoc` entry,
+    or says it has no repo home yet:
+   a. <a id="latin1-swallows"></a>**A Latin-1 character swallows the characters after it** —
+      `tests/test_latin1_character_does_not_swallow_what_follows/.suspended`. Quiet and
+      cheap: legacy C with Latin-1 comments loses a `*/` and the rest of the file
+      silently. Fixed by checking UTF-8 continuation bytes, not by bringing `-encoding`
+      back.
+   b. <a id="relative-include-path"></a>**A relative `-I` in `.c-xrefrc` resolves against the working directory of the server process** —
+      *no repo home yet* (`doc/c-xrefrc.man`), while a directory line resolves against
+      the config's directory and `-prune` against the root. With the config in
+      `tests/test_ffmpeg/ffmpeg`, `-Iffmpeg` found nothing and the absolute path did (WSL,
+      session `d25255b8`, 2026-10-09). Probably the config's general path rule that
+      ADR-0031 proposes for `-prune` should cover `-I` too. The same config had
+      `-prune ffmpeg/compat/atomics`, which with `ffmpeg/` as root names a directory that
+      does not exist, silently.
+      Goes with: adr-0031
+   c. <a id="unknown-cu-under-include"></a>**Any file under an `-I` directory counts as project** —
+      `tests/test_getproject_unknown_cu_under_include_path`.
+      Goes with: project-extent
+   d. <a id="no-project-twice"></a>**`-getproject` for a file outside any project answers `<no-project-found>` twice** —
+      *no repo home yet*. `tests/test_no_project_writes_no_snapshot` shows it, and its
+      `expected` keeps both for now, so that test is only about the snapshot. Seen on
+      WSL, 2026-09-27.
+   e. <a id="warm-start-fatal"></a>**A warm start trips `FATAL cxref.c:1494: 'browsingStack.top' is not true`** —
+      *no repo home yet*. Running `tests/test_browsing_pop_needs_refresh` a second time
+      from the first run's `.c-xref` snapshot dies on the assert, so the same requests
+      crash a server in the editor. Seen on WSL, 2026-09-25. Tests start cold now, so the
+      warm start has to be built inside a test; see that test's `.suspended`.
+   f. <a id="preload-resent"></a>**A preload sent again with the same content and a newer time loses a later change** —
+      *no repo home yet*. A real client does that after a modify and an undo.
+      `tests/test_browsing_previous_header_stale` with a `!touch` of both preloads before
+      its second and third request answers the PREVIOUS with `header.h:7`, the old
+      content, not `:10` from `header.modified`. Each touch reloads both buffers and runs
+      Pass 1 and 2 again. Seen once, from a trace (WSL, session `d25255b8`, 2026-10-10),
+      not understood.
+   g. <a id="unused-yacc-statics"></a>**GlobalUnused gives a false positive for statics in `.y` files** —
+      `18-known-bugs.adoc`.
+   h. <a id="push-by-name"></a>**Push by name when a name has several bindings** —
+      `tests/test_browsing_push_by_name`. Needs the behaviour decided first.
+   i. <a id="truncated-reference-set"></a>**A refactoring can see a truncated reference set** —
+      `18-known-bugs.adoc`. Severe where it bites, rewriting 13 of 25 occurrences on
+      ffmpeg, but it needs a header included by more than ~130 CUs, and c-xrefactory has
+      79 with a worst fan-in of 39, so it cannot happen here. That, and not its severity,
+      is why it sits here.
+      Goes with: time-budget, refactoring-refusals
+   j. <a id="lsp-position-encoding"></a>**The LSP server announces `positionEncoding: "utf-8"` but counts code points** —
+      *no repo home yet* (`src/lsp_handler.c`). In LSP 3.17 "utf-8" means columns in
+      bytes, while the encoding collapse makes every server column a character column, so
+      on a line with non-ASCII the two disagree. The honest value is "utf-32"; the
+      protocol also lets a server pick only an encoding the client offered, with
+      "utf-16" as the default, which agrees with code points outside the astral planes.
+      From reading the code (Mac, session `36694da1`, 2026-10-02), not tested.
+      It is also in the wrong place: at the top level of the `initialize` response, where
+      the protocol has it in `result.capabilities`, so a client ignores it and assumes
+      "utf-16". `test_lsp_simple_lifecycle` pins it there (WSL, session `d25255b8`,
+      2026-10-10).
+   k. <a id="lsp-input-ends"></a>**The LSP server exits as a JSON parse error when its input ends** —
+      *no repo home yet* (`src/lsp.c`). At end of file the header reader returns a length
+      of 0, the empty content does not parse, and the exit code is
+      `LSP_RETURN_ERROR_JSON_PARSE_ERROR`. The protocol does not say what an ending input
+      means, but a client that died without `exit` should not look like a parse error.
+      From reading the code (WSL, session `d25255b8`, 2026-10-10), not tested.
 
 ## 4. Performance, in strict dependency order
 
@@ -373,7 +370,8 @@ Pass 3 rounds 19s each, 42s total.
     config**, **Inline Function and Inline Macro**, **Extract an Expression as a
     Function**, **Unify Parameter Names**, **Introduce Parameter Object**, **Inline Output
     Parameter**, **Finish Extract Variable**, **Inline Variable**, **Name and Define
-    Constant**. All in `11-planned-features.adoc`.
+    Constant**, **C11 `_Generic`** (`tests/test_parsing_generics`). All in
+    `11-planned-features.adoc`.
 27. <a id="local-config-fragments"></a>**Local config fragments — the need, not a solution** — *no repo home yet.*
     `.c-xrefrc` travels with the project and is checked in, which is why
     `11-planned-features.adoc` argues for it: "it will not contain absolute file paths".
