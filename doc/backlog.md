@@ -596,6 +596,12 @@ are noted in `cu-inputs`, `out-of-date`, `time-budget` and `sweep-cost`.
     as dead memory; refreshing in place stops that. For the sweep itself, compute the
     oldest knowledge generation of a file's reaching CUs once per file, not per
     reference.
+    For information: the table only answers exact identity, so other lookups walk all
+    of it. By file, the strip above. By kind, `buildIncludeGraph()` looking for the
+    include items, about 38 ms on a fully parsed ffmpeg, twice per request. By name
+    only, `navigation.c` once per menu item. Per request on ffmpeg, 1376 `stat`s took
+    about 5 ms and 2434 include closures about 50 ms (WSL, session `d25255b8`,
+    2026-10-11).
     Goes with: sweep
 
 ## 8. Real users: installing and being found
@@ -632,6 +638,16 @@ Mac (session `05984816`), 2026-10-07.
     first project working without configuration matters here, see `compile-commands`.
     Waits for: passes-as-one, sweep, refactoring-refusals, install-server, readme-first-screen
     Goes with: lsp-tiers, retry-creating-request, compile-commands
+53. <a id="windows-build"></a>**A Windows build** — most of the code is plain C. About 28
+    `__WIN32__` remnants from the original Xrefactory are there, unmaintained and untested
+    (`misc.c`, `commons.c`, `options.c`). The work is probably: file names (drive letters,
+    backslashes, case-insensitive names, i.e. `normalizeFileName()` and file identity, the
+    risky part), modification times with nanoseconds (`st_mtim` in `fileio.c`), the
+    compiler interrogation (`popen`, and MSVC's `cl` does not answer `-v -E`), and the
+    tests, which need make, bash and sed, and a CI job. A MinGW build under MSYS2 is
+    probably the shortest route. From reading the code (WSL, session `d25255b8`,
+    2026-10-11). Until then WSL works, but on files under `/mnt/c` each `stat` goes
+    through 9P to the Windows side, at about a millisecond each.
 
 ## Foundation
 
