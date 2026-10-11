@@ -8,6 +8,8 @@ Accepted (2026-10-04)
 
 Amended (2026-10-05): terms sharpened, the decision unchanged.
 
+Amended (2026-10-11): the request file is no exception, see below.
+
 Builds on [ADR-0014](0014-adopt-on-demand-parsing-architecture.md) and
 [ADR-0020](0020-separate-buffer-sync-from-operation-dispatch.md)
 Goes with [ADR-0033](0033-references-are-removed-when-every-cu-reaching-their-file-is-parsed-again.md)
@@ -153,6 +155,22 @@ name the whole project, within a time budget. Above the budget browsing asks and
 remembers a "no" for the session, while an operation that edits code or works on a name
 asks every time and is cancelled by a "no".
 
+### The request file is no exception
+
+A request in a file that is not a CU, e.g. a header or a mock, is parsed through the CUs
+that include it, with the cursor in the file. That is how a cursor in a macro body is
+already handled (ADR-0027). The file is never parsed on its own.
+
+A file that no CU reaches has no references. Until it is included it cannot be
+navigated, and a request in it is answered with a message saying so, not with an empty
+answer.
+
+The original edit server parsed the request file whatever it was, on purpose. Its
+references were an overlay for that request on the disk database, which batch `xref` had
+built with every CU in its context. Once the table became the only truth, what that parse
+emitted stayed, and a header parsed without context added to the knowledge. Nobody
+decided that, it followed.
+
 ## Consequences and Risks
 
 **Benefits:**
@@ -197,3 +215,7 @@ Discussed on the Linux machine, session `76735541`, 2026-10-03. A spike for back
 on disk (`tests/test_shared_header_changed_on_disk`). Trying to make Pass 2 compare
 headers with their disk time ran into the double meaning of a zero `lastParsedMtime`,
 and the question of what a header's time could mean led to the `make` model.
+
+The amendment of 2026-10-11 comes from WSL, session `d25255b8`. A test for stripping a
+header that no CU includes found the request header parsed on its own, putting its
+references back (`tests/test_push_in_header_no_cu_includes`).

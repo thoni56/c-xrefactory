@@ -1,0 +1,15 @@
+Missing: a request in a header is parsed through its includers
+
+user.c includes header.h, and f is pushed on in header.h. Then user.c is rewritten on
+disk without the include, and f is pushed on in header.h again. Pass 3 strips header.h,
+since user.c is still known as its includer and is built again. Then singlePass() parses
+header.h on its own, as the request file, and header.h:1 comes back.
+
+ADR-0032 (amended 2026-10-11) says a file that is not a CU is never parsed on its own,
+the request file included. It is parsed through the CUs that include it, with the cursor
+in it, as a cursor in a macro body is today (collectCompilationUnitsExpandingTheMacro()
+in src/server.c). With no includer, as here, the answer is a message saying that no
+compilation unit includes the file.
+
+expected is empty: write it when the message is worded. Backlog item
+request-through-includers.
