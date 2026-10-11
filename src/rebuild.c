@@ -35,7 +35,8 @@ static void setupProgress(int cuCount, int skippedCapped) {
  *
  * Uses brute-force forward-include lookup: iterates all headers in the
  * file table and checks if the request file is among their includers. */
-void parseUnparsedSiblingCUs(Inputs *inputs, int requestFileNumber, ArgumentsVector baseArgs) {
+void parseUnparsedSiblingCUs(Inputs *inputs, int requestFileNumber, bool requestIsParsed,
+                             ArgumentsVector baseArgs) {
     int cuFileNumbers[MAX_CUS_TO_REPARSE];
     int cuCount = 0;
     int skippedAlreadyParsed = 0;
@@ -44,7 +45,13 @@ void parseUnparsedSiblingCUs(Inputs *inputs, int requestFileNumber, ArgumentsVec
     log_info("Pass 3: request file '%s' (fileNumber=%d)",
              getFileItemWithFileNumber(requestFileNumber)->name, requestFileNumber);
 
+    /* The request is parsed by the operation itself, not here */
+    bool requestIsRebuilt = requestIsParsed
+                            && isCompilationUnit(getFileItemWithFileNumber(requestFileNumber)->name)
+                            && knowledgeIsOutOfDate(inputs, requestFileNumber);
+
     bool *asked = calloc(MAX_FILES, sizeof(bool)); /* A sibling shares many headers */
+    bool *rebuilt = calloc(MAX_FILES, sizeof(bool));
     int *siblingCUs = malloc(MAX_FILES * sizeof(int));
     for (int i = getNextExistingFileNumber(0); i != -1; i = getNextExistingFileNumber(i + 1)) {
         FileItem *fi = getFileItemWithFileNumber(i);
@@ -91,13 +98,28 @@ void parseUnparsedSiblingCUs(Inputs *inputs, int requestFileNumber, ArgumentsVec
 
             if (cuCount < MAX_CUS_TO_REPARSE) {
                 cuFileNumbers[cuCount++] = siblingFileNum;
+                rebuilt[siblingFileNum] = true;
                 log_debug("Sibling CU '%s' shares header with request file", siblingItem->name);
             } else {
                 skippedCapped++;
             }
         }
+
+        /* The references in a header are all or nothing (ADR-0032): strip them
+         * only when every CU that includes it is built again, before any is */
+        bool everyIncluderIsRebuilt = siblingCount > 0;
+        for (int j = 0; j < siblingCount; j++) {
+            int includer = siblingCUs[j];
+            if (!(includer == requestFileNumber ? requestIsRebuilt : rebuilt[includer]))
+                everyIncluderIsRebuilt = false;
+        }
+        if (everyIncluderIsRebuilt) {
+            log_debug("Every includer of '%s' is built again, stripping it", fi->name);
+            removeReferenceableItemsForFile(i);
+        }
     }
 
+    free(rebuilt);
     free(siblingCUs);
     free(asked);
 

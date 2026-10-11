@@ -501,16 +501,13 @@ are noted in `cu-inputs`, `out-of-date`, `time-budget` and `sweep-cost`.
     Waits for: adr-0032
     Goes with: header-filtered-siblings
 38. <a id="passes-as-one"></a>**Pass 1, 2 and 3 become one** — bring the goal's
-    out-of-date CUs up to date. `test_shared_header_changed_on_disk` comes off suspension.
+    out-of-date CUs up to date.
     `bringHeldFilesUpToDate()` (`src/server.c`) does it for the held files. A changed
     header is not parsed but stripped, with its includers parsed.
     Until `sweep` is in, a changed header is stripped only in the entry refresh that
     builds all of its includers, before them, or not at all (ADR-0032).
     One pass collects the inputs once. Today the held CUs collect their own, about 39 ms
     more per request on a fully parsed ffmpeg (`sweep-cost`).
-    Opens with moving the rebuild out of `server.c`, as a refactoring commit of its own,
-    when it can be seen what that module is (`doc/docs/17-major-codebase-improvements.adoc`,
-    Partition the Rebuild Like Make).
 39. <a id="header-not-half"></a>**Pass 2 does not strip a header it cannot rebuild** — it
     strips the header's references and then reparses at most 128 includers, so the rest
     of their references are lost, not stale. Leave the header alone when the cap stops it.

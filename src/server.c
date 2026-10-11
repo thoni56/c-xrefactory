@@ -447,7 +447,9 @@ void callServer(ArgumentsVector baseArgs, ArgumentsVector requestArgs) {
      * the request file but haven't been parsed yet (e.g. cold start). */
     if (projectContextInitialized && hasInputFile && !answeredWithoutReferences(options.serverOperation)
         && options.detectedProjectRoot != NULL && options.detectedProjectRoot[0] != '\0') {
-        parseUnparsedSiblingCUs(inputs, requestFileNumber, baseArgs);
+        bool requestIsParsed = requiresProcessingInputFile(options.serverOperation)
+                               && operationParsesRequestFile(options.serverOperation);
+        parseUnparsedSiblingCUs(inputs, requestFileNumber, requestIsParsed, baseArgs);
     }
 
     /* Completeness for name-based operations: if unparsed CUs still exist, ask user

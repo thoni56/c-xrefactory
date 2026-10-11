@@ -7,9 +7,10 @@ int collectCUsIncluding(int fileNumber, int cuFileNumbers[], int cuCount, int ma
     return (int)mock(fileNumber, cuFileNumbers, cuCount, maxCUs);
 }
 
-void parseUnparsedSiblingCUs(Inputs *inputs, int requestFileNumber, ArgumentsVector baseArgs_) {
+void parseUnparsedSiblingCUs(Inputs *inputs, int requestFileNumber, bool requestIsParsed,
+                             ArgumentsVector baseArgs_) {
     ArgumentsVector *baseArgs = &baseArgs_;
-    mock(inputs, requestFileNumber, baseArgs);
+    mock(inputs, requestFileNumber, requestIsParsed, baseArgs);
 }
 
 void bringHeldFilesUpToDate(ArgumentsVector baseArgs_) {
