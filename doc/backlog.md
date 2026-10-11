@@ -31,7 +31,6 @@ graph from them on every push, linked at the end of this file, and `utils/backlo
    Related: that parse was never recorded as a parse until `bb5110e7`, so the file counted
    as unparsed afterwards. ADR-0032 answers the question: reuse them when the CU's
    knowledge is current.
-   Waits for: out-of-date
 
 2. <a id="compiler-asked-twice"></a>**A cold start interrogates the compiler twice** —
    `tests/test_cold_start_interrogates_compiler_once/.suspended`. Waits for item 3,
@@ -484,7 +483,7 @@ Pass 3 rounds 19s each, 42s total.
 ## 7. Freshness as make (ADR-0032, ADR-0033)
 
 The order is roughly the numbers. `header-not-half` can be done any time. Next is
-what is left of `out-of-date`, then `passes-as-one`.
+`passes-as-one`.
 
 Performance, from reading the code (Mac, session `05984816`, 2026-10-08): at equal
 correctness the design costs the same or less. Parsing dominates, and what is parsed
@@ -501,24 +500,16 @@ are noted in `cu-inputs`, `out-of-date`, `time-budget` and `sweep-cost`.
     `partition-options`. The closure can hold the scan's includes beside the parse's,
     which for the predicate only costs a parse.
     Goes with: out-of-date
-36. <a id="out-of-date"></a>**The one freshness predicate** — `knowledgeIsOutOfDate()` in
-    `src/freshness.c`: no knowledge, an input gone, or an input changed after a tick
-    before the knowledge time. The held CUs, Pass 3 and `singlePass()` use it.
-    `fileNumberIsStale()` only picks the held headers to strip, until `sweep`. Left: the
-    held CUs are asked with `Inputs` of their own, collected again for the request after
-    they are built. The config as an input replaces
-    `markAllCompilationUnitsStale()`, and the zero sentinel goes. The config needs a change
-    time, and who owns it depends on where the project config lives after the options
-    partition. `MAX_INCLUDE_CLOSURE` (1000) has no measured reason.
-    Evaluate it change first: `stat` each known file once per request, take those that
-    changed, and walk the reverse include graph (`collectCUsIncluding()`, a hash lookup
-    per step) to the CUs whose knowledge time is older. That costs in proportion to what
-    changed, like the old triggers, without missing one. A few thousand `stat`s on ffmpeg
-    are tens of milliseconds natively; old Pass 3 already stats every sibling CU. On WSL,
-    a tree under `/mnt/c` goes through 9P at about a millisecond per `stat`, so measure
-    there too.
-    Waits for: adr-0032
-    Goes with: partition-options, cu-inputs
+36. <a id="out-of-date"></a>**The config as an input of `knowledgeIsOutOfDate()`** — it
+    replaces `markAllCompilationUnitsStale()`, and the zero sentinel goes. The config
+    needs a change time, and who owns it depends on where the project config lives after
+    the options partition.
+    Left until real use shows the cost (see `sweep-cost`): `MAX_INCLUDE_CLOSURE` (1000)
+    has no measured reason, and evaluating change first, i.e. `stat` each known file once
+    and walk the reverse include graph to the CUs whose knowledge is older, costs in
+    proportion to what changed.
+    Waits for: partition-options
+    Goes with: cu-inputs
 37. <a id="request-target"></a>**What a request needs** — the CUs that reach the request
     file's closure, and the whole project for an operation on a name. Pass 3 takes the CUs
     that reach a header the request file includes directly, through a mock or another
@@ -539,10 +530,11 @@ are noted in `cu-inputs`, `out-of-date`, `time-budget` and `sweep-cost`.
     header is not parsed but stripped, with its includers parsed.
     Until `sweep` is in, a changed header is stripped only in the entry refresh that
     builds all of its includers, before them, or not at all (ADR-0032).
+    One pass collects the inputs once. Today the held CUs collect their own, about 39 ms
+    more per request on a fully parsed ffmpeg (`sweep-cost`).
     Opens with moving the rebuild out of `server.c`, as a refactoring commit of its own,
     when it can be seen what that module is (`doc/docs/17-major-codebase-improvements.adoc`,
     Partition the Rebuild Like Make).
-    Waits for: out-of-date
 39. <a id="header-not-half"></a>**Pass 2 does not strip a header it cannot rebuild** — it
     strips the header's references and then reparses at most 128 includers, so the rest
     of their references are lost, not stale. Leave the header alone when the cap stops it.
@@ -585,7 +577,7 @@ are noted in `cu-inputs`, `out-of-date`, `time-budget` and `sweep-cost`.
     generation, and drop the strips in advance in `buildKnowledgeOfCU()`, Pass 2 and
     `singlePass()`. A capped reverse walk removes nothing in that file.
     `test_preprocess_edit_removes_ifdef_define` comes off suspension.
-    Waits for: generations, out-of-date, include-edges
+    Waits for: generations, include-edges
 45. <a id="sweep-cost"></a>**What the sweep costs** — memory and walk time on ffmpeg,
     whether the reverse walk can go uncapped, and how the mark is stored. The baseline
     to time against: `removeReferenceableItemsForFile()` walks the whole table, and today
