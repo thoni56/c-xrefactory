@@ -35,7 +35,7 @@ Ensure(Lsp, returns_false_when_lsp_option_is_not_in_argv) {
     assert_that(!want_lsp_server(args));
 }
 
-Ensure(Lsp, will_return_when_dispatcher_returns_error) {
+Ensure(Lsp, will_return_ok_when_dispatcher_returns_exit) {
     const char *input =
         "Content-Length: 58\r\n\r\n"
         "{\"jsonrpc\":\"2.0\",\"id\":1,\"method\":\"initialize\",\"params\":{}}";

@@ -13,5 +13,6 @@ typedef enum {
     LSP_RETURN_ERROR_METHOD_NOT_FOUND
 } LspReturnCode;
 
+#define LSP_EXIT_CODE_WITHOUT_SHUTDOWN 1
 
 #endif
