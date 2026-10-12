@@ -65,10 +65,7 @@ graph from them on every push, linked at the end of this file, and `utils/backlo
       `-getproject`. What it still has to show is the client in daily use, which needs
       the tripwire on `stable` or Emacs pointed at the repo's build. Goes with ADR-0030's split: `-openproject` parses nothing, and the
       membership query may reparse a changed preload of a file in the project, but not
-      of one outside it. Today a `-getproject` from a modified buffer carries it as a
-      preload (`c-xref-server-call-on-current-buffer-no-saves`, the "softsetup" hack in
-      `editors/emacs/c-xref.el`), and Pass 1-2 reparse it. Once `-p` stops, membership
-      is answered for real, and today's rule (the root as a prefix, or under `-I`) is
+      of one outside it. Once `-p` stops, membership is answered for real, and today's rule (the root as a prefix, or under `-I`) is
       wrong both ways, so it waits for the project's extent;
       Waits for: adr-0029, root-path-id, project-extent
       Goes with: startup-command-line, adr-0030
