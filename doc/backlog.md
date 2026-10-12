@@ -256,10 +256,14 @@ graph from them on every push, linked at the end of this file, and `utils/backlo
 Roadmap → Optimization has the baseline: a cold-start PUSH on ffmpeg, measured in March
 2026 and not since.
 
-- (#16) <a id="header-filtered-siblings"></a>**Header-filtered sibling parsing** — 2481 sibling CUs → 2 for `AudioFIRContext`. The
-    design problem is that Pass 3 runs during sync and the symbol is only known during
-    dispatch. It narrows what `request-target` widens: the reach of the symbol, not of
-    the request file's closure.
+- (#16) <a id="header-filtered-siblings"></a>**Header-filtered sibling parsing** — for an operation on a symbol, build
+    only the CUs that reach a file declaring it: for `AudioFIRContext` from `af_afir.c` on
+    ffmpeg that is 2, not the 1567 collected today. What to build is collected before the
+    operation, and the symbol is known only from the cursor parse. Looking the cursor up
+    in the table (`cursor-parse-reuse`) gives the symbol first, when the request CU is
+    current. It narrows what `request-target` widens: the reach of the symbol, not of the
+    request file's closure.
+    Goes with: cursor-parse-reuse, request-target
 - (#17) <a id="scan-angle-includes"></a>**Extend the lightweight scan to `<...>` includes** — blocked on header-filtered
     sibling parsing, or ubiquitous system headers drag in nearly every CU. Also removes
     the cold-start double progress bar.
