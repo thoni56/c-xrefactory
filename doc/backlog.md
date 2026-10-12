@@ -223,13 +223,6 @@ graph from them on every push, linked at the end of this file, and `utils/backlo
       from the first run's `.c-xref` snapshot dies on the assert, so the same requests
       crash a server in the editor. Seen on WSL, 2026-09-25. Tests start cold now, so the
       warm start has to be built inside a test; see that test's `.suspended`.
-   f. <a id="preload-resent"></a>**A preload sent again with the same content and a newer time loses a later change** —
-      *no repo home yet*. A real client does that after a modify and an undo.
-      `tests/test_browsing_previous_header_stale` with a `!touch` of both preloads before
-      its second and third request answers the PREVIOUS with `header.h:7`, the old
-      content, not `:10` from `header.modified`. Each touch reloads both buffers and runs
-      Pass 1 and 2 again. Seen once, from a trace (WSL, session `d25255b8`, 2026-10-10),
-      not understood.
    g. <a id="unused-yacc-statics"></a>**GlobalUnused gives a false positive for statics in `.y` files** —
       `18-known-bugs.adoc`.
    h. <a id="push-by-name"></a>**Push by name when a name has several bindings** —
@@ -499,7 +492,7 @@ are noted in `cu-inputs`, `out-of-date`, `time-budget` and `sweep-cost`.
     build list only up to the cap. A reference in the header that only the others emit,
     e.g. under an `#ifdef` they set, is missing until they are built. Strip only when
     `everyIncluderIsRebuilt()`, as the sibling collection does (ADR-0032). It still asks
-    `fileNumberIsStale()` and records the header as parsed. Not needed once `sweep` is in.
+    `fileNumberIsStale()`, which has no coarse-clock gap, and records the header as parsed. Not needed once `sweep` is in.
 - (#55) <a id="parse-all-out-of-date"></a>**An operation on a name analyses only the files never analysed** —
     parse-all counts and parses the CUs without knowledge
     (`countUnparsedCompilationUnits()`, `parseAllUnparsedCompilationUnits()` in
