@@ -16,15 +16,30 @@
 
 
 /* The CUs to build, at most MAX_CUS_TO_REPARSE of them */
-typedef struct {
-    int fileNumbers[MAX_CUS_TO_REPARSE];
-    int count;
-    int skippedCapped; /* Out of date, but did not fit */
-} BuildList;
+struct buildList {
+    int   fileNumbers[MAX_CUS_TO_REPARSE];
+    int   count;
+    int   skippedCapped; /* Out of date, but did not fit */
+    bool *built;         /* By file number, on the list or parsed by the operation */
+};
+
+BuildList *newBuildList(void) {
+    BuildList *list = calloc(1, sizeof(BuildList));
+    list->built = calloc(MAX_FILES, sizeof(bool));
+    return list;
+}
+
+void freeBuildList(BuildList *list) {
+    free(list->built);
+    free(list);
+}
 
 static bool addToBuildList(BuildList *list, int fileNumber) {
+    if (list->built[fileNumber])
+        return true;
     if (list->count < MAX_CUS_TO_REPARSE) {
         list->fileNumbers[list->count++] = fileNumber;
+        list->built[fileNumber] = true;
         return true;
     }
     list->skippedCapped++;
@@ -60,21 +75,18 @@ static bool everyIncluderIsRebuilt(int includers[], int includerCount, bool rebu
  *
  * Uses brute-force forward-include lookup: iterates all headers in the
  * file table and checks if the request file is among their includers. */
-void parseUnparsedSiblingCUs(Inputs *inputs, int requestFileNumber, bool requestIsParsed,
-                             ArgumentsVector baseArgs) {
-    BuildList buildList = {.count = 0, .skippedCapped = 0};
+void collectSiblingCUs(BuildList *list, Inputs *inputs, int requestFileNumber, bool requestIsParsed) {
     int skippedAlreadyParsed = 0;
 
     log_info("Pass 3: request file '%s' (fileNumber=%d)",
              getFileItemWithFileNumber(requestFileNumber)->name, requestFileNumber);
 
     bool *asked = calloc(MAX_FILES, sizeof(bool)); /* A sibling shares many headers */
-    bool *rebuilt = calloc(MAX_FILES, sizeof(bool));
 
     /* The request is parsed by the operation itself, not here */
-    rebuilt[requestFileNumber] = requestIsParsed
-        && isCompilationUnit(getFileItemWithFileNumber(requestFileNumber)->name)
-        && knowledgeIsOutOfDate(inputs, requestFileNumber);
+    if (requestIsParsed && isCompilationUnit(getFileItemWithFileNumber(requestFileNumber)->name)
+        && knowledgeIsOutOfDate(inputs, requestFileNumber))
+        list->built[requestFileNumber] = true;
 
     int *siblingCUs = malloc(MAX_FILES * sizeof(int));
     for (int i = getNextExistingFileNumber(0); i != -1; i = getNextExistingFileNumber(i + 1)) {
@@ -115,46 +127,30 @@ void parseUnparsedSiblingCUs(Inputs *inputs, int requestFileNumber, bool request
             if (asked[siblingFileNum])
                 continue;
             asked[siblingFileNum] = true;
+            if (list->built[siblingFileNum])
+                continue; /* Held, and on the list already */
             if (!knowledgeIsOutOfDate(inputs, siblingFileNum)) {
                 skippedAlreadyParsed++;
                 continue;
             }
 
-            if (addToBuildList(&buildList, siblingFileNum)) {
-                rebuilt[siblingFileNum] = true;
+            if (addToBuildList(list, siblingFileNum))
                 log_debug("Sibling CU '%s' shares header with request file", siblingItem->name);
-            }
         }
 
         /* The references in a header are all or nothing (ADR-0032): strip them
          * only when every CU that includes it is built again, before any is */
-        if (everyIncluderIsRebuilt(siblingCUs, siblingCount, rebuilt)) {
+        if (everyIncluderIsRebuilt(siblingCUs, siblingCount, list->built)) {
             log_debug("Every includer of '%s' is built again, stripping it", fi->name);
             removeReferenceableItemsForFile(i);
         }
     }
 
-    free(rebuilt);
     free(siblingCUs);
     free(asked);
 
-    log_info("Pass 3: %d to parse, %d skipped (already parsed), %d skipped (cap %d)",
-             buildList.count, skippedAlreadyParsed, buildList.skippedCapped, MAX_CUS_TO_REPARSE);
-
-    if (buildList.count > 0) {
-        log_info("Entry refresh pass 3: parsing %d sibling CU(s)", buildList.count);
-        if (options.cxrefProtocol) {
-            setupProgress(&buildList);
-        }
-        int savedCursorOffset = options.cursorOffset;
-        options.cursorOffset = NO_CURSOR_OFFSET;
-        for (int i = 0; i < buildList.count; i++) {
-            buildKnowledgeOfCU(buildList.fileNumbers[i], baseArgs);
-            if (options.cxrefProtocol)
-                writeProgressInformation(buildList.count - i - 1);
-        }
-        options.cursorOffset = savedCursorOffset;
-    }
+    log_info("Pass 3: %d to parse, %d skipped (already parsed), %d skipped (cap %d)", list->count,
+             skippedAlreadyParsed, list->skippedCapped, MAX_CUS_TO_REPARSE);
 }
 
 #define MAX_INCLUDE_WALK_FILES 256
@@ -233,8 +229,10 @@ static void stripChangedHeldHeaders(BuildList *list) {
                               fileItem->name);
                     markFileAsDeleted(fileNumber);
                 } else {
-                    list->count = collectCUsIncluding(fileNumber, list->fileNumbers, list->count,
-                                                      MAX_CUS_TO_REPARSE);
+                    int count = collectCUsIncluding(fileNumber, list->fileNumbers, list->count,
+                                                    MAX_CUS_TO_REPARSE);
+                    for (; list->count < count; list->count++)
+                        list->built[list->fileNumbers[list->count]] = true;
                     /* The stale header's own references go now; building the CUs
                      * above re-emits them. */
                     removeReferenceableItemsForFile(fileNumber);
@@ -275,32 +273,36 @@ static void collectOutOfDateHeldCUs(BuildList *list, Inputs *inputs) {
     }
 }
 
-void bringHeldFilesUpToDate(Inputs *inputs, ArgumentsVector baseArgs) {
-    BuildList buildList = {.count = 0, .skippedCapped = 0};
-
+void collectOutOfDateHeldFiles(BuildList *list, Inputs *inputs) {
     /* Held CUs whose knowledge is out of date. They go first, so the cap
      * never leaves one of them out. */
-    collectOutOfDateHeldCUs(&buildList, inputs);
+    collectOutOfDateHeldCUs(list, inputs);
 
     /* Stale held headers are stripped before any CU is built, so each CU
      * that includes one is built once and puts its part of the header
      * back. The includers are found through the include references as
      * they were before this request. */
-    stripChangedHeldHeaders(&buildList);
+    stripChangedHeldHeaders(list);
+}
 
-    if (buildList.count > 0) {
-        log_info("Building %d CU(s) to bring held files up to date", buildList.count);
-        if (options.cxrefProtocol) {
-            static char progressFormat[128];
-            snprintf(progressFormat, sizeof(progressFormat),
-                     "Updating %d compilation units... %%d remaining", buildList.count);
-            initProgress(progressFormat);
-        }
-        for (int i = 0; i < buildList.count; i++) {
-            buildKnowledgeOfCU(buildList.fileNumbers[i], baseArgs);
-            getFileItemWithFileNumber(buildList.fileNumbers[i])->needsBrowsingStackRefresh = true;
-            if (options.cxrefProtocol)
-                writeProgressInformation(buildList.count - i - 1);
-        }
+void buildKnowledgeOfAll(BuildList *list, ArgumentsVector baseArgs) {
+    if (list->count == 0)
+        return;
+
+    log_info("Building %d CU(s)", list->count);
+    if (options.cxrefProtocol)
+        setupProgress(list);
+
+    /* Clear cursorOffset so the lexer doesn't set positionOfSelectedReference
+     * during the reparse — that would trigger on-line action handling (browsing stack
+     * assertions) before the operation has set things up. */
+    int savedCursorOffset = options.cursorOffset;
+    options.cursorOffset = NO_CURSOR_OFFSET;
+    for (int i = 0; i < list->count; i++) {
+        buildKnowledgeOfCU(list->fileNumbers[i], baseArgs);
+        getFileItemWithFileNumber(list->fileNumbers[i])->needsBrowsingStackRefresh = true;
+        if (options.cxrefProtocol)
+            writeProgressInformation(list->count - i - 1);
     }
+    options.cursorOffset = savedCursorOffset;
 }

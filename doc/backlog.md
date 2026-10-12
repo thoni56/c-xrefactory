@@ -501,9 +501,10 @@ are noted in `cu-inputs`, `out-of-date`, `time-budget` and `sweep-cost`.
     Waits for: adr-0032
     Goes with: header-filtered-siblings
 38. <a id="passes-as-one"></a>**Pass 1, 2 and 3 become one** — bring the goal's
-    out-of-date CUs up to date.
-    `bringHeldFilesUpToDate()` (`src/rebuild.c`) does it for the held files. A changed
-    header is not parsed but stripped, with its includers parsed.
+    out-of-date CUs up to date. The held files and the siblings are one build list
+    (`src/rebuild.c`). Left: a changed held header is stripped without asking whether all
+    its includers fit (`header-not-half`), and `singlePass()` strips and parses the request
+    CU on its own. A changed header is not parsed but stripped, with its includers parsed.
     Until `sweep` is in, a changed header is stripped only in the entry refresh that
     builds all of its includers, before them, or not at all (ADR-0032).
 39. <a id="request-through-includers"></a>**A request in a header is parsed through its includers** —

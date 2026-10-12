@@ -7,13 +7,23 @@ int collectCUsIncluding(int fileNumber, int cuFileNumbers[], int cuCount, int ma
     return (int)mock(fileNumber, cuFileNumbers, cuCount, maxCUs);
 }
 
-void parseUnparsedSiblingCUs(Inputs *inputs, int requestFileNumber, bool requestIsParsed,
-                             ArgumentsVector baseArgs_) {
-    ArgumentsVector *baseArgs = &baseArgs_;
-    mock(inputs, requestFileNumber, requestIsParsed, baseArgs);
+BuildList *newBuildList(void) {
+    return (BuildList *)mock();
 }
 
-void bringHeldFilesUpToDate(Inputs *inputs, ArgumentsVector baseArgs_) {
+void freeBuildList(BuildList *list) {
+    mock(list);
+}
+
+void collectOutOfDateHeldFiles(BuildList *list, Inputs *inputs) {
+    mock(list, inputs);
+}
+
+void collectSiblingCUs(BuildList *list, Inputs *inputs, int requestFileNumber, bool requestIsParsed) {
+    mock(list, inputs, requestFileNumber, requestIsParsed);
+}
+
+void buildKnowledgeOfAll(BuildList *list, ArgumentsVector baseArgs_) {
     ArgumentsVector *baseArgs = &baseArgs_;
-    mock(inputs, baseArgs);
+    mock(list, baseArgs);
 }

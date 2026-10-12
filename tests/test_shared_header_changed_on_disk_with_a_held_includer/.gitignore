@@ -1,0 +1,8 @@
+.c-xrefrc
+*buffer
+*.output
+output
+output.tmp
+log
+*.log
+header.h

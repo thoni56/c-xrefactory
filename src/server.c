@@ -434,26 +434,24 @@ void callServer(ArgumentsVector baseArgs, ArgumentsVector requestArgs) {
 
     Inputs *inputs = collectInputs();
 
-    /* Reparse any stale preloaded files before dispatching the operation,
-     * so all operations see fresh in-memory references. */
-    if (projectWasOpen) {
-        /* Clear cursorOffset so the lexer doesn't set positionOfSelectedReference
-         * during the reparse — that would trigger on-line action handling (browsing stack
-         * assertions) before the operation has set things up. */
-        int savedCursorOffset = options.cursorOffset;
-        options.cursorOffset = NO_CURSOR_OFFSET;
-        bringHeldFilesUpToDate(inputs, baseArgs);
-        options.cursorOffset = savedCursorOffset;
-    }
+    BuildList *buildList = newBuildList();
 
-    /* Entry refresh pass 3: parse sibling CUs that share headers with
-     * the request file but haven't been parsed yet (e.g. cold start). */
+    /* Stale preloaded files are built before dispatching the operation, so all
+     * operations see fresh in-memory references */
+    if (projectWasOpen)
+        collectOutOfDateHeldFiles(buildList, inputs);
+
+    /* Sibling CUs that share headers with the request file but are out of date,
+     * e.g. on a cold start */
     if (projectContextInitialized && hasInputFile && !answeredWithoutReferences(options.serverOperation)
         && options.detectedProjectRoot != NULL && options.detectedProjectRoot[0] != '\0') {
         bool requestIsParsed = requiresProcessingInputFile(options.serverOperation)
                                && operationParsesRequestFile(options.serverOperation);
-        parseUnparsedSiblingCUs(inputs, requestFileNumber, requestIsParsed, baseArgs);
+        collectSiblingCUs(buildList, inputs, requestFileNumber, requestIsParsed);
     }
+
+    buildKnowledgeOfAll(buildList, baseArgs);
+    freeBuildList(buildList);
 
     /* Completeness for name-based operations: if unparsed CUs still exist, ask user
      * before proceeding */
