@@ -270,8 +270,8 @@ defines the symbol being navigated to.
 Pass 3 follows includes from a position. Some operations have no position to start
 from, or are about the whole project by definition, so no include-based subset can make
 their answer complete. For those, after Pass 3, the server counts the CUs that have
-never been parsed and, if there are any, asks "N of M compilation units need reparsing.
-Parse all before ...?" (see Blocking confirmation under Interactive Dialogs below). Answering yes
+never been parsed and, if there are any, asks "N of M files need analysing.
+Analyse all before ...?" (see Blocking confirmation under Interactive Dialogs below). Answering yes
 parses every one of them, saving the snapshot after every 100 CUs so that progress
 survives an interrupt or a crash. That is a save interval, not a limit.
 

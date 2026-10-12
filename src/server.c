@@ -344,7 +344,7 @@ static void scanProjectStructure() {
 static void parseAllUnparsedCompilationUnits(ArgumentsVector baseArgs, int totalCUs, int unparsedCUs) {
     char msg[TMP_STRING_SIZE];
     const char *operationName = parseAllPromptFor(options.serverOperation);
-    sprintf(msg, "%d of %d compilation units need reparsing. Parse all before %s?", unparsedCUs, totalCUs,
+    sprintf(msg, "%d of %d files need analysing. Analyse all before %s?", unparsedCUs, totalCUs,
             operationName);
     if (waitForUserConfirmation(msg)) {
         int parsed = 0;

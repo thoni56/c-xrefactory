@@ -12,5 +12,5 @@ real cold start.
 
 Decide what an ambiguous name should do, then rewrite expected from the second
 push onward. Everything before it is verified, including the "1 of 1
-compilation units need reparsing. Parse all before browsing?" prompt that
+files need analysing. Analyse all before browsing?" prompt that
 arrives now that push by name is in the parse-all gate in src/server.c.

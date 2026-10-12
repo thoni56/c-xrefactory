@@ -8,7 +8,7 @@ end-of-options
 end-of-options
 
 <sync>
-<wait-confirmation len=<n>>3 of 3 compilation units need reparsing. Parse all before browsing?</wait-confirmation>
+<wait-confirmation len=<n>>3 of 3 files need analysing. Analyse all before browsing?</wait-confirmation>
 -continue
 end-of-options
 

@@ -8,4 +8,4 @@ end-of-options
 end-of-options
 
 <sync>
-<wait-confirmation len=<n>>2 of 2 compilation units need reparsing. Parse all before searching?</wait-confirmation>
+<wait-confirmation len=<n>>2 of 2 files need analysing. Analyse all before searching?</wait-confirmation>

@@ -519,9 +519,7 @@ are noted in `cu-inputs`, `out-of-date`, `time-budget` and `sweep-cost`.
     Not needed once `sweep` is in.
 41. <a id="time-budget"></a>**A time budget instead of the 128 CUs** — above it the question
     with an estimate. Browsing remembers a "no" for the session, an operation that edits
-    or works on a name is cancelled by it. Touches the client's question. Today's text
-    says "need reparsing" also of CUs never parsed (`src/server.c:603`, and the `expected`
-    of about 9 tests). Open: does a remembered "no" stop parsing, or only the asking, so
+    or works on a name is cancelled by it. Touches the client's question. Open: does a remembered "no" stop parsing, or only the asking, so
     that each request still parses a budget's worth? With `sweep` the second is safe, and
     is what lets every reaching CU finally have parsed.
     Before `sweep`, ADR-0032 rebuilds a changed header with all its includers or none,

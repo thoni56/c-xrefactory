@@ -6,7 +6,7 @@
 # only way to find helper is to parse helper.c and other.c.
 #
 # expected assumes push by name asks before parsing everything, the way -search
-# does ("N of M compilation units need reparsing"), answered by -continue.
+# does ("N of M files need analysing"), answered by -continue.
 
 include ../Makefile.server
 
