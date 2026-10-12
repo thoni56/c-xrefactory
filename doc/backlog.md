@@ -471,17 +471,18 @@ are noted in `cu-inputs`, `out-of-date`, `time-budget` and `sweep-cost`.
     Waits for: partition-options
     Goes with: cu-inputs
 - (#37) <a id="request-target"></a>**What a request needs** — the CUs that reach the request
-    file's closure, and the whole project for an operation on a name. Pass 3 takes the CUs
-    that reach a header the request file includes directly, through a mock or another
-    header too (`collectCUsIncluding()`). It does not go further down: with the request
+    file's closure, and the whole project for an operation on a name. The sibling
+    collection (`collectSiblingCUs()`) takes the CUs that reach a header the request file
+    includes directly, through a mock or another header too (`collectCUsIncluding()`). It does not go further down: with the request
     including `a.h`, `a.h` including `decl.h` and an unparsed `z.c` including `decl.h`, a
     rename of a symbol from `decl.h` should miss `z.c` (from reading the code, WSL session
-    `76735541`; test first). Taking every header in the closure needs only files. On
-    ffmpeg it reaches almost every CU, which the cap already stops, and `time-budget`
-    after it. `collectCUsIncluding()` stops walking after 256 files, silently, which on
-    ffmpeg cuts a widely included header short. The scan does not record `<...>`
-    includes, so for a project that includes its own headers that way, reach misses CUs
-    never parsed.
+    `76735541`; test first). `collectIncludeClosure()` gives the closure already, from
+    the include graph in `Inputs`. On ffmpeg it reaches almost every CU, which the cap
+    already stops, and `time-budget` after it.
+    Also, within today's rule: `collectCUsIncluding()` stops walking after 256 files,
+    silently, which on ffmpeg cuts a widely included header short. The scan does not
+    record `<...>` includes, so for a project that includes its own headers that way,
+    reach misses CUs never parsed.
     Waits for: adr-0032
     Goes with: header-filtered-siblings
 - (#54) <a id="request-through-includers"></a>**A request in a header is parsed through its includers** —
@@ -504,7 +505,7 @@ are noted in `cu-inputs`, `out-of-date`, `time-budget` and `sweep-cost`.
     parse-all counts and parses the CUs without knowledge
     (`countUnparsedCompilationUnits()`, `parseAllUnparsedCompilationUnits()` in
     `src/server.c`), not those out of date. A CU whose header changed on disk keeps its
-    old references through a rename. From reading the code (WSL, session `d25255b8`,
+    old references through a search. From reading the code (WSL, session `d25255b8`,
     2026-10-12), not tested.
     Goes with: time-budget, behind-the-back
 - (#40) <a id="time-budget"></a>**A time budget instead of the 128 CUs** — above it the question
