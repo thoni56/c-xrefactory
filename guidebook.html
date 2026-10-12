@@ -630,6 +630,7 @@ body.book #toc,body.book #preamble,body.book h1.sect0,body.book .sect1>h2{page-b
 <li><a href="#_navigation_architecture_and_preloading">19.2. Navigation Architecture and Preloading</a></li>
 <li><a href="#_unified_in_memory_table_discovery">19.3. Unified In-Memory Table Discovery</a></li>
 <li><a href="#_editor_buffer_lifecycle_in_the_server">19.4. Editor Buffer Lifecycle in the Server</a></li>
+<li><a href="#_freshness_is_make_for_the_goal">19.5. Freshness Is Make, for the Goal</a></li>
 </ul>
 </li>
 <li><a href="#_archive">20. Archive</a>
@@ -10997,6 +10998,98 @@ carried forward in <a href="21-archive.adoc#cu-reparse-header-staleness">a later
 <p><strong>Implication for <code>didClose</code></strong>: A <code>didClose</code> protocol message (analogous to LSP <code>textDocument/didClose</code>) is not urgently needed for correctness — the existing cleanup handles server-created buffers. It would primarily benefit client-preloaded buffers that the user has closed in the editor, allowing the server to fall back to disk content. This is an architectural nicety, not a bug fix.</p>
 </div>
 </div>
+<div class="sect2">
+<h3 id="_freshness_is_make_for_the_goal">19.5. Freshness Is Make, for the Goal</h3>
+<div class="paragraph">
+<p>Date: 2026-10-12</p>
+</div>
+<div class="paragraph">
+<p>ADR-0032 and ADR-0033 make the entry refresh work like Make. The terms map like this:</p>
+</div>
+<table class="tableblock frame-all grid-all stretch">
+<colgroup>
+<col style="width: 33.3333%;">
+<col style="width: 66.6667%;">
+</colgroup>
+<thead>
+<tr>
+<th class="tableblock halign-left valign-top">Make</th>
+<th class="tableblock halign-left valign-top">c-xrefactory</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">target</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">the knowledge of a CU, i.e. the references its parse put in the table</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">prerequisites</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">the CU and its include closure (and, not yet, the project config)</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">the target&#8217;s mtime</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">the CU&#8217;s <code>knowledgeTime</code>, taken before the content is read</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">a prerequisite&#8217;s mtime</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">the change time of the content the client sends for a file the editor holds, or the disk mtime</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">the recipe</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">parsing the CU, <code>buildKnowledgeOfCU()</code></p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>make goal</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">the entry refresh for one request, over the CUs on its goal: the request, the held files and the siblings</p></td>
+</tr>
+</tbody>
+</table>
+<div class="paragraph">
+<p><code>knowledgeIsOutOfDate()</code> in <code>src/freshness.c</code> is the rule.
+It counts every doubt as out of date: no knowledge, an input that no longer exists, a change within the coarse clock&#8217;s 10 ms, a closure above 1000 files.
+So it can rebuild for nothing, but should not call stale knowledge current.</p>
+</div>
+<div class="paragraph">
+<p>The dependencies work like the <code>.d</code> files from <code>gcc -MD</code>.
+They come from the previous build, the parse that gave the CU its knowledge.
+That is enough, because a new dependency can only appear through a change in a file that is already one, and that change makes the CU out of date anyway.
+An extra edge, like the scan&#8217;s include that an <code>#ifdef</code> does not take, only costs a rebuild.
+A missing edge, like the scan&#8217;s missing <code>&lt;&#8230;&#8203;&gt;</code> includes, only affects a CU without knowledge, and that is out of date anyway.</p>
+</div>
+<div class="paragraph">
+<p>What this guarantees is an absence.
+After the entry refresh, no CU on the goal is out of date without that being known, i.e. every rule reachable from the goal has been evaluated and the recipes that need to run are known.
+The position the operation asks about is only looked at after that.</p>
+</div>
+<div class="paragraph">
+<p>Where it is not yet Make (items in <code>doc/backlog.md</code>):</p>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p><strong>The goal is too small</strong> (<code>request-target</code>). We run <code>make request.o</code>, but the answer is linked from more objects than that.</p>
+</li>
+<li>
+<p><strong>The cap.</strong> At most 128 recipes run, and the rest stay out of date. They are known, though (<code>time-budget</code>, <code>header-not-half</code>).</p>
+</li>
+<li>
+<p><strong>Parse-all builds only the targets that do not exist</strong>, as if every existing target were up to date (<code>parse-all-out-of-date</code>).</p>
+</li>
+<li>
+<p><strong>The config is not a prerequisite</strong> (<code>out-of-date</code>). That is the classic Make pitfall where changing <code>CFLAGS</code> rebuilds nothing. <code>markAllCompilationUnitsStale()</code> covers it for now.</p>
+</li>
+<li>
+<p><strong>A header changed on disk, outside the goal,</strong> keeps its old references (<code>behind-the-back</code>).</p>
+</li>
+<li>
+<p><strong>Several recipes write the same output.</strong> A header&#8217;s references are put in the table by every CU that includes it, which Make cannot express. Hence ADR-0032&#8217;s all or nothing for a header, and in the end the sweep with generations (ADR-0033, <code>sweep</code>).</p>
+</li>
+<li>
+<p><strong>The request&#8217;s own recipe runs as part of the operation</strong>, since the lexer finds the cursor during the parse. Reusing the knowledge when it is current is <code>cursor-parse-reuse</code>.</p>
+</li>
+</ul>
+</div>
+</div>
 </div>
 </div>
 <div class="sect1">
@@ -12276,7 +12369,7 @@ operation reads the in-memory table.</p>
 </div>
 <div id="footer">
 <div id="footer-text">
-Last updated 2026-10-12 14:25:27 UTC
+Last updated 2026-10-12 16:36:50 UTC
 </div>
 </div>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.18.3/highlight.min.js"></script>
