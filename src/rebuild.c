@@ -21,6 +21,7 @@ struct buildList {
     int   count;
     int   skippedCapped; /* Out of date, but did not fit */
     bool *built;         /* By file number, on the list or parsed by the operation */
+    bool  stripRequest;  /* The operation parses the request CU, from scratch */
 };
 
 BuildList *newBuildList(void) {
@@ -67,6 +68,26 @@ static bool everyIncluderIsRebuilt(int includers[], int includerCount, bool rebu
     return includerCount > 0;
 }
 
+/* The request is parsed by the operation itself, not here */
+void collectRequestCU(BuildList *list, Inputs *inputs, int requestFileNumber) {
+    if (isCompilationUnit(getFileItemWithFileNumber(requestFileNumber)->name)
+        && knowledgeIsOutOfDate(inputs, requestFileNumber)) {
+        list->built[requestFileNumber] = true;
+        list->stripRequest = true;
+    }
+}
+
+/* Only after the collecting, since the request's include references lead to its
+ * siblings. Never for a header: its references were put there by its includers,
+ * and parsing it on its own cannot put them all back. */
+void stripRequestCU(BuildList *list, int requestFileNumber) {
+    if (list->stripRequest) {
+        log_debug("file has changed content, removing old references for file %d",
+                  requestFileNumber);
+        removeReferenceableItemsForFile(requestFileNumber);
+    }
+}
+
 /* Entry refresh Pass 3: Find CUs that share headers with the request file
  * but haven't been parsed yet. On cold start without preloads, only the
  * request file gets parsed (by processFile). This pass ensures sibling CUs
@@ -74,18 +95,13 @@ static bool everyIncluderIsRebuilt(int includers[], int includerCount, bool rebu
  *
  * Uses brute-force forward-include lookup: iterates all headers in the
  * file table and checks if the request file is among their includers. */
-void collectSiblingCUs(BuildList *list, Inputs *inputs, int requestFileNumber, bool requestIsParsed) {
+void collectSiblingCUs(BuildList *list, Inputs *inputs, int requestFileNumber) {
     int skippedAlreadyParsed = 0;
 
     log_info("Pass 3: request file '%s' (fileNumber=%d)",
              getFileItemWithFileNumber(requestFileNumber)->name, requestFileNumber);
 
     bool *asked = calloc(MAX_FILES, sizeof(bool)); /* A sibling shares many headers */
-
-    /* The request is parsed by the operation itself, not here */
-    if (requestIsParsed && isCompilationUnit(getFileItemWithFileNumber(requestFileNumber)->name)
-        && knowledgeIsOutOfDate(inputs, requestFileNumber))
-        list->built[requestFileNumber] = true;
 
     int *siblingCUs = malloc(MAX_FILES * sizeof(int));
     for (int i = getNextExistingFileNumber(0); i != -1; i = getNextExistingFileNumber(i + 1)) {

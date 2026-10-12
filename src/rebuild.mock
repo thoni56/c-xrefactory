@@ -19,11 +19,19 @@ void collectOutOfDateHeldFiles(BuildList *list, Inputs *inputs) {
     mock(list, inputs);
 }
 
-void collectSiblingCUs(BuildList *list, Inputs *inputs, int requestFileNumber, bool requestIsParsed) {
-    mock(list, inputs, requestFileNumber, requestIsParsed);
+void collectSiblingCUs(BuildList *list, Inputs *inputs, int requestFileNumber) {
+    mock(list, inputs, requestFileNumber);
 }
 
 void buildKnowledgeOfAll(BuildList *list, ArgumentsVector baseArgs_) {
     ArgumentsVector *baseArgs = &baseArgs_;
     mock(list, baseArgs);
+}
+
+void collectRequestCU(BuildList *list, Inputs *inputs, int requestFileNumber) {
+    mock(list, inputs, requestFileNumber);
+}
+
+void stripRequestCU(BuildList *list, int requestFileNumber) {
+    mock(list, requestFileNumber);
 }

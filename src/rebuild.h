@@ -16,5 +16,7 @@ extern void freeBuildList(BuildList *list);
 extern int collectCUsIncluding(int fileNumber, int cuFileNumbers[], int cuCount, int maxCUs);
 
 extern void collectOutOfDateHeldFiles(BuildList *list, Inputs *inputs);
-extern void collectSiblingCUs(BuildList *list, Inputs *inputs, int requestFileNumber, bool requestIsParsed);
+extern void collectSiblingCUs(BuildList *list, Inputs *inputs, int requestFileNumber);
 extern void buildKnowledgeOfAll(BuildList *list, ArgumentsVector baseArgs);
+extern void collectRequestCU(BuildList *list, Inputs *inputs, int requestFileNumber);
+extern void stripRequestCU(BuildList *list, int requestFileNumber);

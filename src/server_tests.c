@@ -59,7 +59,7 @@ AfterEach(Server) {}
 /* Protected */
 extern bool prepareInputFileForRequest(void);
 extern void setRequestFileArgument(int fileNumber);
-extern void singlePass(Inputs *inputs, ArgumentsVector args, ArgumentsVector nargs);
+extern void singlePass(ArgumentsVector args, ArgumentsVector nargs);
 
 Ensure(Server, has_a_none_operation) {
     assert_that(OP_NONE, is_equal_to(0));
@@ -103,9 +103,6 @@ static void expectACursorParseOf(FileItem *fileItem, FileTimestamp *contentTime,
     expect(initializeFileProcessing, will_return(true));
     always_expect(getFileItemWithFileNumber, when(fileNumber, is_equal_to(42)), will_return(fileItem));
     always_expect(editorFileModificationTime, will_return(contentTime));
-    expect(isCompilationUnit, will_return(true));
-    expect(knowledgeIsOutOfDate, when(fileNumber, is_equal_to(42)), will_return(true));
-    expect(removeReferenceableItemsForFile, when(fileNumber, is_equal_to(42)));
     expect(setupParsingConfig);
     if (sideEffect != NULL)
         expect(callParser, with_side_effect(sideEffect, NULL));
@@ -118,10 +115,9 @@ Ensure(Server, cursor_parse_of_a_compilation_unit_records_when_it_built_the_know
     FileTimestamp contentTime = {.tv_sec = 1234, .tv_nsec = 5678};
     expectACursorParseOf(&fileItem, &contentTime, NULL);
 
-    Inputs         *inputs = NULL;
     ArgumentsVector args = {.argc = 0, .argv = NULL};
     FileTimestamp before = fileTimestampNow();
-    singlePass(inputs, args, args);
+    singlePass(args, args);
     FileTimestamp after = fileTimestampNow();
 
     assert_false(fileTimestampIsLessThan(fileItem.knowledgeTime, before));
@@ -141,9 +137,8 @@ Ensure(Server, cursor_parse_takes_the_knowledge_time_before_parsing) {
     FileTimestamp contentTime = {.tv_sec = 1234, .tv_nsec = 5678};
     expectACursorParseOf(&fileItem, &contentTime, recordParseStart);
 
-    Inputs         *inputs = NULL;
     ArgumentsVector args = {.argc = 0, .argv = NULL};
-    singlePass(inputs, args, args);
+    singlePass(args, args);
 
     assert_false(fileTimestampIsLessThan(parseStart, fileItem.knowledgeTime));
 }
@@ -164,9 +159,8 @@ Ensure(Server, cursor_parse_for_an_operation_that_does_not_parse_leaves_the_file
     expect(setupParsingConfig);
     never_expect(callParser);
 
-    Inputs         *inputs = NULL;
     ArgumentsVector args = {.argc = 0, .argv = NULL};
-    singlePass(inputs, args, args);
+    singlePass(args, args);
 
     assert_true(fileTimestampIsZero(fileItem.lastParsedMtime));
     assert_true(fileTimestampIsZero(fileItem.knowledgeTime));

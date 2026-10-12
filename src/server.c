@@ -211,7 +211,7 @@ void initServer(ArgumentsVector args) {
 }
 
 
-protected void singlePass(Inputs *inputs, ArgumentsVector args, ArgumentsVector nargs) {
+protected void singlePass(ArgumentsVector args, ArgumentsVector nargs) {
     bool inputOpened = false;
 
     inputOpened = initializeFileProcessing(args, nargs);
@@ -220,18 +220,7 @@ protected void singlePass(Inputs *inputs, ArgumentsVector args, ArgumentsVector 
 
     if (inputOpened) {
         bool parses = operationParsesRequestFile(options.serverOperation);
-        /* If the content, preloaded or on disk, or a header it includes changed
-         * since the knowledge was built, remove old references before parsing. A
-         * later pass over the same content finds the knowledge fresh and keeps what
-         * the earlier pass added. Never for a header: its references were put there
-         * by its includers, and parsing it on its own cannot put them all back. */
         FileItem *fileItem = getFileItemWithFileNumber(parsingConfig.fileNumber);
-        if (parses && isCompilationUnit(fileItem->name)
-            && knowledgeIsOutOfDate(inputs, parsingConfig.fileNumber)) {
-            log_debug("file has changed content, removing old references for file %d",
-                      parsingConfig.fileNumber);
-            removeReferenceableItemsForFile(parsingConfig.fileNumber);
-        }
 
         /* Taken before the content is read, as in buildKnowledgeOfCU() */
         FileTimestamp knowledgeTime = fileTimestampNow();
@@ -268,7 +257,7 @@ protected void singlePass(Inputs *inputs, ArgumentsVector args, ArgumentsVector 
     }
 }
 
-static void processFile(Inputs *inputs, ArgumentsVector baseArgs, ArgumentsVector requestArgs) {
+static void processFile(ArgumentsVector baseArgs, ArgumentsVector requestArgs) {
     FileItem *fileItem = getFileItemWithFileNumber(requestFileNumber);
 
     assert(fileItem->isScheduled);
@@ -276,7 +265,7 @@ static void processFile(Inputs *inputs, ArgumentsVector baseArgs, ArgumentsVecto
     for (currentPass=1; currentPass<=maxPasses; currentPass++) {
         inputFileName = fileItem->name;
         assert(inputFileName!=NULL);
-        singlePass(inputs, baseArgs, requestArgs);
+        singlePass(baseArgs, requestArgs);
         if (options.serverOperation==OP_INTERNAL_PARSE_TO_EXTRACT || (completionStringServed && !opensBrowsingSession(options.serverOperation)))
             break;
     }
@@ -441,14 +430,17 @@ void callServer(ArgumentsVector baseArgs, ArgumentsVector requestArgs) {
     if (projectWasOpen)
         collectOutOfDateHeldFiles(buildList, inputs);
 
+    if (hasInputFile && requiresProcessingInputFile(options.serverOperation)
+        && operationParsesRequestFile(options.serverOperation))
+        collectRequestCU(buildList, inputs, requestFileNumber);
+
     /* Sibling CUs that share headers with the request file but are out of date,
      * e.g. on a cold start */
     if (projectContextInitialized && hasInputFile && !answeredWithoutReferences(options.serverOperation)
-        && options.detectedProjectRoot != NULL && options.detectedProjectRoot[0] != '\0') {
-        bool requestIsParsed = requiresProcessingInputFile(options.serverOperation)
-                               && operationParsesRequestFile(options.serverOperation);
-        collectSiblingCUs(buildList, inputs, requestFileNumber, requestIsParsed);
-    }
+        && options.detectedProjectRoot != NULL && options.detectedProjectRoot[0] != '\0')
+        collectSiblingCUs(buildList, inputs, requestFileNumber);
+
+    stripRequestCU(buildList, requestFileNumber);
 
     buildKnowledgeOfAll(buildList, baseArgs);
     freeBuildList(buildList);
@@ -468,7 +460,7 @@ void callServer(ArgumentsVector baseArgs, ArgumentsVector requestArgs) {
 
     if (requiresProcessingInputFile(options.serverOperation)) {
         if (hasInputFile) {
-            processFile(inputs, baseArgs, requestArgs);
+            processFile(baseArgs, requestArgs);
             projectContextInitialized = true;
         } else if (!toleratesMissingInputFile(options.serverOperation)) {
             errorMessage(ERR_ST, "No input file");
