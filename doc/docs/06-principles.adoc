@@ -409,8 +409,7 @@ Staleness::
   A file is stale when its content has changed since it was last parsed. Detected by
   comparing `lastParsedMtime` against the current file modification time (from disk or
   editor buffer). Stale files trigger reparsing during the entry refresh (ADR 20).
-  ADR-0032 replaces it with _Out of date_, and the code follows with `passes-as-one` in
-  `doc/backlog.md`.
+  ADR-0032 replaces it with _Out of date_.
 
 Steady state::
   The server is initialized and processing requests. Staleness detection and incremental

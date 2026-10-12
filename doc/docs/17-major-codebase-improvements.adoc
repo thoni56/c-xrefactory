@@ -665,7 +665,7 @@ That is most of `server.c` today, and `callServer()` mixes it with setting up th
   If `request-target` grows the goal, the goal may want a module of its own.
 * The steps of a rebuild can be separated.
   The one constraint between them is that every strip comes before any build (Chapter 8, Entry Refresh).
-* The first step is a move, with no other change, opening the backlog's `passes-as-one`.
+* The first step is a move, with no other change.
   Before that it would move three passes into a module where they are about to become one.
 
 [[rename-operations]]
