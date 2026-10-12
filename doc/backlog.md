@@ -447,8 +447,8 @@ The order is roughly the numbers. `header-not-half` can be done any time. Next i
 
 Performance, from reading the code (Mac, session `05984816`, 2026-10-08): at equal
 correctness the design costs the same or less. Parsing dominates, and what is parsed
-follows the request rather than triggers: an edited header no longer parses up to 128
-includers at once, only the goal's. More is parsed only where the old answer was
+follows the request rather than triggers: an edited header no longer parses up to the cap's
+worth of includers at once, only the goal's. More is parsed only where the old answer was
 incomplete (deeper reach, disk changes). The bookkeeping added — a `stat` per input, a
 sweep per request — is small beside what goes. The risks are in the implementation, and
 are noted in `cu-inputs`, `out-of-date`, `time-budget` and `sweep-cost`.
@@ -497,10 +497,12 @@ are noted in `cu-inputs`, `out-of-date`, `time-budget` and `sweep-cost`.
     which needs a lookup of the reference at a position in the table. Completion, extract
     and the macro body need the parse.
     Goes with: request-through-includers
-- (#39) <a id="header-not-half"></a>**Pass 2 does not strip a header it cannot rebuild** — it
-    strips the header's references and then reparses at most 128 includers, so the rest
-    of their references are lost, not stale. Leave the header alone when the cap stops it.
-    Not needed once `sweep` is in.
+- (#39) <a id="header-not-half"></a>**A changed header the editor holds is stripped also when not all its includers fit** —
+    `stripChangedHeldHeaders()` (`src/rebuild.c`) strips it and adds its includers to the
+    build list only up to the cap. A reference in the header that only the others emit,
+    e.g. under an `#ifdef` they set, is missing until they are built. Strip only when
+    `everyIncluderIsRebuilt()`, as the sibling collection does (ADR-0032). It still asks
+    `fileNumberIsStale()` and records the header as parsed. Not needed once `sweep` is in.
 - (#55) <a id="parse-all-out-of-date"></a>**An operation on a name analyses only the files never analysed** —
     parse-all counts and parses the CUs without knowledge
     (`countUnparsedCompilationUnits()`, `parseAllUnparsedCompilationUnits()` in
@@ -508,7 +510,8 @@ are noted in `cu-inputs`, `out-of-date`, `time-budget` and `sweep-cost`.
     old references through a search. From reading the code (WSL, session `d25255b8`,
     2026-10-12), not tested.
     Goes with: time-budget, behind-the-back
-- (#40) <a id="time-budget"></a>**A time budget instead of the 128 CUs** — above it the question
+- (#40) <a id="time-budget"></a>**A time budget instead of the cap** — the cap (`MAX_CUS_TO_REPARSE`,
+    128 today) becomes a time budget, and above it the question
     with an estimate. Browsing remembers a "no" for the session, an operation that edits
     or works on a name is cancelled by it. Touches the client's question. Open: does a remembered "no" stop parsing, or only the asking, so
     that each request still parses a budget's worth? With `sweep` the second is safe, and
@@ -548,8 +551,8 @@ are noted in `cu-inputs`, `out-of-date`, `time-budget` and `sweep-cost`.
 - (#45) <a id="sweep-cost"></a>**What the sweep costs** — memory and walk time on ffmpeg,
     whether the reverse walk can go uncapped, and how the mark is stored. The baseline
     to time against: `removeReferenceableItemsForFile()` walks the whole table, and today
-    runs before every CU reparse and for every changed header in Pass 2, so parsing 128
-    CUs on ffmpeg is 128 walks over 1.24 million references. The sweep is one walk per
+    runs before every CU reparse and for every changed header the editor holds, so a full
+    cap, 128 CUs, on ffmpeg is 128 walks over 1.24 million references. The sweep is one walk per
     request that parsed, none for navigation. A stripped reference is also only
     unlinked, never freed (`cxAlloc`), so every reparse leaves its CU's references behind
     as dead memory; refreshing in place stops that. For the sweep itself, compute the
