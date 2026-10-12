@@ -3,8 +3,8 @@
 # Draw doc/backlog.md as an anatomy: a Mermaid flowchart read bottom-up, where an
 # item sits above what it waits for.
 #
-# An item is a numbered line with an anchor and a bold title,
-#     2. <a id="second-item"></a>**Second item** — ...
+# An item is a list entry with its number, an anchor and a bold title,
+#     - (#2) <a id="second-item"></a>**Second item** — ...
 # and what it waits for is a line of slugs below it,
 #        Waits for: first-item
 
@@ -13,7 +13,7 @@ import re
 import sys
 
 SECTION = re.compile(r'^## (\d+)\. (.+)$')
-ITEM = re.compile(r'^(\d+)\. <a id="([^"]+)"></a>\*\*(.+?)\*\*')
+ITEM = re.compile(r'^- \(#(\d+)\) <a id="([^"]+)"></a>\*\*(.+?)\*\*')
 SUBITEM = re.compile(r'^\s+([a-z])\. <a id="([^"]+)"></a>\*\*(.+?)\*\*')
 WAITS = re.compile(r'^\s*Waits for:\s*(.+)$')
 GOES_WITH = re.compile(r'^\s*Goes with:\s*(.+)$')
