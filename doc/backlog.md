@@ -253,8 +253,8 @@ graph from them on every push, linked at the end of this file, and `utils/backlo
 
 ## 4. Performance, in strict dependency order
 
-Roadmap → Optimization. Baseline: cold-start PUSH on ffmpeg `af_afir.c` — scan 2.7s, two
-Pass 3 rounds 19s each, 42s total.
+Roadmap → Optimization has the baseline: a cold-start PUSH on ffmpeg, measured in March
+2026 and not since.
 
 - (#16) <a id="header-filtered-siblings"></a>**Header-filtered sibling parsing** — 2481 sibling CUs → 2 for `AudioFIRContext`. The
     design problem is that Pass 3 runs during sync and the symbol is only known during
