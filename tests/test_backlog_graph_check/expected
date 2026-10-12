@@ -2,3 +2,5 @@ known names: exit=0
 unknown.md: second-item waits for gone-item, which is not in the backlog
 unknown.md: second-item goes with also-gone, which is not in the backlog
 unknown names: exit=1
+duplicate.md: second-item and third-item are both #2
+same number: exit=1

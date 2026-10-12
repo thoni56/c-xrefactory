@@ -172,6 +172,13 @@ def problems_in(path, text):
         for other in item['goes_with']:
             if other not in known:
                 found.append(f"{path}: {item['slug']} goes with {other}, which is not in the backlog")
+    # A number, once given, stays with its item, so two items cannot share one
+    by_number = {}
+    for item in items.values():
+        by_number.setdefault(item['number'], []).append(item['slug'])
+    for number, slugs in by_number.items():
+        if len(slugs) > 1:
+            found.append(f"{path}: {' and '.join(slugs)} are both #{number}")
     return found
 
 
