@@ -616,7 +616,7 @@ watch-for-systemtests-only:
 
 .PHONY: watch-for-systemtests
 watch-for-systemtests:
-	watchexec $(WATCHEXEC_FLAGS) --no-vcs-ignore -f '*/.unittests.done' -- execnotify -t Systemtests make system-tests-logged
+	watchexec $(WATCHEXEC_FLAGS) -d 500 --no-vcs-ignore -f '*/.unittests.done' -- execnotify -t Systemtests make system-tests-logged
 
 # Same as system-tests, and keeps the output in systemtests.log so the result of
 # the last watcher run can be read by someone who was not watching the terminal.
