@@ -522,6 +522,8 @@ are noted in `cu-inputs`, `out-of-date`, `time-budget` and `sweep-cost`.
 - (#41) <a id="freshness-docs"></a>**The docs follow** — *Out of date* replaces *Staleness* in
     `06-principles`, and `08-algorithms` loses "Dual Semantics". In `06-principles`, the
     part on why reparsing only a subset is safe also describes strip-then-reparse.
+    `08-algorithms` still describes the entry refresh as Pass 1, 2 and 3; "Freshness Is
+    Make, for the Goal" in `20-insights` is a start for its rewrite.
 - (#42) <a id="include-edges"></a>**Who writes include edges** — the parse and the lightweight
     scan both do. The parse records the `#include`s the preprocessor took, quoted and
     `<...>`, at their real lines. The scan records every quoted `#include`, `#ifdef` or

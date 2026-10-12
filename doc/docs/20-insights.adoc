@@ -108,3 +108,56 @@ This means **server-created editor buffers do not linger between requests**. On 
 Client-preloaded buffers (`preLoadedFromFile != NULL`) are NOT freed — they represent the editor's view of the file and survive until the client sends updated content or (eventually) a close notification.
 
 **Implication for `didClose`**: A `didClose` protocol message (analogous to LSP `textDocument/didClose`) is not urgently needed for correctness — the existing cleanup handles server-created buffers. It would primarily benefit client-preloaded buffers that the user has closed in the editor, allowing the server to fall back to disk content. This is an architectural nicety, not a bug fix.
+
+=== Freshness Is Make, for the Goal
+
+Date: 2026-10-12
+
+ADR-0032 and ADR-0033 make the entry refresh work like Make. The terms map like this:
+
+[cols="1,2"]
+|===
+|Make |c-xrefactory
+
+|target
+|the knowledge of a CU, i.e. the references its parse put in the table
+
+|prerequisites
+|the CU and its include closure (and, not yet, the project config)
+
+|the target's mtime
+|the CU's `knowledgeTime`, taken before the content is read
+
+|a prerequisite's mtime
+|the change time of the content the client sends for a file the editor holds, or the disk mtime
+
+|the recipe
+|parsing the CU, `buildKnowledgeOfCU()`
+
+|`make goal`
+|the entry refresh for one request, over the CUs on its goal: the request, the held files and the siblings
+|===
+
+`knowledgeIsOutOfDate()` in `src/freshness.c` is the rule.
+It counts every doubt as out of date: no knowledge, an input that no longer exists, a change within the coarse clock's 10 ms, a closure above 1000 files.
+So it can rebuild for nothing, but should not call stale knowledge current.
+
+The dependencies work like the `.d` files from `gcc -MD`.
+They come from the previous build, the parse that gave the CU its knowledge.
+That is enough, because a new dependency can only appear through a change in a file that is already one, and that change makes the CU out of date anyway.
+An extra edge, like the scan's include that an `#ifdef` does not take, only costs a rebuild.
+A missing edge, like the scan's missing `<...>` includes, only affects a CU without knowledge, and that is out of date anyway.
+
+What this guarantees is an absence.
+After the entry refresh, no CU on the goal is out of date without that being known, i.e. every rule reachable from the goal has been evaluated and the recipes that need to run are known.
+The position the operation asks about is only looked at after that.
+
+Where it is not yet Make (items in `doc/backlog.md`):
+
+* *The goal is too small* (`request-target`). We run `make request.o`, but the answer is linked from more objects than that.
+* *The cap.* At most 128 recipes run, and the rest stay out of date. They are known, though (`time-budget`, `header-not-half`).
+* *Parse-all builds only the targets that do not exist*, as if every existing target were up to date (`parse-all-out-of-date`).
+* *The config is not a prerequisite* (`out-of-date`). That is the classic Make pitfall where changing `CFLAGS` rebuilds nothing. `markAllCompilationUnitsStale()` covers it for now.
+* *A header changed on disk, outside the goal,* keeps its old references (`behind-the-back`).
+* *Several recipes write the same output.* A header's references are put in the table by every CU that includes it, which Make cannot express. Hence ADR-0032's all or nothing for a header, and in the end the sweep with generations (ADR-0033, `sweep`).
+* *The request's own recipe runs as part of the operation*, since the lexer finds the cursor during the parse. Reusing the knowledge when it is current is `cursor-parse-reuse`.
