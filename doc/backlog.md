@@ -11,8 +11,7 @@ A few items have no repo home yet — they came out of a session and were never 
 down. Those lines say where to start instead of pointing, and should shrink to a pointer
 once the work gets a chapter, a test or a `.suspended` note.
 
-Ordering principle: first the cheap things that change what everything else costs, then
-the one item that gates the most rows, then the chains that unblock, then bugs and
+Ordering principle: first the one item that gates the most rows, then the chains that unblock, then bugs and
 features. Relative effort only — no dates (#noestimates).
 
 Each item has a name, the `<a id>` before its title. A `Waits for:` line names what it
@@ -20,19 +19,13 @@ waits for, and `Goes with:` what it belongs with. The docs build draws the depen
 graph from them on every push, linked at the end of this file, and `utils/backlog_graph
 --check`, run with the tests, fails if a name is unknown.
 
-## 0. Verify first — cheap, and might change the cost of the rest
-
-1. <a id="compiler-asked-twice"></a>**A cold start interrogates the compiler twice** —
-   `tests/test_cold_start_interrogates_compiler_once/.suspended`. Waits for item 2,
-   steps 2a and 2b.
-   Waits for: partition-options
-
 ## 1. The foundational one
 
-2. <a id="partition-options"></a>**Partition `options` by lifetime** — Session / Project / Request, one owner each, and
+3. <a id="partition-options"></a>**Partition `options` by lifetime** — Session / Project / Request, one owner each, and
    a pure `parseCommandLine()`. `doc/docs/17-major-codebase-improvements.adoc` §17.4. The
    roadmap's Setup Ladder says it gates the rows below it. Largest single item here.
    Begin with step 2 of that section, extracting side effects, in the order it gives.
+   Steps 2.a and 2.b take `test_cold_start_interrogates_compiler_once` off suspension.
    When it moves `ProjectConfig` off being a file-static singleton (`src/startup.c:42`,
    `static ProjectConfig projectConfig = {0};`), give it a `makeProjectConfig()` that
    returns `{.sourceDirs = NULL, .optionSets = makeOptionSets()}`. Today both fields are
@@ -52,7 +45,7 @@ graph from them on every push, linked at the end of this file, and `utils/backlo
    `options`. `parseFileWithFullInit()` keeps only `cursorOffset`, `noErrors`,
    `serverOperation` and, as a stopgap, `dumpSelection` (`test_dump_after_a_rebuild`).
    Every other REQUEST option is lost when a rebuild comes before the dispatch.
-3. <a id="setup-ladder"></a>**The Setup Ladder, in this sequence**, each small once the partition lands
+4. <a id="setup-ladder"></a>**The Setup Ladder, in this sequence**, each small once the partition lands
    (`doc/docs/10-roadmap.adoc`, Convergence: The Setup Ladder → Remaining):
    a. <a id="root-path-id"></a>**the server's project id is its root path** — ADR-0029. `lockedProject` becomes the
       detected project root and `lockedProjectRoot` goes, so `SET_INFO` and
@@ -97,7 +90,7 @@ graph from them on every push, linked at the end of this file, and `utils/backlo
       switch kills the server without `-exit`, losing everything since the last snapshot.
       Waits for: adr-0031
 
-4. <a id="drop-cxfi-refnum"></a>**Drop the `CXFI_REFNUM` record from the snapshot** — it is always written as 1. A safe
+5. <a id="drop-cxfi-refnum"></a>**Drop the `CXFI_REFNUM` record from the snapshot** — it is always written as 1. A safe
    format change: a snapshot of another format version is ignored like no snapshot and
    rewritten on exit, so it costs one cold start, and a bump of its own is fine. `m`
    (`lastFullUpdateMtime`) is only written and read back, and goes the same way. So may
@@ -106,7 +99,7 @@ graph from them on every push, linked at the end of this file, and `utils/backlo
 
 ## 2. After XrefMode
 
-5. <a id="report-errors-flag"></a>**Re-key the 19 `options.mode != ServerMode` guards in `src/yylex.c`** onto a
+6. <a id="report-errors-flag"></a>**Re-key the 19 `options.mode != ServerMode` guards in `src/yylex.c`** onto a
    report-errors flag, and stop `formatMessage()` (`src/commons.c`) dropping the position
    in server mode. Roadmap, "Report what did not parse". Doubles as the server half of
    the Indexing Log Buffer item. Scope reporting to the operation's own parse, not the
@@ -114,7 +107,7 @@ graph from them on every push, linked at the end of this file, and `utils/backlo
    the same change: it was dropped when that test moved to the server, because the
    position is what server mode throws away. With XrefMode gone the guards never
    fire, so today the server reports nothing they guard.
-6. <a id="startup-command-line"></a>**Decide, and enforce, what the startup command line may carry** — *no repo home yet.*
+7. <a id="startup-command-line"></a>**Decide, and enforce, what the startup command line may carry** — *no repo home yet.*
    Bigger than `c-xref file.c`, and it needs code, not just a decision. Once XrefMode is
    gone the server takes no file at startup: every request names its own, and the same
    parser serves both phases, so the question becomes which options are process-scoped at
@@ -150,22 +143,22 @@ graph from them on every push, linked at the end of this file, and `utils/backlo
      look. Auto-discovery gives you the tree under the config; anything outside it still
      has to be named. Likely home: the config, or the machine-specific sibling, since an
      external source tree is usually a local path.
-7. <a id="finish-after-xrefmode"></a>**Finish after XrefMode**, in these pieces:
+8. <a id="finish-after-xrefmode"></a>**Finish after XrefMode**, in these pieces:
    a. <a id="mode-checks"></a>**fold the `options.mode` checks outside `src/yylex.c`** — about 33,
       in semact, options, cxfile, commons, startup, cxref, refactory, parsing and main.
       They are constant wherever the mode is known, since LSP sets `ServerMode` too
       (`src/parsing.c`). The ones that report a missing mode stay. The 30 in `yylex.c`
-      are item 5's. Among them `commons.c`'s `options.cxrefProtocol && options.mode !=
+      are item 6's. Among them `commons.c`'s `options.cxrefProtocol && options.mode !=
       ServerMode`, which is never true: only `-server` sets `cxrefProtocol`, together
       with the mode;
       Goes with: report-errors-flag
-8. <a id="remove-bridge"></a>**Remove the `parseBufferUsingServer` bridge** — §17.3; 9 refactoring call sites
+9. <a id="remove-bridge"></a>**Remove the `parseBufferUsingServer` bridge** — §17.3; 9 refactoring call sites
    re-entering `callServer`. Independent of the rest of this section (it asserts
    `ServerMode`), but it is the last divergent parse path.
 
 ## 3. Correctness, by (quiet × cheap)
 
-9. <a id="refactoring-refusals"></a>**What a refactoring refuses, spelled out and tested** —
+10. <a id="refactoring-refusals"></a>**What a refactoring refuses, spelled out and tested** —
     *no repo home yet.* ADR-0033 lets ghosts stay visible until the sweep, and relies on
     refactorings refusing them. Today rename and the parameter refactorings compare only
     the name at each stored position (`precheckThatSymbolRefsCorresponds`,
@@ -182,29 +175,29 @@ graph from them on every push, linked at the end of this file, and `utils/backlo
     not wait for `sweep`. The message "try re-saving the file" no longer fits. Found by
     reading the code (Mac, session `05984816`, 2026-10-06), not tested.
     Goes with: behind-the-back, sweep
-10. <a id="behind-the-back"></a>**A header changed on disk, which the editor does not hold, keeps its old references** —
+11. <a id="behind-the-back"></a>**A header changed on disk, which the editor does not hold, keeps its old references** —
     it is stripped only when the request file is it or includes it directly, and all its
     includers are built. An includer built later adds the new references beside the old
     ones (ghosts). From reading the code (WSL, session `d25255b8`, 2026-10-11 and
     2026-10-12), not tested.
     Waits for: request-target
     Goes with: sweep
-11. <a id="extract-statics-by-value"></a>**Extract passes statics by value** — *no test pins it.* Since the gate fix this
+12. <a id="extract-statics-by-value"></a>**Extract passes statics by value** — *no test pins it.* Since the gate fix this
     compiles and silently does the wrong thing, where before it failed to compile.
     Liveness-after-the-region is the wrong question for static storage: treat
     static/thread-local as live after the region in `classifyVariableUsingDataFlow`
     (`src/extract.c`), which pushes it to `CLASSIFIED_AS_IN_OUT_ARGUMENT`. Failing system
     test first. Quietest bug on this list.
-12. <a id="token-pasting-trio"></a>**Token pasting trio**, in this order — the later two assume the first
+13. <a id="token-pasting-trio"></a>**Token pasting trio**, in this order — the later two assume the first
     (`doc/docs/18-known-bugs.adoc`): `tests/test_token_pasting_numbers` (changes the
     passing `test_collate_const_suffix_pasting`) → `tests/test_token_pasting_float` →
     `tests/test_collate_hex_prefix_pasting` (touches how every number is lexed).
-13. <a id="header-static-link-names"></a>**Header static: prototype and definition get different link names** —
+14. <a id="header-static-link-names"></a>**Header static: prototype and definition get different link names** —
     `setStaticFunctionLinkName` (`src/semact.c`); renames break the build today.
     `tests/test_static_declared_and_defined_in_header/.suspended` has the
     `exactPositionResolve` question to settle first, so it starts as a decision.
     Waits for: startup-command-line
-14. <a id="correctness-by-cost"></a>**The other correctness bugs**, Latin-1 first; the order of
+15. <a id="correctness-by-cost"></a>**The other correctness bugs**, Latin-1 first; the order of
     the rest is not known. Each has a `.suspended` note or a `18-known-bugs.adoc` entry,
     or says it has no repo home yet:
    a. <a id="latin1-swallows"></a>**A Latin-1 character swallows the characters after it** —
@@ -273,33 +266,33 @@ graph from them on every push, linked at the end of this file, and `utils/backlo
 Roadmap → Optimization. Baseline: cold-start PUSH on ffmpeg `af_afir.c` — scan 2.7s, two
 Pass 3 rounds 19s each, 42s total.
 
-15. <a id="header-filtered-siblings"></a>**Header-filtered sibling parsing** — 2481 sibling CUs → 2 for `AudioFIRContext`. The
+16. <a id="header-filtered-siblings"></a>**Header-filtered sibling parsing** — 2481 sibling CUs → 2 for `AudioFIRContext`. The
     design problem is that Pass 3 runs during sync and the symbol is only known during
     dispatch. It narrows what `request-target` widens: the reach of the symbol, not of
     the request file's closure.
-16. <a id="scan-angle-includes"></a>**Extend the lightweight scan to `<...>` includes** — blocked on header-filtered
+17. <a id="scan-angle-includes"></a>**Extend the lightweight scan to `<...>` includes** — blocked on header-filtered
     sibling parsing, or ubiquitous system headers drag in nearly every CU. Also removes
     the cold-start double progress bar.
     Waits for: header-filtered-siblings
     Goes with: project-extent
-17. <a id="lexing-cache"></a>**Lexing cache re-introduction** — present in the original codebase, lost in
+18. <a id="lexing-cache"></a>**Lexing cache re-introduction** — present in the original codebase, lost in
     restructuring.
     Waits for: scan-angle-includes
-18. <a id="parallel-parsing"></a>**Parallel parsing** — last, and only if the three above leave `avcodec.h` (614 CUs) or
+19. <a id="parallel-parsing"></a>**Parallel parsing** — last, and only if the three above leave `avcodec.h` (614 CUs) or
     `internal.h` (1171 CUs) unacceptable. Global mutable parser state, a single CX arena
     and a shared file table are the obstacles.
     Waits for: lexing-cache
 
 ## 5. Features, by readiness
 
-19. <a id="remove-references-stopgap"></a>**Take the client's "Remove References and Restart Server" back out** — it landed
+20. <a id="remove-references-stopgap"></a>**Take the client's "Remove References and Restart Server" back out** — it landed
     2026-09-24 as a deliberate stopgap (`c-xref-project-remove-references-and-restart`,
     `editors/emacs/c-xref.el`), because discarding the database is the standing remedy for
     two unrelated symptoms: shadow occurrences after behind-the-back disk changes, and a
     stale snapshot outliving a visibility fix (both in `doc/docs/18-known-bugs.adoc`). The
     real work is making the database not need discarding — behind-the-back detection and
     entry refresh are probably most of it,
-    and item 21 dissolves another part. Remove the entry when they land, and check the
+    and item 22 dissolves another part. Remove the entry when they land, and check the
     symptoms are gone rather than assuming it. Check a third case too: with `sweep`,
     ghosts in a header are removed only when every CU reaching it has been parsed again,
     and generations are not in the snapshot (ADR-0033). After a "no" to the completeness
@@ -309,18 +302,18 @@ Pass 3 rounds 19s each, 42s total.
     Goes with: sweep, time-budget
     Goes with: index-based-sessions
 
-20. <a id="move-function-comment-prompt"></a>**Move Function comment y/n prompt** — replaces the `c-xref-comments-moving-level`
+21. <a id="move-function-comment-prompt"></a>**Move Function comment y/n prompt** — replaces the `c-xref-comments-moving-level`
     customization; collapse `CommentMovingMode` to a bool and stop the backward walk at a
     blank line (`src/options.h`, `src/move_function.c`). The TDD scaffolding already
     landed: four `tests/test_move_function_*comment*` tests; sweep
     `-commentmovinglevel=6` → `=1` in the three "with…" `commands.input` files and add
     `test_move_function_stops_at_blank_line` in the same change. Most shovel-ready item
     here.
-21. <a id="index-based-sessions"></a>**Index-based sessions** — dissolves stale-POP *and* lets an answer grow while you
+22. <a id="index-based-sessions"></a>**Index-based sessions** — dissolves stale-POP *and* lets an answer grow while you
     work. Roadmap → Memory as Truth → Remaining. Depends only on entry refresh, which is
     done.
     Waits for: entry-refresh
-22. <a id="indexing-log-buffer"></a>**Indexing Log Buffer** — Option A (`PPC_LOG` + a silent `*c-xref-log*` buffer),
+23. <a id="indexing-log-buffer"></a>**Indexing Log Buffer** — Option A (`PPC_LOG` + a silent `*c-xref-log*` buffer),
     `doc/docs/11-planned-features.adoc`. Follows the report-errors item. The client half
     does not have to be invented: `c-xref-tags-dispatch` and its two helpers in
     `editors/emacs/c-xref.el` rendered exactly this for the `-create` log — a stream of
@@ -328,13 +321,13 @@ Pass 3 rounds 19s each, 42s total.
     are kept, uncalled, for that reason. The viewer commands and keymap below them are
     still bound; only the producer is gone. Whether they stay is decided here.
     Waits for: report-errors-flag
-23. <a id="retry-creating-request"></a>**Retry the request that created the project** — small, and it becomes first contact
+24. <a id="retry-creating-request"></a>**Retry the request that created the project** — small, and it becomes first contact
     with every new project once auto-discovery is the only way in.
-24. <a id="lsp-tiers"></a>**LSP tiers 1–2** — code actions and `workspace/executeCommand` for extract, move
+25. <a id="lsp-tiers"></a>**LSP tiers 1–2** — code actions and `workspace/executeCommand` for extract, move
     function and the parameter refactorings. Stubs exist: `handle_code_action`,
     `handle_execute_command`, with `codeActionProvider` commented out in
     `src/lsp_handler.c`. Keep tier 3 (custom methods + per-editor extension code) small.
-25. <a id="move-function-next"></a>**Move Function next steps**, then **Delete Function**. Also **`-parse-all`, a request that parses every compilation
+26. <a id="move-function-next"></a>**Move Function next steps**, then **Delete Function**. Also **`-parse-all`, a request that parses every compilation
     unit the scan found and has not parsed** — what ADR-0024's CreateMode reduces to
     once the priming is a request rather than a mode; `test_ffmpeg` and
     `test_systemd` ask for it today by searching a name nobody defines and answering
@@ -361,15 +354,15 @@ Pass 3 rounds 19s each, 42s total.
     Parameter**, **Finish Extract Variable**, **Inline Variable**, **Name and Define
     Constant**, **C11 `_Generic`** (`tests/test_parsing_generics`). All in
     `11-planned-features.adoc`.
-26. <a id="local-config-fragments"></a>**Local config fragments: the config names, the fragment binds** —
+27. <a id="local-config-fragments"></a>**Local config fragments: the config names, the fragment binds** —
     ADR-0034, proposed. Decide it, with where the fragment lives and the syntax of a
     default. Then: expand defaults, report an unbound name, read the fragment before the
     environment, and ignore the personal options in a config, with a warning.
     Goes with: project-extent
-27. <a id="chapter-17-hygiene"></a>**Chapter 17 hygiene, opportunistically** — incremental `cxfile.c` cleanup, extract
+28. <a id="chapter-17-hygiene"></a>**Chapter 17 hygiene, opportunistically** — incremental `cxfile.c` cleanup, extract
     the macro expansion module, hashtab → hashlist, split the editor module, rename server
     operations, elisp recompiled and deleted on every build.
-28. <a id="dump-reference-database"></a>**Dump Reference Database** — `-dump=knowledge` answers from the
+29. <a id="dump-reference-database"></a>**Dump Reference Database** — `-dump=knowledge` answers from the
     in-memory table (`src/dump.c`), one record per fact. The selection names which facts,
     so a new kind of fact never changes the answer for an old one. Left are selections for
     references and includes. With those, the about 45 tests that throw the protocol away
@@ -383,15 +376,15 @@ Pass 3 rounds 19s each, 42s total.
     taken afterwards had the reference, so it could not say whether the server knew it at
     the time of the rename.
 
-29. <a id="compile-commands"></a>**Read `-I` and `-D` from `compile_commands.json`** —
+30. <a id="compile-commands"></a>**Read `-I` and `-D` from `compile_commands.json`** —
     *no repo home yet.* Nothing reads it today. CMake and Meson write one, and `bear`
     makes one for Make. It decides whether a stranger's first project works without
     learning `.c-xrefrc` (section 8).
-    Goes with: project-extent, local-config-fragments, compiler-asked-twice
+    Goes with: project-extent, local-config-fragments, partition-options
 
 ## 6. Developer tooling
 
-30. <a id="macos-watchers"></a>**Two causes of watchers not firing on macOS, both found** — *no repo home yet.*
+31. <a id="macos-watchers"></a>**Two causes of watchers not firing on macOS, both found** — *no repo home yet.*
     Kept because the symptoms are absence and noise, which is what gets
     re-investigated from scratch. Diagnosed on the Mac, session `4e8903dc`,
     2026-09-30.
@@ -441,7 +434,7 @@ Pass 3 rounds 19s each, 42s total.
     can stay beside the sources where Emacs cov-mode reads them. Whether it works is
     the open question above; if it does not, moving the build output is what is left.
 
-31. <a id="flaky-preload-tests"></a>**Tests that copy a preload next to the file it replaces can be flaky** — the driver
+32. <a id="flaky-preload-tests"></a>**Tests that copy a preload next to the file it replaces can be flaky** — the driver
     refuses a preload that is not newer than its file, and two `cp`s in a row can get the
     same mtime from the kernel's coarse clock. `test_preload_pruned_after_close` failed so
     once. The fix is to make the replaced file older, `touch -t 200001010000 <file>`. About
@@ -460,14 +453,14 @@ incomplete (deeper reach, disk changes). The bookkeeping added — a `stat` per 
 sweep per request — is small beside what goes. The risks are in the implementation, and
 are noted in `cu-inputs`, `out-of-date`, `time-budget` and `sweep-cost`.
 
-32. <a id="cu-inputs"></a>**A CU's inputs** — the CU, its include closure and the project
+35. <a id="cu-inputs"></a>**A CU's inputs** — the CU, its include closure and the project
     config, put together where `out-of-date` uses them, the CU first. `Inputs`
     (`src/freshness.c`) holds them for one request: the include graph and each file's
     change time, asked for once. Left: the config's change time, whose owner depends on
     `partition-options`. The closure can hold the scan's includes beside the parse's,
     which for the predicate only costs a parse.
     Goes with: out-of-date
-33. <a id="out-of-date"></a>**The config as an input of `knowledgeIsOutOfDate()`** — it
+36. <a id="out-of-date"></a>**The config as an input of `knowledgeIsOutOfDate()`** — it
     replaces `markAllCompilationUnitsStale()`, and the zero sentinel goes. The config
     needs a change time, and who owns it depends on where the project config lives after
     the options partition.
@@ -477,7 +470,7 @@ are noted in `cu-inputs`, `out-of-date`, `time-budget` and `sweep-cost`.
     proportion to what changed.
     Waits for: partition-options
     Goes with: cu-inputs
-34. <a id="request-target"></a>**What a request needs** — the CUs that reach the request
+37. <a id="request-target"></a>**What a request needs** — the CUs that reach the request
     file's closure, and the whole project for an operation on a name. Pass 3 takes the CUs
     that reach a header the request file includes directly, through a mock or another
     header too (`collectCUsIncluding()`). It does not go further down: with the request
@@ -491,30 +484,30 @@ are noted in `cu-inputs`, `out-of-date`, `time-budget` and `sweep-cost`.
     never parsed.
     Waits for: adr-0032
     Goes with: header-filtered-siblings
-35. <a id="request-through-includers"></a>**A request in a header is parsed through its includers** —
+54. <a id="request-through-includers"></a>**A request in a header is parsed through its includers** —
     never on its own (ADR-0032, amended 2026-10-11), as for a macro body. No includer
     gives a message saying that no compilation unit includes the file. Includers that
     are current are parsed only for the cursor, and need a bound.
     `test_push_in_header_no_cu_includes` comes off suspension.
-36. <a id="cursor-parse-reuse"></a>**The request CU is parsed for the cursor, also when its knowledge is current** —
+1. <a id="cursor-parse-reuse"></a>**The request CU is parsed for the cursor, also when its knowledge is current** —
     the lexer finds what the cursor is on during the parse (`lexer.c:448`), so every
     operation with a cursor parses the request file, and in a macro body every CU that
     expands it. ADR-0032 says to reuse the references when the knowledge is current,
     which needs a lookup of the reference at a position in the table. Completion, extract
     and the macro body need the parse.
     Goes with: request-through-includers
-37. <a id="header-not-half"></a>**Pass 2 does not strip a header it cannot rebuild** — it
+39. <a id="header-not-half"></a>**Pass 2 does not strip a header it cannot rebuild** — it
     strips the header's references and then reparses at most 128 includers, so the rest
     of their references are lost, not stale. Leave the header alone when the cap stops it.
     Not needed once `sweep` is in.
-38. <a id="parse-all-out-of-date"></a>**An operation on a name analyses only the files never analysed** —
+55. <a id="parse-all-out-of-date"></a>**An operation on a name analyses only the files never analysed** —
     parse-all counts and parses the CUs without knowledge
     (`countUnparsedCompilationUnits()`, `parseAllUnparsedCompilationUnits()` in
     `src/server.c`), not those out of date. A CU whose header changed on disk keeps its
     old references through a rename. From reading the code (WSL, session `d25255b8`,
     2026-10-12), not tested.
     Goes with: time-budget, behind-the-back
-39. <a id="time-budget"></a>**A time budget instead of the 128 CUs** — above it the question
+40. <a id="time-budget"></a>**A time budget instead of the 128 CUs** — above it the question
     with an estimate. Browsing remembers a "no" for the session, an operation that edits
     or works on a name is cancelled by it. Touches the client's question. Open: does a remembered "no" stop parsing, or only the asking, so
     that each request still parses a budget's worth? With `sweep` the second is safe, and
@@ -526,10 +519,10 @@ are noted in `cu-inputs`, `out-of-date`, `time-budget` and `sweep-cost`.
     found change first (`out-of-date`): `stat` every known file once and walk the reverse
     include graph to the CUs. Then project-wide goals use that and the rest ask
     `knowledgeIsOutOfDate()` per CU, with a test that the two agree for every CU.
-40. <a id="freshness-docs"></a>**The docs follow** — *Out of date* replaces *Staleness* in
+41. <a id="freshness-docs"></a>**The docs follow** — *Out of date* replaces *Staleness* in
     `06-principles`, and `08-algorithms` loses "Dual Semantics". In `06-principles`, the
     part on why reparsing only a subset is safe also describes strip-then-reparse.
-41. <a id="include-edges"></a>**Who writes include edges** — the parse and the lightweight
+42. <a id="include-edges"></a>**Who writes include edges** — the parse and the lightweight
     scan both do. The parse records the `#include`s the preprocessor took, quoted and
     `<...>`, at their real lines. The scan records every quoted `#include`, `#ifdef` or
     not, no `<...>`, all at line 1, column 0 of the includer. A "defined" reference at
@@ -539,17 +532,17 @@ are noted in `cu-inputs`, `out-of-date`, `time-budget` and `sweep-cost`.
     write an edge and which writer wins. The sweep needs it: it removes a file's
     references once every CU reaching it has been parsed again, so an edge the graph
     lacks makes it remove live references, silently (ADR-0033).
-42. <a id="generations"></a>**Generations** — a counter per parse, a mark on every
+43. <a id="generations"></a>**Generations** — a counter per parse, a mark on every
     reference, refreshed in `addToReferenceList()`, and a test that every reference
     enters the table there.
     Waits for: adr-0033
-43. <a id="sweep"></a>**Remove references no CU still emits** — after each request that
+44. <a id="sweep"></a>**Remove references no CU still emits** — after each request that
     parsed something, remove a reference older than every reaching CU's knowledge
     generation, and drop the strips in advance in `buildKnowledgeOfCU()`, Pass 2 and
     `singlePass()`. A capped reverse walk removes nothing in that file.
     `test_preprocess_edit_removes_ifdef_define` comes off suspension.
     Waits for: generations, include-edges
-44. <a id="sweep-cost"></a>**What the sweep costs** — memory and walk time on ffmpeg,
+45. <a id="sweep-cost"></a>**What the sweep costs** — memory and walk time on ffmpeg,
     whether the reverse walk can go uncapped, and how the mark is stored. The baseline
     to time against: `removeReferenceableItemsForFile()` walks the whole table, and today
     runs before every CU reparse and for every changed header in Pass 2, so parsing 128
@@ -574,34 +567,34 @@ announcement until branch switching is safe, since a wrong rename after a `git c
 loses a first user. *No repo home yet* for any of these — discussed on WSL and on the
 Mac (session `05984816`), 2026-10-07.
 
-45. <a id="release-build"></a>**A lean release build** — no coverage, no unit tests, only
+46. <a id="release-build"></a>**A lean release build** — no coverage, no unit tests, only
     `c-xref`. The generated parsers are committed, so `cc` and `make` are enough.
-46. <a id="protocol-handshake"></a>**The client and the server check a protocol version** —
+47. <a id="protocol-handshake"></a>**The client and the server check a protocol version** —
     once the elisp and the binary are installed apart they drift (MELPA builds HEAD, the
     binary is whatever was built). On a mismatch the client offers to rebuild, rather
     than failing in some later request.
-47. <a id="install-server"></a>**`M-x c-xref-install-server`** — builds from source by
+48. <a id="install-server"></a>**`M-x c-xref-install-server`** — builds from source by
     default, since every user of a C tool has a compiler; downloads a release binary as
     the shortcut. The pattern of `pdf-tools-install` and `irony-install-server`. A binary
     fetched by Emacs with `curl` is not quarantined by macOS Gatekeeper.
     Waits for: release-build, protocol-handshake
-48. <a id="releases"></a>**Tagged releases** — semver tags from `stable`, GitHub Releases
+49. <a id="releases"></a>**Tagged releases** — semver tags from `stable`, GitHub Releases
     with binaries, and through the tags MELPA Stable. A Homebrew tap and an AUR package
     are cheap once releases exist.
     Waits for: release-build
-49. <a id="melpa"></a>**The elisp on MELPA** — the package without binaries, which MELPA
+50. <a id="melpa"></a>**The elisp on MELPA** — the package without binaries, which MELPA
     forbids; the server comes from `install-server`. `el-get` and `load.el` stay.
     Waits for: install-server, releases
-50. <a id="readme-first-screen"></a>**The README sells on its first screen** — a GIF or
+51. <a id="readme-first-screen"></a>**The README sells on its first screen** — a GIF or
     asciinema of a parameter move across files; the Java section goes.
-51. <a id="announce"></a>**Announce** — positioned beside clangd, not against it: the
+52. <a id="announce"></a>**Announce** — positioned beside clangd, not against it: the
     refactorings clangd does not have (parameters, move function, macros, Yacc). LSP
     tier 2 is the shape of that, with clangd as the main server; lsp-mode takes add-on
     servers, eglot needs a look. EmacsConf, Sacha Chua's Emacs News, Show HN. A stranger's
     first project working without configuration matters here, see `compile-commands`.
     Waits for: sweep, refactoring-refusals, install-server, readme-first-screen
     Goes with: lsp-tiers, retry-creating-request, compile-commands
-52. <a id="windows-build"></a>**A Windows build** — most of the code is plain C. About 28
+53. <a id="windows-build"></a>**A Windows build** — most of the code is plain C. About 28
     `__WIN32__` remnants from the original Xrefactory are there, unmaintained and untested
     (`misc.c`, `commons.c`, `options.c`). The work is probably: file names (drive letters,
     backslashes, case-insensitive names, i.e. `normalizeFileName()` and file identity, the
@@ -630,7 +623,7 @@ was done.
   *ADR-0029 settles the identity half: the server binds to a root path, the `[section]`
   name stops being an identity, and `-p` goes so `handleProject()` reaches the
   comparison. What stays open is the gate below — which of the three hatches survives,
-  and at what severity. Ties to item 6, which puts `-p` in the config rather than on the
+  and at what severity. Ties to item 7, which puts `-p` in the config rather than on the
   command line.* `callServer` (`src/server.c`) already derives everything from the
   request's input file — `initializeProjectContext`, snapshot load, scan, sibling parse —
   and only then does `answerEditorAction` (`src/cxref.c:1887`) refuse with
@@ -651,7 +644,7 @@ was done.
   silently on crash and on Remove References, and cannot tell that it did); or the server
   locks implicitly from the first request's file and `-getproject` becomes only the
   "which project is this / switch project" query, with `PPC_PROJECT_MISMATCH`
-  (`src/cxref.c:1824`) still enforcing one project per server. Removing `-p` (item 6)
+  (`src/cxref.c:1824`) still enforcing one project per server. Removing `-p` (item 7)
   deletes one of the three hatches, so this has to be settled first or alongside.
   Separately: `FATAL_ERROR` is the wrong severity — a missing `-getproject` is a client
   protocol mistake, not a broken invariant, and killing the server turns it into a
