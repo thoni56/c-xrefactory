@@ -201,11 +201,27 @@ units, 1.38M lines of `.c` and `.h`, on the maintainer's Mac:
   recorded anywhere, which is worth remembering before quoting it back.
 * *Cold-start PUSH* — 42s for `AudioFIRContext` from `af_afir.c`: scan 2.7s, Pass 3 round
   one 19s, round two 19s (the second round from `<...>` includes the full parse
-  discovers). This is the number the two rows below are about, and it has not been
-  re-measured since.
+  discovers). This is the number the two rows below are about. It was measured in March,
+  and is re-measured below.
 
 The first is what a batch prime costs and what a progress estimate would divide; the
 second is what a user waits for before anything appears.
+
+==== Measured, 2026-10-12
+
+The cold-start PUSH again, for `AudioFIRContext` from `af_afir.c`, on the WSL machine
+(session `d25255b8`), with the development build and the fixture's `c-xrefrc.tpl`, from no
+snapshot. Three runs, within 0.15s of each other:
+
+* `-getproject` 0.7s.
+* `-push` 10.0s: 1.0s until the first progress record (scan, include graph, collecting
+  what to build), then one round, "Analysing 128 of 1567 files", about 65ms per
+  compilation unit. The answer is the definition, `af_afir.h:98`. Peak memory 25MB.
+
+There is one round now, not two. What is to be built is collected once per request,
+before anything is built, so includes found while building wait for the next request, as
+do the 1439 files above the cap. The March number does not say which machine or build it
+came from, so the faster parse per compilation unit cannot be put down to a change.
 
 CI cannot supply either number. Travis times script lines, not tests, and `make ci` runs
 the suite as `make -j` with no limit, so its total is build plus the longest test with
