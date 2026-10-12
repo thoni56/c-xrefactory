@@ -349,7 +349,7 @@ static void parseAllUnparsedCompilationUnits(ArgumentsVector baseArgs, int total
     if (waitForUserConfirmation(msg)) {
         int parsed = 0;
         char progressFormat[128];
-        snprintf(progressFormat, sizeof(progressFormat), "Parsing %d compilation units... %%d remaining",
+        snprintf(progressFormat, sizeof(progressFormat), "Analysing %d files... %%d remaining",
                  unparsedCUs);
         initProgress(progressFormat);
         for (int i = getNextExistingFileNumber(0); i != -1; i = getNextExistingFileNumber(i + 1)) {

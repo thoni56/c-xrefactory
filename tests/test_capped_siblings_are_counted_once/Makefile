@@ -4,7 +4,7 @@ include ../Makefile.server
 #
 # Given 130 CUs that, like main.c, include both a.h and b.h, none of them parsed
 # When a is pushed on in main.c
-# Then the progress says 130 unparsed siblings, of which 128 are parsed
+# Then the progress says 128 of 130 files are analysed
 
 SIBLINGS = $(shell seq -w 1 130)
 

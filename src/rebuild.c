@@ -51,11 +51,10 @@ static void setupProgress(BuildList *list) {
     int totalFound = list->count + list->skippedCapped;
     if (list->skippedCapped > 0)
         snprintf(progressFormat, sizeof(progressFormat),
-                 "%d unparsed sibling compilation units, parsing %d... %%d remaining", totalFound,
-                 list->count);
+                 "Analysing %d of %d files... %%d remaining", list->count, totalFound);
     else
         snprintf(progressFormat, sizeof(progressFormat),
-                 "Parsing %d sibling compilation units... %%d remaining", list->count);
+                 "Analysing %d files... %%d remaining", list->count);
     initProgress(progressFormat);
 }
 
