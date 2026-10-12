@@ -5225,6 +5225,7 @@ the reset was performed, nil if the reset was cancelled."
             (error "git reset failed"))
           (c-xref-kill-xref-process nil)
           (delete-file "src/options_config.h") ;; Trigger regeneration of version info
+          (message "Building new server...")
           (unless (zerop (call-process "make" nil output-buffer nil))
             (pop-to-buffer output-buffer)
             (error "Build failed"))
