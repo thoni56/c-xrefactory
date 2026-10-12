@@ -1596,8 +1596,7 @@ mtime-based validation remains correct at next startup.<br>
 <p>A file is stale when its content has changed since it was last parsed. Detected by
 comparing <code>lastParsedMtime</code> against the current file modification time (from disk or
 editor buffer). Stale files trigger reparsing during the entry refresh (ADR 20).
-ADR-0032 replaces it with <em>Out of date</em>, and the code follows with <code>passes-as-one</code> in
-<code>doc/backlog.md</code>.</p>
+ADR-0032 replaces it with <em>Out of date</em>.</p>
 </dd>
 <dt class="hdlist1">Steady state</dt>
 <dd>
@@ -9785,7 +9784,7 @@ If <code>request-target</code> grows the goal, the goal may want a module of its
 The one constraint between them is that every strip comes before any build (Chapter 8, Entry Refresh).</p>
 </li>
 <li>
-<p>The first step is a move, with no other change, opening the backlog&#8217;s <code>passes-as-one</code>.
+<p>The first step is a move, with no other change.
 Before that it would move three passes into a module where they are about to become one.</p>
 </li>
 </ul>
@@ -12277,7 +12276,7 @@ operation reads the in-memory table.</p>
 </div>
 <div id="footer">
 <div id="footer-text">
-Last updated 2026-10-12 12:37:17 UTC
+Last updated 2026-10-12 14:25:27 UTC
 </div>
 </div>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.18.3/highlight.min.js"></script>

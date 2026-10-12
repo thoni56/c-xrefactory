@@ -61,23 +61,22 @@ flowchart BT
   cu_inputs["§7 · 35 · A CU's inputs"]
   out_of_date["§7 · 36 · The config as an input of `knowledgeIsOutOfDate()`"]
   request_target["§7 · 37 · What a request needs"]
-  passes_as_one["§7 · 38 · Pass 1, 2 and 3 become one"]
-  request_through_includers["§7 · 39 · A request in a header is parsed through its includers"]
-  header_not_half["§7 · 40 · Pass 2 does not strip a header it cannot rebuild"]
-  time_budget["§7 · 41 · A time budget instead of the 128 CUs"]
-  freshness_docs["§7 · 42 · The docs follow"]
-  include_edges["§7 · 43 · Who writes include edges"]
-  generations["§7 · 44 · Generations"]
-  sweep["§7 · 45 · Remove references no CU still emits"]
-  sweep_cost["§7 · 46 · What the sweep costs"]
-  release_build["§8 · 47 · A lean release build"]
-  protocol_handshake["§8 · 48 · The client and the server check a protocol version"]
-  install_server["§8 · 49 · `M-x c-xref-install-server`"]
-  releases["§8 · 50 · Tagged releases"]
-  melpa["§8 · 51 · The elisp on MELPA"]
-  readme_first_screen["§8 · 52 · The README sells on its first screen"]
-  announce["§8 · 53 · Announce"]
-  windows_build["§8 · 54 · A Windows build"]
+  request_through_includers["§7 · 38 · A request in a header is parsed through its includers"]
+  header_not_half["§7 · 39 · Pass 2 does not strip a header it cannot rebuild"]
+  time_budget["§7 · 40 · A time budget instead of the 128 CUs"]
+  freshness_docs["§7 · 41 · The docs follow"]
+  include_edges["§7 · 42 · Who writes include edges"]
+  generations["§7 · 43 · Generations"]
+  sweep["§7 · 44 · Remove references no CU still emits"]
+  sweep_cost["§7 · 45 · What the sweep costs"]
+  release_build["§8 · 46 · A lean release build"]
+  protocol_handshake["§8 · 47 · The client and the server check a protocol version"]
+  install_server["§8 · 48 · `M-x c-xref-install-server`"]
+  releases["§8 · 49 · Tagged releases"]
+  melpa["§8 · 50 · The elisp on MELPA"]
+  readme_first_screen["§8 · 51 · The README sells on its first screen"]
+  announce["§8 · 52 · Announce"]
+  windows_build["§8 · 53 · A Windows build"]
   entry_refresh["Entry refresh before every request (ADR-0020)"]
   adr_0029["ADR-0029: the project's identity is its root path"]
   adr_0030["ADR-0030: opening a project and asking about a file are separate"]
@@ -93,7 +92,6 @@ flowchart BT
   adr_0030 --&gt; setup_into_openproject
   setup_into_openproject --&gt; openproject_tripwire
   adr_0031 --&gt; project_extent
-  passes_as_one --&gt; behind_the_back
   startup_command_line --&gt; header_static_link_names
   header_filtered_siblings --&gt; scan_angle_includes
   scan_angle_includes --&gt; lexing_cache
@@ -103,7 +101,6 @@ flowchart BT
   report_errors_flag --&gt; indexing_log_buffer
   partition_options --&gt; out_of_date
   adr_0032 --&gt; request_target
-  passes_as_one --&gt; time_budget
   adr_0033 --&gt; generations
   generations --&gt; sweep
   include_edges --&gt; sweep
@@ -112,7 +109,6 @@ flowchart BT
   release_build --&gt; releases
   install_server --&gt; melpa
   releases --&gt; melpa
-  passes_as_one --&gt; announce
   sweep --&gt; announce
   refactoring_refusals --&gt; announce
   install_server --&gt; announce
@@ -131,7 +127,7 @@ flowchart BT
   class mode_checks ready
   class remove_bridge ready
   class refactoring_refusals ready
-  class behind_the_back blocked
+  class behind_the_back ready
   class extract_statics_by_value ready
   class token_pasting_trio ready
   class header_static_link_names blocked
@@ -166,10 +162,9 @@ flowchart BT
   class cu_inputs ready
   class out_of_date blocked
   class request_target ready
-  class passes_as_one ready
   class request_through_includers ready
   class header_not_half ready
-  class time_budget blocked
+  class time_budget ready
   class freshness_docs ready
   class include_edges ready
   class generations ready
