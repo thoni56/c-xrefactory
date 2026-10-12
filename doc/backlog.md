@@ -192,11 +192,13 @@ graph from them on every push, linked at the end of this file, and `utils/backlo
     not wait for `sweep`. The message "try re-saving the file" no longer fits. Found by
     reading the code (Mac, session `05984816`, 2026-10-06), not tested.
     Goes with: behind-the-back, sweep
-11. <a id="behind-the-back"></a>**Behind-the-back disk changes** — a header changed on
-    disk is stripped only by Pass 3, i.e. when the request includes it directly and every
-    includer is built again. Otherwise its includers keep their references to the old
-    header (ghosts). From reading the code (WSL, session `d25255b8`, 2026-10-11), not
-    tested.
+11. <a id="behind-the-back"></a>**A header changed on disk, which the editor does not hold, keeps its old references** —
+    it is stripped only when the request file is it or includes it directly, and all its
+    includers are built. An includer built later adds the new references beside the old
+    ones (ghosts). From reading the code (WSL, session `d25255b8`, 2026-10-11 and
+    2026-10-12), not tested.
+    Waits for: request-target
+    Goes with: sweep
 12. <a id="extract-statics-by-value"></a>**Extract passes statics by value** — *no test pins it.* Since the gate fix this
     compiles and silently does the wrong thing, where before it failed to compile.
     Liveness-after-the-region is the wrong question for static storage: treat
@@ -508,7 +510,14 @@ are noted in `cu-inputs`, `out-of-date`, `time-budget` and `sweep-cost`.
     strips the header's references and then reparses at most 128 includers, so the rest
     of their references are lost, not stale. Leave the header alone when the cap stops it.
     Not needed once `sweep` is in.
-40. <a id="time-budget"></a>**A time budget instead of the 128 CUs** — above it the question
+40. <a id="parse-all-out-of-date"></a>**An operation on a name analyses only the files never analysed** —
+    parse-all counts and parses the CUs without knowledge
+    (`countUnparsedCompilationUnits()`, `parseAllUnparsedCompilationUnits()` in
+    `src/server.c`), not those out of date. A CU whose header changed on disk keeps its
+    old references through a rename. From reading the code (WSL, session `d25255b8`,
+    2026-10-12), not tested.
+    Goes with: time-budget, behind-the-back
+41. <a id="time-budget"></a>**A time budget instead of the 128 CUs** — above it the question
     with an estimate. Browsing remembers a "no" for the session, an operation that edits
     or works on a name is cancelled by it. Touches the client's question. Open: does a remembered "no" stop parsing, or only the asking, so
     that each request still parses a budget's worth? With `sweep` the second is safe, and
@@ -520,10 +529,10 @@ are noted in `cu-inputs`, `out-of-date`, `time-budget` and `sweep-cost`.
     found change first (`out-of-date`): `stat` every known file once and walk the reverse
     include graph to the CUs. Then project-wide goals use that and the rest ask
     `knowledgeIsOutOfDate()` per CU, with a test that the two agree for every CU.
-41. <a id="freshness-docs"></a>**The docs follow** — *Out of date* replaces *Staleness* in
+42. <a id="freshness-docs"></a>**The docs follow** — *Out of date* replaces *Staleness* in
     `06-principles`, and `08-algorithms` loses "Dual Semantics". In `06-principles`, the
     part on why reparsing only a subset is safe also describes strip-then-reparse.
-42. <a id="include-edges"></a>**Who writes include edges** — the parse and the lightweight
+43. <a id="include-edges"></a>**Who writes include edges** — the parse and the lightweight
     scan both do. The parse records the `#include`s the preprocessor took, quoted and
     `<...>`, at their real lines. The scan records every quoted `#include`, `#ifdef` or
     not, no `<...>`, all at line 1, column 0 of the includer. A "defined" reference at
@@ -533,17 +542,17 @@ are noted in `cu-inputs`, `out-of-date`, `time-budget` and `sweep-cost`.
     write an edge and which writer wins. The sweep needs it: it removes a file's
     references once every CU reaching it has been parsed again, so an edge the graph
     lacks makes it remove live references, silently (ADR-0033).
-43. <a id="generations"></a>**Generations** — a counter per parse, a mark on every
+44. <a id="generations"></a>**Generations** — a counter per parse, a mark on every
     reference, refreshed in `addToReferenceList()`, and a test that every reference
     enters the table there.
     Waits for: adr-0033
-44. <a id="sweep"></a>**Remove references no CU still emits** — after each request that
+45. <a id="sweep"></a>**Remove references no CU still emits** — after each request that
     parsed something, remove a reference older than every reaching CU's knowledge
     generation, and drop the strips in advance in `buildKnowledgeOfCU()`, Pass 2 and
     `singlePass()`. A capped reverse walk removes nothing in that file.
     `test_preprocess_edit_removes_ifdef_define` comes off suspension.
     Waits for: generations, include-edges
-45. <a id="sweep-cost"></a>**What the sweep costs** — memory and walk time on ffmpeg,
+46. <a id="sweep-cost"></a>**What the sweep costs** — memory and walk time on ffmpeg,
     whether the reverse walk can go uncapped, and how the mark is stored. The baseline
     to time against: `removeReferenceableItemsForFile()` walks the whole table, and today
     runs before every CU reparse and for every changed header in Pass 2, so parsing 128
@@ -568,34 +577,34 @@ announcement until branch switching is safe, since a wrong rename after a `git c
 loses a first user. *No repo home yet* for any of these — discussed on WSL and on the
 Mac (session `05984816`), 2026-10-07.
 
-46. <a id="release-build"></a>**A lean release build** — no coverage, no unit tests, only
+47. <a id="release-build"></a>**A lean release build** — no coverage, no unit tests, only
     `c-xref`. The generated parsers are committed, so `cc` and `make` are enough.
-47. <a id="protocol-handshake"></a>**The client and the server check a protocol version** —
+48. <a id="protocol-handshake"></a>**The client and the server check a protocol version** —
     once the elisp and the binary are installed apart they drift (MELPA builds HEAD, the
     binary is whatever was built). On a mismatch the client offers to rebuild, rather
     than failing in some later request.
-48. <a id="install-server"></a>**`M-x c-xref-install-server`** — builds from source by
+49. <a id="install-server"></a>**`M-x c-xref-install-server`** — builds from source by
     default, since every user of a C tool has a compiler; downloads a release binary as
     the shortcut. The pattern of `pdf-tools-install` and `irony-install-server`. A binary
     fetched by Emacs with `curl` is not quarantined by macOS Gatekeeper.
     Waits for: release-build, protocol-handshake
-49. <a id="releases"></a>**Tagged releases** — semver tags from `stable`, GitHub Releases
+50. <a id="releases"></a>**Tagged releases** — semver tags from `stable`, GitHub Releases
     with binaries, and through the tags MELPA Stable. A Homebrew tap and an AUR package
     are cheap once releases exist.
     Waits for: release-build
-50. <a id="melpa"></a>**The elisp on MELPA** — the package without binaries, which MELPA
+51. <a id="melpa"></a>**The elisp on MELPA** — the package without binaries, which MELPA
     forbids; the server comes from `install-server`. `el-get` and `load.el` stay.
     Waits for: install-server, releases
-51. <a id="readme-first-screen"></a>**The README sells on its first screen** — a GIF or
+52. <a id="readme-first-screen"></a>**The README sells on its first screen** — a GIF or
     asciinema of a parameter move across files; the Java section goes.
-52. <a id="announce"></a>**Announce** — positioned beside clangd, not against it: the
+53. <a id="announce"></a>**Announce** — positioned beside clangd, not against it: the
     refactorings clangd does not have (parameters, move function, macros, Yacc). LSP
     tier 2 is the shape of that, with clangd as the main server; lsp-mode takes add-on
     servers, eglot needs a look. EmacsConf, Sacha Chua's Emacs News, Show HN. A stranger's
     first project working without configuration matters here, see `compile-commands`.
     Waits for: sweep, refactoring-refusals, install-server, readme-first-screen
     Goes with: lsp-tiers, retry-creating-request, compile-commands
-53. <a id="windows-build"></a>**A Windows build** — most of the code is plain C. About 28
+54. <a id="windows-build"></a>**A Windows build** — most of the code is plain C. About 28
     `__WIN32__` remnants from the original Xrefactory are there, unmaintained and untested
     (`misc.c`, `commons.c`, `options.c`). The work is probably: file names (drive letters,
     backslashes, case-insensitive names, i.e. `normalizeFileName()` and file identity, the
