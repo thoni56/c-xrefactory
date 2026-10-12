@@ -268,16 +268,13 @@ static int collectOutOfDateHeldCUs(int cuFileNumbers[], int cuCount, Inputs *inp
     return cuCount;
 }
 
-void bringHeldFilesUpToDate(ArgumentsVector baseArgs) {
+void bringHeldFilesUpToDate(Inputs *inputs, ArgumentsVector baseArgs) {
     int cuFileNumbers[MAX_CUS_TO_REPARSE];
     int cuCount = 0;
 
     /* Held CUs whose knowledge is out of date. They go first, so the cap
-     * never leaves one of them out. Inputs of its own, because the
-     * request's are collected after this has parsed. */
-    Inputs *inputs = collectInputs();
+     * never leaves one of them out. */
     cuCount = collectOutOfDateHeldCUs(cuFileNumbers, cuCount, inputs);
-    freeInputs(inputs);
 
     /* Stale held headers are stripped before any CU is built, so each CU
      * that includes one is built once and puts its part of the header

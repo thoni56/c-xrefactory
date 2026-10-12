@@ -390,17 +390,8 @@ void callServer(ArgumentsVector baseArgs, ArgumentsVector requestArgs) {
      * from preloaded content the client has dropped. */
     closeEditorBuffersNoLongerHeld(baseArgs);
 
-    /* Reparse any stale preloaded files before dispatching the operation,
-     * so all operations see fresh in-memory references. */
-    if (projectContextInitialized) {
-        /* Clear cursorOffset so the lexer doesn't set positionOfSelectedReference
-         * during the reparse — that would trigger on-line action handling (browsing stack
-         * assertions) before the operation has set things up. */
-        int savedCursorOffset = options.cursorOffset;
-        options.cursorOffset = NO_CURSOR_OFFSET;
-        bringHeldFilesUpToDate(baseArgs);
-        options.cursorOffset = savedCursorOffset;
-    }
+    /* Held files are brought up to date only in a project that was open already */
+    bool projectWasOpen = projectContextInitialized;
 
     bool hasInputFile = prepareInputFileForRequest();
 
@@ -442,6 +433,18 @@ void callServer(ArgumentsVector baseArgs, ArgumentsVector requestArgs) {
     }
 
     Inputs *inputs = collectInputs();
+
+    /* Reparse any stale preloaded files before dispatching the operation,
+     * so all operations see fresh in-memory references. */
+    if (projectWasOpen) {
+        /* Clear cursorOffset so the lexer doesn't set positionOfSelectedReference
+         * during the reparse — that would trigger on-line action handling (browsing stack
+         * assertions) before the operation has set things up. */
+        int savedCursorOffset = options.cursorOffset;
+        options.cursorOffset = NO_CURSOR_OFFSET;
+        bringHeldFilesUpToDate(inputs, baseArgs);
+        options.cursorOffset = savedCursorOffset;
+    }
 
     /* Entry refresh pass 3: parse sibling CUs that share headers with
      * the request file but haven't been parsed yet (e.g. cold start). */

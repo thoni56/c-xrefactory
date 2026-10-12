@@ -13,7 +13,7 @@ void parseUnparsedSiblingCUs(Inputs *inputs, int requestFileNumber, bool request
     mock(inputs, requestFileNumber, requestIsParsed, baseArgs);
 }
 
-void bringHeldFilesUpToDate(ArgumentsVector baseArgs_) {
+void bringHeldFilesUpToDate(Inputs *inputs, ArgumentsVector baseArgs_) {
     ArgumentsVector *baseArgs = &baseArgs_;
-    mock(baseArgs);
+    mock(inputs, baseArgs);
 }

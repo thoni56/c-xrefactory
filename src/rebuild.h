@@ -12,4 +12,4 @@ extern int collectCUsIncluding(int fileNumber, int cuFileNumbers[], int cuCount,
 extern void parseUnparsedSiblingCUs(Inputs *inputs, int requestFileNumber, bool requestIsParsed,
                                     ArgumentsVector baseArgs);
 
-extern void bringHeldFilesUpToDate(ArgumentsVector baseArgs);
+extern void bringHeldFilesUpToDate(Inputs *inputs, ArgumentsVector baseArgs);
