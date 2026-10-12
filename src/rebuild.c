@@ -15,16 +15,32 @@
 #include "referencerefresh.h"
 
 
-static void setupProgress(int cuCount, int skippedCapped) {
+/* The CUs to build, at most MAX_CUS_TO_REPARSE of them */
+typedef struct {
+    int fileNumbers[MAX_CUS_TO_REPARSE];
+    int count;
+    int skippedCapped; /* Out of date, but did not fit */
+} BuildList;
+
+static bool addToBuildList(BuildList *list, int fileNumber) {
+    if (list->count < MAX_CUS_TO_REPARSE) {
+        list->fileNumbers[list->count++] = fileNumber;
+        return true;
+    }
+    list->skippedCapped++;
+    return false;
+}
+
+static void setupProgress(BuildList *list) {
     static char progressFormat[128];
-    int totalFound = cuCount + skippedCapped;
-    if (skippedCapped > 0)
+    int totalFound = list->count + list->skippedCapped;
+    if (list->skippedCapped > 0)
         snprintf(progressFormat, sizeof(progressFormat),
                  "%d unparsed sibling compilation units, parsing %d... %%d remaining", totalFound,
-                 cuCount);
+                 list->count);
     else
         snprintf(progressFormat, sizeof(progressFormat),
-                 "Parsing %d sibling compilation units... %%d remaining", cuCount);
+                 "Parsing %d sibling compilation units... %%d remaining", list->count);
     initProgress(progressFormat);
 }
 
@@ -46,10 +62,8 @@ static bool everyIncluderIsRebuilt(int includers[], int includerCount, bool rebu
  * file table and checks if the request file is among their includers. */
 void parseUnparsedSiblingCUs(Inputs *inputs, int requestFileNumber, bool requestIsParsed,
                              ArgumentsVector baseArgs) {
-    int cuFileNumbers[MAX_CUS_TO_REPARSE];
-    int cuCount = 0;
+    BuildList buildList = {.count = 0, .skippedCapped = 0};
     int skippedAlreadyParsed = 0;
-    int skippedCapped = 0;
 
     log_info("Pass 3: request file '%s' (fileNumber=%d)",
              getFileItemWithFileNumber(requestFileNumber)->name, requestFileNumber);
@@ -106,12 +120,9 @@ void parseUnparsedSiblingCUs(Inputs *inputs, int requestFileNumber, bool request
                 continue;
             }
 
-            if (cuCount < MAX_CUS_TO_REPARSE) {
-                cuFileNumbers[cuCount++] = siblingFileNum;
+            if (addToBuildList(&buildList, siblingFileNum)) {
                 rebuilt[siblingFileNum] = true;
                 log_debug("Sibling CU '%s' shares header with request file", siblingItem->name);
-            } else {
-                skippedCapped++;
             }
         }
 
@@ -127,20 +138,20 @@ void parseUnparsedSiblingCUs(Inputs *inputs, int requestFileNumber, bool request
     free(siblingCUs);
     free(asked);
 
-    log_info("Pass 3: %d to parse, %d skipped (already parsed), %d skipped (cap %d)", cuCount,
-             skippedAlreadyParsed, skippedCapped, MAX_CUS_TO_REPARSE);
+    log_info("Pass 3: %d to parse, %d skipped (already parsed), %d skipped (cap %d)",
+             buildList.count, skippedAlreadyParsed, buildList.skippedCapped, MAX_CUS_TO_REPARSE);
 
-    if (cuCount > 0) {
-        log_info("Entry refresh pass 3: parsing %d sibling CU(s)", cuCount);
+    if (buildList.count > 0) {
+        log_info("Entry refresh pass 3: parsing %d sibling CU(s)", buildList.count);
         if (options.cxrefProtocol) {
-            setupProgress(cuCount, skippedCapped);
+            setupProgress(&buildList);
         }
         int savedCursorOffset = options.cursorOffset;
         options.cursorOffset = NO_CURSOR_OFFSET;
-        for (int i = 0; i < cuCount; i++) {
-            buildKnowledgeOfCU(cuFileNumbers[i], baseArgs);
+        for (int i = 0; i < buildList.count; i++) {
+            buildKnowledgeOfCU(buildList.fileNumbers[i], baseArgs);
             if (options.cxrefProtocol)
-                writeProgressInformation(cuCount - i - 1);
+                writeProgressInformation(buildList.count - i - 1);
         }
         options.cursorOffset = savedCursorOffset;
     }
@@ -211,7 +222,7 @@ int collectCUsIncluding(int fileNumber, int cuFileNumbers[], int cuCount, int ma
     return cuCount;
 }
 
-static int stripChangedHeldHeaders(int cuFileNumbers[], int cuCount) {
+static void stripChangedHeldHeaders(BuildList *list) {
     for (int i = 0; i != -1; i = getNextExistingEditorBufferIndex(i + 1)) {
         for (EditorBufferList *l = getEditorBufferListElementAt(i); l != NULL; l = l->next) {
             int fileNumber = l->buffer->fileNumber;
@@ -222,8 +233,8 @@ static int stripChangedHeldHeaders(int cuFileNumbers[], int cuCount) {
                               fileItem->name);
                     markFileAsDeleted(fileNumber);
                 } else {
-                    cuCount =
-                        collectCUsIncluding(fileNumber, cuFileNumbers, cuCount, MAX_CUS_TO_REPARSE);
+                    list->count = collectCUsIncluding(fileNumber, list->fileNumbers, list->count,
+                                                      MAX_CUS_TO_REPARSE);
                     /* The stale header's own references go now; building the CUs
                      * above re-emits them. */
                     removeReferenceableItemsForFile(fileNumber);
@@ -235,8 +246,6 @@ static int stripChangedHeldHeaders(int cuFileNumbers[], int cuCount) {
             }
         }
     }
-
-    return cuCount;
 }
 
 /* Only what the client holds, as for a stale header */
@@ -248,7 +257,7 @@ static bool heldCUIsOutOfDate(Inputs *inputs, EditorBuffer *buffer) {
            && knowledgeIsOutOfDate(inputs, buffer->fileNumber);
 }
 
-static int collectOutOfDateHeldCUs(int cuFileNumbers[], int cuCount, Inputs *inputs) {
+static void collectOutOfDateHeldCUs(BuildList *list, Inputs *inputs) {
     for (int i = 0; i != -1; i = getNextExistingEditorBufferIndex(i + 1)) {
         for (EditorBufferList *l = getEditorBufferListElementAt(i); l != NULL; l = l->next) {
             int fileNumber = l->buffer->fileNumber;
@@ -258,43 +267,40 @@ static int collectOutOfDateHeldCUs(int cuFileNumbers[], int cuCount, Inputs *inp
                     log_debug("Out-of-date CU '%s' no longer exists, marking as deleted",
                               fileItem->name);
                     markFileAsDeleted(fileNumber);
-                } else if (cuCount < MAX_CUS_TO_REPARSE) {
-                    cuFileNumbers[cuCount++] = fileNumber;
+                } else {
+                    addToBuildList(list, fileNumber);
                 }
             }
         }
     }
-
-    return cuCount;
 }
 
 void bringHeldFilesUpToDate(Inputs *inputs, ArgumentsVector baseArgs) {
-    int cuFileNumbers[MAX_CUS_TO_REPARSE];
-    int cuCount = 0;
+    BuildList buildList = {.count = 0, .skippedCapped = 0};
 
     /* Held CUs whose knowledge is out of date. They go first, so the cap
      * never leaves one of them out. */
-    cuCount = collectOutOfDateHeldCUs(cuFileNumbers, cuCount, inputs);
+    collectOutOfDateHeldCUs(&buildList, inputs);
 
     /* Stale held headers are stripped before any CU is built, so each CU
      * that includes one is built once and puts its part of the header
      * back. The includers are found through the include references as
      * they were before this request. */
-    cuCount = stripChangedHeldHeaders(cuFileNumbers, cuCount);
+    stripChangedHeldHeaders(&buildList);
 
-    if (cuCount > 0) {
-        log_info("Building %d CU(s) to bring held files up to date", cuCount);
+    if (buildList.count > 0) {
+        log_info("Building %d CU(s) to bring held files up to date", buildList.count);
         if (options.cxrefProtocol) {
             static char progressFormat[128];
             snprintf(progressFormat, sizeof(progressFormat),
-                     "Updating %d compilation units... %%d remaining", cuCount);
+                     "Updating %d compilation units... %%d remaining", buildList.count);
             initProgress(progressFormat);
         }
-        for (int i = 0; i < cuCount; i++) {
-            buildKnowledgeOfCU(cuFileNumbers[i], baseArgs);
-            getFileItemWithFileNumber(cuFileNumbers[i])->needsBrowsingStackRefresh = true;
+        for (int i = 0; i < buildList.count; i++) {
+            buildKnowledgeOfCU(buildList.fileNumbers[i], baseArgs);
+            getFileItemWithFileNumber(buildList.fileNumbers[i])->needsBrowsingStackRefresh = true;
             if (options.cxrefProtocol)
-                writeProgressInformation(cuCount - i - 1);
+                writeProgressInformation(buildList.count - i - 1);
         }
     }
 }
