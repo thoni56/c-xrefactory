@@ -458,18 +458,11 @@ are noted in `cu-inputs`, `out-of-date`, `time-budget` and `sweep-cost`.
     proportion to what changed.
     Goes with: cu-inputs, local-config-fragments
 - (#37) <a id="request-target"></a>**What a request needs** — the CUs that reach the request
-    file's closure, and the whole project for an operation on a name. The sibling
-    collection (`collectSiblingCUs()`) takes the CUs that reach a header the request file
-    includes directly, through a mock or another header too (`collectCUsIncluding()`). It does not go further down: with the request
-    including `a.h`, `a.h` including `decl.h` and an unparsed `z.c` including `decl.h`, a
-    rename of a symbol from `decl.h` should miss `z.c` (from reading the code, WSL session
-    `76735541`; test first). `collectIncludeClosure()` gives the closure already, from
-    the include graph in `Inputs`. On ffmpeg it reaches almost every CU, which the cap
-    already stops, and `time-budget` after it.
-    Also, within today's rule: `collectCUsIncluding()` stops walking after 256 files,
-    silently, which on ffmpeg cuts a widely included header short. The scan does not
-    record `<...>` includes, so for a project that includes its own headers that way,
-    reach misses CUs never parsed.
+    file's closure, and the whole project for an operation on a name. Left: when its array
+    of 256 files is full, `collectCUsIncluding()` walks no further up, silently, which on
+    ffmpeg cuts a widely included header short. The scan does not record `<...>`
+    includes (`scan-angle-includes`), so for a project that includes its own headers that
+    way, reach misses CUs never parsed.
     Waits for: adr-0032
     Goes with: header-filtered-siblings
 - (#54) <a id="request-through-includers"></a>**A request in a header is parsed through its includers** —
