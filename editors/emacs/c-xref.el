@@ -1705,6 +1705,9 @@ tries to delete C-xrefactory windows first.
             (c-xref-start-server-process '("-server") c-xref-server-tasks-ofile proc 'c-xref-server-filter)
       (if (not (eq (process-status (car (eval proc))) 'run))
               (progn
+                (message "C-xref server had stopped (%s %d), starting a new one"
+                         (if (eq (process-status (car (eval proc))) 'signal) "signal" "exit status")
+                         (process-exit-status (car (eval proc))))
                 (delete-process (car (eval proc)))
                 (c-xref-start-server-process '("-server") c-xref-server-tasks-ofile proc 'c-xref-server-filter)
                 )))
