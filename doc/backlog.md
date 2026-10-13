@@ -205,9 +205,6 @@ graph from them on every push, linked at the end of this file, and `utils/backlo
       `-prune ffmpeg/compat/atomics`, which with `ffmpeg/` as root names a directory that
       does not exist, silently.
       Goes with: adr-0031
-   c. <a id="unknown-cu-under-include"></a>**Any file under an `-I` directory counts as project** —
-      `tests/test_getproject_unknown_cu_under_include_path`.
-      Goes with: project-extent
    d. <a id="no-project-twice"></a>**`-getproject` for a file outside any project answers `<no-project-found>` twice** —
       *no repo home yet*. `tests/test_no_project_writes_no_snapshot` shows it, and its
       `expected` keeps both for now, so that test is only about the snapshot. Seen on
