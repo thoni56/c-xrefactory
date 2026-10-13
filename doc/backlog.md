@@ -245,6 +245,20 @@ graph from them on every push, linked at the end of this file, and `utils/backlo
       means, but a client that died without `exit` should not look like a parse error.
       From reading the code (WSL, session `d25255b8`, 2026-10-10), not tested.
 
+- (#58) <a id="search-result-line-zero"></a>**The client asks for search result number 0** — suspected, not
+    reproduced. Typing a search string gave `-olcxsearchgoto0` at once, twice, each time
+    after the question "N of M files need analysing" (WSL, 2026-10-13, the client on
+    `ac3f52e2`). After a push had analysed the files, the same search asked nothing and
+    listed one line. `c-xref-call-task-on-line` (`editors/emacs/c-xref.el`) sends the
+    line number from `count-lines`, which is 0 only in an empty buffer. Suspects: the
+    answer to the question dispatches the symbol list nested inside the first answer
+    (`c-xref-server-dispatch-wait-confirmation`), and the dialog's Enter or space is also
+    "go to" in the search results. The ERT harness (`check-elisp`) can drive it. The
+    server now answers 0 with an error naming the number
+    (`test_search_result_number_zero_is_answered`).
+    Needs designing first: the client has met questions only as answers, never in the
+    middle of a request it is still dispatching.
+
 ## 4. Performance, in strict dependency order
 
 Roadmap → Optimization has the baseline: a cold-start PUSH on ffmpeg, measured in March
