@@ -3,12 +3,8 @@ CXREF -server
 <sync>
 -olcxpushname=value -olcxlccursor=1:0 -olcursor=0 CURDIR/main.c
 <sync>
--continue
-<sync>
 !sleep 0.1
 !cp CURDIR/header_v2.h CURDIR/header.h
 -olcxpushname=value -olcxlccursor=1:0 -olcursor=0 CURDIR/main.c
-<sync>
--continue
 <sync>
 <exit>

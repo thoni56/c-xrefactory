@@ -4,9 +4,6 @@
 # files can define it; like -search, it is project-wide and needs every CU
 # parsed. main.c, the request file, includes nothing, so on a cold start the
 # only way to find helper is to parse helper.c and other.c.
-#
-# expected assumes push by name asks before parsing everything, the way -search
-# does ("N of M files need analysing"), answered by -continue.
 
 include ../Makefile.server
 

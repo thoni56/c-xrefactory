@@ -3,6 +3,4 @@ CXREF -server
 <sync>
 -search=feature_only -olcursor=1 CURDIR/source.c
 <sync>
--continue
-<sync>
 <exit>

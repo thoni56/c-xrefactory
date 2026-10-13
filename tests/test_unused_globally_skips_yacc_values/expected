@@ -8,11 +8,6 @@ end-of-options
 end-of-options
 
 <sync>
-<wait-confirmation len=<n>>1 of 1 files need analysing. Analyse all before checking for unused?</wait-confirmation>
--continue
-end-of-options
-
-<sync>
 <display-or-update-browser len=<n>></display-or-update-browser>
 -olcxmenufilter=2
 end-of-options

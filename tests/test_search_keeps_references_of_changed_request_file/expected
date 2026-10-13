@@ -16,11 +16,6 @@ shell: cp CURDIR/a.v2 CURDIR/a.c
 end-of-options
 
 <sync>
-<wait-confirmation len=<n>>1 of 1 files need analysing. Analyse all before searching?</wait-confirmation>
--cancel
-end-of-options
-
-<sync>
 <symbol-list>
  <str len=<n>>f :a.c :CURDIR/a.c</str>
 </symbol-list>

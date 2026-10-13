@@ -8,11 +8,6 @@ end-of-options
 end-of-options
 
 <sync>
-<wait-confirmation len=<n>>1 of 1 files need analysing. Analyse all before searching?</wait-confirmation>
--continue
-end-of-options
-
-<sync>
 <symbol-list>
  <str len=<n>>ilist :browsing.c :CURDIR/browsing.c</str>
 </symbol-list>

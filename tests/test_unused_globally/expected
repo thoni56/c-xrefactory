@@ -8,11 +8,6 @@ end-of-options
 end-of-options
 
 <sync>
-<wait-confirmation len=<n>>1 of 2 files need analysing. Analyse all before checking for unused?</wait-confirmation>
--cancel
-end-of-options
-
-<sync>
 <display-or-update-browser len=<n>></display-or-update-browser>
 -exit
 end-of-options

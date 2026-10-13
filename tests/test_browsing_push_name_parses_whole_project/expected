@@ -8,11 +8,6 @@ end-of-options
 end-of-options
 
 <sync>
-<wait-confirmation len=<n>>3 of 3 files need analysing. Analyse all before browsing?</wait-confirmation>
--continue
-end-of-options
-
-<sync>
 <goto>
  <position-lc line=3 col=4 len=<n>>CURDIR/helper.c</position-lc>
 </goto>

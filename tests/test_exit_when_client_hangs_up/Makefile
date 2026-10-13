@@ -1,12 +1,12 @@
 # The server is left talking to nobody
 #
-# The command file ends while the server waits for an answer to the parse-all
-# question, so the driver closes the channel without saying -exit. That is what
-# an editor that died looks like from the server's side: it notices at its next
-# read, and has to go away - no records written at a closed channel, no orphan
-# process holding the reference table, nothing for the driver to report.
+# The command file ends after a push by name has answered, so the driver closes
+# the channel without saying -exit. That is what an editor that died looks like
+# from the server's side: it notices at its next read, and has to go away - no
+# records written at a closed channel, no orphan process holding the reference
+# table, nothing for the driver to report.
 #
-# The expected output therefore stops at the question. Anything after it means
+# The expected output therefore stops at the answer. Anything after it means
 # the server said something to a client that was not there; a missing exit is
 # reported by the driver, whose drain is bounded.
 #

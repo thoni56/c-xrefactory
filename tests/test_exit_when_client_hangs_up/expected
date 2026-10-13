@@ -4,8 +4,10 @@ end-of-options
 
 <sync>
 <set-info len=<n>>CURDIR</set-info>
--search=counter -searchdef -olinelen=159 -olcxlccursor=1:0 -olcursor=0 CURDIR/main.c
+-olcxpushname=counter -olcxlccursor=1:0 -olcursor=0 CURDIR/main.c
 end-of-options
 
 <sync>
-<wait-confirmation len=<n>>2 of 2 files need analysing. Analyse all before searching?</wait-confirmation>
+<goto>
+ <position-lc line=1 col=4 len=<n>>CURDIR/main.c</position-lc>
+</goto>

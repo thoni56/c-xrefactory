@@ -60,10 +60,19 @@ AfterEach(Server) {}
 extern bool prepareInputFileForRequest(void);
 extern void setRequestFileArgument(int fileNumber);
 extern void singlePass(ArgumentsVector args, ArgumentsVector nargs);
+extern bool needsConfirmationToAnalyse(int outOfDateCUs);
 
 Ensure(Server, has_a_none_operation) {
     assert_that(OP_NONE, is_equal_to(0));
     assert_that(operationNamesTable[OP_NONE], is_equal_to_string("OP_NONE"));
+}
+
+Ensure(Server, does_not_ask_before_analysing_files_within_the_cap) {
+    assert_that(needsConfirmationToAnalyse(MAX_CUS_TO_REPARSE), is_false);
+}
+
+Ensure(Server, asks_before_analysing_more_files_than_the_cap) {
+    assert_that(needsConfirmationToAnalyse(MAX_CUS_TO_REPARSE + 1), is_true);
 }
 
 /* The request names a file; other files can be scheduled alongside it when a

@@ -330,13 +330,18 @@ static void scanProjectStructure() {
     freeStringList(discoveredCUs);
 }
 
+/* Analysing within the cap is not worth a question (ADR-0032, time budget) */
+protected bool needsConfirmationToAnalyse(int outOfDateCUs) {
+    return outOfDateCUs > MAX_CUS_TO_REPARSE;
+}
+
 static void parseAllUnparsedCompilationUnits(ArgumentsVector baseArgs, Inputs *inputs, int totalCUs,
                                              int unparsedCUs) {
     char msg[TMP_STRING_SIZE];
     const char *operationName = parseAllPromptFor(options.serverOperation);
     sprintf(msg, "%d of %d files need analysing. Analyse all before %s?", unparsedCUs, totalCUs,
             operationName);
-    if (waitForUserConfirmation(msg)) {
+    if (!needsConfirmationToAnalyse(unparsedCUs) || waitForUserConfirmation(msg)) {
         int parsed = 0;
         char progressFormat[128];
         snprintf(progressFormat, sizeof(progressFormat), "Analysing %d files... %%d remaining",

@@ -3,6 +3,4 @@ CXREF -server -I CURDIR/path1 -I CURDIR/path2
 <sync>
 -search=non_existant_to_force_parse_all -olcursor=1 CURDIR/source.c
 <sync>
--continue
-<sync>
 <exit>

@@ -3,8 +3,6 @@ CXREF -server
 <sync>
 -olcxpushname=helper -olcxlccursor=1:0 -olcursor=0 CURDIR/main.c
 <sync>
--continue
-<sync>
 -olcxfilter=0 -olcursor=0 nil
 <sync>
 <exit>

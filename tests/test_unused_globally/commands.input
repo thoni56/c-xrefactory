@@ -3,6 +3,4 @@ CXREF -crlfconversion -crconversion -server
 <sync>
 -olcxpushglobalunused CURDIR/main.c
 <sync>
--cancel
-<sync>
 <exit>

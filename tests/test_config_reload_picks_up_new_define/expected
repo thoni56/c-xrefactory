@@ -8,20 +8,10 @@ end-of-options
 end-of-options
 
 <sync>
-<wait-confirmation len=<n>>1 of 1 files need analysing. Analyse all before searching?</wait-confirmation>
--continue
-end-of-options
-
-<sync>
 <symbol-list>
 </symbol-list>
 shell: cp c-xrefrc.with_feature .c-xrefrc
 -search=feature_only source.c
-end-of-options
-
-<sync>
-<wait-confirmation len=<n>>1 of 1 files need analysing. Analyse all before searching?</wait-confirmation>
--continue
 end-of-options
 
 <sync>

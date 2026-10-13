@@ -3,8 +3,6 @@ CXREF -server
 <sync>
 -olcxpushglobalunused CURDIR/grammar.y
 <sync>
--continue
-<sync>
 -olcxmenufilter=2
 <sync>
 <exit>

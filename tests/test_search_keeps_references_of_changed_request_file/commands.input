@@ -6,6 +6,4 @@ CXREF -server
 !cp CURDIR/a.v2 CURDIR/a.c
 -search=f -olcursor=1 CURDIR/a.c
 <sync>
--cancel
-<sync>
 <exit>
