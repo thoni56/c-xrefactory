@@ -64,7 +64,7 @@ static void setupProgress(BuildList *list) {
     initProgress(progressFormat);
 }
 
-static bool everyIncluderIsRebuilt(int includers[], int includerCount, bool rebuilt[]) {
+static bool everyIncluderIsBuilt(int includers[], int includerCount, bool rebuilt[]) {
     for (int i = 0; i < includerCount; i++) {
         if (!rebuilt[includers[i]])
             return false;
@@ -139,7 +139,7 @@ void collectSiblingCUs(BuildList *list, Inputs *inputs, int requestFileNumber) {
 
         /* The references in a header are all or nothing (ADR-0032): strip them
          * only when every CU that includes it is built again, before any is */
-        if (everyIncluderIsRebuilt(siblingCUs, siblingCount, list->built)) {
+        if (everyIncluderIsBuilt(siblingCUs, siblingCount, list->built)) {
             log_debug("Every includer of '%s' is built again, stripping it", headerFileItem->name);
             removeReferenceableItemsForFile(headerIndex);
         }
@@ -170,7 +170,7 @@ void stripHeadersWhoseIncludersAreAllBuilt(BuildList *list) {
         if (isCompilationUnit(getFileItemWithFileNumber(i)->name))
             continue;
         int includerCount = collectCUsIncluding(i, includers, 0, MAX_FILES);
-        if (everyIncluderIsRebuilt(includers, includerCount, list->built))
+        if (everyIncluderIsBuilt(includers, includerCount, list->built))
             removeReferenceableItemsForFile(i);
     }
     free(includers);

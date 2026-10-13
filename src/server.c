@@ -345,7 +345,7 @@ static int countCompilationUnits(void) {
     return count;
 }
 
-static void parseAllUnparsedCompilationUnits(ArgumentsVector baseArgs, Inputs *inputs) {
+static void analyseAllOutOfDateCUs(ArgumentsVector baseArgs, Inputs *inputs) {
     BuildList *list = newBuildList(MAX_FILES);
     collectOutOfDateCUs(list, inputs);
     int outOfDateCUs = buildListCount(list);
@@ -442,7 +442,7 @@ void callServer(ArgumentsVector baseArgs, ArgumentsVector requestArgs) {
     /* Completeness for name-based operations: if CUs are out of date, ask user
      * before proceeding */
     if (projectContextInitialized && needsWholeProjectParsed(options.serverOperation))
-        parseAllUnparsedCompilationUnits(baseArgs, inputs);
+        analyseAllOutOfDateCUs(baseArgs, inputs);
 
     if (opensBrowsingSession(options.serverOperation))
         pushEmptySession(&browsingStack);
