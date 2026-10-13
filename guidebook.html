@@ -612,9 +612,8 @@ body.book #toc,body.book #preamble,body.book h1.sect0,body.book .sect1>h2{page-b
 <li><a href="#_a_refactoring_can_see_a_truncated_reference_set">17.2. A refactoring can see a truncated reference set</a></li>
 <li><a href="#_stale_sessions_after_pop">17.3. Stale sessions after POP</a></li>
 <li><a href="#_header_static_prototype_and_definition_are_two_symbols">17.4. Header static: prototype and definition are two symbols</a></li>
-<li><a href="#_push_by_name_finds_nothing_on_a_cold_start">17.5. Push by name finds nothing on a cold start</a></li>
-<li><a href="#_token_pasting_that_forms_numbers">17.6. Token pasting that forms numbers</a></li>
-<li><a href="#_a_stale_snapshot_keeps_symbols_the_parser_no_longer_makes_global">17.7. A stale snapshot keeps symbols the parser no longer makes global</a></li>
+<li><a href="#_token_pasting_that_forms_numbers">17.5. Token pasting that forms numbers</a></li>
+<li><a href="#_a_stale_snapshot_keeps_symbols_the_parser_no_longer_makes_global">17.6. A stale snapshot keeps symbols the parser no longer makes global</a></li>
 </ul>
 </li>
 <li><a href="#_refactoring_recipes">18. Refactoring Recipes</a>
@@ -2153,39 +2152,15 @@ defines the symbol being navigated to.</p>
 <p>Pass 3 follows includes from a position. Some operations have no position to start
 from, or are about the whole project by definition, so no include-based subset can make
 their answer complete. For those, after Pass 3, the server counts the CUs that are
-out of date and, if there are any, asks "N of M files need analysing.
-Analyse all before &#8230;&#8203;?" (see Blocking confirmation under Interactive Dialogs below). Answering yes
-parses every one of them, saving the snapshot after every 100 CUs so that progress
-survives an interrupt or a crash. That is a save interval, not a limit.
-Before that, it strips each header whose includers are all among them.</p>
+out of date. Within the cap (<code>MAX_CUS_TO_REPARSE</code>) it parses them without asking. Above
+it, it first asks "N of M files need analysing. Analyse all before &#8230;&#8203;?" (see Blocking
+confirmation under Interactive Dialogs below). Before parsing, it strips each header whose
+includers are all among them. The snapshot is saved after every 100 CUs, so that progress
+survives an interrupt or a crash. That is a save interval, not a limit.</p>
 </div>
-<table class="tableblock frame-all grid-all stretch">
-<colgroup>
-<col style="width: 40%;">
-<col style="width: 60%;">
-</colgroup>
-<thead>
-<tr>
-<th class="tableblock halign-left valign-top">Operation</th>
-<th class="tableblock halign-left valign-top">Status</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td class="tableblock halign-left valign-top"><p class="tableblock">Search (<code>OP_SEARCH</code>)</p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">Asks</p></td>
-</tr>
-<tr>
-<td class="tableblock halign-left valign-top"><p class="tableblock">Unused globals (<code>OP_UNUSED_GLOBAL</code>)</p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">Asks</p></td>
-</tr>
-<tr>
-<td class="tableblock halign-left valign-top"><p class="tableblock">Push by name (<code>OP_BROWSE_PUSH_NAME</code>)</p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">Does not ask yet, so on a cold start it answers "No symbol found." Pinned by the
- suspended <code>test_browsing_push_name_parses_whole_project</code>.</p></td>
-</tr>
-</tbody>
-</table>
+<div class="paragraph">
+<p>The operations are search, unused globals and push by name (<code>needsWholeProjectParsed()</code>).</p>
+</div>
 <div class="paragraph">
 <p>A related consequence: on a cold start the symbol menu at filter level 0 (all symbols
 with the name) only lists symbols from CUs parsed so far. A same-named static in a file
@@ -2859,8 +2834,9 @@ client answers. The client shows a yes/no dialog and sends a bare <code>-continu
 continues with the operation. Both answers produce output: yes may trigger additional
 work (e.g. parsing), while no proceeds with what is available.<br>
 Use it when the answer changes what the server computes. Used by the parse-all check
-for <a href="#project-wide-operations">project-wide operations</a>: when out-of-date CUs exist, the
-server asks whether to parse them all before searching or checking for unused globals.</p>
+for <a href="#project-wide-operations">project-wide operations</a>: when more CUs are out of date
+than the cap, a complete answer will take a while, so the server asks whether to wait
+for it before searching, checking for unused globals or pushing by name.</p>
 </dd>
 <dt class="hdlist1">Extraction dialog</dt>
 <dd>
@@ -5123,7 +5099,7 @@ void callParser(int fileNumber, Language language);</code></pre>
 <p><strong>Requires input file processing</strong> (<code>requiresProcessingInputFile</code>): completion, search, extraction, and all operations that open a browsing session — these parse the request&#8217;s input file</p>
 </li>
 <li>
-<p><strong>Needs the whole project parsed</strong> (<code>needsWholeProjectParsed</code>): search, unused globals, push by name — these ask to parse every unparsed compilation unit first</p>
+<p><strong>Needs the whole project parsed</strong> (<code>needsWholeProjectParsed</code>): search, unused globals, push by name — these parse every out-of-date compilation unit first, and ask when there are more than the cap</p>
 </li>
 <li>
 <p><strong>Answered without references</strong> (<code>answeredWithoutReferences</code>): <code>-getproject</code> — entry refresh skips Pass 3 for it</p>
@@ -10087,22 +10063,7 @@ the definition is <code>helper.h!helper</code>.</p>
 </div>
 </div>
 <div class="sect2">
-<h3 id="_push_by_name_finds_nothing_on_a_cold_start">17.5. Push by name finds nothing on a cold start</h3>
-<div class="paragraph">
-<p><strong>Symptom:</strong> Pushing a symbol by name answers "No symbol found." unless some file
-containing it has already been parsed.</p>
-</div>
-<div class="paragraph">
-<p><strong>Suspected root cause:</strong> Push by name is project-wide, but is not among the operations
-that ask to parse all unparsed CUs first (see
-<a href="08-algorithms.html#project-wide-operations">Project-wide Operations</a>).</p>
-</div>
-<div class="paragraph">
-<p><strong>Test:</strong> <code>test_browsing_push_name_parses_whole_project</code> (suspended).</p>
-</div>
-</div>
-<div class="sect2">
-<h3 id="_token_pasting_that_forms_numbers">17.6. Token pasting that forms numbers</h3>
+<h3 id="_token_pasting_that_forms_numbers">17.5. Token pasting that forms numbers</h3>
 <div class="paragraph">
 <p><strong>Symptom:</strong> Macros that paste numbers produce wrong symbols in the reference table.</p>
 </div>
@@ -10136,7 +10097,7 @@ left for the fix to decide.</p>
 </div>
 </div>
 <div class="sect2">
-<h3 id="_a_stale_snapshot_keeps_symbols_the_parser_no_longer_makes_global">17.7. A stale snapshot keeps symbols the parser no longer makes global</h3>
+<h3 id="_a_stale_snapshot_keeps_symbols_the_parser_no_longer_makes_global">17.6. A stale snapshot keeps symbols the parser no longer makes global</h3>
 <div class="paragraph">
 <p><strong>Symptom:</strong> a fix that narrows a symbol&#8217;s visibility has no effect in a running editor
 session, and reparsing the whole project does not help. Seen 2026-09-24 on the Mac
@@ -11098,9 +11059,6 @@ The position the operation asks about is only looked at after that.</p>
 </li>
 <li>
 <p><strong>The cap.</strong> At most 128 recipes run, and the rest stay out of date. They are known, though (<code>time-budget</code>, <code>header-not-half</code>).</p>
-</li>
-<li>
-<p><strong>Parse-all builds only the targets that do not exist</strong>, as if every existing target were up to date (<code>parse-all-out-of-date</code>).</p>
 </li>
 <li>
 <p><strong>The config is not a prerequisite</strong> (<code>out-of-date</code>). That is the classic Make pitfall where changing <code>CFLAGS</code> rebuilds nothing. <code>markAllCompilationUnitsStale()</code> covers it for now.</p>
@@ -12396,7 +12354,7 @@ operation reads the in-memory table.</p>
 </div>
 <div id="footer">
 <div id="footer-text">
-Last updated 2026-10-13 21:16:27 UTC
+Last updated 2026-10-13 21:32:02 UTC
 </div>
 </div>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.18.3/highlight.min.js"></script>
