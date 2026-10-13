@@ -9,8 +9,7 @@ include ../Makefile.lsp
 ARGUMENTS = -lsp
 
 $(TEST): input.lsp
-	-$(COMMAND) < input.lsp > /dev/null; echo "exit code $$?" > output.tmp
-	$(NORMALIZE) output.tmp > output
+	-$(COMMAND) < input.lsp > /dev/null; echo "exit code $$?" > output
 	$(VERIFY)
 
 trace: ARGUMENTS+=-debug -log=log

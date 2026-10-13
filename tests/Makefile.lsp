@@ -11,6 +11,9 @@ UNAME_S := $(shell uname -s)
 # Extend NORMALIZE to split joined LSP frames and ensure trailing newline
 # (LSP protocol has no trailing newline, so we always add one for readability)
 ifeq ($(UNAME_S),Darwin)
+# BSD sed's $G appends an empty line whether or not one is missing, so this only
+# agrees with the Linux variant for raw LSP frames. Output ending in a newline gets
+# an extra line on macOS; such a test should not normalize it
 NORMALIZE += -e 's/\(.\)Content-Length/\1\nContent-Length/g' -e '$$G'
 else
 NORMALIZE += -e 's/\(.\)Content-Length/\1\nContent-Length/g' -e '$$a\'
