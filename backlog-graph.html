@@ -3,10 +3,14 @@
 <head>
 <meta charset="utf-8">
 <title>Backlog dependencies</title>
-<style>html, body { margin: 0; height: 100%; overflow: hidden; background: #fff; } pre.mermaid { margin: 0; }</style>
+<style>html, body { margin: 0; height: 100%; overflow: hidden; background: #fff; } pre.mermaid { margin: 0; }
+#find { position: fixed; top: 8px; left: 8px; font: 14px sans-serif; }
+g.node.match rect, g.node.match polygon, g.node.match path { stroke: #e8590c !important; stroke-width: 3px !important; }
+g.node.current rect, g.node.current polygon, g.node.current path { stroke-width: 6px !important; }</style>
 <script src="https://cdn.jsdelivr.net/npm/svg-pan-zoom@3.6.2/dist/svg-pan-zoom.min.js"></script>
 </head>
 <body>
+<div id="find" hidden><input id="search" placeholder="Search"> <span id="count"></span></div>
 <pre class="mermaid">
 flowchart BT
   classDef ready fill:#9fd4a8,stroke:#4f9a5d,color:#13261a
@@ -37,6 +41,7 @@ flowchart BT
   truncated_reference_set["§3 · 15i · A refactoring can see a truncated reference set"]
   lsp_position_encoding["§3 · 15j · The LSP server announces `positionEncoding: #quot;utf-8#quot;` but counts code points"]
   lsp_input_ends["§3 · 15k · The LSP server exits as a JSON parse error when its input ends"]
+  search_result_line_zero["§3 · 58 · The client asks for search result number 0"]
   header_filtered_siblings["§4 · 16 · Header-filtered sibling parsing"]
   scan_angle_includes["§4 · 17 · Extend the lightweight scan to `#lt;...#gt;` includes"]
   lexing_cache["§4 · 18 · Lexing cache re-introduction"]
@@ -136,6 +141,7 @@ flowchart BT
   class truncated_reference_set ready
   class lsp_position_encoding ready
   class lsp_input_ends ready
+  class search_result_line_zero ready
   class header_filtered_siblings ready
   class scan_angle_includes blocked
   class lexing_cache blocked
@@ -194,7 +200,69 @@ svg.removeAttribute('width');
 svg.style.maxWidth = 'none';
 svg.style.width = '100vw';
 svg.style.height = '100vh';
-svgPanZoom(svg, { controlIconsEnabled: true, fit: true, center: true, minZoom: 0.1, maxZoom: 20 });
+const panZoom = svgPanZoom(svg, { controlIconsEnabled: true, fit: true, center: true, minZoom: 0.1, maxZoom: 20 });
+// Type / to search the labels, Enter goes to the next match and Escape closes
+const find = document.getElementById('find');
+const search = document.getElementById('search');
+const count = document.getElementById('count');
+let matches = [];
+let current = -1;
+function centre(node) {
+  const n = node.getBoundingClientRect();
+  panZoom.panBy({ x: window.innerWidth / 2 - (n.left + n.width / 2), y: window.innerHeight / 2 - (n.top + n.height / 2) });
+}
+function next() {
+  matches.forEach(m => m.classList.remove('current'));
+  if (matches.length == 0) {
+    count.textContent = search.value ? 'no matches' : '';
+    return;
+  }
+  current = (current + 1) % matches.length;
+  matches[current].classList.add('current');
+  count.textContent = (current + 1) + ' of ' + matches.length;
+  centre(matches[current]);
+}
+search.addEventListener('input', () => {
+  matches.forEach(m => m.classList.remove('match', 'current'));
+  const text = search.value.toLowerCase();
+  matches = text ? [...svg.querySelectorAll('g.node')].filter(n => n.textContent.toLowerCase().includes(text)) : [];
+  matches.forEach(m => m.classList.add('match'));
+  current = -1;
+  next();
+});
+search.addEventListener('keydown', e => {
+  if (e.key == 'Enter')
+    next();
+  if (e.key == 'Escape') {
+    find.hidden = true;
+    search.blur();
+  }
+});
+// Keys for the graph, except while typing a search: + and - zoom, the arrows pan
+// (further with Shift), and 0 fits the whole graph again
+const pans = { ArrowLeft: [1, 0], ArrowRight: [-1, 0], ArrowUp: [0, 1], ArrowDown: [0, -1] };
+document.addEventListener('keydown', e => {
+  if (document.activeElement == search || e.ctrlKey || e.metaKey || e.altKey)
+    return;
+  const step = e.shiftKey ? 0.5 : 0.1;
+  if (e.key == '/') {
+    find.hidden = false;
+    search.focus();
+    search.select();
+  } else if (e.key == '+' || e.key == '=') {
+    panZoom.zoomIn();
+  } else if (e.key == '-') {
+    panZoom.zoomOut();
+  } else if (e.key == '0') {
+    panZoom.fit();
+    panZoom.center();
+  } else if (e.key in pans) {
+    panZoom.panBy({ x: pans[e.key][0] * step * window.innerWidth, y: pans[e.key][1] * step * window.innerHeight });
+  } else {
+    return;
+  }
+  e.preventDefault();
+});
 </script>
 </body>
 </html>
