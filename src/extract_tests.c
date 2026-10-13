@@ -7,7 +7,7 @@
 #include "memory.h"
 #include "stackmemory.h"
 
-char *extractNameFromLinkName(char *linkName);
+bool extractNameFromLinkName(char *linkName, char *name);
 bool isImplicitFunctionShadowLinkName(char *linkName);
 void spliceShadowIfMatches(ProgramGraphNode **program, ReferenceableItem *shadowItem);
 
@@ -38,12 +38,25 @@ AfterEach(Extract) {}
 
 
 Ensure(Extract, extracts_variable_name_from_local_link_name) {
-    assert_that(extractNameFromLinkName(" !int! !pos!!27c-5-8-4"), is_equal_to_string("pos"));
-    assert_that(extractNameFromLinkName(" !int! !counter!!27c-7-12-5"), is_equal_to_string("counter"));
+    char name[TMP_STRING_SIZE];
+
+    assert_that(extractNameFromLinkName(" !int! !pos!!27c-5-8-4", name), is_true);
+    assert_that(name, is_equal_to_string("pos"));
+    assert_that(extractNameFromLinkName(" !int! !counter!!27c-7-12-5", name), is_true);
+    assert_that(name, is_equal_to_string("counter"));
 }
 
 Ensure(Extract, extracts_variable_name_from_implicit_function_link_name) {
-    assert_that(extractNameFromLinkName(" extern !int! !pos!()!27c-9-13-7"), is_equal_to_string("pos"));
+    char name[TMP_STRING_SIZE];
+
+    assert_that(extractNameFromLinkName(" extern !int! !pos!()!27c-9-13-7", name), is_true);
+    assert_that(name, is_equal_to_string("pos"));
+}
+
+Ensure(Extract, finds_no_name_in_a_link_name_that_is_not_a_local) {
+    char name[TMP_STRING_SIZE];
+
+    assert_that(extractNameFromLinkName("source.c!pos", name), is_false);
 }
 
 Ensure(Extract, splice_leaves_program_unchanged_for_non_matching_shadow) {

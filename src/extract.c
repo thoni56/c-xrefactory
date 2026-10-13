@@ -41,29 +41,30 @@ protected bool isImplicitFunctionShadowLinkName(char *linkName) {
         && strstr(linkName, "()!") != NULL;
 }
 
-protected char *extractNameFromLinkName(char *linkName) {
-    /* Skip storage, type-prefix and declarator fields; the name is the fourth */
-    char *p1 = strchr(linkName, '!');
-    if (p1 == NULL) return NULL;
-    char *p2 = strchr(p1 + 1, '!');
-    if (p2 == NULL) return NULL;
-    char *p3 = strchr(p2 + 1, '!');
-    if (p3 == NULL) return NULL;
+/* Skip storage, type-prefix and declarator fields; the name is the fourth.
+ * Returns false for a link name without that form, which anything but a local
+ * or an implicit-function shadow has. */
+protected bool extractNameFromLinkName(char *linkName, char *name) {
+    char *p1 = strchr(linkName, LINK_NAME_SEPARATOR);
+    if (p1 == NULL) return false;
+    char *p2 = strchr(p1 + 1, LINK_NAME_SEPARATOR);
+    if (p2 == NULL) return false;
+    char *p3 = strchr(p2 + 1, LINK_NAME_SEPARATOR);
+    if (p3 == NULL) return false;
     char *nameStart = p3 + 1;
-    char *nameEnd = strchr(nameStart, '!');
-    if (nameEnd == NULL) return NULL;
+    char *nameEnd = strchr(nameStart, LINK_NAME_SEPARATOR);
+    if (nameEnd == NULL) return false;
     size_t len = nameEnd - nameStart;
-    char *result = stackMemoryAlloc(len + 1);
-    memcpy(result, nameStart, len);
-    result[len] = '\0';
-    return result;
+    memcpy(name, nameStart, len);
+    name[len] = '\0';
+    return true;
 }
 
 protected void spliceShadowIfMatches(ProgramGraphNode **program, ReferenceableItem *shadowItem) {
     if (!isImplicitFunctionShadowLinkName(shadowItem->linkName))
         return;
-    char *shadowName = extractNameFromLinkName(shadowItem->linkName);
-    if (shadowName == NULL)
+    char shadowName[TMP_STRING_SIZE];
+    if (!extractNameFromLinkName(shadowItem->linkName, shadowName))
         return;
 
     for (ProgramGraphNode *p = *program; p != NULL; p = p->next) {
@@ -71,8 +72,9 @@ protected void spliceShadowIfMatches(ProgramGraphNode **program, ReferenceableIt
             continue;
         if (p->regionSide != DATAFLOW_INSIDE_BLOCK)
             continue;
-        char *localName = extractNameFromLinkName(p->referenceableItem->linkName);
-        if (localName == NULL || strcmp(localName, shadowName) != 0)
+        char localName[TMP_STRING_SIZE];
+        if (!extractNameFromLinkName(p->referenceableItem->linkName, localName)
+            || strcmp(localName, shadowName) != 0)
             continue;
 
         for (Reference *r = shadowItem->references; r != NULL; r = r->next) {
@@ -624,36 +626,12 @@ static void getLocalVariableDeclarationFromLinkName(char *linkName, char *declar
     *declarationP = 0;
 }
 
+/* For the generators, which only ask about locals: any other link name is a bug */
 static void getLocalVariableNameFromLinkName(char *linkName, char *name) {
-    char *src;
-
     log_trace("%s '%s'", __FUNCTION__, linkName);
 
-    // linkName always starts with a space? Skip storage
-    src = linkName+1;
-    src = strchr(src, LINK_NAME_SEPARATOR);
-    assert(src);
-    assert(*src);
-
-    // skip also type
-    src++;
-    src = strchr(src, LINK_NAME_SEPARATOR);
-    assert(src);
-    assert(*src);
-
-    // and declarator
-    src++;
-    src = strchr(src, LINK_NAME_SEPARATOR);
-    assert(src);
-    assert(*src);
-
-    // Copy the name
-    char *nameP;
-    for (nameP=name, src++; *src!=0 && *src!=LINK_NAME_SEPARATOR; src++, nameP++) {
-        *nameP = *src;
-    }
-    assert(*src);
-    *nameP = 0;
+    if (!extractNameFromLinkName(linkName, name))
+        assert(0);
 }
 
 static void reclassifyInOutVariables(ProgramGraphNode *program) {
