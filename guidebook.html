@@ -2152,11 +2152,12 @@ defines the symbol being navigated to.</p>
 <div class="paragraph">
 <p>Pass 3 follows includes from a position. Some operations have no position to start
 from, or are about the whole project by definition, so no include-based subset can make
-their answer complete. For those, after Pass 3, the server counts the CUs that have
-never been parsed and, if there are any, asks "N of M files need analysing.
+their answer complete. For those, after Pass 3, the server counts the CUs that are
+out of date and, if there are any, asks "N of M files need analysing.
 Analyse all before &#8230;&#8203;?" (see Blocking confirmation under Interactive Dialogs below). Answering yes
 parses every one of them, saving the snapshot after every 100 CUs so that progress
-survives an interrupt or a crash. That is a save interval, not a limit.</p>
+survives an interrupt or a crash. That is a save interval, not a limit.
+Before that, it strips each header whose includers are all among them.</p>
 </div>
 <table class="tableblock frame-all grid-all stretch">
 <colgroup>
@@ -2858,7 +2859,7 @@ client answers. The client shows a yes/no dialog and sends a bare <code>-continu
 continues with the operation. Both answers produce output: yes may trigger additional
 work (e.g. parsing), while no proceeds with what is available.<br>
 Use it when the answer changes what the server computes. Used by the parse-all check
-for <a href="#project-wide-operations">project-wide operations</a>: when unparsed CUs exist, the
+for <a href="#project-wide-operations">project-wide operations</a>: when out-of-date CUs exist, the
 server asks whether to parse them all before searching or checking for unused globals.</p>
 </dd>
 <dt class="hdlist1">Extraction dialog</dt>
@@ -10055,7 +10056,7 @@ Each entry describes symptoms, analysis (when available), and suspected root cau
 <p><strong>Why the caps exist:</strong> removing the lexem-stream cache (ADR-0012) took a full ffmpeg parse from 1-2 minutes to 25, and the caps bound that.</p>
 </div>
 <div class="paragraph">
-<p><strong>Direction:</strong> put the refactoring pushes in <code>needsWholeProjectParsed</code> so they ask like search does — the parse-all there is uncapped and counts only never-parsed CUs, so a warm project is asked for little. Two things that needs: declining must <strong>abort</strong> the refactoring, where today <code>if (waitForUserConfirmation(msg)) { &#8230;&#8203;parse&#8230;&#8203; }</code> has no else and simply proceeds; and <code>parseAllPromptFor()</code> ends in <code>default: assert(0)</code>, so each added operation needs its own prompt word. It applies to parameter manipulation as much as to rename.</p>
+<p><strong>Direction:</strong> put the refactoring pushes in <code>needsWholeProjectParsed</code> so they ask like search does — the parse-all there is uncapped and counts the CUs that are out of date. Two things that needs: declining must <strong>abort</strong> the refactoring, where today <code>if (waitForUserConfirmation(msg)) { &#8230;&#8203;parse&#8230;&#8203; }</code> has no else and simply proceeds; and <code>parseAllPromptFor()</code> ends in <code>default: assert(0)</code>, so each added operation needs its own prompt word. It applies to parameter manipulation as much as to rename.</p>
 </div>
 <div class="paragraph">
 <p><strong>Workaround, if the caps stay:</strong> re-issue the push. Pass 3 filters <code>fileNeedsParsing</code> before applying the cap, so each request parses 128 fresh CUs and they stay parsed — six rounds for <code>avcodec.h</code>. Next does not help: <code>OP_BROWSE_NEXT</code> is in none of the gates and walks the list copied at the push.</p>
@@ -12395,7 +12396,7 @@ operation reads the in-memory table.</p>
 </div>
 <div id="footer">
 <div id="footer-text">
-Last updated 2026-10-13 17:20:51 UTC
+Last updated 2026-10-13 19:24:48 UTC
 </div>
 </div>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.18.3/highlight.min.js"></script>
