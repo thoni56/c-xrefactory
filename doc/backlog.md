@@ -179,12 +179,6 @@ graph from them on every push, linked at the end of this file, and `utils/backlo
     2026-10-12), not tested.
     Waits for: request-target
     Goes with: sweep
-- (#12) <a id="extract-statics-by-value"></a>**Extract passes statics by value** — *no test pins it.* Since the gate fix this
-    compiles and silently does the wrong thing, where before it failed to compile.
-    Liveness-after-the-region is the wrong question for static storage: treat
-    static/thread-local as live after the region in `classifyVariableUsingDataFlow`
-    (`src/extract.c`), which pushes it to `CLASSIFIED_AS_IN_OUT_ARGUMENT`. Failing system
-    test first. Quietest bug on this list.
 - (#13) <a id="token-pasting-trio"></a>**Token pasting trio**, in this order — the later two assume the first
     (`doc/docs/18-known-bugs.adoc`): `tests/test_token_pasting_numbers` (changes the
     passing `test_collate_const_suffix_pasting`) → `tests/test_token_pasting_float` →
