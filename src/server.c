@@ -452,7 +452,7 @@ void callServer(ArgumentsVector baseArgs, ArgumentsVector requestArgs) {
 
     Inputs *inputs = collectInputs();
 
-    BuildList *buildList = newBuildList();
+    BuildList *buildList = newBuildList(MAX_CUS_TO_REPARSE);
 
     /* Stale preloaded files are built before dispatching the operation, so all
      * operations see fresh in-memory references */

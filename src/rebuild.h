@@ -10,7 +10,7 @@
 /* The CUs one request builds */
 typedef struct buildList BuildList;
 
-extern BuildList *newBuildList(void);
+extern BuildList *newBuildList(int capacity);
 extern void freeBuildList(BuildList *list);
 
 extern int collectCUsIncluding(int fileNumber, int cuFileNumbers[], int cuCount, int maxCUs);

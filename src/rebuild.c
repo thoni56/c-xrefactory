@@ -15,22 +15,26 @@
 #include "referencerefresh.h"
 
 
-/* The CUs to build, at most MAX_CUS_TO_REPARSE of them */
+/* The CUs to build, at most capacity of them */
 struct buildList {
-    int   fileNumbers[MAX_CUS_TO_REPARSE];
+    int  *fileNumbers;
+    int   capacity;
     int   count;
     int   skippedCapped; /* Out of date, but did not fit */
     bool *built;         /* By file number, on the list or parsed by the operation */
     bool  stripRequest;  /* The operation parses the request CU, from scratch */
 };
 
-BuildList *newBuildList(void) {
+BuildList *newBuildList(int capacity) {
     BuildList *list = calloc(1, sizeof(BuildList));
+    list->fileNumbers = malloc(capacity * sizeof(int));
+    list->capacity = capacity;
     list->built = calloc(MAX_FILES, sizeof(bool));
     return list;
 }
 
 void freeBuildList(BuildList *list) {
+    free(list->fileNumbers);
     free(list->built);
     free(list);
 }
@@ -38,7 +42,7 @@ void freeBuildList(BuildList *list) {
 static bool addToBuildList(BuildList *list, int fileNumber) {
     if (list->built[fileNumber])
         return true;
-    if (list->count < MAX_CUS_TO_REPARSE) {
+    if (list->count < list->capacity) {
         list->fileNumbers[list->count++] = fileNumber;
         list->built[fileNumber] = true;
         return true;
@@ -145,7 +149,7 @@ void collectSiblingCUs(BuildList *list, Inputs *inputs, int requestFileNumber) {
     free(asked);
 
     log_info("Siblings: %d to build, %d skipped (current), %d skipped (cap %d)", list->count,
-             skippedCurrent, list->skippedCapped, MAX_CUS_TO_REPARSE);
+             skippedCurrent, list->skippedCapped, list->capacity);
 }
 
 #define MAX_INCLUDE_WALK_FILES 256

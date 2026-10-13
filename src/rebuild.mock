@@ -7,8 +7,8 @@ int collectCUsIncluding(int fileNumber, int cuFileNumbers[], int cuCount, int ma
     return (int)mock(fileNumber, cuFileNumbers, cuCount, maxCUs);
 }
 
-BuildList *newBuildList(void) {
-    return (BuildList *)mock();
+BuildList *newBuildList(int capacity) {
+    return (BuildList *)mock(capacity);
 }
 
 void freeBuildList(BuildList *list) {
