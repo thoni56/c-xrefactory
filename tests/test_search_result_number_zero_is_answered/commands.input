@@ -1,0 +1,12 @@
+CXREF -server
+-getproject CURDIR/source.c
+<sync>
+-search=int* -olcxlccursor=1:5 -olcursor=5 CURDIR/source.c -olcursor=85
+<sync>
+-olcxsearchgoto0
+<sync>
+-olcxsearchselect0
+<sync>
+-olcxsearchgoto1
+<sync>
+<exit>

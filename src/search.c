@@ -35,10 +35,21 @@ static void removeMatchesWithSameName(Match *matches) {
     }
 }
 
+/* The number comes from the client, so a bad one is answered, not asserted */
+static bool isASearchResultNumber(int refn) {
+    if (refn > 0)
+        return true;
+    char message[TMP_STRING_SIZE];
+    sprintf(message, "There is no search result number %d", refn);
+    errorMessage(ERR_ST, message);
+    return false;
+}
+
 void selectSearchItem(int refn) {
     char buffer[MAX_FUNCTION_NAME_LENGTH];
 
-    assert(refn > 0);
+    if (!isASearchResultNumber(refn))
+        return;
     assert(searchingStack.top);
     SessionStackEntry *entry = searchingStack.top;
     Match *match = getMatchOnNthLine(entry->matches, refn);
@@ -56,7 +67,8 @@ void selectSearchItem(int refn) {
 void gotoSearchItem(int refn) {
     Match *match;
 
-    assert(refn > 0);
+    if (!isASearchResultNumber(refn))
+        return;
     assert(searchingStack.top);
     match = getMatchOnNthLine(searchingStack.top->matches, refn);
     if (match != NULL) {
