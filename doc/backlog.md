@@ -428,12 +428,6 @@ Roadmap → Optimization has the baseline: a cold-start PUSH on ffmpeg, measured
     can stay beside the sources where Emacs cov-mode reads them. Whether it works is
     the open question above; if it does not, moving the build output is what is left.
 
-- (#32) <a id="flaky-preload-tests"></a>**Tests that copy a preload next to the file it replaces can be flaky** — the driver
-    refuses a preload that is not newer than its file, and two `cp`s in a row can get the
-    same mtime from the kernel's coarse clock. `test_preload_pruned_after_close` failed so
-    once. The fix is to make the replaced file older, `touch -t 200001010000 <file>`. About
-    ten test Makefiles create preloads with `cp`; check which do it next to the file.
-
 ## 7. Freshness as make (ADR-0032, ADR-0033)
 
 The order is roughly the numbers. `header-not-half` can be done any time. Next is
@@ -450,20 +444,19 @@ are noted in `cu-inputs`, `out-of-date`, `time-budget` and `sweep-cost`.
 - (#35) <a id="cu-inputs"></a>**A CU's inputs** — the CU, its include closure and the project
     config, put together where `out-of-date` uses them, the CU first. `Inputs`
     (`src/freshness.c`) holds them for one request: the include graph and each file's
-    change time, asked for once. Left: the config's change time, whose owner depends on
-    `partition-options`. The closure can hold the scan's includes beside the parse's,
-    which for the predicate only costs a parse.
+    change time, asked for once. Left: the config's change time (`out-of-date`). The
+    closure can hold the scan's includes beside the parse's, which for the predicate only
+    costs a parse.
     Goes with: out-of-date
 - (#36) <a id="out-of-date"></a>**The config as an input of `knowledgeIsOutOfDate()`** — it
-    replaces `markAllCompilationUnitsStale()`, and the zero sentinel goes. The config
-    needs a change time, and who owns it depends on where the project config lives after
-    the options partition.
+    replaces `markAllCompilationUnitsStale()`, and the zero sentinel goes. The config is the
+    `.c-xrefrc` and its local fragment (ADR-0034), and its change time is the later of the
+    two.
     Left until real use shows the cost (see `sweep-cost`): `MAX_INCLUDE_CLOSURE` (1000)
     has no measured reason, and evaluating change first, i.e. `stat` each known file once
     and walk the reverse include graph to the CUs whose knowledge is older, costs in
     proportion to what changed.
-    Waits for: partition-options
-    Goes with: cu-inputs
+    Goes with: cu-inputs, local-config-fragments
 - (#37) <a id="request-target"></a>**What a request needs** — the CUs that reach the request
     file's closure, and the whole project for an operation on a name. The sibling
     collection (`collectSiblingCUs()`) takes the CUs that reach a header the request file
