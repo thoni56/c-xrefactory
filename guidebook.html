@@ -5,7 +5,7 @@
 <meta http-equiv="X-UA-Compatible" content="IE=edge">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <meta name="generator" content="Asciidoctor 2.0.26">
-<meta name="author" content="v{VERSION} - Generated 2026-10-12">
+<meta name="author" content="v{VERSION} - Generated 2026-10-13">
 <title>C-xrefactory - a C/Yacc refactoring and code browsing tool - Design Documentation</title>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Open+Sans:300,300italic,400,400italic,600,600italic%7CNoto+Serif:400,400italic,700,700italic%7CDroid+Sans+Mono:400,700">
 <style>
@@ -441,7 +441,7 @@ body.book #toc,body.book #preamble,body.book h1.sect0,body.book .sect1>h2{page-b
 <div id="header">
 <h1>C-xrefactory - a C/Yacc refactoring and code browsing tool - Design Documentation</h1>
 <div class="details">
-<span id="author" class="author">v{VERSION} - Generated 2026-10-12</span><br>
+<span id="author" class="author">v{VERSION} - Generated 2026-10-13</span><br>
 </div>
 <div id="toc" class="toc2">
 <div id="toctitle">Table of Contents</div>
@@ -3778,14 +3778,40 @@ recorded anywhere, which is worth remembering before quoting it back.</p>
 <li>
 <p><strong>Cold-start PUSH</strong> — 42s for <code>AudioFIRContext</code> from <code>af_afir.c</code>: scan 2.7s, Pass 3 round
 one 19s, round two 19s (the second round from <code>&lt;&#8230;&#8203;&gt;</code> includes the full parse
-discovers). This is the number the two rows below are about, and it has not been
-re-measured since.</p>
+discovers). This is the number the two rows below are about. It was measured in March,
+and is re-measured below.</p>
 </li>
 </ul>
 </div>
 <div class="paragraph">
 <p>The first is what a batch prime costs and what a progress estimate would divide; the
 second is what a user waits for before anything appears.</p>
+</div>
+</div>
+<div class="sect3">
+<h4 id="_measured_2026_10_12">10.4.2. Measured, 2026-10-12</h4>
+<div class="paragraph">
+<p>The cold-start PUSH again, for <code>AudioFIRContext</code> from <code>af_afir.c</code>, on the WSL machine
+(session <code>d25255b8</code>), with the development build and the fixture&#8217;s <code>c-xrefrc.tpl</code>, from no
+snapshot. Three runs, within 0.15s of each other:</p>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p><code>-getproject</code> 0.7s.</p>
+</li>
+<li>
+<p><code>-push</code> 10.0s: 1.0s until the first progress record (scan, include graph, collecting
+what to build), then one round, "Analysing 128 of 1567 files", about 65ms per
+compilation unit. The answer is the definition, <code>af_afir.h:98</code>. Peak memory 25MB.</p>
+</li>
+</ul>
+</div>
+<div class="paragraph">
+<p>There is one round now, not two. What is to be built is collected once per request,
+before anything is built, so includes found while building wait for the next request, as
+do the 1439 files above the cap. The March number does not say which machine or build it
+came from, so the faster parse per compilation unit cannot be put down to a change.</p>
 </div>
 <div class="paragraph">
 <p>CI cannot supply either number. Travis times script lines, not tests, and <code>make ci</code> runs
@@ -12369,7 +12395,7 @@ operation reads the in-memory table.</p>
 </div>
 <div id="footer">
 <div id="footer-text">
-Last updated 2026-10-12 16:36:50 UTC
+Last updated 2026-10-13 07:24:32 UTC
 </div>
 </div>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.18.3/highlight.min.js"></script>

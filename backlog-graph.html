@@ -33,7 +33,6 @@ flowchart BT
   unknown_cu_under_include["§3 · 15c · Any file under an `-I` directory counts as project"]
   no_project_twice["§3 · 15d · `-getproject` for a file outside any project answers `#lt;no-project-found#gt;` twice"]
   warm_start_fatal["§3 · 15e · A warm start trips `FATAL cxref.c:1494: 'browsingStack.top' is not true`"]
-  preload_resent["§3 · 15f · A preload sent again with the same content and a newer time loses a later change"]
   unused_yacc_statics["§3 · 15g · GlobalUnused gives a false positive for statics in `.y` files"]
   push_by_name["§3 · 15h · Push by name when a name has several bindings"]
   truncated_reference_set["§3 · 15i · A refactoring can see a truncated reference set"]
@@ -55,15 +54,15 @@ flowchart BT
   dump_reference_database["§5 · 29 · Dump Reference Database"]
   compile_commands["§5 · 30 · Read `-I` and `-D` from `compile_commands.json`"]
   macos_watchers["§6 · 31 · Two causes of watchers not firing on macOS, both found"]
-  flaky_preload_tests["§6 · 32 · Tests that copy a preload next to the file it replaces can be flaky"]
   cu_inputs["§7 · 35 · A CU's inputs"]
   out_of_date["§7 · 36 · The config as an input of `knowledgeIsOutOfDate()`"]
   request_target["§7 · 37 · What a request needs"]
   request_through_includers["§7 · 54 · A request in a header is parsed through its includers"]
   cursor_parse_reuse["§7 · 1 · The request CU is parsed for the cursor, also when its knowledge is current"]
-  header_not_half["§7 · 39 · Pass 2 does not strip a header it cannot rebuild"]
+  header_not_half["§7 · 39 · A changed header the editor holds is stripped also when not all its includers fit"]
+  closed_buffer_strip["§7 · 56 · A header whose buffer the client stops sending is stripped, and none of its includers built"]
   parse_all_out_of_date["§7 · 55 · An operation on a name analyses only the files never analysed"]
-  time_budget["§7 · 40 · A time budget instead of the 128 CUs"]
+  time_budget["§7 · 40 · A time budget instead of the cap"]
   freshness_docs["§7 · 41 · The docs follow"]
   include_edges["§7 · 42 · Who writes include edges"]
   generations["§7 · 43 · Generations"]
@@ -99,7 +98,6 @@ flowchart BT
   behind_the_back --&gt; remove_references_stopgap
   entry_refresh --&gt; index_based_sessions
   report_errors_flag --&gt; indexing_log_buffer
-  partition_options --&gt; out_of_date
   adr_0032 --&gt; request_target
   adr_0033 --&gt; generations
   generations --&gt; sweep
@@ -134,7 +132,6 @@ flowchart BT
   class unknown_cu_under_include ready
   class no_project_twice ready
   class warm_start_fatal ready
-  class preload_resent ready
   class unused_yacc_statics ready
   class push_by_name ready
   class truncated_reference_set ready
@@ -156,13 +153,13 @@ flowchart BT
   class dump_reference_database ready
   class compile_commands ready
   class macos_watchers ready
-  class flaky_preload_tests ready
   class cu_inputs ready
-  class out_of_date blocked
+  class out_of_date ready
   class request_target ready
   class request_through_includers ready
   class cursor_parse_reuse ready
   class header_not_half ready
+  class closed_buffer_strip ready
   class parse_all_out_of_date ready
   class time_budget ready
   class freshness_docs ready
