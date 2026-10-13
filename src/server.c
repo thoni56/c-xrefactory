@@ -335,65 +335,30 @@ protected bool needsConfirmationToAnalyse(int outOfDateCUs) {
     return outOfDateCUs > MAX_CUS_TO_REPARSE;
 }
 
-static void parseAllUnparsedCompilationUnits(ArgumentsVector baseArgs, Inputs *inputs, int totalCUs,
-                                             int unparsedCUs) {
-    char msg[TMP_STRING_SIZE];
-    const char *operationName = parseAllPromptFor(options.serverOperation);
-    sprintf(msg, "%d of %d files need analysing. Analyse all before %s?", unparsedCUs, totalCUs,
-            operationName);
-    if (!needsConfirmationToAnalyse(unparsedCUs) || waitForUserConfirmation(msg)) {
-        int parsed = 0;
-        char progressFormat[128];
-        snprintf(progressFormat, sizeof(progressFormat), "Analysing %d files... %%d remaining",
-                 unparsedCUs);
-        initProgress(progressFormat);
-
-        bool *built = calloc(MAX_FILES, sizeof(bool));
-        for (int i = getNextExistingFileNumber(0); i != -1; i = getNextExistingFileNumber(i + 1)) {
-            FileItem *fi = getFileItemWithFileNumber(i);
-            built[i] = isCompilationUnit(fi->name) && !fi->isDeleted && knowledgeIsOutOfDate(inputs, i);
-        }
-
-        /* The references in a header are all or nothing (ADR-0032): strip them
-         * only when every CU that includes it is built again, before any is */
-        int *includers = malloc(MAX_FILES * sizeof(int));
-        for (int i = getNextExistingFileNumber(0); i != -1; i = getNextExistingFileNumber(i + 1)) {
-            if (isCompilationUnit(getFileItemWithFileNumber(i)->name))
-                continue;
-            int includerCount = collectCUsIncluding(i, includers, 0, MAX_FILES);
-            bool everyIncluderIsBuilt = includerCount > 0;
-            for (int j = 0; j < includerCount; j++)
-                if (!built[includers[j]])
-                    everyIncluderIsBuilt = false;
-            if (everyIncluderIsBuilt)
-                removeReferenceableItemsForFile(i);
-        }
-        free(includers);
-
-        for (int i = getNextExistingFileNumber(0); i != -1; i = getNextExistingFileNumber(i + 1)) {
-            if (built[i]) {
-                buildKnowledgeOfCU(i, baseArgs);
-                parsed++;
-                writeProgressInformation(unparsedCUs - parsed);
-                /* Save snapshot periodically so progress survives Ctrl-g/crash */
-                if (parsed % 100 == 0)
-                    saveReferences();
-            }
-        }
-        free(built);
-        log_info("Completeness parse: parsed %d CUs", parsed);
-    }
-}
-
-static void countUnparsedCompilationUnits(Inputs *inputs, int *totalCUs, int *unparsedCUs) {
+static int countCompilationUnits(void) {
+    int count = 0;
     for (int i = getNextExistingFileNumber(0); i != -1; i = getNextExistingFileNumber(i + 1)) {
         FileItem *fi = getFileItemWithFileNumber(i);
-        if (isCompilationUnit(fi->name) && !fi->isDeleted) {
-            (*totalCUs)++;
-            if (knowledgeIsOutOfDate(inputs, i))
-                (*unparsedCUs)++;
+        if (isCompilationUnit(fi->name) && !fi->isDeleted)
+            count++;
+    }
+    return count;
+}
+
+static void parseAllUnparsedCompilationUnits(ArgumentsVector baseArgs, Inputs *inputs) {
+    BuildList *list = newBuildList(MAX_FILES);
+    collectOutOfDateCUs(list, inputs);
+    int outOfDateCUs = buildListCount(list);
+    if (outOfDateCUs > 0) {
+        char msg[TMP_STRING_SIZE];
+        sprintf(msg, "%d of %d files need analysing. Analyse all before %s?", outOfDateCUs,
+                countCompilationUnits(), parseAllPromptFor(options.serverOperation));
+        if (!needsConfirmationToAnalyse(outOfDateCUs) || waitForUserConfirmation(msg)) {
+            stripHeadersWhoseIncludersAreAllBuilt(list);
+            buildKnowledgeOfAll(list, baseArgs);
         }
     }
+    freeBuildList(list);
 }
 
 void callServer(ArgumentsVector baseArgs, ArgumentsVector requestArgs) {
@@ -474,15 +439,10 @@ void callServer(ArgumentsVector baseArgs, ArgumentsVector requestArgs) {
     buildKnowledgeOfAll(buildList, baseArgs);
     freeBuildList(buildList);
 
-    /* Completeness for name-based operations: if unparsed CUs still exist, ask user
+    /* Completeness for name-based operations: if CUs are out of date, ask user
      * before proceeding */
-    if (projectContextInitialized && needsWholeProjectParsed(options.serverOperation)) {
-        int totalCUs = 0, unparsedCUs = 0;
-        countUnparsedCompilationUnits(inputs, &totalCUs, &unparsedCUs);
-        if (unparsedCUs > 0) {
-            parseAllUnparsedCompilationUnits(baseArgs, inputs, totalCUs, unparsedCUs);
-        }
-    }
+    if (projectContextInitialized && needsWholeProjectParsed(options.serverOperation))
+        parseAllUnparsedCompilationUnits(baseArgs, inputs);
 
     if (opensBrowsingSession(options.serverOperation))
         pushEmptySession(&browsingStack);

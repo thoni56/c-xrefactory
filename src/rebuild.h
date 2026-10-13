@@ -20,3 +20,6 @@ extern void collectSiblingCUs(BuildList *list, Inputs *inputs, int requestFileNu
 extern void buildKnowledgeOfAll(BuildList *list, ArgumentsVector baseArgs);
 extern void collectRequestCU(BuildList *list, Inputs *inputs, int requestFileNumber);
 extern void stripRequestCU(BuildList *list, int requestFileNumber);
+extern void collectOutOfDateCUs(BuildList *list, Inputs *inputs);
+extern void stripHeadersWhoseIncludersAreAllBuilt(BuildList *list);
+extern int buildListCount(BuildList *list);

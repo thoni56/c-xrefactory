@@ -2,6 +2,7 @@
 
 #include <stdlib.h>
 
+#include "cxref.h"
 #include "editor.h"
 #include "editorbuffertable.h"
 #include "filetable.h"
@@ -150,6 +151,33 @@ void collectSiblingCUs(BuildList *list, Inputs *inputs, int requestFileNumber) {
 
     log_info("Siblings: %d to build, %d skipped (current), %d skipped (cap %d)", list->count,
              skippedCurrent, list->skippedCapped, list->capacity);
+}
+
+/* For an operation on a name: every CU in the project that is out of date */
+void collectOutOfDateCUs(BuildList *list, Inputs *inputs) {
+    for (int i = getNextExistingFileNumber(0); i != -1; i = getNextExistingFileNumber(i + 1)) {
+        FileItem *fileItem = getFileItemWithFileNumber(i);
+        if (isCompilationUnit(fileItem->name) && !fileItem->isDeleted && knowledgeIsOutOfDate(inputs, i))
+            addToBuildList(list, i);
+    }
+}
+
+/* The references in a header are all or nothing (ADR-0032): strip them only when
+ * every CU that includes it is on the list, before any is built */
+void stripHeadersWhoseIncludersAreAllBuilt(BuildList *list) {
+    int *includers = malloc(MAX_FILES * sizeof(int));
+    for (int i = getNextExistingFileNumber(0); i != -1; i = getNextExistingFileNumber(i + 1)) {
+        if (isCompilationUnit(getFileItemWithFileNumber(i)->name))
+            continue;
+        int includerCount = collectCUsIncluding(i, includers, 0, MAX_FILES);
+        if (everyIncluderIsRebuilt(includers, includerCount, list->built))
+            removeReferenceableItemsForFile(i);
+    }
+    free(includers);
+}
+
+int buildListCount(BuildList *list) {
+    return list->count;
 }
 
 #define MAX_INCLUDE_WALK_FILES 256
@@ -302,6 +330,9 @@ void buildKnowledgeOfAll(BuildList *list, ArgumentsVector baseArgs) {
         getFileItemWithFileNumber(list->fileNumbers[i])->needsBrowsingStackRefresh = true;
         if (options.cxrefProtocol)
             writeProgressInformation(list->count - i - 1);
+        /* Save the snapshot every 100 CUs, so a long build survives Ctrl-g or a crash */
+        if ((i + 1) % 100 == 0)
+            saveReferences();
     }
     options.cursorOffset = savedCursorOffset;
 }

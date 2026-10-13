@@ -35,3 +35,15 @@ void collectRequestCU(BuildList *list, Inputs *inputs, int requestFileNumber) {
 void stripRequestCU(BuildList *list, int requestFileNumber) {
     mock(list, requestFileNumber);
 }
+
+void collectOutOfDateCUs(BuildList *list, Inputs *inputs) {
+    mock(list, inputs);
+}
+
+void stripHeadersWhoseIncludersAreAllBuilt(BuildList *list) {
+    mock(list);
+}
+
+int buildListCount(BuildList *list) {
+    return (int)mock(list);
+}
