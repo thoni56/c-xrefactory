@@ -103,6 +103,13 @@ void collectSiblingCUs(BuildList *list, Inputs *inputs, int requestFileNumber) {
 
     bool *asked = calloc(MAX_FILES, sizeof(bool)); /* A sibling shares many headers */
 
+    /* The headers the request includes, at any depth */
+    int *closure = malloc(MAX_FILES * sizeof(int));
+    bool *inClosure = calloc(MAX_FILES, sizeof(bool));
+    int closureCount = collectIncludeClosureOf(inputs, requestFileNumber, closure, MAX_FILES);
+    for (int c = 0; c < closureCount; c++)
+        inClosure[closure[c]] = true;
+
     int *siblingCUs = malloc(MAX_FILES * sizeof(int));
     for (int i = getNextExistingFileNumber(0); i != -1; i = getNextExistingFileNumber(i + 1)) {
         FileItem *fi = getFileItemWithFileNumber(i);
@@ -119,15 +126,7 @@ void collectSiblingCUs(BuildList *list, Inputs *inputs, int requestFileNumber) {
         /* Is this header the request file, or included by it? Browsing can start
          * in a header, and then the CUs that include it are the siblings that
          * need parsing - on a cold start none of them has been parsed. */
-        bool requestIncludesThis = (i == requestFileNumber);
-        for (Reference *r = found->references; r != NULL; r = r->next) {
-            if (r->position.file == requestFileNumber) {
-                requestIncludesThis = true;
-                break;
-            }
-        }
-
-        if (!requestIncludesThis)
+        if (i != requestFileNumber && !inClosure[i])
             continue;
 
         /* Collect sibling CUs that include this header and need parsing, also
@@ -162,6 +161,8 @@ void collectSiblingCUs(BuildList *list, Inputs *inputs, int requestFileNumber) {
     }
 
     free(siblingCUs);
+    free(inClosure);
+    free(closure);
     free(asked);
 
     log_info("Pass 3: %d to parse, %d skipped (already parsed), %d skipped (cap %d)", list->count,

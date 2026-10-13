@@ -15,3 +15,8 @@ Inputs *collectInputs(void) {
 void freeInputs(Inputs *inputs) {
     mock(inputs);
 }
+
+int collectIncludeClosureOf(Inputs *inputs, int fileNumber, int fileNumbers[],
+                            int maxFileNumbers) {
+    return (int)mock(inputs, fileNumber, fileNumbers, maxFileNumbers);
+}

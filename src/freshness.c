@@ -61,6 +61,11 @@ static bool inputChangedAfter(FileTimestamp changeTime, FileTimestamp knowledgeT
     return fileTimestampIsZero(changeTime) || changedAfter(changeTime, knowledgeTime);
 }
 
+int collectIncludeClosureOf(Inputs *inputs, int fileNumber, int fileNumbers[],
+                            int maxFileNumbers) {
+    return collectIncludeClosure(inputs->includeGraph, fileNumber, fileNumbers, maxFileNumbers);
+}
+
 bool knowledgeIsOutOfDate(Inputs *inputs, int fileNumber) {
     FileItem *fileItem = getFileItemWithFileNumber(fileNumber);
     if (fileTimestampIsZero(fileItem->knowledgeTime))

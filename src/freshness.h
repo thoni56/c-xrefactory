@@ -13,5 +13,7 @@ extern Inputs *collectInputs(void);
 extern void freeInputs(Inputs *inputs);
 
 extern bool knowledgeIsOutOfDate(Inputs *inputs, int fileNumber);
+extern int collectIncludeClosureOf(Inputs *inputs, int fileNumber, int fileNumbers[],
+                                   int maxFileNumbers);
 
 #endif

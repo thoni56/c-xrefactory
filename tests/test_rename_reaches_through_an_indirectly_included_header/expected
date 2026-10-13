@@ -1,0 +1,59 @@
+CXREF -server -o server-buffer
+-getproject CURDIR/main.c
+end-of-options
+
+<sync>
+<set-info len=<n>>CURDIR</set-info>
+-rfct-rename -renameto=total -olmark=39 -olcursor=39 CURDIR/main.c
+end-of-options
+
+<sync>
+<goto>
+ <position-off off=10 len=<n>>CURDIR/decl.h</position-off>
+</goto>
+<precheck len=<n>> counter;</precheck>
+<goto>
+ <position-off off=38 len=<n>>CURDIR/main.c</position-off>
+</goto>
+<precheck len=<n>> counter;</precheck>
+<goto>
+ <position-off off=21 len=<n>>CURDIR/z.c</position-off>
+</goto>
+<precheck len=<n>> counter;</precheck>
+<goto>
+ <position-off off=51 len=<n>>CURDIR/z.c</position-off>
+</goto>
+<precheck len=<n>> counter;</precheck>
+<goto>
+ <position-off off=39 len=<n>>CURDIR/main.c</position-off>
+</goto>
+<goto>
+ <position-off off=11 len=<n>>CURDIR/decl.h</position-off>
+</goto>
+<replacement>
+ <str len=<n>>counter</str>  <str len=<n>>total</str>
+</replacement>
+<goto>
+ <position-off off=39 len=<n>>CURDIR/main.c</position-off>
+</goto>
+<replacement>
+ <str len=<n>>counter</str>  <str len=<n>>total</str>
+</replacement>
+<goto>
+ <position-off off=22 len=<n>>CURDIR/z.c</position-off>
+</goto>
+<replacement>
+ <str len=<n>>counter</str>  <str len=<n>>total</str>
+</replacement>
+<goto>
+ <position-off off=50 len=<n>>CURDIR/z.c</position-off>
+</goto>
+<replacement>
+ <str len=<n>>counter</str>  <str len=<n>>total</str>
+</replacement>
+<goto>
+ <position-off off=39 len=<n>>CURDIR/main.c</position-off>
+</goto>
+-exit
+end-of-options
+
