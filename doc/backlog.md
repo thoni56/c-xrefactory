@@ -480,6 +480,11 @@ are noted in `cu-inputs`, `out-of-date`, `time-budget` and `sweep-cost`.
 - (#56) <a id="closed-buffer-strip"></a>**A header whose buffer the client stops sending is stripped, and none of its includers built** —
     `tests/test_reverted_held_header_keeps_its_references/.suspended`.
     Goes with: header-not-half
+- (#57) <a id="request-strip-gate"></a>**Nothing tests that a search leaves its request file's references alone** —
+    `callServer()` calls `collectRequestCU()`, which strips the request CU, only when
+    `operationParsesRequestFile()` is true. Within the cap,
+    `test_search_keeps_references_of_changed_request_file` analyses a.c again anyway, so
+    it would pass even if the search stripped a.c. A unit test of the gate.
 - (#55) <a id="parse-all-out-of-date"></a>**An operation on a name analyses only the files never analysed** —
     parse-all counts and parses the CUs without knowledge
     (`countUnparsedCompilationUnits()`, `parseAllUnparsedCompilationUnits()` in
@@ -500,6 +505,9 @@ are noted in `cu-inputs`, `out-of-date`, `time-budget` and `sweep-cost`.
     found change first (`out-of-date`): `stat` every known file once and walk the reverse
     include graph to the CUs. Then project-wide goals use that and the rest ask
     `knowledgeIsOutOfDate()` per CU, with a test that the two agree for every CU.
+    The ask-or-not decision (`needsConfirmationToAnalyse()`) takes the budget and is
+    unit-tested on both sides of it. The budget is a user setting, so system tests use 0
+    (always asks) and unlimited (never asks), and none sit near the boundary.
 - (#41) <a id="freshness-docs"></a>**The docs follow** — *Out of date* replaces *Staleness* in
     `06-principles`, and `08-algorithms` loses "Dual Semantics". In `06-principles`, the
     part on why reparsing only a subset is safe also describes strip-then-reparse.
