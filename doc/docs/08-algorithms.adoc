@@ -270,26 +270,13 @@ defines the symbol being navigated to.
 Pass 3 follows includes from a position. Some operations have no position to start
 from, or are about the whole project by definition, so no include-based subset can make
 their answer complete. For those, after Pass 3, the server counts the CUs that are
-out of date and, if there are any, asks "N of M files need analysing.
-Analyse all before ...?" (see Blocking confirmation under Interactive Dialogs below). Answering yes
-parses every one of them, saving the snapshot after every 100 CUs so that progress
+out of date. Within the cap (`MAX_CUS_TO_REPARSE`) it parses them without asking. Above
+it, it first asks "N of M files need analysing. Analyse all before ...?" (see Blocking
+confirmation under Interactive Dialogs below). Before parsing, it strips each header whose
+includers are all among them. The snapshot is saved after every 100 CUs, so that progress
 survives an interrupt or a crash. That is a save interval, not a limit.
-Before that, it strips each header whose includers are all among them.
 
-[cols="2,3"]
-|===
-|Operation |Status
-
-|Search (`OP_SEARCH`)
-|Asks
-
-|Unused globals (`OP_UNUSED_GLOBAL`)
-|Asks
-
-|Push by name (`OP_BROWSE_PUSH_NAME`)
-|Does not ask yet, so on a cold start it answers "No symbol found." Pinned by the
- suspended `test_browsing_push_name_parses_whole_project`.
-|===
+The operations are search, unused globals and push by name (`needsWholeProjectParsed()`).
 
 A related consequence: on a cold start the symbol menu at filter level 0 (all symbols
 with the name) only lists symbols from CUs parsed so far. A same-named static in a file
@@ -718,8 +705,9 @@ Blocking confirmation (`waitForUserConfirmation`, `<wait-confirmation>`)::
   continues with the operation. Both answers produce output: yes may trigger additional
   work (e.g. parsing), while no proceeds with what is available. +
   Use it when the answer changes what the server computes. Used by the parse-all check
-  for <<project-wide-operations,project-wide operations>>: when out-of-date CUs exist, the
-  server asks whether to parse them all before searching or checking for unused globals.
+  for <<project-wide-operations,project-wide operations>>: when more CUs are out of date
+  than the cap, a complete answer will take a while, so the server asks whether to wait
+  for it before searching, checking for unused globals or pushing by name.
 
 Extraction dialog::
   The server computes the extraction and sends `<extraction-dialog>` with the replacement

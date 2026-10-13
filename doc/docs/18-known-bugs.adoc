@@ -75,17 +75,6 @@ the definition is `helper.h!helper`.
 *Test:* `test_static_declared_and_defined_in_header` (suspended; the note covers the
 `exactPositionResolve` question to settle before fixing).
 
-=== Push by name finds nothing on a cold start
-
-*Symptom:* Pushing a symbol by name answers "No symbol found." unless some file
-containing it has already been parsed.
-
-*Suspected root cause:* Push by name is project-wide, but is not among the operations
-that ask to parse all unparsed CUs first (see
-<<08-algorithms.adoc#project-wide-operations,Project-wide Operations>>).
-
-*Test:* `test_browsing_push_name_parses_whole_project` (suspended).
-
 === Token pasting that forms numbers
 
 *Symptom:* Macros that paste numbers produce wrong symbols in the reference table.

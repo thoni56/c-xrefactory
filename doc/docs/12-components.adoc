@@ -155,7 +155,7 @@ Operations are classified by what they need:
 
 * **Opens a browsing session** (`opensBrowsingSession`): navigation, refactoring support, unused symbol detection — these push a browsing session
 * **Requires input file processing** (`requiresProcessingInputFile`): completion, search, extraction, and all operations that open a browsing session — these parse the request's input file
-* **Needs the whole project parsed** (`needsWholeProjectParsed`): search, unused globals, push by name — these ask to parse every unparsed compilation unit first
+* **Needs the whole project parsed** (`needsWholeProjectParsed`): search, unused globals, push by name — these parse every out-of-date compilation unit first, and ask when there are more than the cap
 * **Answered without references** (`answeredWithoutReferences`): `-getproject` — entry refresh skips Pass 3 for it
 * **None of these**: filter changes, browsing stack manipulation — these operate on existing session state
 

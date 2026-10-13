@@ -655,9 +655,6 @@ was done.
 
 * **ADR-0027 stays `Accepted`, not `Implemented`:** rename does not yet refuse from inside
   a macro body, and the menu is complete only up to the collection caps.
-* **`18-known-bugs.adoc` cites `test_browsing_push_name_parses_whole_project`**, which
-  does not exist; the suspended directory is `tests/test_browsing_push_by_name`. Fix the
-  reference when touching the remaining-bugs item.
 * **Outside this repo:** the external regression scripts still lack the orphan-test-dir
   filter that `utils/failing` got in `db064a2a` — a `tests/test_*/` with an `output` but
   no `Makefile` reads as a failure.
