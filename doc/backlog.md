@@ -497,6 +497,9 @@ are noted in `cu-inputs`, `out-of-date`, `time-budget` and `sweep-cost`.
     e.g. under an `#ifdef` they set, is missing until they are built. Strip only when
     `everyIncluderIsRebuilt()`, as the sibling collection does (ADR-0032). It still asks
     `fileNumberIsStale()`, which has no coarse-clock gap, and records the header as parsed. Not needed once `sweep` is in.
+- (#56) <a id="closed-buffer-strip"></a>**A header whose buffer the client stops sending is stripped, and none of its includers built** —
+    `tests/test_reverted_held_header_keeps_its_references/.suspended`.
+    Goes with: header-not-half
 - (#55) <a id="parse-all-out-of-date"></a>**An operation on a name analyses only the files never analysed** —
     parse-all counts and parses the CUs without knowledge
     (`countUnparsedCompilationUnits()`, `parseAllUnparsedCompilationUnits()` in
@@ -538,8 +541,7 @@ are noted in `cu-inputs`, `out-of-date`, `time-budget` and `sweep-cost`.
     Waits for: adr-0033
 - (#44) <a id="sweep"></a>**Remove references no CU still emits** — after each request that
     parsed something, remove a reference older than every reaching CU's knowledge
-    generation, and drop the strips in advance in `buildKnowledgeOfCU()`, Pass 2 and
-    `singlePass()`. A capped reverse walk removes nothing in that file.
+    generation, and drop every `removeReferenceableItemsForFile()` before a build. A capped reverse walk removes nothing in that file.
     `test_preprocess_edit_removes_ifdef_define` comes off suspension.
     Waits for: generations, include-edges
 - (#45) <a id="sweep-cost"></a>**What the sweep costs** — memory and walk time on ffmpeg,
