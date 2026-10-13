@@ -3,7 +3,11 @@ CXREF -server
 <sync>
 -search=feature_only -olcursor=1 -preload CURDIR/source.c CURDIR/with_feature.preload CURDIR/source.c
 <sync>
+-cancel
+<sync>
 !cp CURDIR/edited_feature.preload CURDIR/source.c
 -search=feature_only -olcursor=1 CURDIR/source.c
+<sync>
+-cancel
 <sync>
 <exit>

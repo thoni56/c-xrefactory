@@ -53,7 +53,7 @@ So a rename there rewrites 13 of 25 occurrences. Browsing survives a truncated s
 
 *Why the caps exist:* removing the lexem-stream cache (ADR-0012) took a full ffmpeg parse from 1-2 minutes to 25, and the caps bound that.
 
-*Direction:* put the refactoring pushes in `needsWholeProjectParsed` so they ask like search does — the parse-all there is uncapped and counts only never-parsed CUs, so a warm project is asked for little. Two things that needs: declining must *abort* the refactoring, where today `if (waitForUserConfirmation(msg)) { ...parse... }` has no else and simply proceeds; and `parseAllPromptFor()` ends in `default: assert(0)`, so each added operation needs its own prompt word. It applies to parameter manipulation as much as to rename.
+*Direction:* put the refactoring pushes in `needsWholeProjectParsed` so they ask like search does — the parse-all there is uncapped and counts the CUs that are out of date. Two things that needs: declining must *abort* the refactoring, where today `if (waitForUserConfirmation(msg)) { ...parse... }` has no else and simply proceeds; and `parseAllPromptFor()` ends in `default: assert(0)`, so each added operation needs its own prompt word. It applies to parameter manipulation as much as to rename.
 
 *Workaround, if the caps stay:* re-issue the push. Pass 3 filters `fileNeedsParsing` before applying the cap, so each request parses 128 fresh CUs and they stay parsed — six rounds for `avcodec.h`. Next does not help: `OP_BROWSE_NEXT` is in none of the gates and walks the list copied at the push.
 

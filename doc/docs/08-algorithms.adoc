@@ -269,11 +269,12 @@ defines the symbol being navigated to.
 
 Pass 3 follows includes from a position. Some operations have no position to start
 from, or are about the whole project by definition, so no include-based subset can make
-their answer complete. For those, after Pass 3, the server counts the CUs that have
-never been parsed and, if there are any, asks "N of M files need analysing.
+their answer complete. For those, after Pass 3, the server counts the CUs that are
+out of date and, if there are any, asks "N of M files need analysing.
 Analyse all before ...?" (see Blocking confirmation under Interactive Dialogs below). Answering yes
 parses every one of them, saving the snapshot after every 100 CUs so that progress
 survives an interrupt or a crash. That is a save interval, not a limit.
+Before that, it strips each header whose includers are all among them.
 
 [cols="2,3"]
 |===
@@ -717,7 +718,7 @@ Blocking confirmation (`waitForUserConfirmation`, `<wait-confirmation>`)::
   continues with the operation. Both answers produce output: yes may trigger additional
   work (e.g. parsing), while no proceeds with what is available. +
   Use it when the answer changes what the server computes. Used by the parse-all check
-  for <<project-wide-operations,project-wide operations>>: when unparsed CUs exist, the
+  for <<project-wide-operations,project-wide operations>>: when out-of-date CUs exist, the
   server asks whether to parse them all before searching or checking for unused globals.
 
 Extraction dialog::
