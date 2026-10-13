@@ -33,7 +33,6 @@ flowchart BT
   header_static_link_names["§3 · 14 · Header static: prototype and definition get different link names"]
   latin1_swallows["§3 · 15a · A Latin-1 character swallows the characters after it"]
   relative_include_path["§3 · 15b · A relative `-I` in `.c-xrefrc` resolves against the working directory of the server process"]
-  unknown_cu_under_include["§3 · 15c · Any file under an `-I` directory counts as project"]
   no_project_twice["§3 · 15d · `-getproject` for a file outside any project answers `#lt;no-project-found#gt;` twice"]
   warm_start_fatal["§3 · 15e · A warm start trips `FATAL cxref.c:1494: 'browsingStack.top' is not true`"]
   unused_yacc_statics["§3 · 15g · GlobalUnused gives a false positive for statics in `.y` files"]
@@ -132,7 +131,6 @@ flowchart BT
   class header_static_link_names blocked
   class latin1_swallows ready
   class relative_include_path ready
-  class unknown_cu_under_include ready
   class no_project_twice ready
   class warm_start_fatal ready
   class unused_yacc_statics ready
