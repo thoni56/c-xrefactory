@@ -88,50 +88,30 @@ void stripRequestCU(BuildList *list, int requestFileNumber) {
     }
 }
 
-/* Entry refresh Pass 3: Find CUs that share headers with the request file
- * but haven't been parsed yet. On cold start without preloads, only the
- * request file gets parsed (by processFile). This pass ensures sibling CUs
- * are also parsed so their symbol references are available for navigation.
- *
- * Uses brute-force forward-include lookup: iterates all headers in the
- * file table and checks if the request file is among their includers. */
+/* The siblings of the request: the CUs that reach the request file or a header it
+ * includes, at any depth, also through a file that is not a CU, such as a mock or
+ * another header. Those out of date go on the build list. */
 void collectSiblingCUs(BuildList *list, Inputs *inputs, int requestFileNumber) {
-    int skippedAlreadyParsed = 0;
-
-    log_info("Pass 3: request file '%s' (fileNumber=%d)",
+    log_info("Siblings of '%s' (fileNumber=%d)",
              getFileItemWithFileNumber(requestFileNumber)->name, requestFileNumber);
 
     bool *asked = calloc(MAX_FILES, sizeof(bool)); /* A sibling shares many headers */
 
-    /* The headers the request includes, at any depth */
-    int *closure = malloc(MAX_FILES * sizeof(int));
-    bool *inClosure = calloc(MAX_FILES, sizeof(bool));
-    int closureCount = collectIncludeClosureOf(inputs, requestFileNumber, closure, MAX_FILES);
-    for (int c = 0; c < closureCount; c++)
-        inClosure[closure[c]] = true;
+    /* The request file first, since browsing can start in a header, and then the
+     * headers it includes */
+    int *headers = malloc((MAX_FILES + 1) * sizeof(int));
+    headers[0] = requestFileNumber;
+    int headerCount = 1 + collectIncludeClosureOf(inputs, requestFileNumber, &headers[1], MAX_FILES);
+    int skippedCurrent = 0;
 
     int *siblingCUs = malloc(MAX_FILES * sizeof(int));
-    for (int i = getNextExistingFileNumber(0); i != -1; i = getNextExistingFileNumber(i + 1)) {
-        FileItem *fi = getFileItemWithFileNumber(i);
-        if (isCompilationUnit(fi->name))
+    for (int h = 0; h < headerCount; h++) {
+        int headerIndex = headers[h];
+        FileItem *headerFileItem = getFileItemWithFileNumber(headerIndex);
+        if (isCompilationUnit(headerFileItem->name))
             continue; /* Skip CUs, only look at headers */
 
-        ReferenceableItem searchItem = makeReferenceableItem(LINK_NAME_INCLUDE_REFS, TypeCppInclude,
-                                                             StorageExtern, VisibilityGlobal, i);
-
-        ReferenceableItem *found;
-        if (!isMemberInReferenceableItemTable(&searchItem, NULL, &found))
-            continue;
-
-        /* Is this header the request file, or included by it? Browsing can start
-         * in a header, and then the CUs that include it are the siblings that
-         * need parsing - on a cold start none of them has been parsed. */
-        if (i != requestFileNumber && !inClosure[i])
-            continue;
-
-        /* Collect sibling CUs that include this header and need parsing, also
-         * through a file that is not a CU, such as a mock or another header */
-        int siblingCount = collectCUsIncluding(i, siblingCUs, 0, MAX_FILES);
+        int siblingCount = collectCUsIncluding(headerIndex, siblingCUs, 0, MAX_FILES);
         for (int j = 0; j < siblingCount; j++) {
             int siblingFileNum = siblingCUs[j];
             if (siblingFileNum == requestFileNumber)
@@ -144,7 +124,7 @@ void collectSiblingCUs(BuildList *list, Inputs *inputs, int requestFileNumber) {
             if (list->built[siblingFileNum])
                 continue; /* Held, and on the list already */
             if (!knowledgeIsOutOfDate(inputs, siblingFileNum)) {
-                skippedAlreadyParsed++;
+                skippedCurrent++;
                 continue;
             }
 
@@ -155,18 +135,17 @@ void collectSiblingCUs(BuildList *list, Inputs *inputs, int requestFileNumber) {
         /* The references in a header are all or nothing (ADR-0032): strip them
          * only when every CU that includes it is built again, before any is */
         if (everyIncluderIsRebuilt(siblingCUs, siblingCount, list->built)) {
-            log_debug("Every includer of '%s' is built again, stripping it", fi->name);
-            removeReferenceableItemsForFile(i);
+            log_debug("Every includer of '%s' is built again, stripping it", headerFileItem->name);
+            removeReferenceableItemsForFile(headerIndex);
         }
     }
 
     free(siblingCUs);
-    free(inClosure);
-    free(closure);
+    free(headers);
     free(asked);
 
-    log_info("Pass 3: %d to parse, %d skipped (already parsed), %d skipped (cap %d)", list->count,
-             skippedAlreadyParsed, list->skippedCapped, MAX_CUS_TO_REPARSE);
+    log_info("Siblings: %d to build, %d skipped (current), %d skipped (cap %d)", list->count,
+             skippedCurrent, list->skippedCapped, MAX_CUS_TO_REPARSE);
 }
 
 #define MAX_INCLUDE_WALK_FILES 256
