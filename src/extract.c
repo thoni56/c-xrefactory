@@ -374,6 +374,35 @@ static void collectVariableUsages(ProgramGraphNode *program, ProgramGraphNode *v
     }
 }
 
+static bool hasStaticLifetime(ReferenceableItem *referenceableItem) {
+    return referenceableItem->storage == StorageStatic
+        || referenceableItem->storage == StorageThreadLocal;
+}
+
+/* A static keeps its value between calls, so a write to it in the block is
+ * never dead, whatever the data flow of one call says. It matters when the value
+ * is needed anywhere but the block: read in the block before it is written there
+ * (the initializer, or an earlier call), or read outside the block. */
+static bool isStaticWrittenInBlockAndNeededElsewhere(ProgramGraphNode *program,
+                                                     ProgramGraphNode *variableNode,
+                                                     unsigned inUsages) {
+    bool writtenInBlock = false;
+    bool readOutsideBlock = false;
+
+    for (ProgramGraphNode *p = program; p != NULL; p = p->next) {
+        if (p->referenceableItem != variableNode->referenceableItem)
+            continue;
+        Usage usage = p->reference->usage;
+        if (p->regionSide == DATAFLOW_INSIDE_BLOCK
+            && (usage == UsageLvalUsed || usage == UsageAddrUsed))
+            writtenInBlock = true;
+        if (p->regionSide == DATAFLOW_OUTSIDE_BLOCK
+            && (usage == UsageUsed || usage == UsageAddrUsed))
+            readOutsideBlock = true;
+    }
+    return writtenInBlock && (hasBit(inUsages, DATAFLOW_OUTSIDE_BLOCK) || readOutsideBlock);
+}
+
 static ExtractClassification classifyVariableUsingDataFlow(ProgramGraphNode *program,
                                                            ProgramGraphNode *variableNode) {
     ProgramGraphNode *p;
@@ -394,6 +423,9 @@ static ExtractClassification classifyVariableUsingDataFlow(ProgramGraphNode *pro
     // outUsages marks usages out of block (from inside, or from ouside)
     if (variableNode->regionSide == DATAFLOW_OUTSIDE_BLOCK) {
         // a variable defined outside of the block
+        if (hasStaticLifetime(referenceableItem)
+            && isStaticWrittenInBlockAndNeededElsewhere(program, variableNode, inUsages))
+            return CLASSIFIED_AS_IN_OUT_ARGUMENT;
         if (isValueFromBlockUsedAfter(outUsages)) {
             // a value set in the block is used outside
             if (hasSimpleOutflowOnly(inUsages, outUsages)) {
@@ -494,19 +526,22 @@ static void classifyLocalVariables(ProgramGraphNode *program) {
 /* This should really be split into three different functions, one for
  * each result: name, declarator, declaration...
  * Name... DONE */
+/* withStorage=false drops the storage class, which is what a copy needs: the
+ * local that an in/out parameter is copied into is not the static it copies. */
 static void getLocalVarStringFromLinkName(char *linkName, char *name, char *declarator, char *declaration,
-                                          char *declStar, bool shouldCopyName) {
+                                          char *declStar, bool shouldCopyName, bool withStorage) {
     char *src, *nameP, *declarationP, *declaratorP;
 
     log_trace("%s '%s'", __FUNCTION__, linkName);
 
     // linkName always starts with a space?
-    // Storage: kept here, this is a redeclaration in the extracted function
+    // Storage:
     for (src=linkName+1, declarationP=declaration, declaratorP=declarator;
          *src!=0 && *src!=LINK_NAME_SEPARATOR;
-         src++, declarationP++, declaratorP++
+         src++
     ) {
-        *declarationP = *declaratorP = *src;
+        if (withStorage)
+            *declarationP++ = *declaratorP++ = *src;
     }
 
     assert(*src);
@@ -889,7 +924,8 @@ static void generateNewFunctionHead(ProgramGraphNode *program, char *extractionN
                 && p->reference->usage == UsageDeclared)
         ) {
             getLocalVariableNameFromLinkName(p->referenceableItem->linkName, name);
-            getLocalVarStringFromLinkName(p->referenceableItem->linkName, name, declarator, declaration, "", true);
+            getLocalVarStringFromLinkName(p->referenceableItem->linkName, name, declarator, declaration, "", true,
+                                          p->classification != CLASSIFIED_AS_IN_OUT_ARGUMENT);
             if (strcmp(ldcla,declarator)==0) {
                 strcatf(resultingString, ",%s",declaration+ldclaLen);
             } else {
