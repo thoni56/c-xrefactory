@@ -499,13 +499,6 @@ are noted in `cu-inputs`, `out-of-date`, `time-budget` and `sweep-cost`.
     `operationParsesRequestFile()` is true. Within the cap,
     `test_search_keeps_references_of_changed_request_file` analyses a.c again anyway, so
     it would pass even if the search stripped a.c. A unit test of the gate.
-- (#55) <a id="parse-all-out-of-date"></a>**An operation on a name analyses only the files never analysed** —
-    parse-all counts and parses the CUs without knowledge
-    (`countUnparsedCompilationUnits()`, `parseAllUnparsedCompilationUnits()` in
-    `src/server.c`), not those out of date. A CU whose header changed on disk keeps its
-    old references through a search. From reading the code (WSL, session `d25255b8`,
-    2026-10-12), not tested.
-    Goes with: time-budget, behind-the-back
 - (#40) <a id="time-budget"></a>**A time budget instead of the cap** — the cap (`MAX_CUS_TO_REPARSE`,
     128 today) becomes a time budget, and above it the question
     with an estimate. Browsing remembers a "no" for the session, an operation that edits

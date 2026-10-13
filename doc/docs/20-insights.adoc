@@ -156,7 +156,6 @@ Where it is not yet Make (items in `doc/backlog.md`):
 
 * *The goal is too small* (`request-target`). We run `make request.o`, but the answer is linked from more objects than that.
 * *The cap.* At most 128 recipes run, and the rest stay out of date. They are known, though (`time-budget`, `header-not-half`).
-* *Parse-all builds only the targets that do not exist*, as if every existing target were up to date (`parse-all-out-of-date`).
 * *The config is not a prerequisite* (`out-of-date`). That is the classic Make pitfall where changing `CFLAGS` rebuilds nothing. `markAllCompilationUnitsStale()` covers it for now.
 * *A header changed on disk, outside the goal,* keeps its old references (`behind-the-back`).
 * *Several recipes write the same output.* A header's references are put in the table by every CU that includes it, which Make cannot express. Hence ADR-0032's all or nothing for a header, and in the end the sweep with generations (ADR-0033, `sweep`).
