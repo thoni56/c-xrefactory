@@ -5,12 +5,15 @@
 <title>Backlog dependencies</title>
 <style>html, body { margin: 0; height: 100%; overflow: hidden; background: #fff; } pre.mermaid { margin: 0; }
 #find { position: fixed; top: 8px; left: 8px; font: 14px sans-serif; }
+#keys { position: fixed; bottom: 8px; left: 8px; padding: 4px 8px; font: bold 13px/1.5 sans-serif; color: rgba(0, 0, 0, 0.333); background: rgba(255, 255, 255, 0.8); }
+#keys:hover { color: rgba(0, 0, 0, 0.8); }
 g.node.match rect, g.node.match polygon, g.node.match path { stroke: #e8590c !important; stroke-width: 3px !important; }
 g.node.current rect, g.node.current polygon, g.node.current path { stroke-width: 6px !important; }</style>
 <script src="https://cdn.jsdelivr.net/npm/svg-pan-zoom@3.6.2/dist/svg-pan-zoom.min.js"></script>
 </head>
 <body>
 <div id="find" hidden><input id="search" placeholder="Search"> <span id="count"></span></div>
+<div id="keys">+ − zoom<br>← ↑ → ↓ or 4 5 6 2 pan, Shift further<br>0 fit<br>/ search</div>
 <pre class="mermaid">
 flowchart BT
   classDef ready fill:#9fd4a8,stroke:#4f9a5d,color:#13261a
@@ -33,7 +36,6 @@ flowchart BT
   token_pasting_trio["§3 · 13 · Token pasting trio"]
   header_static_link_names["§3 · 14 · Header static: prototype and definition get different link names"]
   relative_include_path["§3 · 15b · A relative `-I` in `.c-xrefrc` resolves against the working directory of the server process"]
-  no_project_twice["§3 · 15d · `-getproject` for a file outside any project answers `#lt;no-project-found#gt;` twice"]
   warm_start_fatal["§3 · 15e · A warm start trips `FATAL cxref.c:1494: 'browsingStack.top' is not true`"]
   unused_yacc_statics["§3 · 15g · GlobalUnused gives a false positive for statics in `.y` files"]
   push_by_name["§3 · 15h · Push by name when a name has several bindings"]
@@ -132,7 +134,6 @@ flowchart BT
   class token_pasting_trio ready
   class header_static_link_names blocked
   class relative_include_path ready
-  class no_project_twice ready
   class warm_start_fatal ready
   class unused_yacc_statics ready
   class push_by_name ready
@@ -235,9 +236,10 @@ search.addEventListener('keydown', e => {
     search.blur();
   }
 });
-// Keys for the graph, except while typing a search: + and - zoom, the arrows pan
-// (further with Shift), and 0 fits the whole graph again
-const pans = { ArrowLeft: [1, 0], ArrowRight: [-1, 0], ArrowUp: [0, 1], ArrowDown: [0, -1] };
+// Keys for the graph, except while typing a search: + and - zoom, the arrows and
+// 4, 5, 6 and 2 pan (further with Shift), and 0 fits the whole graph again
+const pans = { ArrowLeft: [1, 0], ArrowRight: [-1, 0], ArrowUp: [0, 1], ArrowDown: [0, -1],
+               4: [1, 0], 6: [-1, 0], 5: [0, 1], 2: [0, -1] };
 document.addEventListener('keydown', e => {
   if (document.activeElement == search || e.ctrlKey || e.metaKey || e.altKey)
     return;
