@@ -152,6 +152,7 @@ extern Options presetOptions;
 /* FUNCTIONS */
 
 extern void aboutMessage(void);
+extern void usage(void);
 
 extern void setOptionVariable(char *name, char *val);
 extern char *getOptionVariable(char *name);

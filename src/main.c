@@ -58,6 +58,14 @@ static void initLogging(ArgumentsVector args) {
         logCommands(args);
 }
 
+/* Which program to be is known from the command line alone, before any options are processed */
+static bool argumentsContain(ArgumentsVector args, char *option) {
+    for (int i=0; i<args.argc; i++)
+        if (strcmp(args.argv[i], option) == 0)
+            return true;
+    return false;
+}
+
 static void checkForStartupDelay(int argc, char *argv[]) {
     for (int i=0; i<argc; i++) {
         if (strncmp(argv[i], "-delay=", 7)==0) {
@@ -84,15 +92,15 @@ int main(int argc, char *argv[]) {
     if (want_lsp_server(args))
         return lsp_server(stdin);
 
-    /* else continue with native server */
-    currentPass = ANY_PASS;
-    totalTaskEntryInitialisations();
-    mainTaskEntryInitialisations(args);
-
     int exitCode = 0;
-    if (options.mode == ServerMode)
+    if (argumentsContain(args, "-help"))
+        usage();
+    else if (argumentsContain(args, "-server")) {
+        currentPass = ANY_PASS;
+        totalTaskEntryInitialisations();
+        mainTaskEntryInitialisations(args);
         server(args);
-    else if (options.serverOperation == OP_ABOUT)
+    } else if (argumentsContain(args, "-about"))
         aboutMessage();          /* asking what this is needs no mode */
     else {
         fprintf(stderr, "No mode given, use -server or -lsp\n");

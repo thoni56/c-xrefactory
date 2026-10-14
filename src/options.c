@@ -154,7 +154,7 @@ void aboutMessage(void) {
 /* *************************************************************************** */
 /*                                      OPTIONS                                */
 
-static void usage() {
+void usage(void) {
     fprintf(stdout, "c-xref - a C/Yacc refactoring tool\n\n");
 #if 0
     fprintf(stdout, "Usage:\n\tc-xref <mode> <option>+ <input files>\n\n");
