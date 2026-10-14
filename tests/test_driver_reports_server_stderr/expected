@@ -1,0 +1,11 @@
+CXREF -server -o server-buffer
+-getproject CURDIR/source.c
+end-of-options
+
+<sync>
+-exit
+end-of-options
+
+exit=1
+ERROR: the server wrote to stderr:
+FATAL something went wrong

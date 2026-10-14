@@ -1,0 +1,14 @@
+#!/bin/sh
+# Stands in for a server that answers every request but also writes to its
+# stderr, as a log_fatal() or a failed assert does
+echo "FATAL something went wrong" >&2
+exiting=no
+while read line; do
+    case "$line" in
+        -exit) exiting=yes ;;
+        end-of-options)
+            [ $exiting = yes ] && exit 0
+            : > server-buffer
+            echo "<sync>" ;;
+    esac
+done

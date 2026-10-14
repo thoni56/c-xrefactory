@@ -47,6 +47,8 @@ import shlex
 import shutil
 import re
 import argparse
+import threading
+import atexit
 
 def eprint(*args, **kwargs):
     print(*args, file=sys.stderr, **kwargs)
@@ -77,6 +79,25 @@ def execute_command(command, cxref_program, curdir):
     if external_process.returncode != 0 and external_process.returncode != 64:
         eprint(f"External command failed with exit code {external_process.returncode}")
         sys.exit(external_process.returncode)
+
+
+def collect_stderr(p, lines):
+    for line in p.stderr:
+        lines.append(line.decode(errors='replace').rstrip('\n'))
+
+
+def fail_on_server_stderr(reader, lines):
+    # Nothing a server writes to stderr reaches a client, so anything there is a
+    # fault, such as a log_fatal() or a failed assert. Many tests throw stdout away,
+    # so this goes to stderr and fails the run, whatever the exit code would have been.
+    reader.join(timeout=1)
+    if lines:
+        sys.stdout.flush()
+        eprint("ERROR: the server wrote to stderr:")
+        for line in lines:
+            eprint(line)
+        sys.stderr.flush()
+        os._exit(1)
 
 
 def end_of_options(p):
@@ -219,7 +240,12 @@ if __name__ == "__main__":
         p = subprocess.Popen(arguments,
                              stdout=subprocess.PIPE,
                              stdin=subprocess.PIPE,
+                             stderr=subprocess.PIPE,
                              bufsize=0)
+        server_stderr = []
+        stderr_reader = threading.Thread(target=collect_stderr, args=(p, server_stderr), daemon=True)
+        stderr_reader.start()
+        atexit.register(fail_on_server_stderr, stderr_reader, server_stderr)
 
         if "-refactory" in invocation:
             wait_for_sync(p)
