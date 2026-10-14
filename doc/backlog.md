@@ -204,6 +204,12 @@ graph from them on every push, linked at the end of this file, and `utils/backlo
       ADR-0031 proposes for `-prune` should cover `-I` too. The same config had
       `-prune ffmpeg/compat/atomics`, which with `ffmpeg/` as root names a directory that
       does not exist, silently.
+      The cause is that the global `cwd` has two meanings in one request: `initCwd()` sets
+      it to the process's working directory, and only after `processOptions()` does
+      `reInitCwd()` (`src/startup.c`) make it the config's directory. The `-I` is
+      resolved in between. If `getcwd()` fails, `cwd` is `/` in that window, so relative
+      names resolve under the root. Resolving the config's relative paths against the
+      config's directory, not `cwd`, fixes both (Mac, session `05984816`, 2026-10-14).
       Goes with: adr-0031
    d. <a id="no-project-twice"></a>**`-getproject` for a file outside any project answers `<no-project-found>` twice** —
       *no repo home yet*. `tests/test_no_project_writes_no_snapshot` shows it, and its
