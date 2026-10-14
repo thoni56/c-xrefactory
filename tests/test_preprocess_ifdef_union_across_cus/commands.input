@@ -3,6 +3,4 @@ CXREF -server
 <sync>
 -search=always_there -olcursor=1 CURDIR/a.c
 <sync>
--continue
-<sync>
 <exit>

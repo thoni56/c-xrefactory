@@ -3,6 +3,4 @@ CXREF -server
 <sync>
 -search=number -olcursor=46 CURDIR/source.c
 <sync>
--continue
-<sync>
 <exit>
