@@ -49,3 +49,38 @@ Ensure(Encoding, will_convert_utf8_character) {
 
     assert_that(text, is_equal_to_string("  "));
 }
+
+Ensure(Encoding, takes_a_latin1_character_as_one_character) {
+    const char *latin1 = "p\xE5*/x"; // "på*/x" in Latin-1: 0xE5 starts no UTF-8 sequence here
+    EditorBuffer *buffer = (EditorBuffer*)0x13131313;
+
+    char text[strlen(latin1)+1];
+    strcpy(text, latin1);
+
+    always_expect(getTextInEditorBuffer, will_return(text));
+    always_expect(getSizeOfEditorBuffer, will_return(strlen(latin1)));
+
+    expect(setSizeOfEditorBuffer, when(size, is_equal_to(5)));
+
+    performEncodingAdjustments(buffer);
+
+    assert_that(text, is_equal_to_string("p */x"));
+}
+
+Ensure(Encoding, will_convert_three_byte_utf8_character) {
+    const char *euro = "\xE2\x82\xAC*/"; // "€*/" in UTF-8
+    EditorBuffer *buffer = (EditorBuffer*)0x13131313;
+
+    char text[strlen(euro)+1];
+    strcpy(text, euro);
+
+    always_expect(getTextInEditorBuffer, will_return(text));
+    always_expect(getSizeOfEditorBuffer, will_return(strlen(euro)));
+
+    expect(setSizeOfEditorBuffer, when(size, is_equal_to(3)));
+
+    performEncodingAdjustments(buffer);
+    text[3] = '\0'; /* Any shortening of the text will not necessarily null-terminate it */
+
+    assert_that(text, is_equal_to_string(" */"));
+}
