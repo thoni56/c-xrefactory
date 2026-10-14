@@ -1,0 +1,2 @@
+# The CR LF line endings are what the test is about, so git keeps them as they are
+source.c -text

@@ -11,7 +11,9 @@
 
 Describe(Encoding);
 BeforeEach(Encoding) {}
-AfterEach(Encoding) {}
+AfterEach(Encoding) {
+    options.eolConversion = NO_EOL_CONVERSION;
+}
 
 
 Ensure(Encoding, will_not_convert_ascii) {
@@ -83,4 +85,60 @@ Ensure(Encoding, will_convert_three_byte_utf8_character) {
     text[3] = '\0'; /* Any shortening of the text will not necessarily null-terminate it */
 
     assert_that(text, is_equal_to_string(" */"));
+}
+
+Ensure(Encoding, will_convert_crlf_to_one_newline) {
+    const char *crlf = "a\r\nb\r\n";
+    EditorBuffer *buffer = (EditorBuffer*)0x13131313;
+
+    options.eolConversion = CR_LF_EOL_CONVERSION | CR_EOL_CONVERSION; /* As the client asks */
+    char text[strlen(crlf)+1];
+    strcpy(text, crlf);
+
+    always_expect(getTextInEditorBuffer, will_return(text));
+    always_expect(getSizeOfEditorBuffer, will_return(strlen(crlf)));
+
+    expect(setSizeOfEditorBuffer, when(size, is_equal_to(4)));
+
+    performEncodingAdjustments(buffer);
+    text[4] = '\0'; /* Any shortening of the text will not necessarily null-terminate it */
+
+    assert_that(text, is_equal_to_string("a\nb\n"));
+}
+
+Ensure(Encoding, will_convert_a_lone_cr_to_a_newline) {
+    const char *cr = "a\rb\r";
+    EditorBuffer *buffer = (EditorBuffer*)0x13131313;
+
+    options.eolConversion = CR_LF_EOL_CONVERSION | CR_EOL_CONVERSION; /* As the client asks */
+    char text[strlen(cr)+1];
+    strcpy(text, cr);
+
+    always_expect(getTextInEditorBuffer, will_return(text));
+    always_expect(getSizeOfEditorBuffer, will_return(strlen(cr)));
+
+    expect(setSizeOfEditorBuffer, when(size, is_equal_to(4)));
+
+    performEncodingAdjustments(buffer);
+
+    assert_that(text, is_equal_to_string("a\nb\n"));
+}
+
+Ensure(Encoding, will_convert_crlf_after_a_utf8_character) {
+    const char *crlf = "\xC3\xA5\r\nb"; /* "å" in UTF-8, CR LF, "b" */
+    EditorBuffer *buffer = (EditorBuffer*)0x13131313;
+
+    options.eolConversion = CR_LF_EOL_CONVERSION | CR_EOL_CONVERSION; /* As the client asks */
+    char text[strlen(crlf)+1];
+    strcpy(text, crlf);
+
+    always_expect(getTextInEditorBuffer, will_return(text));
+    always_expect(getSizeOfEditorBuffer, will_return(strlen(crlf)));
+
+    expect(setSizeOfEditorBuffer, when(size, is_equal_to(3)));
+
+    performEncodingAdjustments(buffer);
+    text[3] = '\0'; /* Any shortening of the text will not necessarily null-terminate it */
+
+    assert_that(text, is_equal_to_string(" \nb"));
 }
