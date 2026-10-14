@@ -45,6 +45,11 @@ graph from them on every push, linked at the end of this file, and `utils/backlo
    `options`. `parseFileWithFullInit()` keeps only `cursorOffset`, `noErrors`,
    `serverOperation` and, as a stopgap, `dumpSelection` (`test_dump_after_a_rebuild`).
    Every other REQUEST option is lost when a rebuild comes before the dispatch.
+   The other way round, the lock that `-getproject` takes copies all of `options` into
+   `savedOptions` (`src/cxref.c:1829`), so the next request starts as `OP_GET_PROJECT`
+   unless it names an operation. A request with no operation of its own then gets a
+   `-getproject` answer, "No source file to identify project" (WSL, session `d25255b8`,
+   2026-10-14).
 - (#4) <a id="setup-ladder"></a>**The Setup Ladder, in this sequence**, each small once the partition lands
    (`doc/docs/10-roadmap.adoc`, Convergence: The Setup Ladder → Remaining):
    a. <a id="root-path-id"></a>**the server's project id is its root path** — ADR-0029. `lockedProject` becomes the
