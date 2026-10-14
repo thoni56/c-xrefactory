@@ -382,17 +382,15 @@ static LexemCode getLexem(void) {
 
 static LexemCode checkCompletionsForId(LexemCode lexem, char *id, Position position) {
     assert(options.mode);
-    if (options.mode == ServerMode) {
-        if (lexem == IDENT_TO_COMPLETE) {
-            completionStringServed = true;
-            if (parsingConfig.language == LANG_YACC) {
-                makeYaccCompletions(id, strlen(id), position);
-            } else {
-                makeCCompletions(id, strlen(id), position);
-            }
-            /* Here should also be a longjmp to stop file processing !!!! Why? */
-            return IDENTIFIER;
+    if (lexem == IDENT_TO_COMPLETE) {
+        completionStringServed = true;
+        if (parsingConfig.language == LANG_YACC) {
+            makeYaccCompletions(id, strlen(id), position);
+        } else {
+            makeCCompletions(id, strlen(id), position);
         }
+        /* Here should also be a longjmp to stop file processing !!!! Why? */
+        return IDENTIFIER;
     }
     return lexem;
 }
@@ -2737,18 +2735,16 @@ LexemCode yylex(void) {
         goto finish;
     }
     assert(options.mode);
-    if (options.mode == ServerMode) {
-        Position position;
-        yytext = currentInput.read;
-        getExtraLexemInformationFor(lexem, &currentInput.read, NULL, NULL, &position, NULL,
-                                    NULL, !insideMacro());
-        if (lexem == IDENT_TO_COMPLETE) {
-            lexem = checkCompletionsForId(lexem, yytext, position);
-            while (includeStack.pointer != 0)
-                popInclude();
-            /* while (getLexBuf(&cFile.lb)) cFile.lb.cc = cFile.lb.fin;*/
-            goto endOfFile;
-        }
+    Position position;
+    yytext = currentInput.read;
+    getExtraLexemInformationFor(lexem, &currentInput.read, NULL, NULL, &position, NULL,
+                                NULL, !insideMacro());
+    if (lexem == IDENT_TO_COMPLETE) {
+        lexem = checkCompletionsForId(lexem, yytext, position);
+        while (includeStack.pointer != 0)
+            popInclude();
+        /* while (getLexBuf(&cFile.lb)) cFile.lb.cc = cFile.lb.fin;*/
+        goto endOfFile;
     }
     log_debug("unknown lexem %d", lexem);
     goto endOfFile;

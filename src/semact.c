@@ -145,20 +145,16 @@ StructMemberFindInfo *initFind(Symbol *s, StructMemberFindInfo *info) {
 
 void setDirectStructureCompletionType(TypeModifier *typeModifier) {
     assert(options.mode);
-    if (options.mode == ServerMode) {
-        structMemberCompletionType = typeModifier;
-        assert(structMemberCompletionType);
-    }
+    structMemberCompletionType = typeModifier;
+    assert(structMemberCompletionType);
 }
 
 void setIndirectStructureCompletionType(TypeModifier *typeModifier) {
     assert(options.mode);
-    if (options.mode == ServerMode) {
-        if (typeModifier->type==TypePointer || typeModifier->type==TypeArray) {
-            structMemberCompletionType = typeModifier->next;
-            assert(structMemberCompletionType);
-        } else structMemberCompletionType = &errorModifier;
-    }
+    if (typeModifier->type==TypePointer || typeModifier->type==TypeArray) {
+        structMemberCompletionType = typeModifier->next;
+        assert(structMemberCompletionType);
+    } else structMemberCompletionType = &errorModifier;
 }
 
 Result findStructureMemberSymbol(Symbol **resultingSymbolP, StructMemberFindInfo *info, char *memberName) {

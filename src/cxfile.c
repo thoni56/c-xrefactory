@@ -544,9 +544,7 @@ static void scanFunction_ReadFileName(int fileNameLength,
     } else {
         fileNumber = getFileNumberFromFileName(fileName);
         fileItem = getFileItemWithFileNumber(fileNumber);
-        if (options.mode == ServerMode) {
-            fileItem->isArgument = isArgument;
-        }
+        fileItem->isArgument = isArgument;
         if (fileTimestampIsZero(fileItem->lastFullUpdateMtime))
             fileItem->lastFullUpdateMtime=fumtime;
         if (fileTimestampIsZero(fileItem->lastParsedMtime))
@@ -712,9 +710,8 @@ static void scanCxFileUsing(CxFileScanDispatchEntry *scanDispatchTable) {
     }
 
     /* TODO: This should be done outside this function... */
-    if (options.mode==ServerMode
-        && (options.serverOperation==OP_UNUSED_LOCAL
-            || options.serverOperation==OP_UNUSED_GLOBAL)) {
+    if (options.serverOperation==OP_UNUSED_LOCAL
+        || options.serverOperation==OP_UNUSED_GLOBAL) {
         // check if last symbol was dead
         cxfileCheckLastSymbolDeadness();
     }

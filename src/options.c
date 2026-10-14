@@ -985,19 +985,17 @@ ArgumentsVector readOptionsFromPipe(void) {
     ArgumentsVector args = {.argc = 0};
 
     assert(options.mode);
-    if (options.mode == ServerMode) {
-        char unused[MAX_FILE_NAME_SIZE];
-        readOptionsIntoArgs(stdin, &args, &optMemory, "", NULL, unused);
-        logCommands(args);
-        /* those options can't contain include or define options, sections neither */
-        int c = getc(stdin);
-        if (c == EOF) {
-            /* Just log and exit since we don't know if there is someone there... */
-            /* We also want a clean exit() if we are going for coverage */
-            log_error("Broken pipe");
-            exit(EXIT_FAILURE);
-            FATAL_ERROR(ERR_INTERNAL, "broken input pipe", EXIT_FAILURE);
-        }
+    char unused[MAX_FILE_NAME_SIZE];
+    readOptionsIntoArgs(stdin, &args, &optMemory, "", NULL, unused);
+    logCommands(args);
+    /* those options can't contain include or define options, sections neither */
+    int c = getc(stdin);
+    if (c == EOF) {
+        /* Just log and exit since we don't know if there is someone there... */
+        /* We also want a clean exit() if we are going for coverage */
+        log_error("Broken pipe");
+        exit(EXIT_FAILURE);
+        FATAL_ERROR(ERR_INTERNAL, "broken input pipe", EXIT_FAILURE);
     }
     return args;
 }

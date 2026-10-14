@@ -292,18 +292,11 @@ Reference *handleFoundSymbolReference(Symbol *symbol, Position position, Usage u
               usageKindEnumName[usage], storageEnumName[symbol->storage]);
 
     assert(options.mode);
-    switch (options.mode) {
-    case ServerMode:
-        if (options.serverOperation == OP_INTERNAL_PARSE_TO_EXTRACT) {
-            if (currentFileNumber != currentFile.characterBuffer.fileNumber) {
-                LEAVE();
-                return NULL;
-            }
+    if (options.serverOperation == OP_INTERNAL_PARSE_TO_EXTRACT) {
+        if (currentFileNumber != currentFile.characterBuffer.fileNumber) {
+            LEAVE();
+            return NULL;
         }
-        break;
-    default:
-        assert(0);              /* Should not happen */
-        break;
     }
 
     ReferenceableItem referenceableItem = makeReferenceableItem(symbol->linkName, symbol->type, storage,
@@ -324,8 +317,7 @@ Reference *handleFoundSymbolReference(Symbol *symbol, Position position, Usage u
 
     place = addToReferenceList(&foundMember->references, position, usage);
 
-    if (options.mode == ServerMode
-        && positionsAreEqual(parsingConfig.positionOfSelectedReference, position)
+    if (positionsAreEqual(parsingConfig.positionOfSelectedReference, position)
         && isVisibleUsage(usage)
     ) {
         if (symbol->linkName[0] == ' ') {  // special symbols for internal use!

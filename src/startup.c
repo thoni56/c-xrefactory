@@ -52,11 +52,7 @@ static void writeConfigFileMessage(char *outFName) {
         if (options.project!=NULL) {
             sprintf(tmpBuff, "'%s' project options not found",
                     options.project);
-            if (options.mode == ServerMode) {
-                errorMessage(ERR_ST, tmpBuff);
-            } else {
-                FATAL_ERROR(ERR_ST, tmpBuff, EXIT_FAILURE);
-            }
+            errorMessage(ERR_ST, tmpBuff);
         }
     }
 }
