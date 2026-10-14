@@ -104,6 +104,9 @@ graph from them on every push, linked at the end of this file, and `utils/backlo
    the same change: it was dropped when that test moved to the server, because the
    position is what server mode throws away. With XrefMode gone the guards never
    fire, so today the server reports nothing they guard.
+   Decide here too whether a file that is not valid UTF-8 is reported, once per file.
+   Since `convertUtf8()` (`src/encoding.c`) takes a lead byte without its continuation
+   bytes as one character, a Latin-1 file reads right, but silently.
 - (#7) <a id="startup-command-line"></a>**Decide, and enforce, what the startup command line may carry** — *no repo home yet.*
    Bigger than `c-xref file.c`, and it needs code, not just a decision. Once XrefMode is
    gone the server takes no file at startup: every request names its own, and the same
@@ -188,14 +191,9 @@ graph from them on every push, linked at the end of this file, and `utils/backlo
     `tests/test_static_declared_and_defined_in_header/.suspended` has the
     `exactPositionResolve` question to settle first, so it starts as a decision.
     Waits for: startup-command-line
-- (#15) <a id="correctness-by-cost"></a>**The other correctness bugs**, Latin-1 first; the order of
-    the rest is not known. Each has a `.suspended` note or a `18-known-bugs.adoc` entry,
+- (#15) <a id="correctness-by-cost"></a>**The other correctness bugs**; their order is not
+    known. Each has a `.suspended` note or a `18-known-bugs.adoc` entry,
     or says it has no repo home yet:
-   a. <a id="latin1-swallows"></a>**A Latin-1 character swallows the characters after it** —
-      `tests/test_latin1_character_does_not_swallow_what_follows/.suspended`. Quiet and
-      cheap: legacy C with Latin-1 comments loses a `*/` and the rest of the file
-      silently. Fixed by checking UTF-8 continuation bytes, not by bringing `-encoding`
-      back.
    b. <a id="relative-include-path"></a>**A relative `-I` in `.c-xrefrc` resolves against the working directory of the server process** —
       *no repo home yet* (`doc/c-xrefrc.man`), while a directory line resolves against
       the config's directory and `-prune` against the root. With the config in
