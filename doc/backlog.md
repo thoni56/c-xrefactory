@@ -113,10 +113,12 @@ graph from them on every push, linked at the end of this file, and `utils/backlo
    parser serves both phases, so the question becomes which options are process-scoped at
    all. The Setup Ladder's step 1 answers it in principle; this makes it concrete.
    - Genuinely startup, on the evidence of what the client sends and what `main()` reads
-     before anything else: the mode; the transport (`-crlfconversion`, `-crconversion`,
-     `-o <answerfile>` — `editors/emacs/c-xref.el:1615`); logging
+     before anything else: the mode; the transport (`-o <answerfile>` —
+     `editors/emacs/c-xref.el:1615`); logging
      (`-log=`, `-debug`, `-trace`, `-info`, `-errors`, `-warnings`, `-infos`, scanned in
-     `main()` before the mode is even known); and `-statistics`.
+     `main()` before the mode is even known); and `-statistics`. The client also sends
+     `-crlfconversion` and `-crconversion`, which say how the editor counts a line
+     break, not how answers travel, and go (`eol-always`).
    - Everything project-scoped — `-p`, `-I`, `-D`, `-optinclude` — belongs to
      the config and binds at the future `-openproject`, not here.
    - **`-exactpositionresolve` has no strategy.** It is real: it changes link names
@@ -143,6 +145,18 @@ graph from them on every push, linked at the end of this file, and `utils/backlo
      look. Auto-discovery gives you the tree under the config; anything outside it still
      has to be named. Likely home: the config, or the machine-specific sibling, since an
      external source tree is usually a local path.
+- (#59) <a id="eol-always"></a>**Line endings are always converted, and `-crlfconversion` and `-crconversion` go** —
+   the client sends both every time it starts a server (`c-xref-start-server-process`,
+   `editors/emacs/c-xref.el`), so the path without them runs only in tests and in servers
+   started by hand. In one change (see `protocol-handshake`): convert CR LF and a lone CR
+   always, merge the four `apply*Conversion` variants in `src/encoding.c` into one, drop
+   `eolConversion` from `options` and its forwarding in `src/refactory.c`, stop the client
+   sending them, and drop them from the 35 tests whose `CXREF` line has them. Pinned by the
+   conversion tests in `src/encoding_tests.c`, which set the options as the client does
+   (that line goes), and `test_push_in_crlf_source_counts_a_line_break_as_one_character`.
+   LSP is not affected either way: it goes by line and column, which a CR before the LF
+   does not move. Found on the Mac, session `05984816`, 2026-10-14.
+   Goes with: startup-command-line
 - (#8) <a id="finish-after-xrefmode"></a>**Finish after XrefMode**, in these pieces:
    a. <a id="mode-checks"></a>**fold the `options.mode` checks outside `src/yylex.c`** — about 33,
       in semact, options, cxfile, commons, startup, cxref, refactory, parsing and main.
@@ -567,22 +581,27 @@ Mac (session `05984816`), 2026-10-07.
 
 - (#46) <a id="release-build"></a>**A lean release build** — no coverage, no unit tests, only
     `c-xref`. The generated parsers are committed, so `cc` and `make` are enough.
-- (#47) <a id="protocol-handshake"></a>**The client and the server check a protocol version** —
-    once the elisp and the binary are installed apart they drift (MELPA builds HEAD, the
-    binary is whatever was built). On a mismatch the client offers to rebuild, rather
-    than failing in some later request.
 - (#48) <a id="install-server"></a>**`M-x c-xref-install-server`** — builds from source by
     default, since every user of a C tool has a compiler; downloads a release binary as
     the shortcut. The pattern of `pdf-tools-install` and `irony-install-server`. A binary
     fetched by Emacs with `curl` is not quarantined by macOS Gatekeeper.
-    Waits for: release-build, protocol-handshake
+    Waits for: release-build
 - (#49) <a id="releases"></a>**Tagged releases** — semver tags from `stable`, GitHub Releases
     with binaries, and through the tags MELPA Stable. A Homebrew tap and an AUR package
     are cheap once releases exist.
     Waits for: release-build
+- (#47) <a id="protocol-handshake"></a>**The client and the server check a protocol version** —
+    once the elisp and the binary are installed apart they drift (MELPA builds HEAD, the
+    binary is whatever was built). On a mismatch the client offers to rebuild, rather
+    than failing in some later request. Until this is in, every upgrade path (el-get,
+    `load.el`) replaces the client and the server together, and the only user is the
+    maintainer, so a protocol or option change is made in one step: no transition, no
+    deprecation, an option the client stops sending is simply unknown afterwards.
+    Waits for: install-server
 - (#50) <a id="melpa"></a>**The elisp on MELPA** — the package without binaries, which MELPA
-    forbids; the server comes from `install-server`. `el-get` and `load.el` stay.
-    Waits for: install-server, releases
+    forbids; the server comes from `install-server`. `el-get` and `load.el` stay. This is
+    where the client and the server start to be installed apart.
+    Waits for: install-server, releases, protocol-handshake
 - (#51) <a id="readme-first-screen"></a>**The README sells on its first screen** — a GIF or
     asciinema of a parameter move across files; the Java section goes.
 - (#52) <a id="announce"></a>**Announce** — positioned beside clangd, not against it: the
