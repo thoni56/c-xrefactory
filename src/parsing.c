@@ -1,23 +1,17 @@
 #include "parsing.h"
 
-#include "constants.h"
 #include "editorbuffer.h"
 #include "editormarker.h"
 #include "filedescriptor.h"
 #include "filetable.h"
 #include "globals.h"
-#include "init.h"
 #include "log.h"
-#include "macroargumenttable.h"
 #include "memory.h"
 #include "misc.h"
 #include "options.h"
 #include "parsers.h"
 #include "position.h"
-#include "referenceableitemtable.h"
-#include "stackmemory.h"
 #include "startup.h"
-#include "symboltable.h"
 #include "yylex.h"
 
 
