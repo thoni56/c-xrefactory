@@ -131,10 +131,10 @@ graph from them on every push, linked at the end of this file, and `utils/backlo
      changes what a symbol is, it is probably project-scoped, although `options.h` marks it
      REQUEST. Decide whether it belongs in the config or goes. Item 14 waits on the same
      question.
-   - **`-lsp` is a third mode and should be one.** `want_lsp_server()` (`src/lsp.c`) scans
-     argv in `main()` and returns before `mainTaskEntryInitialisations()`, so it is a mode
-     in behaviour but not in `options.mode`. If "state a mode" is the rule, it should say
-     so the same way `-server` does.
+   - **The mode is chosen from argv alone.** `main()` picks `-help`, `-lsp`, `-server` or
+     `-about` by scanning argv, before any option is processed, so only `-server` runs the
+     initialisations. That scan is where the check belongs: `-lsp`, `-about` and `-help`
+     take nothing else, and `-server` takes the startup options above.
    - The code: `startup.c:807` processes the command line with
      `PROCESS_FILE_ARGUMENTS_YES`, which is why `c-xref -server file.c` silently schedules
      that file. Flip it to `NO`, now that XrefMode is gone. But `NO` only *ignores*: `matched =

@@ -95,14 +95,14 @@ int main(int argc, char *argv[]) {
     int exitCode = 0;
     if (argumentsContain(args, "-help"))
         usage();
+    else if (argumentsContain(args, "-about"))
+        aboutMessage();
     else if (argumentsContain(args, "-server")) {
         currentPass = ANY_PASS;
         totalTaskEntryInitialisations();
         mainTaskEntryInitialisations(args);
         server(args);
-    } else if (argumentsContain(args, "-about"))
-        aboutMessage();          /* asking what this is needs no mode */
-    else {
+    } else {
         fprintf(stderr, "No mode given, use -server or -lsp\n");
         exitCode = EXIT_FAILURE;
     }
