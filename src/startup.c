@@ -45,7 +45,7 @@ ProjectConfig *getProjectConfig(void) {
 
 /* *************************************************************************** */
 
-static void writeConfigFileMessage(char *file, char *outFName, char *outSect) {
+static void writeConfigFileMessage(char *outFName) {
     char tmpBuff[TMP_BUFF_SIZE];
 
     if (outFName[0]==0) {
@@ -546,7 +546,7 @@ bool initializeProjectContext(char *fileName, ArgumentsVector baseArgs, Argument
     /* === PHASE 1: Project Discovery === */
     /* TODO: Duplicated in `intializeProjectContext` */
     searchForProjectConfigFileAndProjectForFile(fileName, projectConfigFileName, projectSectionName);
-    writeConfigFileMessage(fileName, projectConfigFileName, projectSectionName);
+    writeConfigFileMessage(projectConfigFileName);
 
     if (projectConfigFileName[0] == 0)
         return false;
@@ -606,7 +606,7 @@ bool initializeFileProcessing(ArgumentsVector baseArgs, ArgumentsVector requestA
         strcpy(projectSectionName, previousProjectConfigurationSection);
     } else {
         searchForProjectConfigFileAndProjectForFile(fileName, projectConfigFileName, projectSectionName);
-        writeConfigFileMessage(fileName, projectConfigFileName, projectSectionName);
+        writeConfigFileMessage(projectConfigFileName);
     }
 
     initAllInputs();
