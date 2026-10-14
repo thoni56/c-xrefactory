@@ -340,6 +340,10 @@ Roadmap → Optimization has the baseline: a cold-start PUSH on ffmpeg, measured
     function and the parameter refactorings. Stubs exist: `handle_code_action`,
     `handle_execute_command`, with `codeActionProvider` commented out in
     `src/lsp_handler.c`. Keep tier 3 (custom methods + per-editor extension code) small.
+    First, the refactorings have to return their edits, so that a protocol can write
+    them. Today they write native protocol records as they go (`ppc…()` calls in
+    `refactory.c`, `extract.c` and `cxref.c`). The `assert(options.cxrefProtocol)` lines
+    roughly map where an operation depends on the native protocol, so keep them until then.
 - (#26) <a id="move-function-next"></a>**Move Function next steps**, then **Delete Function**. Also **`-parse-all`, a request that parses every compilation
     unit the scan found and has not parsed** — what ADR-0024's CreateMode reduces to
     once the priming is a request rather than a mode; `test_ffmpeg` and
