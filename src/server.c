@@ -388,9 +388,8 @@ void callServer(ArgumentsVector baseArgs, ArgumentsVector requestArgs) {
             projectContextInitialized = true;
         } else {
             /* No project configuration found — c-xrefactory cannot operate.
-             * For OP_GET_PROJECT the discovery code (writeConfigFileMessage)
-             * already reported the specifics to the client; other operations need
-             * an explicit message. */
+             * OP_GET_PROJECT answers that itself; other operations need an
+             * explicit message. */
             if (options.serverOperation != OP_GET_PROJECT)
                 errorMessage(ERR_ST, "No project configuration (.c-xrefrc) found for this file");
             goto done;

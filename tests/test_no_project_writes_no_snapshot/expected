@@ -4,7 +4,6 @@ end-of-options
 
 <sync>
 <no-project-found len=<n>>CURDIR/source.c</no-project-found>
-<no-project-found len=<n>>CURDIR/source.c</no-project-found>
 -exit
 end-of-options
 

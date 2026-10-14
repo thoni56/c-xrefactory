@@ -223,10 +223,6 @@ graph from them on every push, linked at the end of this file, and `utils/backlo
       names resolve under the root. Resolving the config's relative paths against the
       config's directory, not `cwd`, fixes both (Mac, session `05984816`, 2026-10-14).
       Goes with: adr-0031
-   d. <a id="no-project-twice"></a>**`-getproject` for a file outside any project answers `<no-project-found>` twice** —
-      *no repo home yet*. `tests/test_no_project_writes_no_snapshot` shows it, and its
-      `expected` keeps both for now, so that test is only about the snapshot. Seen on
-      WSL, 2026-09-27.
    e. <a id="warm-start-fatal"></a>**A warm start trips `FATAL cxref.c:1494: 'browsingStack.top' is not true`** —
       *no repo home yet*. Running `tests/test_browsing_pop_needs_refresh` a second time
       from the first run's `.c-xref` snapshot dies on the assert, so the same requests
