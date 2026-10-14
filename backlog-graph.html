@@ -25,13 +25,13 @@ flowchart BT
   drop_cxfi_refnum["§1 · 5 · Drop the `CXFI_REFNUM` record from the snapshot"]
   report_errors_flag["§2 · 6 · Re-key the 19 `options.mode != ServerMode` guards in `src/yylex.c`"]
   startup_command_line["§2 · 7 · Decide, and enforce, what the startup command line may carry"]
+  eol_always["§2 · 59 · Line endings are always converted, and `-crlfconversion` and `-crconversion` go"]
   mode_checks["§2 · 8a · fold the `options.mode` checks outside `src/yylex.c`"]
   remove_bridge["§2 · 9 · Remove the `parseBufferUsingServer` bridge"]
   refactoring_refusals["§3 · 10 · What a refactoring refuses, spelled out and tested"]
   behind_the_back["§3 · 11 · A header changed on disk, which the editor does not hold, keeps its old references"]
   token_pasting_trio["§3 · 13 · Token pasting trio"]
   header_static_link_names["§3 · 14 · Header static: prototype and definition get different link names"]
-  latin1_swallows["§3 · 15a · A Latin-1 character swallows the characters after it"]
   relative_include_path["§3 · 15b · A relative `-I` in `.c-xrefrc` resolves against the working directory of the server process"]
   no_project_twice["§3 · 15d · `-getproject` for a file outside any project answers `#lt;no-project-found#gt;` twice"]
   warm_start_fatal["§3 · 15e · A warm start trips `FATAL cxref.c:1494: 'browsingStack.top' is not true`"]
@@ -72,9 +72,9 @@ flowchart BT
   sweep["§7 · 44 · Remove references no CU still emits"]
   sweep_cost["§7 · 45 · What the sweep costs"]
   release_build["§8 · 46 · A lean release build"]
-  protocol_handshake["§8 · 47 · The client and the server check a protocol version"]
   install_server["§8 · 48 · `M-x c-xref-install-server`"]
   releases["§8 · 49 · Tagged releases"]
+  protocol_handshake["§8 · 47 · The client and the server check a protocol version"]
   melpa["§8 · 50 · The elisp on MELPA"]
   readme_first_screen["§8 · 51 · The README sells on its first screen"]
   announce["§8 · 52 · Announce"]
@@ -106,10 +106,11 @@ flowchart BT
   generations --&gt; sweep
   include_edges --&gt; sweep
   release_build --&gt; install_server
-  protocol_handshake --&gt; install_server
   release_build --&gt; releases
+  install_server --&gt; protocol_handshake
   install_server --&gt; melpa
   releases --&gt; melpa
+  protocol_handshake --&gt; melpa
   sweep --&gt; announce
   refactoring_refusals --&gt; announce
   install_server --&gt; announce
@@ -123,13 +124,13 @@ flowchart BT
   class drop_cxfi_refnum ready
   class report_errors_flag ready
   class startup_command_line ready
+  class eol_always ready
   class mode_checks ready
   class remove_bridge ready
   class refactoring_refusals ready
   class behind_the_back blocked
   class token_pasting_trio ready
   class header_static_link_names blocked
-  class latin1_swallows ready
   class relative_include_path ready
   class no_project_twice ready
   class warm_start_fatal ready
@@ -170,9 +171,9 @@ flowchart BT
   class sweep blocked
   class sweep_cost ready
   class release_build ready
-  class protocol_handshake ready
   class install_server blocked
   class releases blocked
+  class protocol_handshake blocked
   class melpa blocked
   class readme_first_screen ready
   class announce blocked
