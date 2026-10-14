@@ -8,6 +8,7 @@
 #include "fileio.mock"
 #include "globals.mock"
 #include "log.h"
+#include "protocol.h"
 #include "misc.mock"
 #include "options.mock"
 #include "ppc.mock"
@@ -54,4 +55,17 @@ Ensure(Commons, will_extract_only_path_if_there_is_one) {
     length = extractPathInto(source, dest);
     assert_that(dest, is_equal_to_string("path/")); /* Copy only path */
     assert_that(length, is_equal_to(strlen("path/")));
+}
+
+/* initCwd tests */
+
+Ensure(Commons, reports_and_resolves_against_the_root_when_the_working_directory_is_unknown) {
+    options.cxrefProtocol = true;
+    expect(getCwd, will_return(NULL));
+    expect(ppcGenRecord, when(kind, is_equal_to_string(PPC_ERROR)));
+
+    initCwd();
+
+    assert_that(cwd, is_equal_to_string("/"));
+    options.cxrefProtocol = false;
 }

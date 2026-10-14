@@ -55,16 +55,11 @@ void initCwd(void) {
 
     returnedCwd = getCwd(cwd, MAX_FILE_NAME_SIZE);
     if (returnedCwd==NULL) {
-        // Then try with getenv, on some linuxes the statically linked
-        // getcwd does not work. TODO: Probably not nowadays
-        returnedCwd = getEnv("PWD");
-        if (returnedCwd==NULL) {
-            errorMessage(ERR_ST, "can't get current working directory");
-            sprintf(cwd, ".");
-        } else {
-            assert(strlen(returnedCwd) < MAX_FILE_NAME_SIZE);
-            strcpy(cwd, returnedCwd);
-        }
+        /* E.g. the directory was deleted, or its path is too long. Relative
+         * names then resolve under the root until reInitCwd() makes cwd the
+         * project config's directory */
+        errorMessage(ERR_ST, "can't get current working directory");
+        strcpy(cwd, "/");
     }
 #ifdef __WIN32__
     if (strlen(cwd)<=2 || cwd[1]!=':') {
