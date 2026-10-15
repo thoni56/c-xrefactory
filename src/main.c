@@ -98,7 +98,6 @@ int main(int argc, char *argv[]) {
     else if (argumentsContain(args, "-about"))
         aboutMessage();
     else if (argumentsContain(args, "-server")) {
-        currentPass = ANY_PASS;
         totalTaskEntryInitialisations();
         mainTaskEntryInitialisations(args);
         server(args);
