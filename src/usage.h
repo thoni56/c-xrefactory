@@ -25,7 +25,6 @@
 /* INVISIBLE USAGES */                          \
     ENUM(UsageMaxOnLineVisibleUsages)           \
     ENUM(UsageNone)                             \
-    ENUM(UsageMacroExpandingCU)                 \
     ENUM(USAGE_ANY)                             \
     ENUM(USAGE_FILTER)
 

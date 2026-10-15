@@ -28,8 +28,6 @@ typedef struct fileItem {	/* to be renamed to constant pool item TODO: Why?*/
     FileTimestamp lastModified;
     FileTimestamp lastParsedMtime;
     FileTimestamp knowledgeTime;        // when the CU's knowledge was built (ADR-0032)
-    FileTimestamp lastFullUpdateMtime;
-    bool isArgument : 1;
     bool isScheduled : 1;
     bool needsBrowsingStackRefresh : 1;  // entry-point reparsed this file, stack needs update
     bool isDeleted : 1;                 // file no longer exists on disk
@@ -38,8 +36,7 @@ typedef struct fileItem {	/* to be renamed to constant pool item TODO: Why?*/
 
 
 typedef enum {
-    FILE_IS_SCHEDULED,
-    FILE_IS_ARGUMENT
+    FILE_IS_SCHEDULED
 } FileSource;
 
 #define NO_FILE_NAME "___None___"

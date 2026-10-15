@@ -42,7 +42,6 @@ static FileTable fileTable;
 static void fillFileItem(FileItem *item, char *name) {
     memset(item, 0, sizeof(FileItem));
     item->name = name;
-    item->isArgument = false;
 }
 
 
@@ -183,8 +182,6 @@ static char *getNextInputFileFromFileTable(int *indexP, FileSource wantedFileSou
         fileItem = getFileItemWithFileNumber(i);
         assert(fileItem!=NULL);
         if (wantedFileSource==FILE_IS_SCHEDULED && fileItem->isScheduled)
-            break;
-        if (wantedFileSource==FILE_IS_ARGUMENT && fileItem->isArgument)
             break;
     }
     *indexP = i;

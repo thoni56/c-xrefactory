@@ -461,9 +461,8 @@ To implement incremental updates, `c-xrefactory` tracks when each file/buffer wa
 Each `FileItem` in the file table has:
 
 * `lastParsedMtime` - The modification time when we last parsed this file (any update mode)
-* `lastFullUpdateMtime` - The modification time when we last did a FULL update (including header propagation)
 
-These are `FileTimestamp` values (`struct timespec` with nanosecond precision).
+It is a `FileTimestamp` value (`struct timespec` with nanosecond precision).
 
 *_Dual Semantics_*
 

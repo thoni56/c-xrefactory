@@ -604,10 +604,10 @@ Each bump comes with a `test_snapshot_from_<version>_is_ignored`.
 
 Example file information line:
 
-    32571f  1715027668m 21:/usr/include/ctype.h
+    32571f  1715027668p 21:/usr/include/ctype.h
 
 * `32571f` — file number 32571
-* `1715027668m` — modification time (to detect stale entries)
+* `1715027668p` — modification time when last parsed (to detect stale entries)
 * `21:/usr/include/ctype.h` — filename (21 characters)
 
 ==== Reading

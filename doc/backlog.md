@@ -92,13 +92,6 @@ graph from them on every push, linked at the end of this file, and `utils/backlo
       switch kills the server without `-exit`, losing everything since the last snapshot.
       Waits for: adr-0031
 
-- (#5) <a id="drop-cxfi-refnum"></a>**Drop the `CXFI_REFNUM` record from the snapshot** — it is always written as 1. A safe
-   format change: a snapshot of another format version is ignored like no snapshot and
-   rewritten on exit, so it costs one cold start, and a bump of its own is fine. `m`
-   (`lastFullUpdateMtime`) is only written and read back, and goes the same way. So may
-   `i` (`isArgument`), if it means nothing for a scanned project, and the usage
-   numbering, if `UsageMacroExpandingCU`, which nothing produces, goes.
-
 ## 2. After XrefMode
 
 - (#6) <a id="report-errors-flag"></a>**Re-key the 19 `options.mode != ServerMode` guards in `src/yylex.c`** onto a

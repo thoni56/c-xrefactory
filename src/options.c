@@ -435,10 +435,6 @@ static void scheduleCommandLineEnteredFileToProcess(char *fn) {
     ENTER();
     int fileNumber = addFileNameToFileTable(fn);
     FileItem *fileItem = getFileItemWithFileNumber(fileNumber);
-    if (options.mode!=ServerMode) {
-        // yes in edit server you process also headers, etc.
-        fileItem->isArgument = true;
-    }
     log_debug("recursively process command line argument file #%d '%s'", fileNumber, fileItem->name);
     if (!options.updateOnlyModifiedFiles) {
         fileItem->isScheduled = true;
