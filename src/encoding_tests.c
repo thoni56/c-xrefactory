@@ -6,7 +6,6 @@
 
 #include "commons.mock"
 #include "editorbuffer.mock"
-#include "options.mock"
 
 
 Describe(Encoding);

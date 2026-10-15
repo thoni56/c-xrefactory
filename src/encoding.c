@@ -1,27 +1,5 @@
 #include "encoding.h"
 
-
-#define EDITOR_ENCODING_WALK_THROUGH_BUFFER(buffer, command) {          \
-        unsigned char *s, *d, *max;                                     \
-        unsigned char *text = (unsigned char *)getTextInEditorBuffer(buffer); \
-        max = text + getSizeOfEditorBuffer(buffer);                     \
-        for (s=d=text; s<max; s++) {                                    \
-            command;                                                    \
-            d++;                                                        \
-        }                                                               \
-        setSizeOfEditorBuffer(buffer, d - text);                        \
-    }
-
-#define EDITOR_ENCODING_CR_LF_OR_CR_TO_LF_CONVERSION(s,d)   \
-    if (*s == '\r') {                                       \
-        if (s+1<max && *(s+1)=='\n') {                      \
-            s++;                                            \
-            *d = *s;                                        \
-        } else {                                            \
-            *d = '\n';                                      \
-        }                                                   \
-    }
-
 static bool hasContinuationBytes(unsigned char *src, int count, unsigned char *max) {
     for (int i = 1; i <= count; i++)
         if (src+i >= max || (src[i] & 0xC0) != 0x80)
@@ -54,15 +32,22 @@ static bool convertUtf8(unsigned char **srcP, unsigned char **dstP, unsigned cha
 }
 
 
-static void applyUtf8CrLfCrConversion(EditorBuffer *buffer) {
-    EDITOR_ENCODING_WALK_THROUGH_BUFFER(buffer, {
-            if (convertUtf8(&s, &d, max)) ;
-            else EDITOR_ENCODING_CR_LF_OR_CR_TO_LF_CONVERSION(s,d)
-                else
-                    *d = *s;
-        });
-}
-
+/* CR LF and a lone CR become one newline, so a line break is one character
+ * whatever the file had, as the editor counts it */
 void performEncodingAdjustments(EditorBuffer *buffer) {
-    applyUtf8CrLfCrConversion(buffer);
+    unsigned char *text = (unsigned char *)getTextInEditorBuffer(buffer);
+    unsigned char *max = text + getSizeOfEditorBuffer(buffer);
+    unsigned char *s, *d;
+
+    for (s=d=text; s<max; s++, d++) {
+        if (convertUtf8(&s, &d, max))
+            ;
+        else if (*s == '\r') {
+            if (s+1<max && *(s+1)=='\n')
+                s++;
+            *d = '\n';
+        } else
+            *d = *s;
+    }
+    setSizeOfEditorBuffer(buffer, d - text);
 }
