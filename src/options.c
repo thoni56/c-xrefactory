@@ -63,7 +63,6 @@ Options presetOptions = {
 #endif
     .eolConversion = NO_EOL_CONVERSION,
     .fileNamesCaseSensitive = true,
-    .updateOnlyModifiedFiles = false,
     .tabulator = 4,
 
     /* --- REQUEST --- */
@@ -436,9 +435,7 @@ static void scheduleCommandLineEnteredFileToProcess(char *fn) {
     int fileNumber = addFileNameToFileTable(fn);
     FileItem *fileItem = getFileItemWithFileNumber(fileNumber);
     log_debug("recursively process command line argument file #%d '%s'", fileNumber, fileItem->name);
-    if (!options.updateOnlyModifiedFiles) {
-        fileItem->isScheduled = true;
-    }
+    fileItem->isScheduled = true;
     if (recordingRequestFile)
         recordedRequestFileNumber = fileNumber;
     LEAVE();

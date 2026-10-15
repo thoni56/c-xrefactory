@@ -90,7 +90,6 @@ typedef struct options {
     char *cFilesSuffixes;                       /* PROJECT */
     int eolConversion;                          /* PROJECT */
     bool fileNamesCaseSensitive;                /* PROJECT */
-    bool updateOnlyModifiedFiles;               /* PROJECT */
     int tabulator;                              /* PROJECT */
 
     /* --- REQUEST: Piped from editor client, per-request --- */
