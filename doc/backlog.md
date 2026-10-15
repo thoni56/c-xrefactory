@@ -95,12 +95,12 @@ graph from them on every push, linked at the end of this file, and `utils/backlo
 ## 2. After XrefMode
 
 - (#6) <a id="report-errors-flag"></a>**Re-key the 19 `options.mode != ServerMode` guards in `src/yylex.c`** onto a
-   report-errors flag, and stop `formatMessage()` (`src/commons.c`) dropping the position
-   in server mode. Roadmap, "Report what did not parse". Doubles as the server half of
+   report-errors flag, and have `formatMessage()` (`src/commons.c`) give the position of
+   an error in a parse. Roadmap, "Report what did not parse". Doubles as the server half of
    the Indexing Log Buffer item. Scope reporting to the operation's own parse, not the
    session-wide `-errors`. Restore `tests/test_multipass`'s error-position assertion in
    the same change: it was dropped when that test moved to the server, because the
-   position is what server mode throws away. With XrefMode gone the guards never
+   server gives no position. With XrefMode gone the guards never
    fire, so today the server reports nothing they guard.
    Decide here too whether a file that is not valid UTF-8 is reported, once per file.
    Since `convertUtf8()` (`src/encoding.c`) takes a lead byte without its continuation
@@ -166,17 +166,16 @@ graph from them on every push, linked at the end of this file, and `utils/backlo
    does not move. Found on the Mac, session `05984816`, 2026-10-14.
    Goes with: startup-command-line
 - (#8) <a id="finish-after-xrefmode"></a>**Finish after XrefMode**, in these pieces:
-   a. <a id="mode-checks"></a>**fold the `options.mode` checks outside `src/yylex.c`** — about 33,
-      in semact, options, cxfile, commons, startup, cxref, refactory, parsing and main.
-      They are constant wherever the mode is known, since LSP sets `ServerMode` too
-      (`src/parsing.c`). The ones that report a missing mode stay. The 30 in `yylex.c`
-      are item 6's. Among them `commons.c`'s `options.cxrefProtocol && options.mode !=
-      ServerMode`, which is never true: only `-server` sets `cxrefProtocol`, together
-      with the mode;
+   a. <a id="mode-checks"></a>**fold the last `options.mode` checks**, one at a time, since
+      each changes behaviour where the mode is not yet known: `src/startup.c:633` (no
+      input file), `src/commons.c:379,390` (`fileAbortEnabled` and the `longjmp`, probably
+      dead), `src/semact.c:923,935` (parameter positions) and `src/yylex.c:345` with
+      `src/lexer.c:801,810` (`inServerMode`). The guards on messages are item 6's. Then
+      `options.mode` and `Mode` go.
       Goes with: report-errors-flag
 - (#9) <a id="remove-bridge"></a>**Remove the `parseBufferUsingServer` bridge** — §17.3; 9 refactoring call sites
-   re-entering `callServer`. Independent of the rest of this section (it asserts
-   `ServerMode`), but it is the last divergent parse path.
+   re-entering `callServer`. Independent of the rest of this section, but it is the last
+   divergent parse path.
 
 ## 3. Correctness, by (quiet × cheap)
 
