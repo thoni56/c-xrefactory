@@ -71,6 +71,7 @@ typedef enum {
 } CxFileScanOperation;
 
 
+/* Integer records only: the reader does not skip the text of a listed key */
 static CxFieldTag generatedFieldKeyList[] = {
     CXFI_FILE_FUMTIME,
     CXFI_FILE_UMTIME,

@@ -581,6 +581,14 @@ The snapshot starts with its format version, `C_XREF_FILE_FORMAT_VERSION` in `cx
 A snapshot of any other version is ignored like no snapshot, and rewritten on exit, so a
 bump costs one cold start.
 
+Removing or adding an integer record needs no bump. The snapshot's key list (`@`) names
+the integer records it uses, and the reader stores a listed key's value whether or not it
+has a handler. So an old snapshot's extra record is stored and never read, and a new
+record is 0 when an old snapshot lacks it, so a 0 must mean "unknown". Older binaries
+read newer snapshots the same way. A string record must stay out of the key list: the reader
+skips an unlisted key's text by its length, but stores only the length of a listed one, and
+misreads the rest.
+
 The version is a promise about what the snapshot means, not only about its syntax. Bump
 it whenever a snapshot written before a change could be read after it and give a wrong
 answer, also when every record still parses:
