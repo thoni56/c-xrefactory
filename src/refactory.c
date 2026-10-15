@@ -113,10 +113,9 @@ void parseBufferUsingServer(char *project, EditorMarker *point, EditorMarker *ma
 
     assert(options.mode == ServerMode);
 
-    /* Clear accumulated input files from previous parses to avoid global state pollution.
-     * This is crucial when parseBufferUsingServer() is called multiple times (e.g.,
-     * target validation followed by function boundaries check). Without this, getNextScheduledFile()
-     * would return the wrong file because it searches from index 0. */
+    /* Clear accumulated input files from previous parses to avoid global state pollution,
+     * since parseBufferUsingServer() can be called several times (e.g., target validation
+     * followed by function boundaries check). */
     options.inputFiles = NULL;
 
     setArguments(argumentVector, project, point, mark);

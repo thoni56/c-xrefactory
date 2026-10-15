@@ -42,10 +42,6 @@ int getNextExistingFileNumber(int fileNumber) {
     return (int)mock(fileNumber);
 }
 
-char *getNextScheduledFile(int *beginNumber) {
-  return (char *) mock(beginNumber);
-}
-
 void mapOverFileTable(void (*fun)(FileItem *)) {
     mock(fun);
 }

@@ -75,29 +75,21 @@ Ensure(Server, asks_before_analysing_more_files_than_the_cap) {
     assert_that(needsConfirmationToAnalyse(MAX_CUS_TO_REPARSE + 1), is_true);
 }
 
-/* The request names a file; other files can be scheduled alongside it when a
- * legacy project config expands its source directories. The request's file is
- * the one to prepare, and it must end up the only one scheduled. */
-Ensure(Server, prepares_the_file_the_request_named_when_others_are_also_scheduled) {
-    int      otherFile = 99;
-    int      requestFile = 100;
-    FileItem otherItem = {.isScheduled = true};
-    FileItem requestItem = {.isScheduled = true};
+/* A request has at most one input file, the one it named */
+Ensure(Server, prepares_the_file_the_request_named) {
+    int requestFile = 100;
 
     setRequestFileArgument(requestFile);
 
-    expect(getFileItemWithFileNumber, when(fileNumber, is_equal_to(requestFile)), will_return(&requestItem));
-    /* everything else scheduled is unscheduled */
-    expect(getNextExistingFileNumber, will_return(otherFile));
-    expect(getFileItemWithFileNumber, when(fileNumber, is_equal_to(otherFile)), will_return(&otherItem));
-    expect(getNextExistingFileNumber, will_return(requestFile));
-    expect(getFileItemWithFileNumber, when(fileNumber, is_equal_to(requestFile)), will_return(&requestItem));
-    expect(getNextExistingFileNumber, will_return(-1));
-
     assert_that(prepareInputFileForRequest(), is_true);
     assert_that(requestFileNumber, is_equal_to(requestFile));
-    assert_that(otherItem.isScheduled, is_false);
-    assert_that(requestItem.isScheduled, is_true);
+}
+
+Ensure(Server, prepares_no_file_when_the_request_named_none) {
+    setRequestFileArgument(NO_FILE_NUMBER);
+
+    assert_that(prepareInputFileForRequest(), is_false);
+    assert_that(requestFileNumber, is_equal_to(NO_FILE_NUMBER));
 }
 
 /* sideEffect, if not NULL, runs when the parser is called */

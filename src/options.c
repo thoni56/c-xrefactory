@@ -435,7 +435,6 @@ static void scheduleCommandLineEnteredFileToProcess(char *fn) {
     int fileNumber = addFileNameToFileTable(fn);
     FileItem *fileItem = getFileItemWithFileNumber(fileNumber);
     log_debug("recursively process command line argument file #%d '%s'", fileNumber, fileItem->name);
-    fileItem->isScheduled = true;
     if (recordingRequestFile)
         recordedRequestFileNumber = fileNumber;
     LEAVE();

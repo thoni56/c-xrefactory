@@ -131,46 +131,18 @@ static int collectCompilationUnitsExpandingTheMacro(int cuFileNumbers[], int max
 
 /* The file this request named, as a bare argument on the request's own command
  * line, or NO_FILE_NUMBER when the request named none (menu and filter
- * operations). Other files can be scheduled alongside it - a legacy project
- * config expands its source directories into every file it finds - so the
- * request has to say which one it is about. */
+ * operations). */
 static int requestFileArgument = -1;
 
 protected void setRequestFileArgument(int fileNumber) {
     requestFileArgument = fileNumber;
 }
 
-/* Prepare the single input file this request is about.
- *
- * The request names it, but other files can be scheduled alongside: a legacy
- * project config expands its source directories into every file it finds. So
- * prepare the file the request named, and leave it as the only scheduled one.
- * When the request names no file - menu and filter operations work on the
- * session, not on a file - fall back to whatever happens to be scheduled.
- */
+/* Prepare the single input file this request is about, the one it named. Menu
+ * and filter operations name none: they work on the session, not on a file. */
 protected bool prepareInputFileForRequest(void) {
-    int fileNumber = requestFileArgument;
-    if (fileNumber == NO_FILE_NUMBER || !getFileItemWithFileNumber(fileNumber)->isScheduled) {
-        fileNumber = 0;
-        if (getNextScheduledFile(&fileNumber) == NULL) {
-            /* Nothing scheduled - the operation does not need a file, or the
-             * one it named does not exist. */
-            requestFileNumber = NO_FILE_NUMBER;
-            return false;
-        }
-    }
-
-    /* Ensure only this file is processed during this request */
-    for (int i = getNextExistingFileNumber(0); i != -1; i = getNextExistingFileNumber(i + 1)) {
-        FileItem *fileItem = getFileItemWithFileNumber(i);
-        if (i != fileNumber && fileItem->isScheduled) {
-            log_trace("Unscheduling '%s', it is not the file this request named.", fileItem->name);
-            fileItem->isScheduled = false;
-        }
-    }
-
-    requestFileNumber = fileNumber;
-    return true;
+    requestFileNumber = requestFileArgument;
+    return requestFileNumber != NO_FILE_NUMBER;
 }
 
 static void closeInputFile(void) {
@@ -260,7 +232,6 @@ protected void singlePass(ArgumentsVector args, ArgumentsVector nargs) {
 static void processFile(ArgumentsVector baseArgs, ArgumentsVector requestArgs) {
     FileItem *fileItem = getFileItemWithFileNumber(requestFileNumber);
 
-    assert(fileItem->isScheduled);
     maxPasses = 1;
     for (currentPass=1; currentPass<=maxPasses; currentPass++) {
         inputFileName = fileItem->name;
@@ -269,7 +240,6 @@ static void processFile(ArgumentsVector baseArgs, ArgumentsVector requestArgs) {
         if (options.serverOperation==OP_INTERNAL_PARSE_TO_EXTRACT || (completionStringServed && !opensBrowsingSession(options.serverOperation)))
             break;
     }
-    fileItem->isScheduled = false;
 }
 
 static bool waitForUserConfirmation(char *message) {
@@ -456,7 +426,6 @@ void callServer(ArgumentsVector baseArgs, ArgumentsVector requestArgs) {
     } else {
         if (hasInputFile) {
             FileItem *requestFile = getFileItemWithFileNumber(requestFileNumber);
-            requestFile->isScheduled = false;
             /* -get expands ${__file} and its family from the name, it needs no parse */
             inputFileName = options.serverOperation == OP_GET_ENV_VALUE ? requestFile->name : NULL;
         }

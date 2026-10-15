@@ -174,27 +174,6 @@ int getFileNumberFromFileName(char *fileName) {
     return fileTableLookup(&fileTable, fileName);
 }
 
-static char *getNextInputFileFromFileTable(int *indexP, FileSource wantedFileSource) {
-    int         i;
-    FileItem  *fileItem;
-
-    for (i = getNextExistingFileNumber(*indexP); i != -1; i = getNextExistingFileNumber(i+1)) {
-        fileItem = getFileItemWithFileNumber(i);
-        assert(fileItem!=NULL);
-        if (wantedFileSource==FILE_IS_SCHEDULED && fileItem->isScheduled)
-            break;
-    }
-    *indexP = i;
-    if (i != -1)
-        return fileItem->name;
-    else
-        return NULL;
-}
-
-char *getNextScheduledFile(int *indexP) {
-    return getNextInputFileFromFileTable(indexP, FILE_IS_SCHEDULED);
-}
-
 void fileTableMemoryStatistics(void) {
     printMemoryStatisticsFor(&fileTableMemory);
 }

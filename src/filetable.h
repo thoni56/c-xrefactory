@@ -28,16 +28,11 @@ typedef struct fileItem {	/* to be renamed to constant pool item TODO: Why?*/
     FileTimestamp lastModified;
     FileTimestamp lastParsedMtime;
     FileTimestamp knowledgeTime;        // when the CU's knowledge was built (ADR-0032)
-    bool isScheduled : 1;
     bool needsBrowsingStackRefresh : 1;  // entry-point reparsed this file, stack needs update
     bool isDeleted : 1;                 // file no longer exists on disk
     struct fileItem *next;
 } FileItem;
 
-
-typedef enum {
-    FILE_IS_SCHEDULED
-} FileSource;
 
 #define NO_FILE_NAME "___None___"
 
@@ -63,7 +58,6 @@ extern void mapOverFileTableWithIndex(void (*fun)(FileItem *, int));
 extern void mapOverFileTableWithBool(void (*fun)(FileItem *, bool), bool);
 extern void mapOverFileTableWithPointer(void (*fun)(FileItem *, void *), void *pointer);
 
-extern char *getNextScheduledFile(int *indexP);
 
 extern void markFileAsDeleted(int fileNumber);
 

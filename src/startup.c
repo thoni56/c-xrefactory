@@ -719,7 +719,6 @@ void totalTaskEntryInitialisations(void) {
 }
 
 static void clearFileItem(FileItem *fileItem) {
-    fileItem->isScheduled = false;
     fileItem->needsBrowsingStackRefresh = false;
 }
 
