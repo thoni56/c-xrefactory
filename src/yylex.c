@@ -381,7 +381,6 @@ static LexemCode getLexem(void) {
 /* ***************************************************************** */
 
 static LexemCode checkCompletionsForId(LexemCode lexem, char *id, Position position) {
-    assert(options.mode);
     if (lexem == IDENT_TO_COMPLETE) {
         completionStringServed = true;
         if (parsingConfig.language == LANG_YACC) {
@@ -1081,7 +1080,6 @@ endOfBody:
     symbol->mbody = macroBody;
 
     addMacroToTabs(symbol, macroName);
-    assert(options.mode);
     handleFoundSymbolReference(symbol, macroPosition, UsageDefined, NO_FILE_NUMBER);
     return;
 
@@ -2398,7 +2396,6 @@ static LexemCode getActualMacroArgument(char *previousLexemP, LexemCode lexem, P
 
 endOfFile:;
 endOfMacroArgument:;
-    assert(options.mode);
     if (options.mode != ServerMode) {
         warningMessage(ERR_ST, "[getActualMacroArgument] unterminated macro call");
     }
@@ -2460,7 +2457,6 @@ static LexemStream *getActualMacroArguments(MacroBody *macroBody, Position macro
 endOfMacroArgument:
     assert(0);
 endOfFile:
-    assert(options.mode);
     if (options.mode!=ServerMode) {
         warningMessage(ERR_ST,"[getActualMacroArguments] unterminated macro call");
     }
@@ -2503,7 +2499,6 @@ static bool expandMacroCall(Symbol *macroSymbol, Position macroPosition) {
     } else {
         actualArgumentsInput = NULL;
     }
-    assert(options.mode);
     handleFoundSymbolReference(macroSymbol, macroPosition, UsageUsed, NO_FILE_NUMBER);
     log_debug("create macro body '%s' as new input", macroBody->name);
 
@@ -2523,7 +2518,6 @@ endOfMacroArgument:
     return false;
 
  endOfFile:
-    assert(options.mode);
     if (options.mode!=ServerMode) {
         warningMessage(ERR_ST,"[macroCallExpand] unterminated macro call");
     }
@@ -2661,7 +2655,6 @@ LexemCode yylex(void) {
         Position position;
         getExtraLexemInformationFor(lexem, &currentInput.read, NULL, NULL, &position, NULL,
                                     NULL, !insideMacro());
-        assert(options.mode);
         if (options.mode == ServerMode) {
             // TODO: ???????????? isn't this useless
             lexem = checkCompletionsForId(lexem, yytext, position);
@@ -2734,7 +2727,6 @@ LexemCode yylex(void) {
         yytext = constant;
         goto finish;
     }
-    assert(options.mode);
     Position position;
     yytext = currentInput.read;
     getExtraLexemInformationFor(lexem, &currentInput.read, NULL, NULL, &position, NULL,

@@ -526,7 +526,6 @@ static void scanFunction_ReadFileName(int fileNameLength,
             fileItem->lastParsedMtime=umtime;
         if (fileTimestampIsZero(fileItem->knowledgeTime))
             fileItem->knowledgeTime=knowledgeTime;
-        assert(options.mode);
     } else {
         fileNumber = getFileNumberFromFileName(fileName);
         fileItem = getFileItemWithFileNumber(fileNumber);

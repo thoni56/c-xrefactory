@@ -111,8 +111,6 @@ void parseBufferUsingServer(char *project, EditorMarker *point, EditorMarker *ma
 
     currentPass = ANY_PASS;
 
-    assert(options.mode == ServerMode);
-
     /* Clear accumulated input files from previous parses to avoid global state pollution,
      * since parseBufferUsingServer() can be called several times (e.g., target validation
      * followed by function boundaries check). */

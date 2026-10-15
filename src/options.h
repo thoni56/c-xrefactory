@@ -18,10 +18,10 @@
 
 #define END_OF_OPTIONS_STRING "end-of-options"
 
-/* Working mode in which the task is invoked */
+
 typedef enum {
-    UndefinedMode = 0, /* Explicitly zero so we can assert(mode) */
-    ServerMode         /* editor server, called by on-line editing action */
+    UndefinedMode = 0,
+    ServerMode
 } Mode;
 
 typedef struct variable {

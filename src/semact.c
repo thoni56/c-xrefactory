@@ -92,7 +92,6 @@ void deleteSymDef(void *p) {
     pp = (Symbol *) p;
     log_debug("deleting %s %s", pp->name, pp->linkName);
     if (symbolTableDelete(symbolTable,pp)==0) {
-        assert(options.mode);
         if (options.mode != ServerMode) {
             errorMessage(ERR_INTERNAL,"symbol on deletion not found");
         }
@@ -144,13 +143,11 @@ StructMemberFindInfo *initFind(Symbol *s, StructMemberFindInfo *info) {
 }
 
 void setDirectStructureCompletionType(TypeModifier *typeModifier) {
-    assert(options.mode);
     structMemberCompletionType = typeModifier;
     assert(structMemberCompletionType);
 }
 
 void setIndirectStructureCompletionType(TypeModifier *typeModifier) {
-    assert(options.mode);
     if (typeModifier->type==TypePointer || typeModifier->type==TypeArray) {
         structMemberCompletionType = typeModifier->next;
         assert(structMemberCompletionType);

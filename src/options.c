@@ -972,7 +972,6 @@ void readOptionsFromCommand(char *command, ArgumentsVector *outArgs, char *secti
 ArgumentsVector readOptionsFromPipe(void) {
     ArgumentsVector args = {.argc = 0};
 
-    assert(options.mode);
     char unused[MAX_FILE_NAME_SIZE];
     readOptionsIntoArgs(stdin, &args, &optMemory, "", NULL, unused);
     logCommands(args);

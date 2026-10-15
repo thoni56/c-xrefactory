@@ -657,8 +657,6 @@ bool initializeFileProcessing(ArgumentsVector baseArgs, ArgumentsVector requestA
         inputOpened = computeAndOpenInputFile(inputFileName); /* Phase 5 only */
     }
 
-    assert(options.mode);
-
  fini:
     initializationsPerInvocation();
 
