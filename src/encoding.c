@@ -74,43 +74,6 @@ static void applyUtf8CrLfCrConversion(EditorBuffer *buffer) {
         });
 }
 
-static void applyUtf8CrLfConversion(EditorBuffer *buffer) {
-    EDITOR_ENCODING_WALK_THROUGH_BUFFER(buffer, {
-            if (convertUtf8(&s, &d, max)) ;
-            else EDITOR_ENCODING_CR_LF_TO_LF_CONVERSION(s,d)
-                else
-                    *d = *s;
-        });
-}
-
-static void applyUtf8CrConversion(EditorBuffer *buffer) {
-    EDITOR_ENCODING_WALK_THROUGH_BUFFER(buffer, {
-            if (convertUtf8(&s, &d, max)) ;
-            else EDITOR_ENCODING_CR_TO_LF_CONVERSION(s,d)
-                else
-                    *d = *s;
-        });
-}
-
-static void applyUtf8Conversion(EditorBuffer *buffer) {
-    EDITOR_ENCODING_WALK_THROUGH_BUFFER(buffer, {
-            if (convertUtf8(&s, &d, max)) ;
-            else
-                *d = *s;
-                });
-}
-
-
 void performEncodingAdjustments(EditorBuffer *buffer) {
-    // utf-8
-    if ((options.eolConversion&CR_LF_EOL_CONVERSION)
-        && (options.eolConversion & CR_EOL_CONVERSION)) {
-        applyUtf8CrLfCrConversion(buffer);
-    } else if (options.eolConversion & CR_LF_EOL_CONVERSION) {
-        applyUtf8CrLfConversion(buffer);
-    } else if (options.eolConversion & CR_EOL_CONVERSION) {
-        applyUtf8CrConversion(buffer);
-    } else {
-        applyUtf8Conversion(buffer);
-    }
+    applyUtf8CrLfCrConversion(buffer);
 }
