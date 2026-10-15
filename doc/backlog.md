@@ -141,10 +141,9 @@ graph from them on every push, linked at the end of this file, and `utils/backlo
      snapshot know the rest of the project, and goal and reach (ADR-0032) decide what to
      parse. The XrefMode argument language — backquoted commands, path lists, wildcards,
      the directory walk in `dirInputFile()` (`src/options.c`) — served a run whose input
-     set was its arguments, and goes with the startup file arguments. Traced in session
-     05984816 (Mac): a startup `.` is walked again by the first request, because
-     `server()` takes `savedOptions` after startup filled `inputFiles`, until a project
-     config load clears it; requests do not accumulate file arguments.
+     set was its arguments, and goes with the startup file arguments. A request already
+     enters its file directly (`addRequestFileToFileTable()`), so only `startup.c` still
+     walks file arguments, through `processFileArguments()`.
    - `.c-xrefrc` is also read with `YES` (`startup.c:446`), for the source directories
      listed in it. Do not assume that list is legacy. What dies with `-p` is the
      *registry*: several `[project]` sections, each covering directories, one selected by
