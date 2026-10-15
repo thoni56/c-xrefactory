@@ -2422,13 +2422,10 @@ browsing stack.</p>
 <li>
 <p><code>lastParsedMtime</code> - The modification time when we last parsed this file (any update mode)</p>
 </li>
-<li>
-<p><code>lastFullUpdateMtime</code> - The modification time when we last did a FULL update (including header propagation)</p>
-</li>
 </ul>
 </div>
 <div class="paragraph">
-<p>These are <code>FileTimestamp</code> values (<code>struct timespec</code> with nanosecond precision).</p>
+<p>It is a <code>FileTimestamp</code> value (<code>struct timespec</code> with nanosecond precision).</p>
 </div>
 <div class="paragraph">
 <p><strong><em>Dual Semantics</em></strong></p>
@@ -5847,6 +5844,15 @@ A snapshot of any other version is ignored like no snapshot, and rewritten on ex
 bump costs one cold start.</p>
 </div>
 <div class="paragraph">
+<p>Removing or adding an integer record needs no bump. The snapshot&#8217;s key list (<code>@</code>) names
+the integer records it uses, and the reader stores a listed key&#8217;s value whether or not it
+has a handler. So an old snapshot&#8217;s extra record is stored and never read, and a new
+record is 0 when an old snapshot lacks it, so a 0 must mean "unknown". Older binaries
+read newer snapshots the same way. A string record must stay out of the key list: the reader
+skips an unlisted key&#8217;s text by its length, but stores only the length of a listed one, and
+misreads the rest.</p>
+</div>
+<div class="paragraph">
 <p>The version is a promise about what the snapshot means, not only about its syntax. Bump
 it whenever a snapshot written before a change could be read after it and give a wrong
 answer, also when every record still parses:</p>
@@ -5873,7 +5879,7 @@ time.</p>
 </div>
 <div class="literalblock">
 <div class="content">
-<pre>32571f  1715027668m 21:/usr/include/ctype.h</pre>
+<pre>32571f  1715027668p 21:/usr/include/ctype.h</pre>
 </div>
 </div>
 <div class="ulist">
@@ -5882,7 +5888,7 @@ time.</p>
 <p><code>32571f</code> — file number 32571</p>
 </li>
 <li>
-<p><code>1715027668m</code> — modification time (to detect stale entries)</p>
+<p><code>1715027668p</code> — modification time when last parsed (to detect stale entries)</p>
 </li>
 <li>
 <p><code>21:/usr/include/ctype.h</code> — filename (21 characters)</p>
@@ -12354,7 +12360,7 @@ operation reads the in-memory table.</p>
 </div>
 <div id="footer">
 <div id="footer-text">
-Last updated 2026-10-15 05:37:59 UTC
+Last updated 2026-10-15 16:08:40 UTC
 </div>
 </div>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.18.3/highlight.min.js"></script>

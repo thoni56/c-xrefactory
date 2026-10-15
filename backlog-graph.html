@@ -25,7 +25,6 @@ flowchart BT
   setup_into_openproject["§1 · 4c · project setup moves into the future `-openproject`"]
   openproject_tripwire["§1 · 4d · the assert that nothing before the future `-openproject` reads a project-scoped option"]
   project_extent["§1 · 4e · what a project consists of"]
-  drop_cxfi_refnum["§1 · 5 · Drop the `CXFI_REFNUM` record from the snapshot"]
   report_errors_flag["§2 · 6 · Re-key the 19 `options.mode != ServerMode` guards in `src/yylex.c`"]
   startup_command_line["§2 · 7 · Decide, and enforce, what the startup command line may carry"]
   eol_always["§2 · 59 · Line endings are always converted, and `-crlfconversion` and `-crconversion` go"]
@@ -123,7 +122,6 @@ flowchart BT
   class setup_into_openproject blocked
   class openproject_tripwire blocked
   class project_extent ready
-  class drop_cxfi_refnum ready
   class report_errors_flag ready
   class startup_command_line ready
   class eol_always ready
