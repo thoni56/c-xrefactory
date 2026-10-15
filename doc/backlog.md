@@ -134,6 +134,17 @@ graph from them on every push, linked at the end of this file, and `utils/backlo
      true` sits outside the `if` in `options.c`, so a bare word vanishes without a word.
      Rejecting it means reporting there. `c-xref file.c` already answers "No mode given",
      pinned by `tests/test_options_mode_required`.
+   - **File arguments: none at startup, exactly one per request.** A request's only bare
+     argument is the current buffer's file (`c-xref-server-call-on-current-buffer`,
+     `editors/emacs/c-xref.el`), which may not exist on disk yet; other buffers travel as
+     `-preload`. The server only enters it in the file table: the structure scan and the
+     snapshot know the rest of the project, and goal and reach (ADR-0032) decide what to
+     parse. The XrefMode argument language — backquoted commands, path lists, wildcards,
+     the directory walk in `dirInputFile()` (`src/options.c`) — served a run whose input
+     set was its arguments, and goes with the startup file arguments. Traced in session
+     05984816 (Mac): a startup `.` is walked again by the first request, because
+     `server()` takes `savedOptions` after startup filled `inputFiles`, until a project
+     config load clears it; requests do not accumulate file arguments.
    - `.c-xrefrc` is also read with `YES` (`startup.c:446`), for the source directories
      listed in it. Do not assume that list is legacy. What dies with `-p` is the
      *registry*: several `[project]` sections, each covering directories, one selected by
