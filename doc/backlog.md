@@ -516,11 +516,6 @@ are noted in `cu-inputs`, `out-of-date`, `time-budget` and `sweep-cost`.
 - (#56) <a id="closed-buffer-strip"></a>**A header whose buffer the client stops sending is stripped, and none of its includers built** —
     `tests/test_reverted_held_header_keeps_its_references/.suspended`.
     Goes with: header-not-half
-- (#57) <a id="request-strip-gate"></a>**Nothing tests that a search leaves its request file's references alone** —
-    `callServer()` calls `collectRequestCU()`, which strips the request CU, only when
-    `operationParsesRequestFile()` is true. Within the cap,
-    `test_search_keeps_references_of_changed_request_file` analyses a.c again anyway, so
-    it would pass even if the search stripped a.c. A unit test of the gate.
 - (#40) <a id="time-budget"></a>**A time budget instead of the cap** — the cap (`MAX_CUS_TO_REPARSE`,
     128 today) becomes a time budget, and above it the question
     with an estimate. Browsing remembers a "no" for the session, an operation that edits

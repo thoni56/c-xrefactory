@@ -166,3 +166,33 @@ Ensure(Server, cursor_parse_for_an_operation_that_does_not_parse_leaves_the_file
     assert_true(fileTimestampIsZero(fileItem.lastParsedMtime));
     assert_true(fileTimestampIsZero(fileItem.knowledgeTime));
 }
+
+/* Search answers from the table, so a stripped request file would lose its references
+ * for good */
+Ensure(Server, search_does_not_strip_its_request_file) {
+    FileItem fileItem = {.name = "a.c"};
+    setRequestFileArgument(42);
+    options.serverOperation = OP_SEARCH;
+
+    cgreen_mocks_are(loose_mocks);
+    always_expect(getFileItemWithFileNumber, will_return(&fileItem));
+    expect(initializeProjectContext, will_return(true));
+    never_expect(collectRequestCU);
+
+    ArgumentsVector args = {.argc = 0, .argv = NULL};
+    callServer(args, args);
+}
+
+Ensure(Server, push_collects_its_request_file_for_stripping) {
+    FileItem fileItem = {.name = "a.c"};
+    setRequestFileArgument(42);
+    options.serverOperation = OP_BROWSE_PUSH;
+
+    cgreen_mocks_are(loose_mocks);
+    always_expect(getFileItemWithFileNumber, will_return(&fileItem));
+    expect(initializeProjectContext, will_return(true));
+    expect(collectRequestCU, when(requestFileNumber, is_equal_to(42)));
+
+    ArgumentsVector args = {.argc = 0, .argv = NULL};
+    callServer(args, args);
+}
