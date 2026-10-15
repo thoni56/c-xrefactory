@@ -1,4 +1,4 @@
-CXREF -crlfconversion -crconversion -server -o server-buffer
+CXREF -server -o server-buffer
 -getproject include.c
 end-of-options
 

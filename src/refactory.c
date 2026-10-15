@@ -64,14 +64,6 @@ static void setArguments(char *argv[MAX_NARGV_OPTIONS_COUNT], char *project,
 
     argv[i] = "null";
     i++;
-    if (refactoringOptions.eolConversion & CR_LF_EOL_CONVERSION) {
-        argv[i] = "-crlfconversion";
-        i++;
-    }
-    if (refactoringOptions.eolConversion & CR_EOL_CONVERSION) {
-        argv[i] = "-crconversion";
-        i++;
-    }
     if (project != NULL) {
         argv[i] = "-p";
         i++;

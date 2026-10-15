@@ -1,4 +1,4 @@
-CXREF -crlfconversion -crconversion -server
+CXREF -server
 -getproject CURDIR/source.c
 <sync>
 -olcxpushonly  -olcursor=25 CURDIR/source.c

@@ -61,7 +61,6 @@ Options presetOptions = {
 #else
     .cFilesSuffixes = "c:C",
 #endif
-    .eolConversion = NO_EOL_CONVERSION,
     .fileNamesCaseSensitive = true,
     .tabulator = 4,
 
@@ -1038,10 +1037,6 @@ static bool processCOption(int *argi, ArgumentsVector args) {
     if (0) {}
     else if (strncmp(args.argv[i], "-commandlog=", 12)==0)
         options.commandlog = allocateStringForOption(&options.commandlog, args.argv[i]+12);
-    else if (strcmp(args.argv[i], "-crlfconversion")==0)
-        options.eolConversion|=CR_LF_EOL_CONVERSION;
-    else if (strcmp(args.argv[i], "-crconversion")==0)
-        options.eolConversion|=CR_EOL_CONVERSION;
     else if (strcmp(args.argv[i], "-completioncasesensitive")==0)
         options.completionCaseSensitive = true;
     else if (strncmp(args.argv[i], "-commentmovinglevel=",20)==0) {

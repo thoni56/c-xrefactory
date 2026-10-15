@@ -112,11 +112,6 @@ Answer requests from the Emacs extension.
 Answer Language Server Protocol requests.
 
 .TP
-.B "\-crconversion \-crlfconversion"
-Treat a return, or a return followed by a linefeed, as the end of a
-line in requests. By default the end of line is detected.
-
-.TP
 .B \-log=file
 Write a log to
 .I file.

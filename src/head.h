@@ -14,12 +14,6 @@ typedef enum language {
     LANG_YACC  = 1<<2
 } Language;
 
-/* ****************** end of line conversions ***************************** */
-
-#define NO_EOL_CONVERSION		0
-#define CR_LF_EOL_CONVERSION	1
-#define CR_EOL_CONVERSION		2
-
 /* ****************** X-files hashing method ****************************** */
 
 #define XFILE_HASH_MAX 3

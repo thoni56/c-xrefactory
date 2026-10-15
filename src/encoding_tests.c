@@ -11,9 +11,7 @@
 
 Describe(Encoding);
 BeforeEach(Encoding) {}
-AfterEach(Encoding) {
-    options.eolConversion = NO_EOL_CONVERSION;
-}
+AfterEach(Encoding) {}
 
 
 Ensure(Encoding, will_not_convert_ascii) {

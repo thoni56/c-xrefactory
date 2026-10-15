@@ -1,7 +1,5 @@
 #include "encoding.h"
 
-#include "options.h"
-
 
 #define EDITOR_ENCODING_WALK_THROUGH_BUFFER(buffer, command) {          \
         unsigned char *s, *d, *max;                                     \
@@ -22,15 +20,6 @@
         } else {                                            \
             *d = '\n';                                      \
         }                                                   \
-    }
-#define EDITOR_ENCODING_CR_LF_TO_LF_CONVERSION(s,d) \
-    if (*s == '\r' && s+1<max && *(s+1)=='\n') {    \
-        s++;                                        \
-        *d = *s;                                    \
-    }
-#define EDITOR_ENCODING_CR_TO_LF_CONVERSION(s,d)      \
-    if (*s == '\r') {                                 \
-        *d = '\n';                                    \
     }
 
 static bool hasContinuationBytes(unsigned char *src, int count, unsigned char *max) {

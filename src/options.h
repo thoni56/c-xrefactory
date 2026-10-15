@@ -88,7 +88,6 @@ typedef struct options {
     StringList *includeDirs;                    /* PROJECT */
     char *cxFileLocation;                       /* PROJECT */
     char *cFilesSuffixes;                       /* PROJECT */
-    int eolConversion;                          /* PROJECT */
     bool fileNamesCaseSensitive;                /* PROJECT */
     int tabulator;                              /* PROJECT */
 

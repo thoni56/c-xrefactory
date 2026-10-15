@@ -114,9 +114,7 @@ graph from them on every push, linked at the end of this file, and `utils/backlo
      before anything else: the mode; the transport (`-o <answerfile>` —
      `editors/emacs/c-xref.el:1615`); logging
      (`-log=`, `-debug`, `-trace`, `-info`, `-errors`, `-warnings`, `-infos`, scanned in
-     `main()` before the mode is even known); and `-statistics`. The client also sends
-     `-crlfconversion` and `-crconversion`, which say how the editor counts a line
-     break, not how answers travel, and go (`eol-always`).
+     `main()` before the mode is even known); and `-statistics`.
    - Everything project-scoped — `-p`, `-I`, `-D`, `-optinclude` — belongs to
      the config and binds at the future `-openproject`, not here.
    - **`-exactpositionresolve` has no strategy.** It is real: it changes link names
@@ -153,18 +151,6 @@ graph from them on every push, linked at the end of this file, and `utils/backlo
      look. Auto-discovery gives you the tree under the config; anything outside it still
      has to be named. Likely home: the config, or the machine-specific sibling, since an
      external source tree is usually a local path.
-- (#59) <a id="eol-always"></a>**Line endings are always converted, and `-crlfconversion` and `-crconversion` go** —
-   the client sends both every time it starts a server (`c-xref-start-server-process`,
-   `editors/emacs/c-xref.el`), so the path without them runs only in tests and in servers
-   started by hand. In one change (see `protocol-handshake`): convert CR LF and a lone CR
-   always, merge the four `apply*Conversion` variants in `src/encoding.c` into one, drop
-   `eolConversion` from `options` and its forwarding in `src/refactory.c`, stop the client
-   sending them, and drop them from the 35 tests whose `CXREF` line has them. Pinned by the
-   conversion tests in `src/encoding_tests.c`, which set the options as the client does
-   (that line goes), and `test_push_in_crlf_source_counts_a_line_break_as_one_character`.
-   LSP is not affected either way: it goes by line and column, which a CR before the LF
-   does not move. Found on the Mac, session `05984816`, 2026-10-14.
-   Goes with: startup-command-line
 - (#8) <a id="finish-after-xrefmode"></a>**Finish after XrefMode**, in these pieces:
    a. <a id="mode-checks"></a>**fold the last `options.mode` checks**, one at a time, since
       each changes behaviour where the mode is not yet known: `src/startup.c:633` (no
