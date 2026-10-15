@@ -28,7 +28,7 @@ flowchart BT
   report_errors_flag["§2 · 6 · Re-key the 19 `options.mode != ServerMode` guards in `src/yylex.c`"]
   startup_command_line["§2 · 7 · Decide, and enforce, what the startup command line may carry"]
   eol_always["§2 · 59 · Line endings are always converted, and `-crlfconversion` and `-crconversion` go"]
-  mode_checks["§2 · 8a · fold the `options.mode` checks outside `src/yylex.c`"]
+  mode_checks["§2 · 8a · fold the last `options.mode` checks"]
   remove_bridge["§2 · 9 · Remove the `parseBufferUsingServer` bridge"]
   refactoring_refusals["§3 · 10 · What a refactoring refuses, spelled out and tested"]
   behind_the_back["§3 · 11 · A header changed on disk, which the editor does not hold, keeps its old references"]
@@ -65,7 +65,6 @@ flowchart BT
   cursor_parse_reuse["§7 · 1 · The request CU is parsed for the cursor, also when its knowledge is current"]
   header_not_half["§7 · 39 · A changed header the editor holds is stripped also when not all its includers fit"]
   closed_buffer_strip["§7 · 56 · A header whose buffer the client stops sending is stripped, and none of its includers built"]
-  request_strip_gate["§7 · 57 · Nothing tests that a search leaves its request file's references alone"]
   time_budget["§7 · 40 · A time budget instead of the cap"]
   freshness_docs["§7 · 41 · The docs follow"]
   include_edges["§7 · 42 · Who writes include edges"]
@@ -162,7 +161,6 @@ flowchart BT
   class cursor_parse_reuse ready
   class header_not_half ready
   class closed_buffer_strip ready
-  class request_strip_gate ready
   class time_budget ready
   class freshness_docs ready
   class include_edges ready
