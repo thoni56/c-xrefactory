@@ -427,16 +427,12 @@ char *getOptionVariable(char *name) {
  * own arguments are of interest, so the server clears this before processing a
  * request and reads it right after. */
 static char *requestFileArgumentName = NULL;
-static bool  recordingRequestFile = false;
-static int   recordedRequestFileNumber = -1;
 
 static void scheduleCommandLineEnteredFileToProcess(char *fn) {
     ENTER();
     int fileNumber = addFileNameToFileTable(fn);
     FileItem *fileItem = getFileItemWithFileNumber(fileNumber);
     log_debug("recursively process command line argument file #%d '%s'", fileNumber, fileItem->name);
-    if (recordingRequestFile)
-        recordedRequestFileNumber = fileNumber;
     LEAVE();
 }
 
@@ -1801,6 +1797,7 @@ static void processFileArgument(char *fileArgument) {
 
 void processFileArguments(void) {
     for (StringList *l = options.inputFiles; l != NULL; l = l->next) {
+        log_debug("processing file argument '%s'", l->string);
         processFileArgument(l->string);
     }
 }
@@ -1809,20 +1806,14 @@ void clearRequestFileArgument(void) {
     requestFileArgumentName = NULL;
 }
 
-/* Schedule the file the request named and return its file number, or
- * NO_FILE_NUMBER if the request named none. Scheduling it again is harmless -
- * processFileArguments() has already done so - and going through the same path
- * is what gives us the file number under the name the file table knows. */
-int scheduleRequestFileArgument(void) {
+/* Enter the file the request named in the file table and return its file number,
+ * or NO_FILE_NUMBER if the request named none. It is the editor's current buffer,
+ * which need not exist on disk yet. */
+int addRequestFileToFileTable(void) {
     if (requestFileArgumentName == NULL)
         return NO_FILE_NUMBER;
 
-    recordedRequestFileNumber = NO_FILE_NUMBER;
-    recordingRequestFile = true;
-    processFileArgument(requestFileArgumentName);
-    recordingRequestFile = false;
-
-    return recordedRequestFileNumber;
+    return addFileNameToFileTable(requestFileArgumentName);
 }
 
 

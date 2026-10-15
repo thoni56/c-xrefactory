@@ -22,7 +22,7 @@ void clearRequestFileArgument(void) {
     mock();
 }
 
-int scheduleRequestFileArgument(void) {
+int addRequestFileToFileTable(void) {
     return (int)mock();
 }
 

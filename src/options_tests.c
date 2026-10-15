@@ -881,3 +881,24 @@ Ensure(Options, getOptionFromFile_does_not_return_eof_if_there_is_text) {
     assert_that(foundText, is_equal_to_string(""));
     assert_that(charsRead, is_equal_to(0));
 }
+
+/* A request names one file, the editor's current buffer. It is entered in the
+ * file table as it is, also when it does not exist on disk yet. */
+Ensure(Options, enters_the_file_the_request_named_in_the_file_table) {
+    char *arguments[] = {"", "new.c"};
+    ArgumentsVector args = {2, arguments};
+
+    clearRequestFileArgument();
+    processOptions(args, PROCESS_FILE_ARGUMENTS_YES);
+
+    expect(addFileNameToFileTable, when(fileName, is_equal_to_string("new.c")),
+           will_return(42));
+
+    assert_that(addRequestFileToFileTable(), is_equal_to(42));
+}
+
+Ensure(Options, enters_no_file_when_the_request_named_none) {
+    clearRequestFileArgument();
+
+    assert_that(addRequestFileToFileTable(), is_equal_to(NO_FILE_NUMBER));
+}

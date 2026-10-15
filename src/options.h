@@ -163,7 +163,7 @@ extern void recoverMemoryFromIncludeList(void);
 
 extern void processFileArguments(void);
 extern void clearRequestFileArgument(void);
-extern int scheduleRequestFileArgument(void);
+extern int addRequestFileToFileTable(void);
 extern void processOptions(ArgumentsVector args, ProcessFileArguments infilesFlag);
 
 /* Handling of allocated string and string list options that need to be "shifted" on deep copy */
