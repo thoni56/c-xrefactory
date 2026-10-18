@@ -1620,7 +1620,7 @@ tries to delete C-xrefactory windows first.
   (let ((oldpct) (opts))
     (setq oldpct process-connection-type)
     (setq process-connection-type nil)
-    (setq opts (list "-o" ofile))
+    (setq opts (list "-o" ofile "-errors"))
 
 ;;    (when c-xref-debug-mode
 ;;      (setq opts (append opts (list "-debug" "-log=log"))))
