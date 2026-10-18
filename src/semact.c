@@ -46,11 +46,9 @@ int styyerror(char *message) {
     char tmpBuff[TMP_BUFF_SIZE];
 
     if (strcmp(message, "syntax error") == 0) {
-        if (displayingErrorMessages()) {
-            log_debug("Syntax error on: '%s'", yytext);
-            sprintf(tmpBuff, "Syntax error on: %s", yytext);
-            errorMessage(ERR_ST, tmpBuff);
-        }
+        log_debug("Syntax error on: '%s'", yytext);
+        sprintf(tmpBuff, "Syntax error on: %s", yytext);
+        parsingMessage(ERR_ST, tmpBuff);
     } else if (strncmp(message, "DEBUG:", 6) == 0) {
         if (displayingErrorMessages())
             errorMessage(ERR_ST, message);
