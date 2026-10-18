@@ -997,15 +997,6 @@ static int handleIncludeOption(int i, ArgumentsVector args) {
     return i;
 }
 
-static struct {
-    bool errors;
-    bool warnings;
-    bool infos;
-    bool debug;
-    bool trace;
-} logging_selected = {false, false, false, false, false};
-
-
 static bool processAOption(int *argi, ArgumentsVector args) {
     int i = *argi;
     if (0) {}
@@ -1086,7 +1077,6 @@ static bool processEOption(int *argi, ArgumentsVector args) {
     if (0) {}
     else if (strcmp(args.argv[i], "-errors")==0) {
         options.errors = true;
-        logging_selected.errors = true;
     } else if (strcmp(args.argv[i], "-exit")==0) {
         forgetKnowledgeForHeldContent();
         saveReferences();
@@ -1169,9 +1159,6 @@ static bool processIOption(int *argi, ArgumentsVector args) {
     }
     else if (strncmp(args.argv[i], "-I", 2)==0 && args.argv[i][2]!=0) {
         addToStringListOption(&options.includeDirs, args.argv[i]+2);
-    }
-    else if (strcmp(args.argv[i], "-infos")==0) {
-        logging_selected.infos = true;
     }
     else if (strcmp(args.argv[i], "-info")==0) {
         /* Log level handled in main.c initLogging() */;
@@ -1596,7 +1583,7 @@ static bool processWOption(int *argi, ArgumentsVector args) {
     int i = * argi;
     if (0) {}
     else if (strcmp(args.argv[i], "-warnings") == 0){
-        logging_selected.warnings = true;
+        /* Already handled in initLogging() but we need to allow it */
     }
     else return false;
     *argi = i;
