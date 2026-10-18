@@ -2266,6 +2266,19 @@ Gets the value associated with NAME, set by -set in the .c-xrefrc file.
     i
     ))
 
+(defun c-xref-server-dispatch-log (ss i len tag)
+  (let ((tlen) (cc))
+    (setq tlen (c-xref-server-dispatch-get-int-attr c-xref_PPCA_LEN))
+    (setq cc (c-xref-char-list-substring ss i (+ i tlen)))
+    (setq i (+ i tlen))
+    (setq i (c-xref-server-parse-xml-tag ss i len))
+    (c-xref-server-dispatch-require-end-ctag tag)
+    (with-current-buffer (get-buffer-create c-xref-log-view-buffer)
+      (goto-char (point-max))
+      (insert cc))
+    i
+    ))
+
 (defun c-xref-server-dispatch-call-macro (ss i len _dispatch-data)
   (let ((tlen))
     (setq tlen (c-xref-server-dispatch-get-int-attr c-xref_PPCA_LEN))
@@ -3265,6 +3278,9 @@ Special hotkeys available:
        (
             (equal c-xref-server-ctag c-xref_PPC_WARNING)
             (setq i (c-xref-server-dispatch-information ss i len dispatch-data c-xref-server-ctag)))
+       (
+            (equal c-xref-server-ctag c-xref_PPC_LOG)
+            (setq i (c-xref-server-dispatch-log ss i len c-xref-server-ctag)))
        (
             (equal c-xref-server-ctag c-xref_PPC_BOTTOM_WARNING)
             (setq i (c-xref-server-dispatch-bottom-information ss i len dispatch-data c-xref-server-ctag)))
