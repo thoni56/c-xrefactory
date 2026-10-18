@@ -7,7 +7,6 @@
 #include "commandlogger.h"
 #include "fileio.h"
 #include "filetable.h"
-#include "globals.h"
 #include "log.h"
 #include "lsp.h"
 #include "memory.h"
