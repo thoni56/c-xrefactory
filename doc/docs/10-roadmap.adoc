@@ -36,6 +36,9 @@ convergence is **complete**; the mechanism lives in <<06-principles.adoc#,Princi
   periodically; no mandatory `-create`.
 * *XrefMode removed* — the `-create`/`-update` batch engine is gone, and a mode has to be
   given, `-server` or `-lsp`.
+* *Diagnostics buffer* — what the request's own parse could not handle reaches
+  `*c-xref-diagnostics*` with its position, and `next-error` visits it
+  (<<11-planned-features.adoc#,Planned Features>>, Diagnostics Buffer).
 
 ==== Remaining
 
@@ -63,10 +66,9 @@ convergence is **complete**; the mechanism lives in <<06-principles.adoc#,Princi
  <<06-principles.adoc#,Principles>> (Editor Buffers Are the Content Source).
 
 |Report what did not parse
-|Server mode stays quiet through 19 `options.mode != ServerMode` guards in `yylex.c`, so a
- misconfigured `-I` is invisible and navigation silently misses references. Replace them with
- calls to `parsingMessage()`, which writes to the channel of
- <<11-planned-features.adoc#,Planned Features>> (Indexing Log Buffer); that channel comes first.
+|19 preprocessor messages in `yylex.c`, e.g. "unmatched #elif", are still behind
+ `options.mode != ServerMode` guards that never fire, so they send nothing. Replace them with
+ calls to `parsingMessage()`.
 
 |Batch prime
 |An explicit request — `-parse-all` — that parses every compilation unit the scan

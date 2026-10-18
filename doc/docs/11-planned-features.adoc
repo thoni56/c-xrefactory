@@ -209,42 +209,39 @@ It is a small annoyance today. It becomes the normal first contact with a new pr
 
 Keep the dialog and re-send the original request once the config is written, rather than unwinding. The request's dispatch data is still in hand at that point, so this should not need new plumbing — worth confirming before committing to it.
 
-=== Indexing Log Buffer
+=== Diagnostics Buffer
 
-**Status**: Planned
+**Status**: Partly done
 
 ==== Background
 
 The server parses a compilation unit when a request needs it. An operation that is project-wide asks before parsing the rest, and entry refresh reparses what has changed before every operation. Parsing is therefore spread through a session instead of happening once. During this parsing, warnings and errors may occur (e.g., missing include files, syntax errors from missing `-D` defines). These are expected and harmless — `c-xrefactory` continues best-effort — but users benefit from seeing them to tune their `.c-xrefrc` (adding `-I` paths, `-D` defines, etc.).
 
-The legacy `-create` command in Emacs offered "View log file?" after completion, showing a file with all parsing messages. The server path needs an equivalent.
-
-There are also other situations when a re-parse or re-discovery might throw the same kind of errors.
-
-==== Problem
-
-The current protocol has no non-modal message channel. Every message type either shows a modal dialog (`PPC_WARNING`, `PPC_ERROR`, `PPC_INFORMATION`) requiring "Press a key to continue", or writes a transient line to the minibuffer (`PPC_BOTTOM_INFORMATION`). Sending per-file warnings during cold start floods the user with one modal per warning, effectively locking up the editor.
-
-The log channel is not an alternative. A server's stdout and stderr are the
-synchronisation stream: the Emacs filter accepts `<progress>` and `<sync>` records there
-and calls `(error "SYNCHRO PROBLEM: %s" ss)` on anything else (`c-xref.el:1748`). That is
-why `console_level` defaults to `LOG_FATAL` (`main.c:25`), and why `-warnings` or
-`-infos` must not be passed to a server. A `-log=<file>` file is still fine. Everything a
-user should see is a protocol record, which settles the choice below.
-
 ==== What works now
 
-An unresolved `#include` reaches the client as a `<warning>` record when reporting is
-asked for. `test_parsing_include_error` holds it. Two pieces are missing: `formatMessage()`
-(`commons.c`) still drops the position in server mode, so an entry cannot be made
-navigable, and the switch is `-errors`, which is session-scoped. The operation should turn
-reporting on for the duration of its own parse instead.
+What did not parse is collected in the buffer `*c-xref-diagnostics*`, one `file:line: message` per line.
+The buffer is in a mode derived from `compilation-mode`, so `RET` in it, and `M-g n` and `M-g p` from anywhere, go to the place.
+Nothing is shown when a message arrives.
+
+The server sends these messages as `<log>` records.
+Every other message record is modal, or a line in the minibuffer, and `<error>` also abandons the operation.
+A server's stdout and stderr cannot be used either, since they are the synchronisation stream, and the client stops with `SYNCHRO PROBLEM` on anything else there.
+
+In the server, a message about the code goes through `parsingMessage()`, or `parsingMessageAt()` when the caller knows the position better than the current lexem does (the lexer runs ahead of the parser).
+They send nothing unless the server was started with `-errors`, which the client does, and nothing in the parses that only refresh other files (`noErrors`).
+So what is reported is what the request's own parse found.
+`warningMessage()` and `errorMessage()` stay for what an operation itself has to say, and those are modal.
+
+==== What is left
+
+* A notice in the message area when something has been added, e.g. `3 diagnostics (see *c-xref-diagnostics*)`, so that the buffer is found.
+* The user manual: the buffer, and `M-g n` and `M-g p`.
+* A file's messages are replaced when it is parsed again. The buffer then holds what is true now, and a line that was only half typed does not stay there.
+* A message is sent once. The same missing header is reported once per compilation unit that includes it, so a generated `config.h` included by two hundred files is two hundred identical messages and one fact.
 
 ==== What the report should contain
 
-Distinct unresolved include names, each with a count of how many places wanted it. The
-same missing header is reported once per compilation unit that includes it, so a generated
-`config.h` included by two hundred files is two hundred identical messages and one fact.
+Distinct unresolved include names, each with a count of how many places wanted it.
 The set of names is short even in a badly configured project.
 
 Two triggers for the same report: after a whole-project parse, and on demand, which is how
@@ -259,14 +256,6 @@ config, i.e. "`foo/bar.h` was not found, there is one under `lib/include/`. Add
 After that the CUs that wanted it are out of date, since the config changed, and get
 parsed again when needed.
 More than one candidate is a menu, and none is just the report.
-
-==== Design Options
-
-**Option A: New protocol record type** (recommended) — Add a `PPC_LOG` record that the Emacs client silently appends to a `*c-xref-log*` buffer. The count accumulates over the session, and a `PPC_BOTTOM_INFORMATION` reports it — "N warnings (see *c-xref-log*)" — after a parse-all, or when asked. Clean separation, no modals, inspectable at leisure. Touches protocol definition, C server code, and Emacs client.
-
-**Option B: Server-side batching** — Collect all warnings during cold start into a single string, send as one `PPC_INFORMATION` after parsing completes. One modal instead of many. Simpler but still modal.
-
-**Option C: Summary only** — Send a `PPC_BOTTOM_WARNING` summary to the minibuffer (e.g., "3 files could not be opened during indexing"). Details go only to the log file. Minimal change but no inspectable buffer in Emacs.
 
 === Unused Detection: Exclude Patterns
 

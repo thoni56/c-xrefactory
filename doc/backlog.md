@@ -94,20 +94,13 @@ graph from them on every push, linked at the end of this file, and `utils/backlo
 
 ## 2. After XrefMode
 
-- (#23) <a id="indexing-log-buffer"></a>**Indexing Log Buffer** — Option A (`PPC_LOG` + a silent `*c-xref-log*` buffer),
-    `doc/docs/11-planned-features.adoc`. Every other message record is modal or a
-    minibuffer line, and `<error>` also abandons the operation, so a parse diagnostic needs
-    this channel before anything sends one. Parse diagnostics go through one
-    `parsingMessage()`, which decides whether to report (not in the refresh parses, and
-    scoped to the operation's own parse, not the session-wide `-errors`), writes to the
-    channel and sends a repeated message once. `warningMessage()` stays for an operation's
-    own warnings, which are modal. The first producer is the unresolved `#include` that
-    `test_parsing_include_error` shows as a `<warning>` today. The client half does not
-    have to be invented: `c-xref-tags-dispatch` and its two helpers in
-    `editors/emacs/c-xref.el` rendered exactly this for the `-create` log — a stream of
-    PPC records into `*c-xref-log*`, severity faces, `file://` links made clickable — and
-    are kept, uncalled, for that reason. The viewer commands and keymap below them are
-    still bound; only the producer is gone. Whether they stay is decided here.
+- (#23) <a id="indexing-log-buffer"></a>**What is left of the diagnostics buffer** —
+    `doc/docs/11-planned-features.adoc` (Diagnostics Buffer). What did not parse reaches
+    `*c-xref-diagnostics*` as `file:line: message`, and `next-error` visits it. Left:
+    a notice in the message area when something has been added, e.g. `3 diagnostics (see
+    *c-xref-diagnostics*)`; the user manual (the buffer, `M-g n` and `M-g p`); a file's
+    messages replaced when it is parsed again, so that a half-typed line does not stay
+    there; and a repeated message sent once.
 - (#6) <a id="report-errors-flag"></a>**Replace the 19 `options.mode != ServerMode` guards in `src/yylex.c`** with
    calls to `parsingMessage()`. With XrefMode gone the guards never fire, so today the
    server reports nothing they guard. Roadmap, "Report what did not parse". Restore
@@ -116,7 +109,6 @@ graph from them on every push, linked at the end of this file, and `utils/backlo
    Decide here too whether a file that is not valid UTF-8 is reported, once per file.
    Since `convertUtf8()` (`src/encoding.c`) takes a lead byte without its continuation
    bytes as one character, a Latin-1 file reads right, but silently.
-   Waits for: indexing-log-buffer
 - (#7) <a id="startup-command-line"></a>**Decide, and enforce, what the startup command line may carry** — *no repo home yet.*
    Bigger than `c-xref file.c`, and it needs code, not just a decision. Once XrefMode is
    gone the server takes no file at startup: every request names its own, and the same
