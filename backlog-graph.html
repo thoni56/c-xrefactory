@@ -25,7 +25,7 @@ flowchart BT
   setup_into_openproject["§1 · 4c · project setup moves into the future `-openproject`"]
   openproject_tripwire["§1 · 4d · the assert that nothing before the future `-openproject` reads a project-scoped option"]
   project_extent["§1 · 4e · what a project consists of"]
-  indexing_log_buffer["§2 · 23 · Indexing Log Buffer"]
+  indexing_log_buffer["§2 · 23 · What is left of the diagnostics buffer"]
   report_errors_flag["§2 · 6 · Replace the 19 `options.mode != ServerMode` guards in `src/yylex.c`"]
   startup_command_line["§2 · 7 · Decide, and enforce, what the startup command line may carry"]
   mode_checks["§2 · 8a · fold the last `options.mode` checks"]
@@ -58,6 +58,7 @@ flowchart BT
   dump_reference_database["§5 · 29 · Dump Reference Database"]
   compile_commands["§5 · 30 · Read `-I` and `-D` from `compile_commands.json`"]
   macos_watchers["§6 · 31 · Two causes of watchers not firing on macOS, both found"]
+  yydebug_to_log["§6 · 61 · The `-yydebug` parse trace goes to the log"]
   cu_inputs["§7 · 35 · A CU's inputs"]
   out_of_date["§7 · 36 · The config as an input of `knowledgeIsOutOfDate()`"]
   request_target["§7 · 37 · What a request needs"]
@@ -93,7 +94,6 @@ flowchart BT
   adr_0030 --&gt; setup_into_openproject
   setup_into_openproject --&gt; openproject_tripwire
   adr_0031 --&gt; project_extent
-  indexing_log_buffer --&gt; report_errors_flag
   request_target --&gt; behind_the_back
   startup_command_line --&gt; header_static_link_names
   header_filtered_siblings --&gt; scan_angle_includes
@@ -122,7 +122,7 @@ flowchart BT
   class openproject_tripwire blocked
   class project_extent ready
   class indexing_log_buffer ready
-  class report_errors_flag blocked
+  class report_errors_flag ready
   class startup_command_line ready
   class mode_checks ready
   class remove_bridge ready
@@ -154,6 +154,7 @@ flowchart BT
   class dump_reference_database ready
   class compile_commands ready
   class macos_watchers ready
+  class yydebug_to_log ready
   class cu_inputs ready
   class out_of_date ready
   class request_target ready

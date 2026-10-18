@@ -522,7 +522,7 @@ body.book #toc,body.book #preamble,body.book h1.sect0,body.book .sect1>h2{page-b
 <li><a href="#_rename_function_handles_expect">11.4. Rename function handles <code>expect</code></a></li>
 <li><a href="#_migrate_to_project_local_config">11.5. Migrate to project local config</a></li>
 <li><a href="#_retry_the_request_that_created_the_project">11.6. Retry the request that created the project</a></li>
-<li><a href="#_indexing_log_buffer">11.7. Indexing Log Buffer</a></li>
+<li><a href="#_diagnostics_buffer">11.7. Diagnostics Buffer</a></li>
 <li><a href="#_unused_detection_exclude_patterns">11.8. Unused Detection: Exclude Patterns</a></li>
 <li><a href="#_browsing_includes">11.9. Browsing includes</a></li>
 <li><a href="#_semantic_read_only_files_include_path_ownership">11.10. Semantic Read-only Files (Include Path Ownership)</a></li>
@@ -3475,6 +3475,11 @@ periodically; no mandatory <code>-create</code>.</p>
 <p><strong>XrefMode removed</strong> — the <code>-create</code>/<code>-update</code> batch engine is gone, and a mode has to be
 given, <code>-server</code> or <code>-lsp</code>.</p>
 </li>
+<li>
+<p><strong>Diagnostics buffer</strong> — what the request&#8217;s own parse could not handle reaches
+<code><strong>c-xref-diagnostics</strong></code> with its position, and <code>next-error</code> visits it
+(<a href="11-planned-features.html">Planned Features</a>, Diagnostics Buffer).</p>
+</li>
 </ul>
 </div>
 </div>
@@ -3516,10 +3521,9 @@ given, <code>-server</code> or <code>-lsp</code>.</p>
 </tr>
 <tr>
 <td class="tableblock halign-left valign-top"><p class="tableblock">Report what did not parse</p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">Server mode stays quiet through 19 <code>options.mode != ServerMode</code> guards in <code>yylex.c</code>, so a
- misconfigured <code>-I</code> is invisible and navigation silently misses references. Replace them with
- calls to <code>parsingMessage()</code>, which writes to the channel of
- <a href="11-planned-features.html">Planned Features</a> (Indexing Log Buffer); that channel comes first.</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">19 preprocessor messages in <code>yylex.c</code>, e.g. "unmatched #elif", are still behind
+ <code>options.mode != ServerMode</code> guards that never fire, so they send nothing. Replace them with
+ calls to <code>parsingMessage()</code>.</p></td>
 </tr>
 <tr>
 <td class="tableblock halign-left valign-top"><p class="tableblock">Batch prime</p></td>
@@ -4295,52 +4299,58 @@ current file, and if found, offer to migrate that section to a project-local <co
 </div>
 </div>
 <div class="sect2">
-<h3 id="_indexing_log_buffer">11.7. Indexing Log Buffer</h3>
+<h3 id="_diagnostics_buffer">11.7. Diagnostics Buffer</h3>
 <div class="paragraph">
-<p><strong>Status</strong>: Planned</p>
+<p><strong>Status</strong>: Partly done</p>
 </div>
 <div class="sect3">
 <h4 id="_background_3">11.7.1. Background</h4>
 <div class="paragraph">
 <p>The server parses a compilation unit when a request needs it. An operation that is project-wide asks before parsing the rest, and entry refresh reparses what has changed before every operation. Parsing is therefore spread through a session instead of happening once. During this parsing, warnings and errors may occur (e.g., missing include files, syntax errors from missing <code>-D</code> defines). These are expected and harmless — <code>c-xrefactory</code> continues best-effort — but users benefit from seeing them to tune their <code>.c-xrefrc</code> (adding <code>-I</code> paths, <code>-D</code> defines, etc.).</p>
 </div>
+</div>
+<div class="sect3">
+<h4 id="_what_works_now_2">11.7.2. What works now</h4>
 <div class="paragraph">
-<p>The legacy <code>-create</code> command in Emacs offered "View log file?" after completion, showing a file with all parsing messages. The server path needs an equivalent.</p>
+<p>What did not parse is collected in the buffer <code><strong>c-xref-diagnostics</strong></code>, one <code>file:line: message</code> per line.
+The buffer is in a mode derived from <code>compilation-mode</code>, so <code>RET</code> in it, and <code>M-g n</code> and <code>M-g p</code> from anywhere, go to the place.
+Nothing is shown when a message arrives.</p>
 </div>
 <div class="paragraph">
-<p>There are also other situations when a re-parse or re-discovery might throw the same kind of errors.</p>
+<p>The server sends these messages as <code>&lt;log&gt;</code> records.
+Every other message record is modal, or a line in the minibuffer, and <code>&lt;error&gt;</code> also abandons the operation.
+A server&#8217;s stdout and stderr cannot be used either, since they are the synchronisation stream, and the client stops with <code>SYNCHRO PROBLEM</code> on anything else there.</p>
+</div>
+<div class="paragraph">
+<p>In the server, a message about the code goes through <code>parsingMessage()</code>, or <code>parsingMessageAt()</code> when the caller knows the position better than the current lexem does (the lexer runs ahead of the parser).
+They send nothing unless the server was started with <code>-errors</code>, which the client does, and nothing in the parses that only refresh other files (<code>noErrors</code>).
+So what is reported is what the request&#8217;s own parse found.
+<code>warningMessage()</code> and <code>errorMessage()</code> stay for what an operation itself has to say, and those are modal.</p>
 </div>
 </div>
 <div class="sect3">
-<h4 id="_problem_2">11.7.2. Problem</h4>
-<div class="paragraph">
-<p>The current protocol has no non-modal message channel. Every message type either shows a modal dialog (<code>PPC_WARNING</code>, <code>PPC_ERROR</code>, <code>PPC_INFORMATION</code>) requiring "Press a key to continue", or writes a transient line to the minibuffer (<code>PPC_BOTTOM_INFORMATION</code>). Sending per-file warnings during cold start floods the user with one modal per warning, effectively locking up the editor.</p>
-</div>
-<div class="paragraph">
-<p>The log channel is not an alternative. A server&#8217;s stdout and stderr are the
-synchronisation stream: the Emacs filter accepts <code>&lt;progress&gt;</code> and <code>&lt;sync&gt;</code> records there
-and calls <code>(error "SYNCHRO PROBLEM: %s" ss)</code> on anything else (<code>c-xref.el:1748</code>). That is
-why <code>console_level</code> defaults to <code>LOG_FATAL</code> (<code>main.c:25</code>), and why <code>-warnings</code> or
-<code>-infos</code> must not be passed to a server. A <code>-log=&lt;file&gt;</code> file is still fine. Everything a
-user should see is a protocol record, which settles the choice below.</p>
-</div>
-</div>
-<div class="sect3">
-<h4 id="_what_works_now_2">11.7.3. What works now</h4>
-<div class="paragraph">
-<p>An unresolved <code>#include</code> reaches the client as a <code>&lt;warning&gt;</code> record when reporting is
-asked for. <code>test_parsing_include_error</code> holds it. Two pieces are missing: <code>formatMessage()</code>
-(<code>commons.c</code>) still drops the position in server mode, so an entry cannot be made
-navigable, and the switch is <code>-errors</code>, which is session-scoped. The operation should turn
-reporting on for the duration of its own parse instead.</p>
+<h4 id="_what_is_left">11.7.3. What is left</h4>
+<div class="ulist">
+<ul>
+<li>
+<p>A notice in the message area when something has been added, e.g. <code>3 diagnostics (see <strong>c-xref-diagnostics</strong>)</code>, so that the buffer is found.</p>
+</li>
+<li>
+<p>The user manual: the buffer, and <code>M-g n</code> and <code>M-g p</code>.</p>
+</li>
+<li>
+<p>A file&#8217;s messages are replaced when it is parsed again. The buffer then holds what is true now, and a line that was only half typed does not stay there.</p>
+</li>
+<li>
+<p>A message is sent once. The same missing header is reported once per compilation unit that includes it, so a generated <code>config.h</code> included by two hundred files is two hundred identical messages and one fact.</p>
+</li>
+</ul>
 </div>
 </div>
 <div class="sect3">
 <h4 id="_what_the_report_should_contain">11.7.4. What the report should contain</h4>
 <div class="paragraph">
-<p>Distinct unresolved include names, each with a count of how many places wanted it. The
-same missing header is reported once per compilation unit that includes it, so a generated
-<code>config.h</code> included by two hundred files is two hundred identical messages and one fact.
+<p>Distinct unresolved include names, each with a count of how many places wanted it.
 The set of names is short even in a badly configured project.</p>
 </div>
 <div class="paragraph">
@@ -4358,18 +4368,6 @@ config, i.e. "`foo/bar.h` was not found, there is one under <code>lib/include/</
 After that the CUs that wanted it are out of date, since the config changed, and get
 parsed again when needed.
 More than one candidate is a menu, and none is just the report.</p>
-</div>
-</div>
-<div class="sect3">
-<h4 id="_design_options">11.7.6. Design Options</h4>
-<div class="paragraph">
-<p><strong>Option A: New protocol record type</strong> (recommended) — Add a <code>PPC_LOG</code> record that the Emacs client silently appends to a <code><strong>c-xref-log</strong></code> buffer. The count accumulates over the session, and a <code>PPC_BOTTOM_INFORMATION</code> reports it — "N warnings (see <strong>c-xref-log</strong>)" — after a parse-all, or when asked. Clean separation, no modals, inspectable at leisure. Touches protocol definition, C server code, and Emacs client.</p>
-</div>
-<div class="paragraph">
-<p><strong>Option B: Server-side batching</strong> — Collect all warnings during cold start into a single string, send as one <code>PPC_INFORMATION</code> after parsing completes. One modal instead of many. Simpler but still modal.</p>
-</div>
-<div class="paragraph">
-<p><strong>Option C: Summary only</strong> — Send a <code>PPC_BOTTOM_WARNING</code> summary to the minibuffer (e.g., "3 files could not be opened during indexing"). Details go only to the log file. Minimal change but no inspectable buffer in Emacs.</p>
 </div>
 </div>
 </div>
@@ -9052,7 +9050,7 @@ This refactoring is independent of the LexemStream API improvements but would be
 <div class="sect2">
 <h3 id="clean-parser-api">16.3. Remove <code>parseBufferUsingServer</code> Bridge</h3>
 <div class="sect3">
-<h4 id="_problem_3">16.3.1. Problem</h4>
+<h4 id="_problem_2">16.3.1. Problem</h4>
 <div class="paragraph">
 <p>Refactoring operations that need structural information from parsing (function boundaries, move target validation, parameter positions, etc.) do not call the parser directly. Instead, they go through <code>parseBufferUsingServer()</code> — a function that constructs magic string arguments (like <code>"-olcxmovetarget"</code>, <code>"-olcxgetfunctionbounds"</code>) and runs a full <code>initServer()</code> + <code>callServer()</code> cycle. This is the internal equivalent of the editor sending a command over the protocol.</p>
 </div>
@@ -9229,7 +9227,7 @@ result.valid = parsedInfo.moveTargetAccepted;</code></pre>
 <div class="sect2">
 <h3 id="typed-requests">16.4. Replace Global <code>options</code> with Typed Requests</h3>
 <div class="sect3">
-<h4 id="_problem_4">16.4.1. Problem</h4>
+<h4 id="_problem_3">16.4.1. Problem</h4>
 <div class="paragraph">
 <p>The <code>Options</code> struct is one global blob serving four distinct lifetimes:</p>
 </div>
@@ -12360,7 +12358,7 @@ operation reads the in-memory table.</p>
 </div>
 <div id="footer">
 <div id="footer-text">
-Last updated 2026-10-18 20:02:41 UTC
+Last updated 2026-10-18 21:40:40 UTC
 </div>
 </div>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.18.3/highlight.min.js"></script>
