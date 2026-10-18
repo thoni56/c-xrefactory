@@ -64,9 +64,9 @@ convergence is **complete**; the mechanism lives in <<06-principles.adoc#,Princi
 
 |Report what did not parse
 |Server mode stays quiet through 19 `options.mode != ServerMode` guards in `yylex.c`, so a
- misconfigured `-I` is invisible and navigation silently misses references. Re-key them onto
- a report-errors flag; the include guard is done. The user-facing half is
- <<11-planned-features.adoc#,Planned Features>> (Indexing Log Buffer).
+ misconfigured `-I` is invisible and navigation silently misses references. Replace them with
+ calls to `parsingMessage()`, which writes to the channel of
+ <<11-planned-features.adoc#,Planned Features>> (Indexing Log Buffer); that channel comes first.
 
 |Batch prime
 |An explicit request — `-parse-all` — that parses every compilation unit the scan

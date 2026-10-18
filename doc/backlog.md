@@ -94,17 +94,30 @@ graph from them on every push, linked at the end of this file, and `utils/backlo
 
 ## 2. After XrefMode
 
-- (#6) <a id="report-errors-flag"></a>**Re-key the 19 `options.mode != ServerMode` guards in `src/yylex.c`** onto a
-   report-errors flag, and have `formatMessage()` (`src/commons.c`) give the position of
-   an error in a parse. Roadmap, "Report what did not parse". Doubles as the server half of
-   the Indexing Log Buffer item. Scope reporting to the operation's own parse, not the
-   session-wide `-errors`. Restore `tests/test_multipass`'s error-position assertion in
-   the same change: it was dropped when that test moved to the server, because the
-   server gives no position. With XrefMode gone the guards never
-   fire, so today the server reports nothing they guard.
+- (#23) <a id="indexing-log-buffer"></a>**Indexing Log Buffer** — Option A (`PPC_LOG` + a silent `*c-xref-log*` buffer),
+    `doc/docs/11-planned-features.adoc`. Every other message record is modal or a
+    minibuffer line, and `<error>` also abandons the operation, so a parse diagnostic needs
+    this channel before anything sends one. Parse diagnostics go through one
+    `parsingMessage()`, which decides whether to report (not in the refresh parses, and
+    scoped to the operation's own parse, not the session-wide `-errors`), writes to the
+    channel and sends a repeated message once. `warningMessage()` stays for an operation's
+    own warnings, which are modal. The first producer is the unresolved `#include` that
+    `test_parsing_include_error` shows as a `<warning>` today. The client half does not
+    have to be invented: `c-xref-tags-dispatch` and its two helpers in
+    `editors/emacs/c-xref.el` rendered exactly this for the `-create` log — a stream of
+    PPC records into `*c-xref-log*`, severity faces, `file://` links made clickable — and
+    are kept, uncalled, for that reason. The viewer commands and keymap below them are
+    still bound; only the producer is gone. Whether they stay is decided here.
+- (#6) <a id="report-errors-flag"></a>**Replace the 19 `options.mode != ServerMode` guards in `src/yylex.c`** with
+   calls to `parsingMessage()`. With XrefMode gone the guards never fire, so today the
+   server reports nothing they guard. Roadmap, "Report what did not parse". Have
+   `formatMessage()` (`src/commons.c`) give the position of an error in a parse, and
+   restore `tests/test_multipass`'s error-position assertion in the same change: it was
+   dropped when that test moved to the server, because the server gives no position.
    Decide here too whether a file that is not valid UTF-8 is reported, once per file.
    Since `convertUtf8()` (`src/encoding.c`) takes a lead byte without its continuation
    bytes as one character, a Latin-1 file reads right, but silently.
+   Waits for: indexing-log-buffer
 - (#7) <a id="startup-command-line"></a>**Decide, and enforce, what the startup command line may carry** — *no repo home yet.*
    Bigger than `c-xref file.c`, and it needs code, not just a decision. Once XrefMode is
    gone the server takes no file at startup: every request names its own, and the same
@@ -319,14 +332,6 @@ Roadmap → Optimization has the baseline: a cold-start PUSH on ffmpeg, measured
     work. Roadmap → Memory as Truth → Remaining. Depends only on entry refresh, which is
     done.
     Waits for: entry-refresh
-- (#23) <a id="indexing-log-buffer"></a>**Indexing Log Buffer** — Option A (`PPC_LOG` + a silent `*c-xref-log*` buffer),
-    `doc/docs/11-planned-features.adoc`. Follows the report-errors item. The client half
-    does not have to be invented: `c-xref-tags-dispatch` and its two helpers in
-    `editors/emacs/c-xref.el` rendered exactly this for the `-create` log — a stream of
-    PPC records into `*c-xref-log*`, severity faces, `file://` links made clickable — and
-    are kept, uncalled, for that reason. The viewer commands and keymap below them are
-    still bound; only the producer is gone. Whether they stay is decided here.
-    Waits for: report-errors-flag
 - (#24) <a id="retry-creating-request"></a>**Retry the request that created the project** — small, and it becomes first contact
     with every new project once auto-discovery is the only way in.
 - (#25) <a id="lsp-tiers"></a>**LSP tiers 1–2** — code actions and `workspace/executeCommand` for extract, move
@@ -569,15 +574,6 @@ Mac (session `05984816`), 2026-10-07.
 
 - (#46) <a id="release-build"></a>**A lean release build** — no coverage, no unit tests, only
     `c-xref`. The generated parsers are committed, so `cc` and `make` are enough.
-- (#48) <a id="install-server"></a>**`M-x c-xref-install-server`** — builds from source by
-    default, since every user of a C tool has a compiler; downloads a release binary as
-    the shortcut. The pattern of `pdf-tools-install` and `irony-install-server`. A binary
-    fetched by Emacs with `curl` is not quarantined by macOS Gatekeeper.
-    Waits for: release-build
-- (#49) <a id="releases"></a>**Tagged releases** — semver tags from `stable`, GitHub Releases
-    with binaries, and through the tags MELPA Stable. A Homebrew tap and an AUR package
-    are cheap once releases exist.
-    Waits for: release-build
 - (#47) <a id="protocol-handshake"></a>**The client and the server check a protocol version** —
     once the elisp and the binary are installed apart they drift (MELPA builds HEAD, the
     binary is whatever was built). On a mismatch the client offers to rebuild, rather
@@ -585,7 +581,15 @@ Mac (session `05984816`), 2026-10-07.
     `load.el`) replaces the client and the server together, and the only user is the
     maintainer, so a protocol or option change is made in one step: no transition, no
     deprecation, an option the client stops sending is simply unknown afterwards.
-    Waits for: install-server
+- (#48) <a id="install-server"></a>**`M-x c-xref-install-server`** — builds from source by
+    default, since every user of a C tool has a compiler; downloads a release binary as
+    the shortcut. The pattern of `pdf-tools-install` and `irony-install-server`. A binary
+    fetched by Emacs with `curl` is not quarantined by macOS Gatekeeper.
+    Waits for: release-build, protocol-handshake
+- (#49) <a id="releases"></a>**Tagged releases** — semver tags from `stable`, GitHub Releases
+    with binaries, and through the tags MELPA Stable. A Homebrew tap and an AUR package
+    are cheap once releases exist.
+    Waits for: release-build
 - (#50) <a id="melpa"></a>**The elisp on MELPA** — the package without binaries, which MELPA
     forbids; the server comes from `install-server`. `el-get` and `load.el` stay. This is
     where the client and the server start to be installed apart.
