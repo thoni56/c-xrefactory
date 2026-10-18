@@ -318,6 +318,21 @@ void warningMessage(int errCode, char *message) {
     }
 }
 
+void parsingMessage(int errCode, char *message) {
+    char buffer[MAX_PPC_RECORD_SIZE];
+
+    if (!options.noErrors) {
+        formatMessage(buffer, errCode, message);
+        if (options.cxrefProtocol) {
+            strcat(buffer, "\n");
+            ppcGenRecord(PPC_LOG, buffer);
+        } else {
+            if (displayingErrorMessages())
+                log_warn("%s", buffer);
+        }
+    }
+}
+
 void infoMessage(char message[]) {
     if (options.cxrefProtocol) {
         ppcGenRecord(PPC_INFORMATION, message);

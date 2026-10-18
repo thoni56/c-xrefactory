@@ -20,6 +20,10 @@ void reInitCwd(char *dffname, char *dffsect) {
     mock(dffname, dffsect);
 }
 
+void parsingMessage(int code, char *message) {
+    mock(code, message);
+}
+
 void infoMessage(char message[]) {
     mock(message);
 }

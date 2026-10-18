@@ -711,7 +711,7 @@ static void processInclude2(Position includePosition, char includeType, char *in
 
     if (!openInclude(includeType, includedName, is_include_next)) {
         if (displayingErrorMessages())
-            warningMessage(ERR_CANT_OPEN, includedName);
+            parsingMessage(ERR_CANT_OPEN, includedName);
         else
             log_warn("Can't open file '%s'", includedName);
     } else {
