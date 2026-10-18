@@ -42,6 +42,7 @@ flowchart BT
   lsp_position_encoding["§3 · 15j · The LSP server announces `positionEncoding: #quot;utf-8#quot;` but counts code points"]
   lsp_input_ends["§3 · 15k · The LSP server exits as a JSON parse error when its input ends"]
   search_result_line_zero["§3 · 58 · The client asks for search result number 0"]
+  include_bracket_from_macro["§3 · 60 · `#include MACRO` where the macro is `#lt;...#gt;`"]
   header_filtered_siblings["§4 · 16 · Header-filtered sibling parsing"]
   scan_angle_includes["§4 · 17 · Extend the lightweight scan to `#lt;...#gt;` includes"]
   lexing_cache["§4 · 18 · Lexing cache re-introduction"]
@@ -137,6 +138,7 @@ flowchart BT
   class lsp_position_encoding ready
   class lsp_input_ends ready
   class search_result_line_zero ready
+  class include_bracket_from_macro ready
   class header_filtered_siblings ready
   class scan_angle_includes blocked
   class lexing_cache blocked
