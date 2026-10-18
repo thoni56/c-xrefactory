@@ -10,7 +10,7 @@ include ../Makefile.server
 $(TEST):
 	@rm -rf output output.tmp server-buffer run.stdout run.stderr
 	-@$(SERVER_DRIVER) commands.input > run.stdout 2> run.stderr
-	@(grep -E -o "<log [^>]*>(Include <>|#include <...>)[^<]*" run.stdout | head -1; \
+	@(grep -o "<log [^>]*>[^<]*#include <...>[^<]*" run.stdout | head -1; \
 	  grep -F "Syntax error on: ." run.stdout; \
 	  grep -F "Syntax error on: >" run.stdout) | $(NORMALIZE) > output
 	$(VERIFY)

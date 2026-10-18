@@ -22,6 +22,7 @@
 static void scanComment(CharacterBuffer *cb) {
     int ch;
     char oldCh;
+    int startLine = lineNumberFrom(cb);
     /*  ******* a block comment ******* */
     ch = getChar(cb);
     if (ch=='\n') {
@@ -41,7 +42,8 @@ static void scanComment(CharacterBuffer *cb) {
         /* TODO test on cpp directive */
     } while ((oldCh != '*' || ch != '/') && ch != -1);
     if (ch == -1)
-        parsingMessage(ERR_ST, "unterminated comment");
+        parsingMessageAt(getFileItemWithFileNumber(fileNumberFrom(cb))->name, startLine, ERR_ST,
+                         "unterminated comment");
 }
 
 

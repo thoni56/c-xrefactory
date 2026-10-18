@@ -10,6 +10,7 @@
 #include "protocol.h"
 #include "semact.h"             /* displayingErrorMessages() */
 
+#include "filedescriptor.h"
 #include "fileio.h"
 #include "log.h"
 #include "stringlist.h"
@@ -318,11 +319,12 @@ void warningMessage(int errCode, char *message) {
     }
 }
 
-void parsingMessage(int errCode, char *message) {
+void parsingMessageAt(char *fileName, int lineNumber, int errCode, char *message) {
     char buffer[MAX_PPC_RECORD_SIZE];
 
     if (!options.noErrors) {
-        formatMessage(buffer, errCode, message);
+        int prefixLength = sprintf(buffer, "%s:%d: ", fileName, lineNumber);
+        formatMessage(buffer + prefixLength, errCode, message);
         if (options.cxrefProtocol && displayingErrorMessages()) {
             strcat(buffer, "\n");
             ppcGenRecord(PPC_LOG, buffer);
@@ -330,6 +332,11 @@ void parsingMessage(int errCode, char *message) {
             log_warn("%s", buffer);
         }
     }
+}
+
+/* At the lexem being consumed, which the lexer has already passed */
+void parsingMessage(int errCode, char *message) {
+    parsingMessageAt(currentFile.fileName, currentFile.lineNumber, errCode, message);
 }
 
 void infoMessage(char message[]) {

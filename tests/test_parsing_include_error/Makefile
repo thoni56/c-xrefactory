@@ -11,7 +11,7 @@ include ../Makefile.server
 $(TEST):
 	@rm -rf output output.tmp server-buffer run.stdout run.stderr
 	-@$(SERVER_DRIVER) commands.input > run.stdout 2> run.stderr
-	@(grep -o "<log [^>]*>Can't open file somefile" run.stdout; true) \
+	@(grep -o "<log [^>]*>[^<]*Can't open file somefile" run.stdout; true) \
 	    | $(NORMALIZE) > output
 	$(VERIFY)
 

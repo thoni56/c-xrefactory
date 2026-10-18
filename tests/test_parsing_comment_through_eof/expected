@@ -1,1 +1,1 @@
-<log len=<n>>unterminated comment
+<log len=<n>>CURDIR/source.c:3: unterminated comment

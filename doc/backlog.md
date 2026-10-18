@@ -110,10 +110,9 @@ graph from them on every push, linked at the end of this file, and `utils/backlo
     still bound; only the producer is gone. Whether they stay is decided here.
 - (#6) <a id="report-errors-flag"></a>**Replace the 19 `options.mode != ServerMode` guards in `src/yylex.c`** with
    calls to `parsingMessage()`. With XrefMode gone the guards never fire, so today the
-   server reports nothing they guard. Roadmap, "Report what did not parse". Have
-   `formatMessage()` (`src/commons.c`) give the position of an error in a parse, and
-   restore `tests/test_multipass`'s error-position assertion in the same change: it was
-   dropped when that test moved to the server, because the server gives no position.
+   server reports nothing they guard. Roadmap, "Report what did not parse". Restore
+   `tests/test_multipass`'s error-position assertion: it was dropped when that test moved
+   to the server, which gave no position until `parsingMessage()` did.
    Decide here too whether a file that is not valid UTF-8 is reported, once per file.
    Since `convertUtf8()` (`src/encoding.c`) takes a lead byte without its continuation
    bytes as one character, a Latin-1 file reads right, but silently.
