@@ -113,7 +113,8 @@ has to do it after this returns rather than before.
 (defvar c-xref-ppc-progress-len (length c-xref-ppc-progress))
 (defvar c-xref-ppc-progress-end (format "</%s>" c-xref_PPC_PROGRESS))
 
-(defvar c-xref-log-view-buffer " *c-xref-log*")
+(defvar c-xref-diagnostics-buffer "*c-xref-diagnostics*")
+(defvar c-xref-diagnostics-header "C-xref diagnostics\n")
 (defvar c-xref-server-answer-buffer "*c-xref-server-answer*")
 (defvar c-xref-completions-buffer "*completions*")
 (defvar c-xref-search-results-buffer "*c-xref-search-results*")
@@ -724,7 +725,7 @@ A-Za-z0-9.\t-- incremental search, insert character
   (let ((res))
     (setq res nil)
     (if (or
-             (equal name c-xref-log-view-buffer)
+             (equal name c-xref-diagnostics-buffer)
              (equal name c-xref-server-answer-buffer)
              (equal name c-xref-completions-buffer)
              (equal name c-xref-search-results-buffer)
@@ -2266,16 +2267,29 @@ Gets the value associated with NAME, set by -set in the .c-xrefrc file.
     i
     ))
 
+(require 'compile)
+
+(define-derived-mode c-xref-diagnostics-mode compilation-mode "C-xref-Diagnostics"
+  "What the c-xref server could not parse, one file:line: message per line.")
+
 (defun c-xref-server-dispatch-log (ss i len tag)
-  (let ((tlen) (cc))
+  (let ((tlen) (cc) (buffer))
     (setq tlen (c-xref-server-dispatch-get-int-attr c-xref_PPCA_LEN))
     (setq cc (c-xref-char-list-substring ss i (+ i tlen)))
     (setq i (+ i tlen))
     (setq i (c-xref-server-parse-xml-tag ss i len))
     (c-xref-server-dispatch-require-end-ctag tag)
-    (with-current-buffer (get-buffer-create c-xref-log-view-buffer)
-      (goto-char (point-max))
-      (insert cc))
+    (setq buffer (get-buffer-create c-xref-diagnostics-buffer))
+    (with-current-buffer buffer
+      (let ((inhibit-read-only t))
+        (unless (derived-mode-p 'c-xref-diagnostics-mode)
+          (c-xref-diagnostics-mode)
+          ;; next-error skips the message it starts on, so the first one must not be on line 1
+          (insert c-xref-diagnostics-header))
+        (save-excursion
+          (goto-char (point-max))
+          (insert cc))))
+    (setq next-error-last-buffer buffer)
     i
     ))
 
@@ -3543,157 +3557,6 @@ bug in its own right.
       ;; where the user is already waiting, instead of in their next browse.
       (c-xref-lock-project-for-file source)
       (message "Removed %s. Server restarted, browser stack discarded." database)))))
-
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;;;;;;;;;;;;;;;;;;;;;;;;;; TAGS maintenance ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-
-;; "tags" here is the reference database, not Emacs TAGS, and the "tag" the
-;; code parses is the XML tag of a PPC record - two different words that met.
-;;
-;; c-xref-tags-dispatch and its two helpers render the indexing log of a -create
-;; or -update run: a stream of <information>, <warning> and <error> records, with
-;; <A HREF="file://..."> turned into a clickable link, inserted into
-;; c-xref-log-view-buffer. Nothing calls c-xref-tags-dispatch any more - it hung
-;; off XrefMode's "View log file?" prompt, which went with the -create flow.
-;;
-;; Kept deliberately rather than deleted. The Indexing Log Buffer in
-;; doc/backlog.md wants the server path to do the same job - PPC_LOG records
-;; appended quietly to *c-xref-log* - and this is what the client half of that
-;; looked like when it worked. The viewer commands and their keymap below are
-;; still bound and still reachable; it is the producer that is missing.
-
-
-(defun c-xref-tags-dispatch-error (ss i len tag)
-  (let ((tlen) (cc) (_link) (j) (cclen) (_ccc) (bp) (tlink))
-    (setq tlen (c-xref-server-dispatch-get-int-attr c-xref_PPCA_LEN))
-    (setq cc (c-xref-char-list-substring ss i (+ i tlen)))
-    (setq i (+ i tlen))
-    (setq i (c-xref-server-parse-xml-tag ss i len))
-    (c-xref-server-dispatch-require-end-ctag tag)
-    (if (equal (substring cc 0 16) "<A HREF=\"file://")
-            (progn
-              ;; hypertext link
-              (setq cclen (length cc))
-              (setq j (c-xref-server-parse-xml-tag cc 0 cclen))
-              (setq tlen (c-xref-server-dispatch-get-int-attr c-xref_PPCA_LEN))
-              (setq tlink (cdr (assoc "HREF" c-xref-server-ctag-attributes)))
-              ;; tag
-              (setq bp (point))
-              (insert "HREF=\"" tlink "\"")
-              ;;(insert (substring tlink 7) " ")
-              (put-text-property bp
-                                         (point)
-                                         'invisible t)
-              (setq bp (point))
-              (insert (substring cc j (+ j tlen)))
-              (put-text-property bp (point) 'face 'c-xref-error-face)
-              ;; after tag text
-              (insert (substring cc (+ j tlen 4)))
-              (put-text-property bp (point) 'mouse-face 'highlight)
-              )
-      (insert cc)
-      )
-    i
-    ))
-
-(defun c-xref-tags-dispatch-information (ss i len tag)
-  (let ((tlen) (cc))
-    (setq tlen (c-xref-server-dispatch-get-int-attr c-xref_PPCA_LEN))
-    (setq cc (c-xref-char-list-substring ss i (+ i tlen)))
-    (setq i (+ i tlen))
-    (setq i (c-xref-server-parse-xml-tag ss i len))
-    (c-xref-server-dispatch-require-end-ctag tag)
-    (insert cc)
-    (newline)
-    i
-    ))
-
-(defun c-xref-tags-dispatch (ss i len)
-  (let ((_x) (j))
-    (setq j 0)
-    (if c-xref-debug-mode (message "tag dispatching: %s" ss))
-    (setq i (c-xref-server-dispatch-skip-blank ss i len))
-    (while (and (< i len) (eq (elt ss i) ?<))
-      (setq i (c-xref-server-parse-xml-tag ss i len))
-      (cond
-       (
-            (equal c-xref-server-ctag c-xref_PPC_INFORMATION)
-            (setq i (c-xref-tags-dispatch-information ss i len c-xref-server-ctag)))
-       (
-            (equal c-xref-server-ctag c-xref_PPC_WARNING)
-            (setq i (c-xref-tags-dispatch-error ss i len c-xref-server-ctag)))
-       (
-            (equal c-xref-server-ctag c-xref_PPC_ERROR)
-            (setq i (c-xref-tags-dispatch-error ss i len c-xref-server-ctag)))
-       (
-            (equal c-xref-server-ctag c-xref_PPC_FATAL_ERROR)
-            (setq i (c-xref-tags-dispatch-error ss i len c-xref-server-ctag)))
-       (
-            t
-            ;;    (error "unexpected tag in log file: %s" c-xref-server-ctag))
-            (message "unexpected tag in log file: %s" c-xref-server-ctag))
-       )
-      (setq i (c-xref-server-dispatch-skip-blank ss i len))
-      )
-    (+ i j)
-    ))
-
-(defun c-xref-tags-log-exit ()
-  (interactive "")
-  (c-xref-soft-delete-window c-xref-log-view-buffer)
-  )
-
-(defun c-xref-tags-log-browse ()
-  (interactive "")
-  (let ((el) (line) (file) (b) (i) (di) (len) (ln))
-    (end-of-line)
-    (setq el (point))
-    (beginning-of-line)
-    (setq line (buffer-substring (point) el))
-    ;;(message "checking %s" (substring line 0 6))
-    (if (equal (substring line 0 6) "HREF=\"")
-            (progn
-              (setq b 6)
-              (if (equal (substring line b (+ b 5)) "file:")
-                  (progn
-                        (setq b (+ b 5))
-                        (if (and (eq (elt line b) ?/)
-                                     (eq (elt line (+ b 1)) ?/))
-                            (setq b (+ b 2))
-                          )))
-              (setq i b)
-              (setq di 0)
-              (setq len (length line))
-              (while (and (< i len)
-                              (not (eq (elt line i) ?\"))
-                              )
-                (if (eq (elt line i) ?#) (setq di i))
-                (setq i (1+ i))
-                )
-              (if (eq di 0) (setq di i))
-              (setq file (substring line b di))
-              (setq ln (string-to-number (substring line (+ di 1) i)))
-              (c-xref-show-file-line-in-caller-window file ln)
-              )
-      (c-xref-find-file-on-point)
-      )
-    ))
-
-(defun c-xref-tags-log-mouse-button (event)
-  (interactive "e")
-  (mouse-set-point event)
-  (c-xref-tags-log-browse)
-  )
-
-(defvar c-xref-tags-log-key-map (make-sparse-keymap "C-xref symbol-resolution"))
-(define-key c-xref-tags-log-key-map "\e" 'c-xref-tags-log-exit)
-(define-key c-xref-tags-log-key-map "q" 'c-xref-tags-log-exit)
-(define-key c-xref-tags-log-key-map " " 'c-xref-tags-log-browse)
-(define-key c-xref-tags-log-key-map [newline] 'c-xref-tags-log-browse)
-(define-key c-xref-tags-log-key-map [return] 'c-xref-tags-log-browse)
-(define-key c-xref-tags-log-key-map "\C-m" 'c-xref-tags-log-browse)
-(c-xref-bind-default-button c-xref-tags-log-key-map 'c-xref-tags-log-mouse-button)
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;; COMPLETION ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
