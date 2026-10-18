@@ -323,12 +323,11 @@ void parsingMessage(int errCode, char *message) {
 
     if (!options.noErrors) {
         formatMessage(buffer, errCode, message);
-        if (options.cxrefProtocol) {
+        if (options.cxrefProtocol && displayingErrorMessages()) {
             strcat(buffer, "\n");
             ppcGenRecord(PPC_LOG, buffer);
         } else {
-            if (displayingErrorMessages())
-                log_warn("%s", buffer);
+            log_warn("%s", buffer);
         }
     }
 }

@@ -710,10 +710,7 @@ static void processInclude2(Position includePosition, char includeType, char *in
     }
 
     if (!openInclude(includeType, includedName, is_include_next)) {
-        if (displayingErrorMessages())
-            parsingMessage(ERR_CANT_OPEN, includedName);
-        else
-            log_warn("Can't open file '%s'", includedName);
+        parsingMessage(ERR_CANT_OPEN, includedName);
     } else {
         addIncludeReferences(currentFile.characterBuffer.fileNumber, includePosition);
     }

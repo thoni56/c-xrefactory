@@ -4,9 +4,9 @@ include ../Makefile.server
 # protocol tag. This is what makes a misconfigured -I visible: without it
 # navigation silently misses every symbol the header would have defined.
 #
-# The request asks for errors (-errors on the CXREF startup line), so the
-# message is wanted. `options.noErrors` keeps background reparses quiet on
-# its own (referencerefresh.c), so asking per session is enough.
+# The server is asked for messages (-errors on the CXREF startup line), and
+# then the request's own parse reports. `options.noErrors` keeps the other
+# parses quiet (referencerefresh.c).
 
 $(TEST):
 	@rm -rf output output.tmp server-buffer run.stdout run.stderr
