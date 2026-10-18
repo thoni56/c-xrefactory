@@ -800,11 +800,6 @@ declaration
     | static_assert_declaration ';'
     | error
         {
-#if YYDEBUG
-            char buffer[1000];
-            sprintf(buffer, "DEBUG: error parsing declaration, near '%s'", yytext);
-            yyerror(buffer);
-#endif
         }
     ;
 
@@ -825,11 +820,6 @@ init_declarations
     | error                                             {
         /* $$.d = &s_errorSymbol; */
         $$.data = typeSpecifier2(&errorModifier);
-#if YYDEBUG
-        char buffer[1000];
-        sprintf(buffer, "DEBUG: error parsing init_declarations, near '%s'", yytext);
-        yyerror(buffer);
-#endif
     }
     ;
 
@@ -1059,11 +1049,6 @@ struct_declaration
     }
     | error                                             {
         $$.data = newSymbolAsCopyOf(&errorSymbol);
-#if YYDEBUG
-        char buffer[1000];
-        sprintf(buffer, "DEBUG: error parsing struct_declaration near '%s'", yytext);
-        yyerror(buffer);
-#endif
     }
     ;
 
@@ -1149,11 +1134,6 @@ enumerator
     }
     | error                                 {
         $$.data = newSymbolAsCopyOf(&errorSymbol);
-#if YYDEBUG
-        char buffer[1000];
-        sprintf(buffer, "DEBUG: error parsing enumerator near '%s'", yytext);
-        yyerror(buffer);
-#endif
     }
     | COMPLETE_OTHER_NAME      { assert(0); /* token never used */ }
     ;
@@ -1368,11 +1348,6 @@ parameter_declaration
     }
     | error                                     {
         $$.data = newSymbolAsCopyOf(&errorSymbol);
-#if YYDEBUG
-        char buffer[1000];
-        sprintf(buffer, "DEBUG: error parsing parameter_declaration near '%s'", yytext);
-        yyerror(buffer);
-#endif
     }
     ;
 
@@ -1455,11 +1430,6 @@ initializer
     }
     | error             {
         $$.data = NULL;
-#if YYDEBUG
-        char buffer[1000];
-        sprintf(buffer, "DEBUG: error parsing initializer, near '%s'", yytext);
-        yyerror(buffer);
-#endif
     }
     ;
 

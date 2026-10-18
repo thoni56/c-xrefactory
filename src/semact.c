@@ -49,9 +49,6 @@ int styyerror(char *message) {
         log_debug("Syntax error on: '%s'", yytext);
         sprintf(tmpBuff, "Syntax error on: %s", yytext);
         parsingMessage(ERR_ST, tmpBuff);
-    } else if (strncmp(message, "DEBUG:", 6) == 0) {
-        if (displayingErrorMessages())
-            errorMessage(ERR_ST, message);
     } else {
         sprintf(tmpBuff,"YACC error: %s", message);
         errorMessage(ERR_INTERNAL, tmpBuff);
