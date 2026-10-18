@@ -1,1 +1,1 @@
-<log len=<n>>comment through eof
+<log len=<n>>unterminated comment

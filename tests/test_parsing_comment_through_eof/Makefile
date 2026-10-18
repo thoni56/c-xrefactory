@@ -6,7 +6,7 @@ include ../Makefile.server
 $(TEST):
 	@rm -rf output output.tmp server-buffer run.stdout run.stderr
 	-@$(SERVER_DRIVER) commands.input > run.stdout 2> run.stderr
-	@(grep -o "<[a-z]* [^>]*>comment through eof" run.stdout; true) \
+	@(grep -o "<[a-z]* [^>]*>[a-z ]*comment[a-z ]*" run.stdout; true) \
 	    | $(NORMALIZE) > output
 	$(VERIFY)
 

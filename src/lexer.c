@@ -41,7 +41,7 @@ static void scanComment(CharacterBuffer *cb) {
         /* TODO test on cpp directive */
     } while ((oldCh != '*' || ch != '/') && ch != -1);
     if (ch == -1)
-        parsingMessage(ERR_ST, "comment through eof");
+        parsingMessage(ERR_ST, "unterminated comment");
 }
 
 
