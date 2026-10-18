@@ -30,8 +30,7 @@ BeforeEach(Semact) {}
 AfterEach(Semact) {}
 
 Ensure(Semact, can_generate_message_for_no_such_field) {
-    options.debug = true;
-    expect(errorMessage, when(message, is_equal_to_string("Field/member 'field' not found")));
+    expect(parsingMessage, when(message, is_equal_to_string("Field/member 'field' not found")));
     noSuchMemberError("field");
 }
 

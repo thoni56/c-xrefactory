@@ -61,10 +61,8 @@ int styyerror(char *message) {
 
 void noSuchMemberError(char *memberName) {
     char message[TMP_BUFF_SIZE];
-    if (options.debug || options.errors) {
-        sprintf(message, "Field/member '%s' not found", memberName);
-        errorMessage(ERR_ST, message);
-    }
+    sprintf(message, "Field/member '%s' not found", memberName);
+    parsingMessage(ERR_ST, message);
 }
 
 int styyErrorRecovery(void) {
