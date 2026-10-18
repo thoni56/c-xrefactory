@@ -275,6 +275,15 @@ graph from them on every push, linked at the end of this file, and `utils/backlo
     (`test_search_result_number_zero_is_answered`).
     Needs designing first: the client has met questions only as answers, never in the
     middle of a request it is still dispatching.
+- (#60) <a id="include-bracket-from-macro"></a>**`#include MACRO` where the macro is `<...>`** — the
+    header is not opened, so everything it declares is missing, e.g. FreeType's
+    `#include FT_FREETYPE_H`. The lexer makes one `STRING_LITERAL` of a `<...>` only right
+    after `#include` (`putIncludeString()`, `src/lexembuffer.c`); a macro body is ordinary
+    tokens. Join the tokens up to `>` into a header name (C11 6.10.2p4 leaves how to the
+    implementation; gcc joins their spellings). The tokens after `<` are not cut either,
+    as the `"..."` branch does, so they reach the parser as syntax errors
+    (`processIncludeDirective()`, `src/yylex.c`). `test_parsing_include_using_macro` pins
+    both; its two syntax errors go when this is fixed.
 
 ## 4. Performance, in strict dependency order
 
