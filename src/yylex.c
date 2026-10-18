@@ -742,7 +742,7 @@ protected void processIncludeDirective(Position includePosition, bool is_include
             /* Or possibly a bracketed include, don't know why
              * STRING_LITERAL doesn't cover this here as it normally
              * does... */
-            warningMessage(ERR_ST,"Include <> after macro expansion not yet implemented, sorry\n\tuse \"\" instead");
+            parsingMessage(ERR_ST,"Include <> after macro expansion not yet implemented, sorry\n\tuse \"\" instead");
         }
     }
     return;
