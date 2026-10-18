@@ -25,7 +25,8 @@ flowchart BT
   setup_into_openproject["§1 · 4c · project setup moves into the future `-openproject`"]
   openproject_tripwire["§1 · 4d · the assert that nothing before the future `-openproject` reads a project-scoped option"]
   project_extent["§1 · 4e · what a project consists of"]
-  report_errors_flag["§2 · 6 · Re-key the 19 `options.mode != ServerMode` guards in `src/yylex.c`"]
+  indexing_log_buffer["§2 · 23 · Indexing Log Buffer"]
+  report_errors_flag["§2 · 6 · Replace the 19 `options.mode != ServerMode` guards in `src/yylex.c`"]
   startup_command_line["§2 · 7 · Decide, and enforce, what the startup command line may carry"]
   mode_checks["§2 · 8a · fold the last `options.mode` checks"]
   remove_bridge["§2 · 9 · Remove the `parseBufferUsingServer` bridge"]
@@ -48,7 +49,6 @@ flowchart BT
   remove_references_stopgap["§5 · 20 · Take the client's #quot;Remove References and Restart Server#quot; back out"]
   move_function_comment_prompt["§5 · 21 · Move Function comment y/n prompt"]
   index_based_sessions["§5 · 22 · Index-based sessions"]
-  indexing_log_buffer["§5 · 23 · Indexing Log Buffer"]
   retry_creating_request["§5 · 24 · Retry the request that created the project"]
   lsp_tiers["§5 · 25 · LSP tiers 1–2"]
   move_function_next["§5 · 26 · Move Function next steps"]
@@ -71,9 +71,9 @@ flowchart BT
   sweep["§7 · 44 · Remove references no CU still emits"]
   sweep_cost["§7 · 45 · What the sweep costs"]
   release_build["§8 · 46 · A lean release build"]
+  protocol_handshake["§8 · 47 · The client and the server check a protocol version"]
   install_server["§8 · 48 · `M-x c-xref-install-server`"]
   releases["§8 · 49 · Tagged releases"]
-  protocol_handshake["§8 · 47 · The client and the server check a protocol version"]
   melpa["§8 · 50 · The elisp on MELPA"]
   readme_first_screen["§8 · 51 · The README sells on its first screen"]
   announce["§8 · 52 · Announce"]
@@ -92,6 +92,7 @@ flowchart BT
   adr_0030 --&gt; setup_into_openproject
   setup_into_openproject --&gt; openproject_tripwire
   adr_0031 --&gt; project_extent
+  indexing_log_buffer --&gt; report_errors_flag
   request_target --&gt; behind_the_back
   startup_command_line --&gt; header_static_link_names
   header_filtered_siblings --&gt; scan_angle_includes
@@ -99,14 +100,13 @@ flowchart BT
   lexing_cache --&gt; parallel_parsing
   behind_the_back --&gt; remove_references_stopgap
   entry_refresh --&gt; index_based_sessions
-  report_errors_flag --&gt; indexing_log_buffer
   adr_0032 --&gt; request_target
   adr_0033 --&gt; generations
   generations --&gt; sweep
   include_edges --&gt; sweep
   release_build --&gt; install_server
+  protocol_handshake --&gt; install_server
   release_build --&gt; releases
-  install_server --&gt; protocol_handshake
   install_server --&gt; melpa
   releases --&gt; melpa
   protocol_handshake --&gt; melpa
@@ -120,7 +120,8 @@ flowchart BT
   class setup_into_openproject blocked
   class openproject_tripwire blocked
   class project_extent ready
-  class report_errors_flag ready
+  class indexing_log_buffer ready
+  class report_errors_flag blocked
   class startup_command_line ready
   class mode_checks ready
   class remove_bridge ready
@@ -143,7 +144,6 @@ flowchart BT
   class remove_references_stopgap blocked
   class move_function_comment_prompt ready
   class index_based_sessions ready
-  class indexing_log_buffer blocked
   class retry_creating_request ready
   class lsp_tiers ready
   class move_function_next ready
@@ -166,9 +166,9 @@ flowchart BT
   class sweep blocked
   class sweep_cost ready
   class release_build ready
+  class protocol_handshake ready
   class install_server blocked
   class releases blocked
-  class protocol_handshake blocked
   class melpa blocked
   class readme_first_screen ready
   class announce blocked
