@@ -457,6 +457,10 @@ Roadmap → Optimization has the baseline: a cold-start PUSH on ffmpeg, measured
     root asks Spotlight to skip the whole tree, build output included, so the `*.gcov`
     can stay beside the sources where Emacs cov-mode reads them. Whether it works is
     the open question above; if it does not, moving the build output is what is left.
+- (#61) <a id="yydebug-to-log"></a>**The `-yydebug` parse trace goes to the log** — byacc's skeleton
+    writes it with `printf` (`byacc-1.9/skeleton.c`), and in a server stdout is the sync
+    stream, so a client stops with `SYNCHRO PROBLEM`. It works only with the server driver
+    or from a shell. The trace gives states, not rule names; byacc's `-v` listing maps them.
 
 ## 7. Freshness as make (ADR-0032, ADR-0033)
 
