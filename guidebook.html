@@ -5,7 +5,7 @@
 <meta http-equiv="X-UA-Compatible" content="IE=edge">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <meta name="generator" content="Asciidoctor 2.0.26">
-<meta name="author" content="v{VERSION} - Generated 2026-10-18">
+<meta name="author" content="v{VERSION} - Generated 2026-10-19">
 <title>C-xrefactory - a C/Yacc refactoring and code browsing tool - Design Documentation</title>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Open+Sans:300,300italic,400,400italic,600,600italic%7CNoto+Serif:400,400italic,700,700italic%7CDroid+Sans+Mono:400,700">
 <style>
@@ -441,7 +441,7 @@ body.book #toc,body.book #preamble,body.book h1.sect0,body.book .sect1>h2{page-b
 <div id="header">
 <h1>C-xrefactory - a C/Yacc refactoring and code browsing tool - Design Documentation</h1>
 <div class="details">
-<span id="author" class="author">v{VERSION} - Generated 2026-10-18</span><br>
+<span id="author" class="author">v{VERSION} - Generated 2026-10-19</span><br>
 </div>
 <div id="toc" class="toc2">
 <div id="toctitle">Table of Contents</div>
@@ -4314,7 +4314,7 @@ current file, and if found, offer to migrate that section to a project-local <co
 <div class="paragraph">
 <p>What did not parse is collected in the buffer <code><strong>c-xref-diagnostics</strong></code>, one <code>file:line: message</code> per line.
 The buffer is in a mode derived from <code>compilation-mode</code>, so <code>RET</code> in it, and <code>M-g n</code> and <code>M-g p</code> from anywhere, go to the place.
-Nothing is shown when a message arrives.</p>
+An answer that added messages ends with a notice, e.g. <code>2 new messages in <strong>c-xref-diagnostics</strong>, M-g n to visit</code>, with the user&#8217;s own key for <code>next-error</code>.</p>
 </div>
 <div class="paragraph">
 <p>The server sends these messages as <code>&lt;log&gt;</code> records.
@@ -4332,9 +4332,6 @@ So what is reported is what the request&#8217;s own parse found.
 <h4 id="_what_is_left">11.7.3. What is left</h4>
 <div class="ulist">
 <ul>
-<li>
-<p>A notice in the message area when something has been added, e.g. <code>3 diagnostics (see <strong>c-xref-diagnostics</strong>)</code>, so that the buffer is found.</p>
-</li>
 <li>
 <p>The user manual: the buffer, and <code>M-g n</code> and <code>M-g p</code>.</p>
 </li>
@@ -12358,7 +12355,7 @@ operation reads the in-memory table.</p>
 </div>
 <div id="footer">
 <div id="footer-text">
-Last updated 2026-10-18 21:40:40 UTC
+Last updated 2026-10-19 10:21:29 UTC
 </div>
 </div>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.18.3/highlight.min.js"></script>
