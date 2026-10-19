@@ -39,6 +39,7 @@ convergence is **complete**; the mechanism lives in <<06-principles.adoc#,Princi
 * *Diagnostics buffer* — what the request's own parse could not handle reaches
   `*c-xref-diagnostics*` with its position, and `next-error` visits it
   (<<11-planned-features.adoc#,Planned Features>>, Diagnostics Buffer).
+  This was the last thing only the batch modes could do, i.e. `-create -errors`.
 
 ==== Remaining
 

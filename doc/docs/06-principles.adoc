@@ -37,6 +37,16 @@ Writes — periodic save, save on exit — are not affected; the tripwire is on 
 read path only. A future feature that requires post-startup disk access means this
 principle has to be revisited.
 
+=== Visible Analysis
+
+The user should be able to see what `c-xrefactory` sees.
+What the in-memory table knows shows up in navigation, search and refactorings.
+What a parse could not handle, e.g. a missing include or a syntax error, is shown in `*c-xref-diagnostics*`, with its position.
+Nothing that went wrong in the analysis should be silent.
+
+The original trusted its database and reported nothing, so the only way to find the truth was to look for it.
+With the batch modes gone the server is the only place the analysis happens, so it is also where it has to be shown.
+
 === Editor Buffers Are the Content Source
 
 In server mode the parser never reads a source file from disk more than once.
