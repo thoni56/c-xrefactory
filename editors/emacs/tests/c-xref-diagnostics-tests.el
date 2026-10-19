@@ -82,3 +82,32 @@
                    (concat c-xref-diagnostics-header
                            "Analysing /project/a.c\n"
                            "/project/a.c:2:9: Syntax error on: c\n")))))
+
+(ert-deftest c-xref-a-unit-analysed-again-replaces-its-group ()
+  (let ((answer (concat (c-xref-test-analysing-record "/project/a.c")
+                        (c-xref-test-log-records "/project/a.c:2:9: Syntax error on: c\n")
+                        (c-xref-test-analysing-record "/project/b.c")
+                        (c-xref-test-log-records "/project/b.c:1:1: unterminated comment\n")
+                        (c-xref-test-analysing-record "/project/a.c")
+                        (c-xref-test-log-records "/project/a.c:3:1: Syntax error on: d\n"))))
+    (when (get-buffer c-xref-diagnostics-buffer)
+      (kill-buffer c-xref-diagnostics-buffer))
+    (c-xref-server-dispatch answer 0 (length answer)
+                            (list (cons 'caller-window (selected-window))))
+    (should (equal (with-current-buffer c-xref-diagnostics-buffer (buffer-string))
+                   (concat c-xref-diagnostics-header
+                           "Analysing /project/b.c\n"
+                           "/project/b.c:1:1: unterminated comment\n"
+                           "Analysing /project/a.c\n"
+                           "/project/a.c:3:1: Syntax error on: d\n")))))
+
+(ert-deftest c-xref-a-unit-analysed-clean-leaves-no-group ()
+  (let ((answer (concat (c-xref-test-analysing-record "/project/a.c")
+                        (c-xref-test-log-records "/project/a.c:2:9: Syntax error on: c\n")
+                        (c-xref-test-analysing-record "/project/a.c"))))
+    (when (get-buffer c-xref-diagnostics-buffer)
+      (kill-buffer c-xref-diagnostics-buffer))
+    (c-xref-server-dispatch answer 0 (length answer)
+                            (list (cons 'caller-window (selected-window))))
+    (should (equal (with-current-buffer c-xref-diagnostics-buffer (buffer-string))
+                   c-xref-diagnostics-header))))

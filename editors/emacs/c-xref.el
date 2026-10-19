@@ -115,6 +115,9 @@ has to do it after this returns rather than before.
 
 (defvar c-xref-diagnostics-buffer "*c-xref-diagnostics*")
 (defvar c-xref-diagnostics-header "C-xref diagnostics\n")
+(defconst c-xref-diagnostics-heading-prefix "Analysing ")
+(defvar-local c-xref-diagnostics-pending-unit nil
+  "The unit analysed last, its heading waits for its first message.")
 (defvar c-xref-server-answer-buffer "*c-xref-server-answer*")
 (defvar c-xref-completions-buffer "*completions*")
 (defvar c-xref-search-results-buffer "*c-xref-search-results*")
@@ -2285,7 +2288,7 @@ Returned with the index after the end tag, as (TEXT . INDEX)."
     (setq record (c-xref-server-dispatch-read-record ss i len tag))
     (setq cc (car record))
     (setq i (cdr record))
-    (c-xref-diagnostics-append cc)
+    (c-xref-diagnostics-append-message cc)
     i
     ))
 
@@ -2294,22 +2297,57 @@ Returned with the index after the end tag, as (TEXT . INDEX)."
     (setq record (c-xref-server-dispatch-read-record ss i len tag))
     (setq cc (car record))
     (setq i (cdr record))
-    (c-xref-diagnostics-append (format "Analysing %s\n" cc))
+    (c-xref-diagnostics-remove-group cc)
+    (with-current-buffer (c-xref-diagnostics-get-buffer)
+      (setq c-xref-diagnostics-pending-unit cc))
     i
     ))
 
-(defun c-xref-diagnostics-append (text)
+(defun c-xref-diagnostics-heading (file)
+  (concat c-xref-diagnostics-heading-prefix file "\n"))
+
+(defun c-xref-diagnostics-remove-group (file)
+  (let ((buffer (get-buffer c-xref-diagnostics-buffer)))
+    (when buffer
+      (with-current-buffer buffer
+        (let ((inhibit-read-only t))
+          (save-excursion
+            (goto-char (point-min))
+            ;; With the newline before it a heading only matches a whole line
+            (when (search-forward (concat "\n" (c-xref-diagnostics-heading file)) nil t)
+              (let ((start (- (point) (length (c-xref-diagnostics-heading file)))))
+                (delete-region start (if (re-search-forward
+                                          (concat "^" c-xref-diagnostics-heading-prefix) nil t)
+                                         (match-beginning 0)
+                                       (point-max)))))))))))
+
+(defun c-xref-diagnostics-get-buffer ()
   (let ((buffer (get-buffer-create c-xref-diagnostics-buffer)))
     (with-current-buffer buffer
-      (let ((inhibit-read-only t))
-        (unless (derived-mode-p 'c-xref-diagnostics-mode)
-          (c-xref-diagnostics-mode)
+      (unless (derived-mode-p 'c-xref-diagnostics-mode)
+        (c-xref-diagnostics-mode)
+        (let ((inhibit-read-only t))
           ;; next-error skips the message it starts on, so the first one must not be on line 1
-          (insert c-xref-diagnostics-header))
+          (insert c-xref-diagnostics-header))))
+    buffer))
+
+(defun c-xref-diagnostics-append (text)
+  (let ((buffer (c-xref-diagnostics-get-buffer)))
+    (with-current-buffer buffer
+      (let ((inhibit-read-only t))
         (save-excursion
           (goto-char (point-max))
           (insert text))))
     (setq next-error-last-buffer buffer)))
+
+(defun c-xref-diagnostics-append-message (message)
+  (let ((unit))
+    (with-current-buffer (c-xref-diagnostics-get-buffer)
+      (setq unit c-xref-diagnostics-pending-unit)
+      (setq c-xref-diagnostics-pending-unit nil))
+    (if unit
+        (c-xref-diagnostics-append (c-xref-diagnostics-heading unit)))
+    (c-xref-diagnostics-append message)))
 
 (defun c-xref-server-dispatch-call-macro (ss i len _dispatch-data)
   (let ((tlen))
