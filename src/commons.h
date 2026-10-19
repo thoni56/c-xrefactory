@@ -3,6 +3,8 @@
 
 #include <stdlib.h>
 
+#include "position.h"
+
 
 #define InternalCheck(expr) {\
     if (!(expr)) internalCheckFail(#expr, __FILE__, __LINE__);\
@@ -16,7 +18,7 @@ extern void reInitCwd(char *dffname, char *dffsect);
 
 extern void infoMessage(char message[]);
 extern void parsingMessage(int code, char *message);
-extern void parsingMessageAt(char *fileName, int lineNumber, int code, char *message);
+extern void parsingMessageAt(Position position, int code, char *message);
 extern void warningMessage(int code, char *message);
 extern void errorMessage(int code, char *message);
 #define FATAL_ERROR(code, message, exitCode) fatalError(code, message, EXIT_FAILURE, __FILE__, __LINE__);

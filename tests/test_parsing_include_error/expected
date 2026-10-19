@@ -1,1 +1,1 @@
-<log len=<n>>CURDIR/source.c:5: Can't open file somefile
+<log len=<n>>CURDIR/source.c:5:1: Can't open file somefile

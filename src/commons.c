@@ -12,10 +12,12 @@
 
 #include "filedescriptor.h"
 #include "fileio.h"
+#include "filetable.h"
 #include "log.h"
 #include "stringlist.h"
 #include "misc.h"
 #include "ppc.h"
+#include "yylex.h"
 
 
 
@@ -319,11 +321,13 @@ void warningMessage(int errCode, char *message) {
     }
 }
 
-void parsingMessageAt(char *fileName, int lineNumber, int errCode, char *message) {
+void parsingMessageAt(Position position, int errCode, char *message) {
     char buffer[MAX_PPC_RECORD_SIZE];
 
     if (!options.noErrors) {
-        int prefixLength = sprintf(buffer, "%s:%d: ", fileName, lineNumber);
+        /* Columns are counted from 1, as compilers do */
+        int prefixLength = sprintf(buffer, "%s:%d:%d: ", getFileItemWithFileNumber(position.file)->name,
+                                   position.line, position.col + 1);
         formatMessage(buffer + prefixLength, errCode, message);
         if (options.cxrefProtocol && displayingErrorMessages()) {
             strcat(buffer, "\n");
@@ -334,9 +338,9 @@ void parsingMessageAt(char *fileName, int lineNumber, int errCode, char *message
     }
 }
 
-/* At the lexem being consumed, which the lexer has already passed */
+/* At the lexem the parser got last, the lexer has already passed it */
 void parsingMessage(int errCode, char *message) {
-    parsingMessageAt(currentFile.fileName, currentFile.lineNumber, errCode, message);
+    parsingMessageAt(positionOfLastLexem(), errCode, message);
 }
 
 void infoMessage(char message[]) {

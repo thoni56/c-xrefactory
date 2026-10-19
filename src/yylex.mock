@@ -8,6 +8,12 @@ void initAllInputs(void) {
     mock();
 }
 
+Position positionOfLastLexem(void) {
+    Position position = {0};
+    mock();
+    return position;
+}
+
 void initInput(FILE *file, EditorBuffer *buffer, char *prefix, char *fileName) {
     mock(file, buffer, prefix, fileName);
 }

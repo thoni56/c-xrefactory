@@ -33,6 +33,7 @@ extern char *yytext;
 extern int macroStackIndex;
 
 extern void initAllInputs(void);
+extern Position positionOfLastLexem(void);
 
 /* Expose helper to mask a macro as undefined (mbody == NULL) */
 void undefineMacroByName(const char *name);

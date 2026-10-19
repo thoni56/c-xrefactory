@@ -24,8 +24,8 @@ void parsingMessage(int code, char *message) {
     mock(code, message);
 }
 
-void parsingMessageAt(char *fileName, int lineNumber, int code, char *message) {
-    mock(fileName, lineNumber, code, message);
+void parsingMessageAt(Position position, int code, char *message) {
+    mock(position.file, position.line, position.col, code, message);
 }
 
 void infoMessage(char message[]) {

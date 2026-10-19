@@ -6,6 +6,7 @@
 
 #include "filedescriptor.mock"
 #include "fileio.mock"
+#include "filetable.mock"
 #include "globals.mock"
 #include "log.h"
 #include "protocol.h"

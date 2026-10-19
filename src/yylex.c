@@ -42,6 +42,11 @@
 
 
 static bool isProcessingPreprocessorIf; /* Flag for yylex, to not filter '\n' */
+static Position lastLexemPosition;      /* The one yylex() gave the parser last */
+
+Position positionOfLastLexem(void) {
+    return lastLexemPosition;
+}
 
 static void setYylvalsForIdentifier(char *name, Symbol *symbol, Position position) {
     uniyylval->ast_id.data = &yyIdBuffer[yyIdBufferIndex];
@@ -49,12 +54,14 @@ static void setYylvalsForIdentifier(char *name, Symbol *symbol, Position positio
     yyIdBufferIndex++;
     yyIdBufferIndex %= (YYIDBUFFER_SIZE);
     yytext              = name;
+    lastLexemPosition = position;
     uniyylval->ast_id.begin = position;
     uniyylval->ast_id.end = position;
     uniyylval->ast_id.end.col += strlen(yytext);
 }
 
 static void setYylvalsForPosition(Position position, int length) {
+    lastLexemPosition = position;
     uniyylval->ast_position.data = position;
     uniyylval->ast_position.begin = position;
     uniyylval->ast_position.end = position;
@@ -62,6 +69,7 @@ static void setYylvalsForPosition(Position position, int length) {
 }
 
 static void setYylvalsForInteger(int val, Position position, int length) {
+    lastLexemPosition = position;
     uniyylval->ast_integer.data = val;
     uniyylval->ast_integer.begin = position;
     uniyylval->ast_integer.end = position;
@@ -710,7 +718,7 @@ static void processInclude2(Position includePosition, char includeType, char *in
     }
 
     if (!openInclude(includeType, includedName, is_include_next)) {
-        parsingMessage(ERR_CANT_OPEN, includedName);
+        parsingMessageAt(includePosition, ERR_CANT_OPEN, includedName);
     } else {
         addIncludeReferences(currentFile.characterBuffer.fileNumber, includePosition);
     }
@@ -742,7 +750,7 @@ protected void processIncludeDirective(Position includePosition, bool is_include
             /* Or possibly a bracketed include, don't know why
              * STRING_LITERAL doesn't cover this here as it normally
              * does... */
-            parsingMessage(ERR_ST, "#include <...> from a macro is not supported, use \"...\"");
+            parsingMessageAt(includePosition, ERR_ST, "#include <...> from a macro is not supported, use \"...\"");
         }
     }
     return;
