@@ -2273,13 +2273,29 @@ Gets the value associated with NAME, set by -set in the .c-xrefrc file.
   "What the c-xref server could not parse, one message per line.")
 
 (defun c-xref-server-dispatch-log (ss i len tag)
-  (let ((tlen) (cc) (buffer))
+  (let ((tlen) (cc))
     (setq tlen (c-xref-server-dispatch-get-int-attr c-xref_PPCA_LEN))
     (setq cc (c-xref-char-list-substring ss i (+ i tlen)))
     (setq i (+ i tlen))
     (setq i (c-xref-server-parse-xml-tag ss i len))
     (c-xref-server-dispatch-require-end-ctag tag)
-    (setq buffer (get-buffer-create c-xref-diagnostics-buffer))
+    (c-xref-diagnostics-append cc)
+    i
+    ))
+
+(defun c-xref-server-dispatch-analysing (ss i len tag)
+  (let ((tlen) (cc))
+    (setq tlen (c-xref-server-dispatch-get-int-attr c-xref_PPCA_LEN))
+    (setq cc (c-xref-char-list-substring ss i (+ i tlen)))
+    (setq i (+ i tlen))
+    (setq i (c-xref-server-parse-xml-tag ss i len))
+    (c-xref-server-dispatch-require-end-ctag tag)
+    (c-xref-diagnostics-append (format "Analysing %s\n" cc))
+    i
+    ))
+
+(defun c-xref-diagnostics-append (text)
+  (let ((buffer (get-buffer-create c-xref-diagnostics-buffer)))
     (with-current-buffer buffer
       (let ((inhibit-read-only t))
         (unless (derived-mode-p 'c-xref-diagnostics-mode)
@@ -2288,10 +2304,8 @@ Gets the value associated with NAME, set by -set in the .c-xrefrc file.
           (insert c-xref-diagnostics-header))
         (save-excursion
           (goto-char (point-max))
-          (insert cc))))
-    (setq next-error-last-buffer buffer)
-    i
-    ))
+          (insert text))))
+    (setq next-error-last-buffer buffer)))
 
 (defun c-xref-server-dispatch-call-macro (ss i len _dispatch-data)
   (let ((tlen))
@@ -3296,6 +3310,9 @@ Special hotkeys available:
             (equal c-xref-server-ctag c-xref_PPC_LOG)
             (setq logs (1+ logs))
             (setq i (c-xref-server-dispatch-log ss i len c-xref-server-ctag)))
+       (
+            (equal c-xref-server-ctag c-xref_PPC_ANALYSING)
+            (setq i (c-xref-server-dispatch-analysing ss i len c-xref-server-ctag)))
        (
             (equal c-xref-server-ctag c-xref_PPC_BOTTOM_WARNING)
             (setq i (c-xref-server-dispatch-bottom-information ss i len dispatch-data c-xref-server-ctag)))

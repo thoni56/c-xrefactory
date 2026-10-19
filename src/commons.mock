@@ -28,6 +28,10 @@ void parsingMessageAt(Position position, int code, char *message) {
     mock(position.file, position.line, position.col, code, message);
 }
 
+void announceAnalysing(char *fileName) {
+    mock(fileName);
+}
+
 void infoMessage(char message[]) {
     mock(message);
 }

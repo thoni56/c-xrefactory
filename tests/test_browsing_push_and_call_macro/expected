@@ -8,6 +8,7 @@ end-of-options
 end-of-options
 
 <sync>
+<analysing len=<n>>CURDIR/source.c</analysing>
 <goto>
  <position-lc line=5 col=4 len=<n>>CURDIR/source.c</position-lc>
 </goto>

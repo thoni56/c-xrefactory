@@ -320,6 +320,10 @@ void warningMessage(int errCode, char *message) {
     }
 }
 
+static bool sendsParsingMessages(void) {
+    return options.cxrefProtocol && displayingErrorMessages();
+}
+
 void parsingMessageAt(Position position, int errCode, char *message) {
     char buffer[MAX_PPC_RECORD_SIZE];
 
@@ -328,13 +332,19 @@ void parsingMessageAt(Position position, int errCode, char *message) {
         int prefixLength = sprintf(buffer, "%s:%d:%d: ", getFileItemWithFileNumber(position.file)->name,
                                    position.line, position.col + 1);
         formatMessage(buffer + prefixLength, errCode, message);
-        if (options.cxrefProtocol && displayingErrorMessages()) {
+        if (sendsParsingMessages()) {
             strcat(buffer, "\n");
             ppcGenRecord(PPC_LOG, buffer);
         } else {
             log_warn("%s", buffer);
         }
     }
+}
+
+/* The messages that follow are from the parse of this file */
+void announceAnalysing(char *fileName) {
+    if (!options.noErrors && sendsParsingMessages())
+        ppcGenRecord(PPC_ANALYSING, fileName);
 }
 
 /* At the lexem the parser got last, the lexer has already passed it */

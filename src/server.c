@@ -165,6 +165,8 @@ static void parseInputFile(void) {
 
     if (operationParsesRequestFile(options.serverOperation)) {
         log_debug("parse start");
+        if (currentPass == 1)
+            announceAnalysing(currentFile.fileName);
         callParser(parsingConfig.fileNumber, parsingConfig.language);
         log_debug("parse end");
     } else

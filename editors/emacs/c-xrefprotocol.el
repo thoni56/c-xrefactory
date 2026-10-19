@@ -39,6 +39,7 @@
 (defconst c-xref_PPC_SET_INFO "set-info")
 (defconst c-xref_PPC_WARNING "warning")
 (defconst c-xref_PPC_LOG "log")
+(defconst c-xref_PPC_ANALYSING "analysing")
 (defconst c-xref_PPC_BOTTOM_WARNING "bottom-warning")
 (defconst c-xref_PPC_ERROR "error")
 (defconst c-xref_PPC_FATAL_ERROR "fatalError")

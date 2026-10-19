@@ -66,3 +66,19 @@
     (should (equal (c-xref-test-last-message)
                    (format "2 new messages in *c-xref-diagnostics*, %s to visit"
                            (substitute-command-keys "\\[next-error]"))))))
+
+(defun c-xref-test-analysing-record (file)
+  "The server's announcement that FILE is being analysed."
+  (format "<analysing len=%d>%s</analysing>" (length file) file))
+
+(ert-deftest c-xref-the-messages-of-a-unit-come-under-its-heading ()
+  (let ((answer (concat (c-xref-test-analysing-record "/project/a.c")
+                        (c-xref-test-log-records "/project/a.c:2:9: Syntax error on: c\n"))))
+    (when (get-buffer c-xref-diagnostics-buffer)
+      (kill-buffer c-xref-diagnostics-buffer))
+    (c-xref-server-dispatch answer 0 (length answer)
+                            (list (cons 'caller-window (selected-window))))
+    (should (equal (with-current-buffer c-xref-diagnostics-buffer (buffer-string))
+                   (concat c-xref-diagnostics-header
+                           "Analysing /project/a.c\n"
+                           "/project/a.c:2:9: Syntax error on: c\n")))))
