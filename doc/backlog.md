@@ -99,7 +99,8 @@ graph from them on every push, linked at the end of this file, and `utils/backlo
     `*c-xref-diagnostics*` with its position, and `next-error` visits it. Left:
     the user manual (the buffer, `M-g n` and `M-g p`); a file's
     messages replaced when it is parsed again, so that a half-typed line does not stay
-    there; and a repeated message sent once.
+    there; a repeated message sent once; and the report of unresolved includes, with a
+    suggested `-I`. The preprocessor's messages are #6, a macro's place of use is #63.
 - (#6) <a id="report-errors-flag"></a>**Replace the 19 `options.mode != ServerMode` guards in `src/yylex.c`** with
    calls to `parsingMessage()`. With XrefMode gone the guards never fire, so today the
    server reports nothing they guard. Roadmap, "Report what did not parse". Restore

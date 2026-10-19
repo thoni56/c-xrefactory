@@ -2270,7 +2270,7 @@ Gets the value associated with NAME, set by -set in the .c-xrefrc file.
 (require 'compile)
 
 (define-derived-mode c-xref-diagnostics-mode compilation-mode "C-xref-Diagnostics"
-  "What the c-xref server could not parse, one file:line: message per line.")
+  "What the c-xref server could not parse, one message per line.")
 
 (defun c-xref-server-dispatch-log (ss i len tag)
   (let ((tlen) (cc) (buffer))
