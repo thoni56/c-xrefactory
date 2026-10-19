@@ -221,9 +221,11 @@ The server parses a compilation unit when a request needs it. An operation that 
 
 What did not parse is collected in the buffer `*c-xref-diagnostics*`, with its position.
 The buffer is in a mode derived from `compilation-mode`, so `RET` in it, and `M-g n` and `M-g p` from anywhere, go to the place.
+The messages are grouped by the compilation unit whose parse found them, under a line `Analysing <file>`, as compile output is.
+When a unit is parsed again its group is replaced and moved last, and a unit that parses clean has no group.
 An answer that added messages ends with a notice, e.g. `2 new messages in *c-xref-diagnostics*, M-g n to visit`, with the user's own key for `next-error`.
 
-The server sends these messages as `<log>` records.
+The server sends these messages as `<log>` records, after an `<analysing>` record for the unit.
 Every other message record is modal, or a line in the minibuffer, and `<error>` also abandons the operation.
 A server's stdout and stderr cannot be used either, since they are the synchronisation stream, and the client stops with `SYNCHRO PROBLEM` on anything else there.
 
@@ -231,6 +233,7 @@ In the server, a message about the code goes through `parsingMessage()`, which g
 The lexer and the preprocessor are ahead of the parser, so they use `parsingMessageAt()` with a position of their own, e.g. that of the `#include`.
 They send nothing unless the server was started with `-errors`, which the client does, and nothing in the parses that only refresh other files (`noErrors`).
 So what is reported is what the request's own parse found.
+A unit that is only reparsed to refresh it keeps its old group until it is parsed for a request again.
 `warningMessage()` and `errorMessage()` stay for what an operation itself has to say, and those are modal.
 
 ==== What is left
@@ -238,8 +241,7 @@ So what is reported is what the request's own parse found.
 * The user manual: the buffer, and `M-g n` and `M-g p`.
 * The preprocessor's own messages, e.g. "unmatched #elif". 19 of them in `yylex.c` are still behind guards that never fire, so they send nothing.
 * A message about tokens from a macro expansion gives their place in the macro body. It should also say where the macro is used, as gcc does.
-* A file's messages are replaced when it is parsed again. The buffer then holds what is true now, and a line that was only half typed does not stay there.
-* A message is sent once. The same missing header is reported once per compilation unit that includes it, so a generated `config.h` included by two hundred files is two hundred identical messages and one fact.
+* The report below. The same missing header is reported by every unit that includes it, so a generated `config.h` included by two hundred files is two hundred messages and one fact.
 
 ==== What the report should contain
 

@@ -96,11 +96,9 @@ graph from them on every push, linked at the end of this file, and `utils/backlo
 
 - (#23) <a id="indexing-log-buffer"></a>**What is left of the diagnostics buffer** —
     `doc/docs/11-planned-features.adoc` (Diagnostics Buffer). What did not parse reaches
-    `*c-xref-diagnostics*` with its position, and `next-error` visits it. Left:
-    the user manual (the buffer, `M-g n` and `M-g p`); a file's
-    messages replaced when it is parsed again, so that a half-typed line does not stay
-    there; a repeated message sent once; and the report of unresolved includes, with a
-    suggested `-I`. The preprocessor's messages are #6, a macro's place of use is #63.
+    `*c-xref-diagnostics*` with its position, grouped by unit, and `next-error` visits it.
+    Left: the user manual (the buffer, `M-g n` and `M-g p`); and the report of unresolved
+    includes, with a suggested `-I`. The preprocessor's messages are #6, a macro's place of use is #63.
 - (#6) <a id="report-errors-flag"></a>**Replace the 19 `options.mode != ServerMode` guards in `src/yylex.c`** with
    calls to `parsingMessage()`. With XrefMode gone the guards never fire, so today the
    server reports nothing they guard. Roadmap, "Report what did not parse". Restore
