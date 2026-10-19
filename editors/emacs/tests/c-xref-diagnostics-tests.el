@@ -64,4 +64,5 @@
     (c-xref-server-dispatch answer 0 (length answer)
                             (list (cons 'caller-window (selected-window))))
     (should (equal (c-xref-test-last-message)
-                   "2 new messages in *c-xref-diagnostics*"))))
+                   (format "2 new messages in *c-xref-diagnostics*, %s to visit"
+                           (substitute-command-keys "\\[next-error]"))))))

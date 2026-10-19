@@ -3316,7 +3316,8 @@ Special hotkeys available:
       (setq i (c-xref-server-dispatch-skip-blank ss i len))
       )
     (if (> logs 0)
-        (message "%d new messages in %s" logs c-xref-diagnostics-buffer))
+        (message "%d new messages in %s, %s to visit" logs c-xref-diagnostics-buffer
+                 (substitute-command-keys "\\[next-error]")))
     (+ i j)
     ))
 
