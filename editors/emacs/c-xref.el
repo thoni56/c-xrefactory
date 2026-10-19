@@ -2146,6 +2146,18 @@ Gets the value associated with NAME, set by -set in the .c-xrefrc file.
   )
 
 
+(defun c-xref-server-dispatch-read-record (ss i len tag)
+  "The text of the TAG record whose text starts at I in SS.
+Returned with the index after the end tag, as (TEXT . INDEX)."
+  (let ((tlen) (text))
+    (setq tlen (c-xref-server-dispatch-get-int-attr c-xref_PPCA_LEN))
+    (setq text (c-xref-char-list-substring ss i (+ i tlen)))
+    (setq i (+ i tlen))
+    (setq i (c-xref-server-parse-xml-tag ss i len))
+    (c-xref-server-dispatch-require-end-ctag tag)
+    (cons text i)
+    ))
+
 (defun c-xref-soft-select-dispach-data-caller-window (dispatch-data)
   (let ((winassoc) (win) (res))
     (setq res nil)
@@ -2222,13 +2234,11 @@ Gets the value associated with NAME, set by -set in the .c-xrefrc file.
     ))
 
 (defun c-xref-server-dispatch-error (ss i len dispatch-data tag)
-  (let ((tlen) (cc) (cw))
+  (let ((record) (cc) (cw))
     (setq cw (selected-window))
-    (setq tlen (c-xref-server-dispatch-get-int-attr c-xref_PPCA_LEN))
-    (setq cc (c-xref-char-list-substring ss i (+ i tlen)))
-    (setq i (+ i tlen))
-    (setq i (c-xref-server-parse-xml-tag ss i len))
-    (c-xref-server-dispatch-require-end-ctag tag)
+    (setq record (c-xref-server-dispatch-read-record ss i len tag))
+    (setq cc (car record))
+    (setq i (cdr record))
     (c-xref-select-dispach-data-caller-window dispatch-data)
     (c-xref-display-and-set-new-dialog-window c-xref-error-modal-buffer nil t)
     (insert "[error] : ")
@@ -2244,13 +2254,11 @@ Gets the value associated with NAME, set by -set in the .c-xrefrc file.
     ))
 
 (defun c-xref-server-dispatch-information (ss i len dispatch-data tag)
-  (let ((tlen) (cc) (cw) (dw))
+  (let ((record) (cc) (cw) (dw))
     (setq cw (selected-window))
-    (setq tlen (c-xref-server-dispatch-get-int-attr c-xref_PPCA_LEN))
-    (setq cc (c-xref-char-list-substring ss i (+ i tlen)))
-    (setq i (+ i tlen))
-    (setq i (c-xref-server-parse-xml-tag ss i len))
-    (c-xref-server-dispatch-require-end-ctag tag)
+    (setq record (c-xref-server-dispatch-read-record ss i len tag))
+    (setq cc (car record))
+    (setq i (cdr record))
     (if (and (equal tag c-xref_PPC_DEBUG_INFORMATION)
                  (eq c-xref-debug-mode nil))
             () ;; do nothing if debug information and mode is off
@@ -2273,23 +2281,19 @@ Gets the value associated with NAME, set by -set in the .c-xrefrc file.
   "What the c-xref server could not parse, one message per line.")
 
 (defun c-xref-server-dispatch-log (ss i len tag)
-  (let ((tlen) (cc))
-    (setq tlen (c-xref-server-dispatch-get-int-attr c-xref_PPCA_LEN))
-    (setq cc (c-xref-char-list-substring ss i (+ i tlen)))
-    (setq i (+ i tlen))
-    (setq i (c-xref-server-parse-xml-tag ss i len))
-    (c-xref-server-dispatch-require-end-ctag tag)
+  (let ((record) (cc))
+    (setq record (c-xref-server-dispatch-read-record ss i len tag))
+    (setq cc (car record))
+    (setq i (cdr record))
     (c-xref-diagnostics-append cc)
     i
     ))
 
 (defun c-xref-server-dispatch-analysing (ss i len tag)
-  (let ((tlen) (cc))
-    (setq tlen (c-xref-server-dispatch-get-int-attr c-xref_PPCA_LEN))
-    (setq cc (c-xref-char-list-substring ss i (+ i tlen)))
-    (setq i (+ i tlen))
-    (setq i (c-xref-server-parse-xml-tag ss i len))
-    (c-xref-server-dispatch-require-end-ctag tag)
+  (let ((record) (cc))
+    (setq record (c-xref-server-dispatch-read-record ss i len tag))
+    (setq cc (car record))
+    (setq i (cdr record))
     (c-xref-diagnostics-append (format "Analysing %s\n" cc))
     i
     ))
@@ -2318,12 +2322,10 @@ Gets the value associated with NAME, set by -set in the .c-xrefrc file.
     ))
 
 (defun c-xref-server-dispatch-kill-buffer-remove-file (ss i len dispatch-data)
-  (let ((tlen) (cc))
-    (setq tlen (c-xref-server-dispatch-get-int-attr c-xref_PPCA_LEN))
-    (setq cc (c-xref-char-list-substring ss i (+ i tlen)))
-    (setq i (+ i tlen))
-    (setq i (c-xref-server-parse-xml-tag ss i len))
-    (c-xref-server-dispatch-require-end-ctag c-xref_PPC_KILL_BUFFER_REMOVE_FILE)
+  (let ((record) (cc))
+    (setq record (c-xref-server-dispatch-read-record ss i len c-xref_PPC_KILL_BUFFER_REMOVE_FILE))
+    (setq cc (car record))
+    (setq i (cdr record))
     (if (c-xref-yes-or-no-window cc t dispatch-data)
             (progn
               ;; do not kill buffer really, this would make undo impossible
@@ -2338,12 +2340,10 @@ Gets the value associated with NAME, set by -set in the .c-xrefrc file.
     ))
 
 (defun c-xref-server-dispatch-no-project (ss i len dispatch-data)
-  (let ((tlen) (cc))
-    (setq tlen (c-xref-server-dispatch-get-int-attr c-xref_PPCA_LEN))
-    (setq cc (c-xref-char-list-substring ss i (+ i tlen)))
-    (setq i (+ i tlen))
-    (setq i (c-xref-server-parse-xml-tag ss i len))
-    (c-xref-server-dispatch-require-end-ctag c-xref_PPC_NO_PROJECT)
+  (let ((record) (cc))
+    (setq record (c-xref-server-dispatch-read-record ss i len c-xref_PPC_NO_PROJECT))
+    (setq cc (car record))
+    (setq i (cdr record))
     (if (c-xref-yes-or-no-window
              (format "No project covers %s,\ncreate new project?" cc)
              t dispatch-data)
@@ -2359,12 +2359,10 @@ Gets the value associated with NAME, set by -set in the .c-xrefrc file.
 
 (defun c-xref-server-dispatch-project-mismatch (ss i len dispatch-data)
   "Handle project mismatch - server is locked to a different project."
-  (let ((tlen) (locked-project))
-    (setq tlen (c-xref-server-dispatch-get-int-attr c-xref_PPCA_LEN))
-    (setq locked-project (c-xref-char-list-substring ss i (+ i tlen)))
-    (setq i (+ i tlen))
-    (setq i (c-xref-server-parse-xml-tag ss i len))
-    (c-xref-server-dispatch-require-end-ctag c-xref_PPC_PROJECT_MISMATCH)
+  (let ((record) (locked-project))
+    (setq record (c-xref-server-dispatch-read-record ss i len c-xref_PPC_PROJECT_MISMATCH))
+    (setq locked-project (car record))
+    (setq i (cdr record))
     (if (c-xref-yes-or-no-window
          (format "Server is locked to project '%s'.\nSwitch to this file's project? (Server will restart)"
                  locked-project)
@@ -2435,12 +2433,10 @@ No.
   ;; continues and the pending edits apply. If the user answers No,
   ;; we raise an Emacs error which aborts the dispatch loop, throwing
   ;; the pending edits away.
-  (let ((tlen) (cc) (conf))
-    (setq tlen (c-xref-server-dispatch-get-int-attr c-xref_PPCA_LEN))
-    (setq cc (c-xref-char-list-substring ss i (+ i tlen)))
-    (setq i (+ i tlen))
-    (setq i (c-xref-server-parse-xml-tag ss i len))
-    (c-xref-server-dispatch-require-end-ctag tag)
+  (let ((record) (cc) (conf))
+    (setq record (c-xref-server-dispatch-read-record ss i len tag))
+    (setq cc (car record))
+    (setq i (cdr record))
     (setq conf (c-xref-yes-or-no-window cc t dispatch-data))
     (if (not conf)
         (progn
@@ -2453,12 +2449,10 @@ No.
   ;; Blocking confirmation: the server is waiting on stdin for
   ;; -continue or -cancel before deciding what to send next.
   ;; Consumed by waitForUserConfirmation in server.c.
-  (let ((tlen) (cc) (conf))
-    (setq tlen (c-xref-server-dispatch-get-int-attr c-xref_PPCA_LEN))
-    (setq cc (c-xref-char-list-substring ss i (+ i tlen)))
-    (setq i (+ i tlen))
-    (setq i (c-xref-server-parse-xml-tag ss i len))
-    (c-xref-server-dispatch-require-end-ctag tag)
+  (let ((record) (cc) (conf))
+    (setq record (c-xref-server-dispatch-read-record ss i len tag))
+    (setq cc (car record))
+    (setq i (cdr record))
     (setq conf (c-xref-yes-or-no-window cc t dispatch-data))
     (sit-for 0) ;; Force redisplay to close dialog window before waiting
     ;; Send bare response — no extra options, waitForUserConfirmation
@@ -2471,13 +2465,11 @@ No.
     ))
 
 (defun c-xref-server-dispatch-bottom-information (ss i len _dispatch-data tag)
-  (let ((tlen) (cc) (beep))
+  (let ((record) (cc) (beep))
     (setq beep (c-xref-server-dispatch-get-int-attr c-xref_PPCA_BEEP))
-    (setq tlen (c-xref-server-dispatch-get-int-attr c-xref_PPCA_LEN))
-    (setq cc (c-xref-char-list-substring ss i (+ i tlen)))
-    (setq i (+ i tlen))
-    (setq i (c-xref-server-parse-xml-tag ss i len))
-    (c-xref-server-dispatch-require-end-ctag tag)
+    (setq record (c-xref-server-dispatch-read-record ss i len tag))
+    (setq cc (car record))
+    (setq i (cdr record))
     (message "%s" cc)
     (if (not (equal beep 0)) (beep t))
     i
@@ -2520,12 +2512,10 @@ No.
     ))
 
 (defun c-xref-server-dispatch-set-info (ss i len dispatch-data)
-  (let ((tlen) (cc))
-    (setq tlen (c-xref-server-dispatch-get-int-attr c-xref_PPCA_LEN))
-    (setq cc (c-xref-char-list-substring ss i (+ i tlen)))
-    (setq i (+ i tlen))
-    (setq i (c-xref-server-parse-xml-tag ss i len))
-    (c-xref-server-dispatch-require-end-ctag c-xref_PPC_SET_INFO)
+  (let ((record) (cc))
+    (setq record (c-xref-server-dispatch-read-record ss i len c-xref_PPC_SET_INFO))
+    (setq cc (car record))
+    (setq i (cdr record))
     (c-xref-hard-prepend-to-dispatch-data dispatch-data (cons (cons 'info cc) nil))
     i
     ))
@@ -2714,14 +2704,12 @@ Special hotkeys available:
     ))
 
 (defun c-xref-server-dispatch-parse-string-value (ss i len _dispatch-data)
-  (let ((tlen))
+  (let ((record))
     (setq i (c-xref-server-parse-xml-tag ss i len))
     (c-xref-server-dispatch-require-ctag c-xref_PPC_STRING_VALUE)
-    (setq tlen (c-xref-server-dispatch-get-int-attr c-xref_PPCA_LEN))
-    (setq c-xref-server-cstring-value (c-xref-char-list-substring ss i (+ i tlen)))
-    (setq i (+ i tlen))
-    (setq i (c-xref-server-parse-xml-tag ss i len))
-    (c-xref-server-dispatch-require-end-ctag c-xref_PPC_STRING_VALUE)
+    (setq record (c-xref-server-dispatch-read-record ss i len c-xref_PPC_STRING_VALUE))
+    (setq c-xref-server-cstring-value (car record))
+    (setq i (cdr record))
     i
     ))
 
@@ -2974,12 +2962,10 @@ Special hotkeys available:
     ))
 
 (defun c-xref-server-dispatch-display-resolution (ss i len dispatch-data)
-  (let ((tlen) (mess) (messagewin) (winconfig) (fdd))
-    (setq tlen (c-xref-server-dispatch-get-int-attr c-xref_PPCA_LEN))
-    (setq mess (c-xref-char-list-substring ss i (+ i tlen)))
-    (setq i (+ i tlen))
-    (setq i (c-xref-server-parse-xml-tag ss i len))
-    (c-xref-server-dispatch-require-end-ctag c-xref_PPC_DISPLAY_RESOLUTION)
+  (let ((record) (mess) (messagewin) (winconfig) (fdd))
+    (setq record (c-xref-server-dispatch-read-record ss i len c-xref_PPC_DISPLAY_RESOLUTION))
+    (setq mess (car record))
+    (setq i (cdr record))
     (c-xref-select-dispach-data-caller-window dispatch-data)
     ;; this window excursion causes that after reporting missinterpreted references
     ;; the windows are lost for further browsing, try it differently
@@ -3005,12 +2991,10 @@ Special hotkeys available:
     ))
 
 (defun c-xref-server-dispatch-display-or-update-browser (ss i len dispatch-data)
-  (let ((tlen) (mess) (_messagewin))
-    (setq tlen (c-xref-server-dispatch-get-int-attr c-xref_PPCA_LEN))
-    (setq mess (c-xref-char-list-substring ss i (+ i tlen)))
-    (setq i (+ i tlen))
-    (setq i (c-xref-server-parse-xml-tag ss i len))
-    (c-xref-server-dispatch-require-end-ctag c-xref_PPC_DISPLAY_OR_UPDATE_BROWSER)
+  (let ((record) (mess) (_messagewin))
+    (setq record (c-xref-server-dispatch-read-record ss i len c-xref_PPC_DISPLAY_OR_UPDATE_BROWSER))
+    (setq mess (car record))
+    (setq i (cdr record))
     (c-xref-select-dispach-data-caller-window dispatch-data)
     (c-xref-create-browser-windows nil dispatch-data)
     ;; do not update content, it is done automatically after
@@ -3167,35 +3151,29 @@ Special hotkeys available:
     ))
 
 (defun c-xref-server-dispatch-extraction-dialog (ss i len _dispatch-data)
-  (let ((tlen) (minvocation) (mhead) (mtail) (mline) (dname))
+  (let ((record) (tlen) (minvocation) (mhead) (mtail) (mline) (dname))
     (setq dname (cdr (assoc c-xref_PPCA_TYPE c-xref-server-ctag-attributes)))
 
     ;; Invocation code string
     (setq i (c-xref-server-parse-xml-tag ss i len))
     (c-xref-server-dispatch-require-ctag c-xref_PPC_STRING_VALUE)
-    (setq tlen (c-xref-server-dispatch-get-int-attr c-xref_PPCA_LEN))
-    (setq minvocation (c-xref-char-list-substring ss i (+ i tlen)))
-    (setq i (+ i tlen))
-    (setq i (c-xref-server-parse-xml-tag ss i len))
-    (c-xref-server-dispatch-require-end-ctag c-xref_PPC_STRING_VALUE)
+    (setq record (c-xref-server-dispatch-read-record ss i len c-xref_PPC_STRING_VALUE))
+    (setq minvocation (car record))
+    (setq i (cdr record))
 
     ;; Extraction header
     (setq i (c-xref-server-parse-xml-tag ss i len))
     (c-xref-server-dispatch-require-ctag c-xref_PPC_STRING_VALUE)
-    (setq tlen (c-xref-server-dispatch-get-int-attr c-xref_PPCA_LEN))
-    (setq mhead (c-xref-char-list-substring ss i (+ i tlen)))
-    (setq i (+ i tlen))
-    (setq i (c-xref-server-parse-xml-tag ss i len))
-    (c-xref-server-dispatch-require-end-ctag c-xref_PPC_STRING_VALUE)
+    (setq record (c-xref-server-dispatch-read-record ss i len c-xref_PPC_STRING_VALUE))
+    (setq mhead (car record))
+    (setq i (cdr record))
 
     ;; Extraction tail
     (setq i (c-xref-server-parse-xml-tag ss i len))
     (c-xref-server-dispatch-require-ctag c-xref_PPC_STRING_VALUE)
-    (setq tlen (c-xref-server-dispatch-get-int-attr c-xref_PPCA_LEN))
-    (setq mtail (c-xref-char-list-substring ss i (+ i tlen)))
-    (setq i (+ i tlen))
-    (setq i (c-xref-server-parse-xml-tag ss i len))
-    (c-xref-server-dispatch-require-end-ctag c-xref_PPC_STRING_VALUE)
+    (setq record (c-xref-server-dispatch-read-record ss i len c-xref_PPC_STRING_VALUE))
+    (setq mtail (car record))
+    (setq i (cdr record))
 
     ;; ?????
     (setq i (c-xref-server-parse-xml-tag ss i len))
