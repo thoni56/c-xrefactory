@@ -4329,10 +4329,12 @@ current file, and if found, offer to migrate that section to a project-local <co
 <div class="paragraph">
 <p>What did not parse is collected in the buffer <code><strong>c-xref-diagnostics</strong></code>, with its position.
 The buffer is in a mode derived from <code>compilation-mode</code>, so <code>RET</code> in it, and <code>M-g n</code> and <code>M-g p</code> from anywhere, go to the place.
+The messages are grouped by the compilation unit whose parse found them, under a line <code>Analysing &lt;file&gt;</code>, as compile output is.
+When a unit is parsed again its group is replaced and moved last, and a unit that parses clean has no group.
 An answer that added messages ends with a notice, e.g. <code>2 new messages in <strong>c-xref-diagnostics</strong>, M-g n to visit</code>, with the user&#8217;s own key for <code>next-error</code>.</p>
 </div>
 <div class="paragraph">
-<p>The server sends these messages as <code>&lt;log&gt;</code> records.
+<p>The server sends these messages as <code>&lt;log&gt;</code> records, after an <code>&lt;analysing&gt;</code> record for the unit.
 Every other message record is modal, or a line in the minibuffer, and <code>&lt;error&gt;</code> also abandons the operation.
 A server&#8217;s stdout and stderr cannot be used either, since they are the synchronisation stream, and the client stops with <code>SYNCHRO PROBLEM</code> on anything else there.</p>
 </div>
@@ -4341,6 +4343,7 @@ A server&#8217;s stdout and stderr cannot be used either, since they are the syn
 The lexer and the preprocessor are ahead of the parser, so they use <code>parsingMessageAt()</code> with a position of their own, e.g. that of the <code>#include</code>.
 They send nothing unless the server was started with <code>-errors</code>, which the client does, and nothing in the parses that only refresh other files (<code>noErrors</code>).
 So what is reported is what the request&#8217;s own parse found.
+A unit that is only reparsed to refresh it keeps its old group until it is parsed for a request again.
 <code>warningMessage()</code> and <code>errorMessage()</code> stay for what an operation itself has to say, and those are modal.</p>
 </div>
 </div>
@@ -4358,10 +4361,7 @@ So what is reported is what the request&#8217;s own parse found.
 <p>A message about tokens from a macro expansion gives their place in the macro body. It should also say where the macro is used, as gcc does.</p>
 </li>
 <li>
-<p>A file&#8217;s messages are replaced when it is parsed again. The buffer then holds what is true now, and a line that was only half typed does not stay there.</p>
-</li>
-<li>
-<p>A message is sent once. The same missing header is reported once per compilation unit that includes it, so a generated <code>config.h</code> included by two hundred files is two hundred identical messages and one fact.</p>
+<p>The report below. The same missing header is reported by every unit that includes it, so a generated <code>config.h</code> included by two hundred files is two hundred messages and one fact.</p>
 </li>
 </ul>
 </div>
@@ -12377,7 +12377,7 @@ operation reads the in-memory table.</p>
 </div>
 <div id="footer">
 <div id="footer-text">
-Last updated 2026-10-19 11:49:15 UTC
+Last updated 2026-10-19 13:31:39 UTC
 </div>
 </div>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.18.3/highlight.min.js"></script>
