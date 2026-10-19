@@ -219,7 +219,7 @@ The server parses a compilation unit when a request needs it. An operation that 
 
 ==== What works now
 
-What did not parse is collected in the buffer `*c-xref-diagnostics*`, one `file:line: message` per line.
+What did not parse is collected in the buffer `*c-xref-diagnostics*`, with its position.
 The buffer is in a mode derived from `compilation-mode`, so `RET` in it, and `M-g n` and `M-g p` from anywhere, go to the place.
 An answer that added messages ends with a notice, e.g. `2 new messages in *c-xref-diagnostics*, M-g n to visit`, with the user's own key for `next-error`.
 

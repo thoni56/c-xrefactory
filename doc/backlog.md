@@ -96,7 +96,7 @@ graph from them on every push, linked at the end of this file, and `utils/backlo
 
 - (#23) <a id="indexing-log-buffer"></a>**What is left of the diagnostics buffer** —
     `doc/docs/11-planned-features.adoc` (Diagnostics Buffer). What did not parse reaches
-    `*c-xref-diagnostics*` as `file:line: message`, and `next-error` visits it. Left:
+    `*c-xref-diagnostics*` with its position, and `next-error` visits it. Left:
     the user manual (the buffer, `M-g n` and `M-g p`); a file's
     messages replaced when it is parsed again, so that a half-typed line does not stay
     there; and a repeated message sent once.
@@ -279,6 +279,11 @@ graph from them on every push, linked at the end of this file, and `utils/backlo
     as the `"..."` branch does, so they reach the parser as syntax errors
     (`processIncludeDirective()`, `src/yylex.c`). `test_parsing_include_using_macro` pins
     both; its two syntax errors go when this is fixed.
+- (#63) <a id="message-at-macro-use"></a>**A parse message in a macro expansion also says where the
+    macro is used** — a token from an expansion has its position in the macro body, so
+    `next-error` goes to the `#define`, often in a header. gcc reports the place of use and
+    adds a note for the definition. Needs the outermost macro call of the expansion
+    (`expandMacroCall()`, `src/yylex.c`). `test_parsing_include_using_macro` shows it.
 
 ## 4. Performance, in strict dependency order
 
