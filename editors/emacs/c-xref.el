@@ -3203,7 +3203,7 @@ Special hotkeys available:
 
 
 (defun c-xref-server-dispatch (ss i len dispatch-data)
-  (let ((_x) (j))
+  (let ((_x) (j) (logs 0))
     (setq j 0)
     (if c-xref-debug-mode (message "[%s] dispatching: %s" (format-time-string "%T.%3N") ss))
     (setq i (c-xref-server-dispatch-skip-blank ss i len))
@@ -3294,6 +3294,7 @@ Special hotkeys available:
             (setq i (c-xref-server-dispatch-information ss i len dispatch-data c-xref-server-ctag)))
        (
             (equal c-xref-server-ctag c-xref_PPC_LOG)
+            (setq logs (1+ logs))
             (setq i (c-xref-server-dispatch-log ss i len c-xref-server-ctag)))
        (
             (equal c-xref-server-ctag c-xref_PPC_BOTTOM_WARNING)
@@ -3314,6 +3315,8 @@ Special hotkeys available:
        )
       (setq i (c-xref-server-dispatch-skip-blank ss i len))
       )
+    (if (> logs 0)
+        (message "%d new messages in %s" logs c-xref-diagnostics-buffer))
     (+ i j)
     ))
 

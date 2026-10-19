@@ -46,3 +46,22 @@
       (when (get-file-buffer file)
         (kill-buffer (get-file-buffer file)))
       (delete-file file))))
+
+(defun c-xref-test-last-message ()
+  "The last line in *Messages*."
+  (with-current-buffer "*Messages*"
+    (save-excursion
+      (goto-char (point-max))
+      (skip-chars-backward "\n")
+      (buffer-substring (line-beginning-position) (point)))))
+
+(ert-deftest c-xref-an-answer-with-diagnostics-ends-with-a-notice ()
+  (let ((answer (c-xref-test-log-records "source.c:2: Syntax error on: c\n"
+                                         "source.c:3: unterminated comment\n")))
+    (when (get-buffer c-xref-diagnostics-buffer)
+      (kill-buffer c-xref-diagnostics-buffer))
+    (message "before")
+    (c-xref-server-dispatch answer 0 (length answer)
+                            (list (cons 'caller-window (selected-window))))
+    (should (equal (c-xref-test-last-message)
+                   "2 new messages in *c-xref-diagnostics*"))))
