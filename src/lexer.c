@@ -6,7 +6,6 @@
 
 #include "characterreader.h"
 #include "commons.h"
-#include "filetable.h"
 #include "globals.h"
 #include "lexem.h"
 #include "lexembuffer.h"

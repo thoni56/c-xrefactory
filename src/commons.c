@@ -10,7 +10,6 @@
 #include "protocol.h"
 #include "semact.h"             /* displayingErrorMessages() */
 
-#include "filedescriptor.h"
 #include "fileio.h"
 #include "filetable.h"
 #include "log.h"
