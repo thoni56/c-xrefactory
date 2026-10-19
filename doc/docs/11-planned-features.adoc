@@ -221,7 +221,7 @@ The server parses a compilation unit when a request needs it. An operation that 
 
 What did not parse is collected in the buffer `*c-xref-diagnostics*`, one `file:line: message` per line.
 The buffer is in a mode derived from `compilation-mode`, so `RET` in it, and `M-g n` and `M-g p` from anywhere, go to the place.
-Nothing is shown when a message arrives.
+An answer that added messages ends with a notice, e.g. `2 new messages in *c-xref-diagnostics*, M-g n to visit`, with the user's own key for `next-error`.
 
 The server sends these messages as `<log>` records.
 Every other message record is modal, or a line in the minibuffer, and `<error>` also abandons the operation.
@@ -234,7 +234,6 @@ So what is reported is what the request's own parse found.
 
 ==== What is left
 
-* A notice in the message area when something has been added, e.g. `3 diagnostics (see *c-xref-diagnostics*)`, so that the buffer is found.
 * The user manual: the buffer, and `M-g n` and `M-g p`.
 * A file's messages are replaced when it is parsed again. The buffer then holds what is true now, and a line that was only half typed does not stay there.
 * A message is sent once. The same missing header is reported once per compilation unit that includes it, so a generated `config.h` included by two hundred files is two hundred identical messages and one fact.

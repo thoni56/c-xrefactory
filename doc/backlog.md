@@ -97,8 +97,7 @@ graph from them on every push, linked at the end of this file, and `utils/backlo
 - (#23) <a id="indexing-log-buffer"></a>**What is left of the diagnostics buffer** —
     `doc/docs/11-planned-features.adoc` (Diagnostics Buffer). What did not parse reaches
     `*c-xref-diagnostics*` as `file:line: message`, and `next-error` visits it. Left:
-    a notice in the message area when something has been added, e.g. `3 diagnostics (see
-    *c-xref-diagnostics*)`; the user manual (the buffer, `M-g n` and `M-g p`); a file's
+    the user manual (the buffer, `M-g n` and `M-g p`); a file's
     messages replaced when it is parsed again, so that a half-typed line does not stay
     there; and a repeated message sent once.
 - (#6) <a id="report-errors-flag"></a>**Replace the 19 `options.mode != ServerMode` guards in `src/yylex.c`** with
