@@ -99,6 +99,16 @@ graph from them on every push, linked at the end of this file, and `utils/backlo
     `*c-xref-diagnostics*` with its position, grouped by unit, and `next-error` visits it.
     Left: the user manual (the buffer, `M-g n` and `M-g p`); and the report of unresolved
     includes, with a suggested `-I`. The preprocessor's messages are #6, a macro's place of use is #63.
+- (#64) <a id="message-gates"></a>**One meaning per message gate** — *no repo home yet.* Three
+    gates decide where a message goes, in `src/commons.c`: `noErrors` (this parse is quiet,
+    set by the refresh parses and `-no-errors`), `cxrefProtocol` (set by `-server` only, so
+    the same as the mode) and `displayingErrorMessages()` (`-errors` or `-debug`,
+    `src/semact.c`). `-errors` gates only the log for `warningMessage()` and
+    `errorMessage()`, but the protocol for `parsingMessageAt()` and `announceAnalysing()`,
+    whose log ignores it. `-debug` adds `<log>` records to the protocol stream. Let
+    `-errors` mean only "the client wants parse messages", leave the log to the log level,
+    and give `noErrors` a name that is not about errors. `styyErrorRecovery()` checks
+    `debug && displayingErrorMessages()`, which is `debug`.
 - (#6) <a id="report-errors-flag"></a>**Replace the 19 `options.mode != ServerMode` guards in `src/yylex.c`** with
    calls to `parsingMessage()`. With XrefMode gone the guards never fire, so today the
    server reports nothing they guard. Roadmap, "Report what did not parse". Restore
@@ -107,6 +117,7 @@ graph from them on every push, linked at the end of this file, and `utils/backlo
    Decide here too whether a file that is not valid UTF-8 is reported, once per file.
    Since `convertUtf8()` (`src/encoding.c`) takes a lead byte without its continuation
    bytes as one character, a Latin-1 file reads right, but silently.
+   Waits for: message-gates
 - (#7) <a id="startup-command-line"></a>**Decide, and enforce, what the startup command line may carry** — *no repo home yet.*
    Bigger than `c-xref file.c`, and it needs code, not just a decision. Once XrefMode is
    gone the server takes no file at startup: every request names its own, and the same
