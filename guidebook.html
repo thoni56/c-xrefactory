@@ -469,12 +469,13 @@ body.book #toc,body.book #preamble,body.book h1.sect0,body.book .sect1>h2{page-b
 <ul class="sectlevel2">
 <li><a href="#_reference_database_and_parsing">6.1. Reference Database and Parsing</a></li>
 <li><a href="#_memory_as_truth">6.2. Memory As Truth</a></li>
-<li><a href="#_editor_buffers_are_the_content_source">6.3. Editor Buffers Are the Content Source</a></li>
-<li><a href="#_continuously_fresh_references">6.4. Continuously Fresh References</a></li>
-<li><a href="#_minimal_reparse_set">6.5. Minimal Reparse Set</a></li>
-<li><a href="#_preserve_parsed_work">6.6. Preserve Parsed Work</a></li>
-<li><a href="#_project_scope">6.7. Project Scope</a></li>
-<li><a href="#_terminology">6.8. Terminology</a></li>
+<li><a href="#_visible_analysis">6.3. Visible Analysis</a></li>
+<li><a href="#_editor_buffers_are_the_content_source">6.4. Editor Buffers Are the Content Source</a></li>
+<li><a href="#_continuously_fresh_references">6.5. Continuously Fresh References</a></li>
+<li><a href="#_minimal_reparse_set">6.6. Minimal Reparse Set</a></li>
+<li><a href="#_preserve_parsed_work">6.7. Preserve Parsed Work</a></li>
+<li><a href="#_project_scope">6.8. Project Scope</a></li>
+<li><a href="#_terminology">6.9. Terminology</a></li>
 </ul>
 </li>
 <li><a href="#_software_architecture">7. Software Architecture</a>
@@ -1105,7 +1106,20 @@ principle has to be revisited.</p>
 </div>
 </div>
 <div class="sect2">
-<h3 id="_editor_buffers_are_the_content_source">6.3. Editor Buffers Are the Content Source</h3>
+<h3 id="_visible_analysis">6.3. Visible Analysis</h3>
+<div class="paragraph">
+<p>The user should be able to see what <code>c-xrefactory</code> sees.
+What the in-memory table knows shows up in navigation, search and refactorings.
+What a parse could not handle, e.g. a missing include or a syntax error, is shown in <code><strong>c-xref-diagnostics</strong></code>, with its position.
+Nothing that went wrong in the analysis should be silent.</p>
+</div>
+<div class="paragraph">
+<p>The original trusted its database and reported nothing, so the only way to find the truth was to look for it.
+With the batch modes gone the server is the only place the analysis happens, so it is also where it has to be shown.</p>
+</div>
+</div>
+<div class="sect2">
+<h3 id="_editor_buffers_are_the_content_source">6.4. Editor Buffers Are the Content Source</h3>
 <div class="paragraph">
 <p>In server mode the parser never reads a source file from disk more than once.
 Every file the server parses is backed by an in-memory <code>EditorBuffer</code>. Its text
@@ -1178,7 +1192,7 @@ editing scenario. To simulate an edit, send the new content as a preload.
 </div>
 </div>
 <div class="sect2">
-<h3 id="_continuously_fresh_references">6.4. Continuously Fresh References</h3>
+<h3 id="_continuously_fresh_references">6.5. Continuously Fresh References</h3>
 <div class="paragraph">
 <p>The reference table must be kept fresh on every request. This is the central design
 challenge in a request/response architecture where:</p>
@@ -1254,7 +1268,7 @@ consistent view of the codebase.</p>
 </div>
 </div>
 <div class="sect2">
-<h3 id="_minimal_reparse_set">6.5. Minimal Reparse Set</h3>
+<h3 id="_minimal_reparse_set">6.6. Minimal Reparse Set</h3>
 <div class="paragraph">
 <p>Full freshness does not require full reparsing. Parsing is the most expensive operation
 the server performs, so the system must determine the <strong>minimal set of compilation units</strong>
@@ -1328,7 +1342,7 @@ that share the edited header" is the difference between minutes and milliseconds
 </div>
 </div>
 <div class="sect2">
-<h3 id="_preserve_parsed_work">6.6. Preserve Parsed Work</h3>
+<h3 id="_preserve_parsed_work">6.7. Preserve Parsed Work</h3>
 <div class="paragraph">
 <p>Parsing is the most expensive operation the server performs. On large codebases, a full
 parse can take tens of minutes. Some operations — like a project-wide search on cold
@@ -1357,7 +1371,7 @@ parse loop — a ~1% overhead that prevents losing minutes of work on interrupti
 </div>
 </div>
 <div class="sect2">
-<h3 id="_project_scope">6.7. Project Scope</h3>
+<h3 id="_project_scope">6.8. Project Scope</h3>
 <div class="paragraph">
 <p>A <strong>project</strong> is defined by a <code>.c-xrefrc</code> configuration file. The directory containing
 this file is the <strong>project root</strong>. On auto-detection, the server walks upward from the
@@ -1408,7 +1422,7 @@ file table does not support.
 </div>
 </div>
 <div class="sect2">
-<h3 id="_terminology">6.8. Terminology</h3>
+<h3 id="_terminology">6.9. Terminology</h3>
 <div class="paragraph">
 <p>The following terms are used throughout the documentation and codebase. Preferred terms
 are listed alphabetically; terms to avoid are noted to reduce ambiguity.</p>
@@ -3478,7 +3492,8 @@ given, <code>-server</code> or <code>-lsp</code>.</p>
 <li>
 <p><strong>Diagnostics buffer</strong> — what the request&#8217;s own parse could not handle reaches
 <code><strong>c-xref-diagnostics</strong></code> with its position, and <code>next-error</code> visits it
-(<a href="11-planned-features.html">Planned Features</a>, Diagnostics Buffer).</p>
+(<a href="11-planned-features.html">Planned Features</a>, Diagnostics Buffer).
+This was the last thing only the batch modes could do, i.e. <code>-create -errors</code>.</p>
 </li>
 </ul>
 </div>
@@ -4312,7 +4327,7 @@ current file, and if found, offer to migrate that section to a project-local <co
 <div class="sect3">
 <h4 id="_what_works_now_2">11.7.2. What works now</h4>
 <div class="paragraph">
-<p>What did not parse is collected in the buffer <code><strong>c-xref-diagnostics</strong></code>, one <code>file:line: message</code> per line.
+<p>What did not parse is collected in the buffer <code><strong>c-xref-diagnostics</strong></code>, with its position.
 The buffer is in a mode derived from <code>compilation-mode</code>, so <code>RET</code> in it, and <code>M-g n</code> and <code>M-g p</code> from anywhere, go to the place.
 An answer that added messages ends with a notice, e.g. <code>2 new messages in <strong>c-xref-diagnostics</strong>, M-g n to visit</code>, with the user&#8217;s own key for <code>next-error</code>.</p>
 </div>
@@ -12355,7 +12370,7 @@ operation reads the in-memory table.</p>
 </div>
 <div id="footer">
 <div id="footer-text">
-Last updated 2026-10-19 10:21:29 UTC
+Last updated 2026-10-19 11:08:20 UTC
 </div>
 </div>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.18.3/highlight.min.js"></script>
