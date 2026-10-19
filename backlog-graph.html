@@ -26,6 +26,7 @@ flowchart BT
   openproject_tripwire["§1 · 4d · the assert that nothing before the future `-openproject` reads a project-scoped option"]
   project_extent["§1 · 4e · what a project consists of"]
   indexing_log_buffer["§2 · 23 · What is left of the diagnostics buffer"]
+  message_gates["§2 · 64 · One meaning per message gate"]
   report_errors_flag["§2 · 6 · Replace the 19 `options.mode != ServerMode` guards in `src/yylex.c`"]
   startup_command_line["§2 · 7 · Decide, and enforce, what the startup command line may carry"]
   mode_checks["§2 · 8a · fold the last `options.mode` checks"]
@@ -95,6 +96,7 @@ flowchart BT
   adr_0030 --&gt; setup_into_openproject
   setup_into_openproject --&gt; openproject_tripwire
   adr_0031 --&gt; project_extent
+  message_gates --&gt; report_errors_flag
   request_target --&gt; behind_the_back
   startup_command_line --&gt; header_static_link_names
   header_filtered_siblings --&gt; scan_angle_includes
@@ -123,7 +125,8 @@ flowchart BT
   class openproject_tripwire blocked
   class project_extent ready
   class indexing_log_buffer ready
-  class report_errors_flag ready
+  class message_gates ready
+  class report_errors_flag blocked
   class startup_command_line ready
   class mode_checks ready
   class remove_bridge ready
