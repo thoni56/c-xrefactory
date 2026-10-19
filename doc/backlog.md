@@ -165,6 +165,11 @@ graph from them on every push, linked at the end of this file, and `utils/backlo
 - (#9) <a id="remove-bridge"></a>**Remove the `parseBufferUsingServer` bridge** — §17.3; 9 refactoring call sites
    re-entering `callServer`. Independent of the rest of this section, but it is the last
    divergent parse path.
+- (#62) <a id="docs-audit"></a>**Audit the docs, chapter by chapter** — much of `doc/docs/` was
+    written while the batch modes and the disk database were the truth. Each chapter is
+    read against the code as it is, and what is stale is fixed or becomes a line here.
+    `06-principles` first, e.g. the snapshot paragraph in "Reference Database and Parsing".
+    Goes with: freshness-docs
 
 ## 3. Correctness, by (quiet × cheap)
 
