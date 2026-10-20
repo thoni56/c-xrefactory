@@ -28,7 +28,6 @@ flowchart BT
   indexing_log_buffer["§2 · 23 · What is left of the diagnostics buffer"]
   report_errors_flag["§2 · 6 · Report the preprocessor's messages that are left in `src/yylex.c`"]
   malformed_has_include["§2 · 66 · A malformed `__has_include` stops the server"]
-  eof_in_macro_call["§2 · 67 · A file that ends inside a macro call stops the server"]
   lsp_mode["§2 · 68 · An `LspMode`, and a sink for the messages"]
   startup_command_line["§2 · 7 · Decide, and enforce, what the startup command line may carry"]
   mode_checks["§2 · 8a · fold the last `options.mode` checks"]
@@ -48,6 +47,7 @@ flowchart BT
   search_result_line_zero["§3 · 58 · The client asks for search result number 0"]
   include_bracket_from_macro["§3 · 60 · `#include MACRO` where the macro is `#lt;...#gt;`"]
   message_at_macro_use["§3 · 63 · A parse message in a macro expansion also says where the macro is used"]
+  latin_1_lookalikes["§3 · 69 · Latin-1 that looks like UTF-8 is read as one character"]
   header_filtered_siblings["§4 · 16 · Header-filtered sibling parsing"]
   scan_angle_includes["§4 · 17 · Extend the lightweight scan to `#lt;...#gt;` includes"]
   lexing_cache["§4 · 18 · Lexing cache re-introduction"]
@@ -122,8 +122,7 @@ flowchart BT
   install_server --&gt; announce
   readme_first_screen --&gt; announce
   message_at_macro_use -.-&gt; indexing_log_buffer
-  eof_in_macro_call -.-&gt; report_errors_flag
-  malformed_has_include -.-&gt; eof_in_macro_call
+  malformed_has_include -.-&gt; report_errors_flag
   freshness_docs -.-&gt; docs_audit
   sweep -.-&gt; refactoring_refusals
   adr_0031 -.-&gt; relative_include_path
@@ -149,7 +148,6 @@ flowchart BT
   class indexing_log_buffer ready
   class report_errors_flag ready
   class malformed_has_include ready
-  class eof_in_macro_call ready
   class lsp_mode blocked
   class startup_command_line ready
   class mode_checks ready
@@ -169,6 +167,7 @@ flowchart BT
   class search_result_line_zero ready
   class include_bracket_from_macro ready
   class message_at_macro_use ready
+  class latin_1_lookalikes ready
   class header_filtered_siblings ready
   class scan_angle_includes blocked
   class lexing_cache blocked
