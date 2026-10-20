@@ -7,6 +7,8 @@
 #     - (#2) <a id="second-item"></a>**Second item** — ...
 # and what it waits for is a line of slugs below it,
 #        Waits for: first-item
+# and the one item it should preferably come after is a line too,
+#        After: first-item
 
 import html
 import re
@@ -18,6 +20,7 @@ ITEM = re.compile(r'^- \(#(\d+)\) <a id="([^"]+)"></a>\*\*(.+?)\*\*')
 SUBITEM = re.compile(r'^\s+([a-z])\. <a id="([^"]+)"></a>\*\*(.+?)\*\*')
 WAITS = re.compile(r'^\s*Waits for:\s*(.+)$')
 GOES_WITH = re.compile(r'^\s*Goes with:\s*(.+)$')
+AFTER = re.compile(r'^\s*After:\s*(.+)$')
 FOUNDATION = re.compile(r'^## Foundation\s*$')
 DONE = re.compile(r'^- <a id="([^"]+)"></a>\*\*(.+?)\*\*')
 
@@ -33,7 +36,7 @@ def label(text):
 
 def new_item(number, slug, title, section):
     return {'number': number, 'slug': slug, 'title': title, 'section': section,
-            'waits': [], 'goes_with': [], 'parts': []}
+            'waits': [], 'goes_with': [], 'after': [], 'parts': []}
 
 
 def read_backlog(lines):
@@ -74,6 +77,10 @@ def read_backlog(lines):
         if m and current is not None:
             current['waits'] += [s.strip() for s in m.group(1).split(',')]
             continue
+        m = AFTER.match(line)
+        if m and current is not None:
+            current['after'] += [s.strip() for s in m.group(1).split(',')]
+            continue
         m = GOES_WITH.match(line)
         if m and current is not None:
             current['goes_with'] += [s.strip() for s in m.group(1).split(',')]
@@ -100,8 +107,11 @@ def node_lines(work, foundation):
 
 def edge_lines(work):
     # Goes with is not drawn: the layout would take it as an edge to rank by
-    return [f"  {node_id(waited)} --> {node_id(item['slug'])}"
-            for item in work for waited in item['waits']]
+    # What an item comes after is a preferred order, so it is dashed and does not block
+    return ([f"  {node_id(waited)} --> {node_id(item['slug'])}"
+             for item in work for waited in item['waits']]
+            + [f"  {node_id(before)} -.-> {node_id(item['slug'])}"
+               for item in work for before in item['after']])
 
 
 def state_lines(work, items, foundation):
@@ -244,6 +254,12 @@ def problems_in(path, text):
         for waited in item['waits']:
             if waited not in known:
                 found.append(f"{path}: {item['slug']} waits for {waited}, which is not in the backlog")
+        # One at most, so that the preferred orders form trees
+        if len(item['after']) > 1:
+            found.append(f"{path}: {item['slug']} comes after {len(item['after'])} items, only one is allowed")
+        for before in item['after']:
+            if before not in known:
+                found.append(f"{path}: {item['slug']} comes after {before}, which is not in the backlog")
         for other in item['goes_with']:
             if other not in known:
                 found.append(f"{path}: {item['slug']} goes with {other}, which is not in the backlog")

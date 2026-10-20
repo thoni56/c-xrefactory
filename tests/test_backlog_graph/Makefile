@@ -6,6 +6,7 @@ include ../Makefile.cli
 # When the graph is generated
 # Then it holds only what takes part in an edge, labelled with section, number and title
 # And each edge goes from what is waited for up to what waits, and goes with is not drawn
+# And what comes after an item is drawn dashed from it, and does not block
 # And an item is ready, blocked or done, and a label's quotes and brackets are escaped
 
 $(TEST):

@@ -11,6 +11,7 @@ flowchart BT
   groundwork --> first_item
   first_item --> second_item
   rung_a --> rung_b
+  first_item -.-> odd_title
   class first_item ready
   class second_item blocked
   class rung_a ready
