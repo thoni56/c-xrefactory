@@ -1357,8 +1357,8 @@ static LexemCode handleHasIncludeOp(void) {
         ON_LEXEM_EXCEPTION_GOTO(lexem, error, error);
         getExtraLexemInformationFor(lexem, &currentInput.read, NULL, NULL, &position, NULL, NULL,
                                     true);
-        if (lexem != ')' && options.mode!=ServerMode) {
-            warningMessage(ERR_ST,"missing ')' after __has_include(<...>");
+        if (lexem != ')') {
+            parsingMessageAt(position, ERR_ST, "missing ')' after __has_include(<...>");
         }
     } else {
         if (options.mode!=ServerMode)
@@ -1372,8 +1372,8 @@ static LexemCode handleHasIncludeOp(void) {
         ON_LEXEM_EXCEPTION_GOTO(lexem, error, error);
         getExtraLexemInformationFor(lexem, &currentInput.read, NULL, NULL, &position, NULL, NULL,
                                     true);
-        if (lexem != ')' && options.mode!=ServerMode) {
-            warningMessage(ERR_ST,"missing ')' after __has_include(\"\"");
+        if (lexem != ')') {
+            parsingMessageAt(position, ERR_ST, "missing ')' after __has_include(\"\"");
         }
     }
 
@@ -1443,8 +1443,8 @@ static LexemCode handleHasIncludeNextOp(void) {
         ON_LEXEM_EXCEPTION_GOTO(lexem, error, error);
         getExtraLexemInformationFor(lexem, &currentInput.read, NULL, NULL, &position, NULL, NULL,
                                     true);
-        if (lexem != ')' && options.mode!=ServerMode) {
-            warningMessage(ERR_ST,"missing ')' after __has_include_next(<...>");
+        if (lexem != ')') {
+            parsingMessageAt(position, ERR_ST, "missing ')' after __has_include_next(<...>");
         }
     } else {
         if (options.mode!=ServerMode)
@@ -1458,8 +1458,8 @@ static LexemCode handleHasIncludeNextOp(void) {
         ON_LEXEM_EXCEPTION_GOTO(lexem, error, error);
         getExtraLexemInformationFor(lexem, &currentInput.read, NULL, NULL, &position, NULL, NULL,
                                     true);
-        if (lexem != ')' && options.mode!=ServerMode) {
-            warningMessage(ERR_ST,"missing ')' after __has_include_next(\"\"");
+        if (lexem != ')') {
+            parsingMessageAt(position, ERR_ST, "missing ')' after __has_include_next(\"\"");
         }
     }
 
@@ -1511,8 +1511,8 @@ static LexemCode handleDefinedOp(void) {
 
         getExtraLexemInformationFor(lexem, &currentInput.read, NULL, NULL, &position, NULL, NULL,
                                     true);
-        if (lexem != ')' && options.mode!=ServerMode) {
-            warningMessage(ERR_ST,"missing ')' after defined( ");
+        if (lexem != ')') {
+            parsingMessageAt(position, ERR_ST, "missing ')' after defined( ");
         }
     }
     return res;

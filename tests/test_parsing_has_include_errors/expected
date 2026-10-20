@@ -1,0 +1,5 @@
+<log len=<n>>CURDIR/source.c:1:25: missing ')' after __has_include(<...>
+<log len=<n>>CURDIR/source.c:3:25: missing ')' after __has_include(""
+<log len=<n>>CURDIR/source.c:5:30: missing ')' after __has_include_next(<...>
+<log len=<n>>CURDIR/source.c:7:30: missing ')' after __has_include_next(""
+<log len=<n>>CURDIR/source.c:9:15: missing ')' after defined( 
