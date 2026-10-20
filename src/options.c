@@ -1165,22 +1165,6 @@ static bool processIOption(int *argi, ArgumentsVector args) {
     return true;
 }
 
-static bool processJOption(int *argi, ArgumentsVector args) {
-    int i = * argi;
-    if (0) {}
-    else return false;
-    *argi = i;
-    return true;
-}
-
-static bool processKOption(int *argi, ArgumentsVector args) {
-    int i = * argi;
-    if (0) {}
-    else return false;
-    *argi = i;
-    return true;
-}
-
 static bool processLOption(int *argi, ArgumentsVector args) {
     int i = * argi;
     if (0) {}
@@ -1545,15 +1529,6 @@ static bool processTOption(int *argi, ArgumentsVector args) {
     return true;
 }
 
-static bool processUOption(int *argi, ArgumentsVector args) {
-    int i = *argi;
-    if (0) {}
-    else
-        return false;
-    *argi = i;
-    return true;
-}
-
 static bool processVOption(int *argi, ArgumentsVector args) {
     int i = * argi;
     if (0) {}
@@ -1658,12 +1633,6 @@ void processOptions(ArgumentsVector args, ProcessFileArguments doProcessFiles) {
             case 'i': case 'I':
                 matched = processIOption(&i, args);
                 break;
-            case 'j': case 'J':
-                matched = processJOption(&i, args);
-                break;
-            case 'k': case 'K':
-                matched = processKOption(&i, args);
-                break;
             case 'l': case 'L':
                 matched = processLOption(&i, args);
                 break;
@@ -1684,9 +1653,6 @@ void processOptions(ArgumentsVector args, ProcessFileArguments doProcessFiles) {
                 break;
             case 't': case 'T':
                 matched = processTOption(&i, args);
-                break;
-            case 'u': case 'U':
-                matched = processUOption(&i, args);
                 break;
             case 'v': case 'V':
                 matched = processVOption(&i, args);
