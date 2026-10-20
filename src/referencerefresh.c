@@ -3,6 +3,7 @@
 #include <stdlib.h>
 #include <string.h>
 
+#include "commons.h"
 #include "editor.h"
 #include "filedescriptor.h"
 #include "filetable.h"
@@ -20,7 +21,6 @@
 static bool parseFileWithFullInit(char *fileName, ArgumentsVector baseArgs) {
     bool parsed = false;
     int savedCursorOffset = options.cursorOffset;
-    bool savedNoErrors = options.noErrors;
     ServerOperation savedServerOperation = options.serverOperation;
     /* A string option lives in the options' own memory, which the reset frees, so it is
      * copied out and allocated again. A stopgap until the options partition: every other
@@ -30,10 +30,10 @@ static bool parseFileWithFullInit(char *fileName, ArgumentsVector baseArgs) {
     inputFileName = fileName;
     ArgumentsVector emptyArgs = {.argc = 0, .argv = NULL};
     maxPasses = 1;
+    silenceMessages();
     for (currentPass = 1; currentPass <= maxPasses; currentPass++) {
         if (initializeFileProcessing(baseArgs, emptyArgs)) {
             options.cursorOffset = NO_CURSOR_OFFSET;
-            options.noErrors = true;
             parseToCreateReferences(inputFileName);
             parsed = true;
             closeCharacterBuffer(&currentFile.characterBuffer);
@@ -41,9 +41,9 @@ static bool parseFileWithFullInit(char *fileName, ArgumentsVector baseArgs) {
         }
         currentFile.characterBuffer.isAtEOF = false;
     }
+    resumeMessages();
 
     options.cursorOffset = savedCursorOffset;
-    options.noErrors = savedNoErrors;
     options.serverOperation = savedServerOperation;
     if (savedDumpSelection != NULL) {
         allocateStringForOption(&options.dumpSelection, savedDumpSelection);

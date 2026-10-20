@@ -32,6 +32,14 @@ void announceAnalysing(char *fileName) {
     mock(fileName);
 }
 
+void silenceMessages(void) {
+    mock();
+}
+
+void resumeMessages(void) {
+    mock();
+}
+
 void infoMessage(char message[]) {
     mock(message);
 }

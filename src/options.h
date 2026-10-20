@@ -101,7 +101,6 @@ typedef struct options {
     char *searchString;                         /* REQUEST */
     SearchKind searchKind;                      /* REQUEST */
     bool completionCaseSensitive;               /* REQUEST */
-    bool noErrors;                              /* REQUEST */
     bool exactPositionResolve;                  /* REQUEST */
     char *cursorLineColumn;                     /* REQUEST */
     int cursorOffset;                           /* REQUEST */

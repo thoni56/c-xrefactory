@@ -74,7 +74,6 @@ Options presetOptions = {
     .searchString = "",
     .searchKind = SEARCH_FULL,
     .completionCaseSensitive = false,
-    .noErrors = false,
     .exactPositionResolve = false,
     .cursorLineColumn = "0:3",
     .cursorOffset = NO_CURSOR_OFFSET,

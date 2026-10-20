@@ -5,7 +5,7 @@ include ../Makefile.server
 # navigation silently misses every symbol the header would have defined.
 #
 # The server is asked for messages (-errors on the CXREF startup line), and
-# then the request's own parse reports. `options.noErrors` keeps the other
+# then the request's own parse reports. `silenceMessages()` keeps the other
 # parses quiet (referencerefresh.c).
 
 $(TEST):

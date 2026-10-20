@@ -305,10 +305,21 @@ static void formatMessage(char *out, int errCode, char *text) {
     out += strlen(out);
 }
 
+/* A parse that only refreshes another file's references reports nothing */
+static bool silenced = false;
+
+void silenceMessages(void) {
+    silenced = true;
+}
+
+void resumeMessages(void) {
+    silenced = false;
+}
+
 void warningMessage(int errCode, char *message) {
     char buffer[MAX_PPC_RECORD_SIZE];
 
-    if (!options.noErrors) {
+    if (!silenced) {
         formatMessage(buffer, errCode, message);
         if (options.cxrefProtocol) {
             strcat(buffer, "\n");
@@ -327,7 +338,7 @@ static bool sendsParsingMessages(void) {
 void parsingMessageAt(Position position, int errCode, char *message) {
     char buffer[MAX_PPC_RECORD_SIZE];
 
-    if (!options.noErrors) {
+    if (!silenced) {
         /* Columns are counted from 1, as compilers do */
         int prefixLength = sprintf(buffer, "%s:%d:%d: ", getFileItemWithFileNumber(position.file)->name,
                                    position.line, position.col + 1);
@@ -343,7 +354,7 @@ void parsingMessageAt(Position position, int errCode, char *message) {
 
 /* The messages that follow are from the parse of this file */
 void announceAnalysing(char *fileName) {
-    if (!options.noErrors && sendsParsingMessages())
+    if (!silenced && sendsParsingMessages())
         ppcGenRecord(PPC_ANALYSING, fileName);
 }
 
@@ -375,7 +386,7 @@ static void writeErrorMessage(int errorCode, char *message) {
 }
 
 void errorMessage(int errCode, char *mess) {
-    if (!options.noErrors) {
+    if (!silenced) {
         writeErrorMessage(errCode, mess);
     }
 }

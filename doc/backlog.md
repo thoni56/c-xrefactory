@@ -42,7 +42,7 @@ graph from them on every push, linked at the end of this file, and `utils/backlo
    `RefactoringRequest` for the refactorings.
    Today a CU built during entry refresh resets the request's options: the fast path of
    `initializeFileProcessing()` copies `savedOptions`, taken at server start, over
-   `options`. `parseFileWithFullInit()` keeps only `cursorOffset`, `noErrors`,
+   `options`. `parseFileWithFullInit()` keeps only `cursorOffset`,
    `serverOperation` and, as a stopgap, `dumpSelection` (`test_dump_after_a_rebuild`).
    Every other REQUEST option is lost when a rebuild comes before the dispatch.
    The other way round, the lock that `-getproject` takes copies all of `options` into
@@ -99,16 +99,15 @@ graph from them on every push, linked at the end of this file, and `utils/backlo
     `*c-xref-diagnostics*` with its position, grouped by unit, and `next-error` visits it.
     Left: the user manual (the buffer, `M-g n` and `M-g p`); and the report of unresolved
     includes, with a suggested `-I`. The preprocessor's messages are #6, a macro's place of use is #63.
-- (#64) <a id="message-gates"></a>**One meaning per message gate** — *no repo home yet.* Three
-    gates decide where a message goes, in `src/commons.c`: `noErrors` (this parse is quiet,
-    set by the refresh parses and `-no-errors`), `cxrefProtocol` (set by `-server` only, so
-    the same as the mode) and `displayingErrorMessages()` (`-errors` or `-debug`,
+- (#64) <a id="message-gates"></a>**One meaning per message gate** — *no repo home yet.* Two
+    gates decide where a message goes, in `src/commons.c`: `cxrefProtocol` (set by `-server`
+    only, so the same as the mode) and `displayingErrorMessages()` (`-errors` or `-debug`,
     `src/semact.c`). `-errors` gates only the log for `warningMessage()` and
     `errorMessage()`, but the protocol for `parsingMessageAt()` and `announceAnalysing()`,
     whose log ignores it. `-debug` adds `<log>` records to the protocol stream. Let
-    `-errors` mean only "the client wants parse messages", leave the log to the log level,
-    and give `noErrors` a name that is not about errors. `styyErrorRecovery()` checks
-    `debug && displayingErrorMessages()`, which is `debug`.
+    `-errors` mean only "the client wants parse messages", and leave the log to the log
+    level. `styyErrorRecovery()` checks `debug && displayingErrorMessages()`, which is
+    `debug`. The message functions check `silenced` each in its own way.
 - (#6) <a id="report-errors-flag"></a>**Replace the 19 `options.mode != ServerMode` guards in `src/yylex.c`** with
    calls to `parsingMessage()`. With XrefMode gone the guards never fire, so today the
    server reports nothing they guard. Roadmap, "Report what did not parse". Restore

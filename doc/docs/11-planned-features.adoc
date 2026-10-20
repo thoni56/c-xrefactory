@@ -231,7 +231,7 @@ A server's stdout and stderr cannot be used either, since they are the synchroni
 
 In the server, a message about the code goes through `parsingMessage()`, which gives the position of the lexem the parser got last.
 The lexer and the preprocessor are ahead of the parser, so they use `parsingMessageAt()` with a position of their own, e.g. that of the `#include`.
-They send nothing unless the server was started with `-errors`, which the client does, and nothing in the parses that only refresh other files (`noErrors`).
+They send nothing unless the server was started with `-errors`, which the client does, and nothing in the parses that only refresh other files.
 So what is reported is what the request's own parse found.
 A unit that is only reparsed to refresh it keeps its old group until it is parsed for a request again.
 `warningMessage()` and `errorMessage()` stay for what an operation itself has to say, and those are modal.

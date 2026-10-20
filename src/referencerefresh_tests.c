@@ -26,6 +26,8 @@
 Describe(ReferenceRefresh);
 BeforeEach(ReferenceRefresh) {
     log_set_level(LOG_ERROR);
+    always_expect(silenceMessages);
+    always_expect(resumeMessages);
 }
 AfterEach(ReferenceRefresh) {}
 
