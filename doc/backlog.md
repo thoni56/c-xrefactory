@@ -109,10 +109,6 @@ graph from them on every push, linked at the end of this file, and `utils/backlo
     `displayingErrorMessages()` only returns `options.errors`, inline it. The checks for
     `ServerMode` are true in both modes, LSP sets it too (`src/parsing.c:140`), so they
     can go. #6 removes those in `src/yylex.c`.
-- (#65) <a id="move-into-itself-is-an-error"></a>**Moving a function into itself is refused
-    as an error** — *no repo home yet.* `src/move_function.c:381` sends "You can't move
-    something into itself." as `<information>`. It is a refusal, like "Invalid target place"
-    at line 435, so it should be `errorMessage(ERR_ST, ...)`. No test covers it.
 - (#6) <a id="report-errors-flag"></a>**Replace the 19 `options.mode != ServerMode` guards in `src/yylex.c`** with
    calls to `parsingMessage()`. With XrefMode gone the guards never fire, so today the
    server reports nothing they guard. Roadmap, "Report what did not parse". Restore

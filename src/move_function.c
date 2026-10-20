@@ -378,7 +378,7 @@ static void moveStaticFunctionAndMakeItExtern(EditorMarker *startMarker, EditorM
     EditorBuffer *sourceBuffer = startMarker->buffer;
     if (target->buffer == startMarker->buffer && target->offset > startMarker->offset &&
         target->offset < startMarker->offset + functionBlockSize) {
-        ppcGenRecord(PPC_INFORMATION, "You can't move something into itself.");
+        errorMessage(ERR_ST, "You can't move something into itself.");
         return;
     }
 
