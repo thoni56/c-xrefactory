@@ -107,16 +107,13 @@ every push, `After` dashed and `Goes with` not at all, linked at the end of this
    guards that never fire. "end of file in cpp conditional" in `cppDeleteUntilEndElse()`
    should be at the `#if` that is not closed, so the directive's position has to be
    passed down through `processIfdefDirective()`, `processIfDirective()` and
-   `execCppIf()`. The six `__has_include` ones wait for #66, two of the macro call ones
-   for #67. The third, in `expandMacroCall()`, fires when a file ends on the name of a
+   `execCppIf()`. The six `__has_include` ones wait for #66. Of the three "unterminated
+   macro call", the one in `expandMacroCall()` fires when a file ends on the name of a
    function-like macro, which is no error.
-    After: eof-in-macro-call
+    After: malformed-has-include
 - (#66) <a id="malformed-has-include"></a>**A malformed `__has_include` stops the server** —
     `tests/test_parsing_malformed_has_include_survives/.suspended`. Its six messages wait
     for it.
-- (#67) <a id="eof-in-macro-call"></a>**A file that ends inside a macro call stops the server** —
-    `tests/test_parsing_unterminated_macro_call/.suspended`. Its two messages wait for it.
-    After: malformed-has-include
 - (#68) <a id="lsp-mode"></a>**An `LspMode`, and a sink for the messages** — *no repo home yet.*
     LSP sets `ServerMode` (`src/parsing.c:140`), a stop-gap for the `assert(options.mode)`
     that are gone now. Once #8a has folded the checks of the mode, `Mode` is `ServerMode`

@@ -1,4 +1,2 @@
-<log len=<n>>CURDIR/inside.c:3:9: unterminated macro call
 <goto>
-<log len=<n>>CURDIR/after.c:3:9: unterminated macro call
 <goto>

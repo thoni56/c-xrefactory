@@ -350,10 +350,13 @@ static LexemCode refillCurrentInputIfExhausted(char **previousLexemP) {
             currentInput = macroInputStack[--macroStackIndex];
         } else if (inputType == NORMAL_STREAM) {
             setCurrentFileConsistency(&currentFile, &currentInput);
-            if (!buildLexemFromCharacters(&currentFile.characterBuffer, &currentFile.lexemBuffer, options.mode == ServerMode)) {
-                return END_OF_FILE_EXCEPTION;
-            }
+            bool built = buildLexemFromCharacters(&currentFile.characterBuffer, &currentFile.lexemBuffer,
+                                                  options.mode == ServerMode);
+            /* The lexem buffer has moved also at the end of the file, and inside a macro
+             * call the input is used again after it */
             setCurrentInputConsistency(&currentInput, &currentFile);
+            if (!built)
+                return END_OF_FILE_EXCEPTION;
         }
         if (previousLexemP != NULL)
             *previousLexemP = currentInput.read;
@@ -2422,6 +2425,7 @@ static LexemStream *getActualMacroArguments(MacroBody *macroBody, Position macro
     char *previousLexemP;
     Position beginPosition = lparPosition;
     Position endPosition = lparPosition;
+    int argumentIndex = 0;
 
     LexemCode lexem = getLexSkippingLines(&previousLexemP, NULL, NULL, &endPosition, NULL);
     ON_LEXEM_EXCEPTION_GOTO(lexem, endOfFile, endOfMacroArgument); /* CAUTION! Contains goto:s! */
@@ -2431,8 +2435,6 @@ static LexemStream *getActualMacroArguments(MacroBody *macroBody, Position macro
 
     log_debug("getActualMacroArguments for %s: %s", macroBody->name, lexemEnumNames[lexem]);
 
-    int argumentIndex = 0;
-
     if (lexem == ')') {
         handleMacroUsageParameterPositions(0, macroPosition, beginPosition, endPosition, true);
     } else {
@@ -2440,7 +2442,8 @@ static LexemStream *getActualMacroArguments(MacroBody *macroBody, Position macro
             lexem = getActualMacroArgument(previousLexemP, lexem, macroPosition, &beginPosition, &endPosition,
                                            &actualArgs[argumentIndex], macroBody->argCount, argumentIndex);
             //ON_LEXEM_EXCEPTION_GOTO(lexem, endOfFile, endOfMacroArgument); /* CAUTION! Contains goto:s! */
-            log_debug("getActualMacroArgument: %s", lexemEnumNames[lexem]);
+            /* At the end of the file lexem is an exception, which has no name */
+            log_debug("getActualMacroArgument: %s", (int)lexem < 0 ? "exception" : lexemEnumNames[lexem]);
             //printf("Macroposition: %d:%d:%d\n", macroPosition.file, macroPosition.line, macroPosition.col);
             argumentIndex++;
             if (lexem != ',' || argumentIndex >= macroBody->argCount)
@@ -2451,7 +2454,7 @@ static LexemStream *getActualMacroArguments(MacroBody *macroBody, Position macro
                                         NULL, !insideMacro());
         }
     }
-    /* fill missing arguments */
+ fillMissingArguments:
     for (;argumentIndex < macroBody->argCount; argumentIndex++) {
         actualArgs[argumentIndex] = makeLexemStream(NULL, NULL, NULL, NULL, NORMAL_STREAM);
     }
@@ -2465,8 +2468,8 @@ endOfFile:
     if (options.mode!=ServerMode) {
         warningMessage(ERR_ST,"[getActualMacroArguments] unterminated macro call");
     }
-    LEAVE();
-    return NULL;                /* WARNING this will probably crash the caller... */
+    /* The caller expands every argument, so the missing ones are empty */
+    goto fillMissingArguments;
 }
 
 /* **************************************************************** */
