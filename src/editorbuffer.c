@@ -1,7 +1,7 @@
 #include "editorbuffer.h"
 
-#include <string.h>
 #include <stdlib.h>
+#include <string.h>
 
 #include "commons.h"
 #include "editor.h"

@@ -1,13 +1,13 @@
 #include "yylex.h"
 
 #include <ctype.h>
-#include <string.h>
 #include <stdlib.h>
+#include <string.h>
 
 #include "c_parser.h"
-#include "cppexp_parser.h"
 #include "commons.h"
 #include "constants.h"
+#include "cppexp_parser.h"
 #include "cxref.h"
 #include "extract.h"
 #include "filedescriptor.h"
@@ -16,19 +16,18 @@
 #include "globals.h"
 #include "hash.h"
 #include "head.h"
-#include "lexemstream.h"
 #include "lexem.h"
 #include "lexembuffer.h"
+#include "lexemstream.h"
 #include "lexer.h"
 #include "log.h"
 #include "macroargumenttable.h"
 #include "memory.h"
 #include "misc.h"
 #include "options.h"
-#include "parsing.h"
 #include "parsers.h"
+#include "parsing.h"
 #include "position.h"
-#include "referenceableitemtable.h"
 #include "semact.h"
 #include "stackmemory.h"
 #include "storage.h"

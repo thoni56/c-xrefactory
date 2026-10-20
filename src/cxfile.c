@@ -1,8 +1,8 @@
 #include "cxfile.h"
 
 #include <ctype.h>
-#include <string.h>
 #include <stdlib.h>
+#include <string.h>
 
 #include "browsingmenu.h"
 #include "characterreader.h"
@@ -10,7 +10,6 @@
 #include "editor.h"
 #include "fileio.h"
 #include "filetable.h"
-#include "globals.h"
 #include "head.h"
 #include "list.h"
 #include "log.h"

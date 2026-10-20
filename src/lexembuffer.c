@@ -1,14 +1,12 @@
 #include "lexembuffer.h"
 
-#include <string.h>
 #include <ctype.h>
+#include <string.h>
 
 #include "characterreader.h"
-#include "head.h"
 #include "commons.h"
-#include "globals.h"
+#include "head.h"
 #include "lexem.h"
-#include "options.h"
 #include "parsing.h"
 
 //

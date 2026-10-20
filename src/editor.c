@@ -1,7 +1,7 @@
 #include "editor.h"
 
-#include <stdlib.h>
 #include <memory.h>
+#include <stdlib.h>
 
 #include "commons.h"
 #include "editorbuffer.h"
@@ -13,7 +13,6 @@
 #include "log.h"
 #include "misc.h"
 #include "proto.h"
-#include "referenceableitemtable.h"
 #include "referencerefresh.h"
 #include "timestamp.h"
 #include "undo.h"
