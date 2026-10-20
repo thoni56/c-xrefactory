@@ -313,6 +313,13 @@ every push, `After` dashed and `Goes with` not at all, linked at the end of this
     and every position after it on the line is two characters early. Read a sequence that
     would be an overlong or invalid code point as single bytes. A file that is not UTF-8
     is not reported, it parses.
+- (#70) <a id="completion-select-out-of-range"></a>**Selecting a completion says "selection out of range"** — *no repo home yet.*
+    In `yylex.c`, half-way through an Add Parameter, `pre` and F8 listed 8 completions
+    over 16 lines. Enter on the last one, `previousLexemP`, sent `-olcomplselect16`, which
+    is the right line. The answer was `selection out of range.`
+    `getMatchOnNthLine()` (`src/match.c`) counts wrapped lines and returns NULL only for an
+    empty list, so the session entry `selectCompletion()` found probably had no matches.
+    The completion request also got a syntax error at the cursor (858:45).
 
 ## 4. Performance, in strict dependency order
 
