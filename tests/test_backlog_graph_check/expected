@@ -4,3 +4,5 @@ unknown.md: second-item goes with also-gone, which is not in the backlog
 unknown names: exit=1
 duplicate.md: second-item and third-item are both #2
 same number: exit=1
+wrapped.md: #2 is not read as an item, its title must be on one line
+title on two lines: exit=1

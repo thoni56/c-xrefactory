@@ -13,6 +13,7 @@ import re
 import sys
 
 SECTION = re.compile(r'^## (\d+)\. (.+)$')
+NUMBERED = re.compile(r'^- \(#(\d+)\) ')
 ITEM = re.compile(r'^- \(#(\d+)\) <a id="([^"]+)"></a>\*\*(.+?)\*\*')
 SUBITEM = re.compile(r'^\s+([a-z])\. <a id="([^"]+)"></a>\*\*(.+?)\*\*')
 WAITS = re.compile(r'^\s*Waits for:\s*(.+)$')
@@ -235,6 +236,10 @@ def problems_in(path, text):
     sections, items, foundation = read_backlog(text.split('\n'))
     known = set(items) | {done['slug'] for done in foundation}
     found = []
+    for line in text.split('\n'):
+        m = NUMBERED.match(line)
+        if m and not ITEM.match(line):
+            found.append(f"{path}: #{m.group(1)} is not read as an item, its title must be on one line")
     for item in items.values():
         for waited in item['waits']:
             if waited not in known:

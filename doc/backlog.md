@@ -113,9 +113,8 @@ graph from them on every push, linked at the end of this file, and `utils/backlo
 - (#66) <a id="malformed-has-include"></a>**A malformed `__has_include` stops the server** —
     `tests/test_parsing_malformed_has_include_survives/.suspended`. Its six messages wait
     for it.
-- (#67) <a id="eof-in-macro-call"></a>**A file that ends inside a macro call stops the
-    server** — `tests/test_parsing_unterminated_macro_call/.suspended`. Its two messages
-    wait for it.
+- (#67) <a id="eof-in-macro-call"></a>**A file that ends inside a macro call stops the server** —
+    `tests/test_parsing_unterminated_macro_call/.suspended`. Its two messages wait for it.
 - (#68) <a id="lsp-mode"></a>**An `LspMode`, and a sink for the messages** — *no repo home yet.*
     LSP sets `ServerMode` (`src/parsing.c:140`), a stop-gap for the `assert(options.mode)`
     that are gone now. First remove the checks for `ServerMode` that are true in both
@@ -302,8 +301,8 @@ graph from them on every push, linked at the end of this file, and `utils/backlo
     as the `"..."` branch does, so they reach the parser as syntax errors
     (`processIncludeDirective()`, `src/yylex.c`). `test_parsing_include_using_macro` pins
     both; its two syntax errors go when this is fixed.
-- (#63) <a id="message-at-macro-use"></a>**A parse message in a macro expansion also says where the
-    macro is used** — a token from an expansion has its position in the macro body, so
+- (#63) <a id="message-at-macro-use"></a>**A parse message in a macro expansion also says where the macro is used** —
+    a token from an expansion has its position in the macro body, so
     `next-error` goes to the `#define`, often in a header. gcc reports the place of use and
     adds a note for the definition. Needs the outermost macro call of the expansion
     (`expandMacroCall()`, `src/yylex.c`). `test_parsing_include_using_macro` shows it.
