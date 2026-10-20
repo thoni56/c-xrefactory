@@ -2404,9 +2404,7 @@ static LexemCode getActualMacroArgument(char *previousLexemP, LexemCode lexem, P
 
 endOfFile:;
 endOfMacroArgument:;
-    if (options.mode != ServerMode) {
-        warningMessage(ERR_ST, "[getActualMacroArgument] unterminated macro call");
-    }
+    parsingMessageAt(macroPosition, ERR_ST, "unterminated macro call");
 
 end:
     ppmReallocc(bufferDesc.buffer, bufferP - bufferDesc.buffer, sizeof(char), bufferDesc.size + MAX_LEXEM_SIZE);
@@ -2465,9 +2463,7 @@ static LexemStream *getActualMacroArguments(MacroBody *macroBody, Position macro
 endOfMacroArgument:
     assert(0);
 endOfFile:
-    if (options.mode!=ServerMode) {
-        warningMessage(ERR_ST,"[getActualMacroArguments] unterminated macro call");
-    }
+    parsingMessageAt(macroPosition, ERR_ST, "unterminated macro call");
     /* The caller expands every argument, so the missing ones are empty */
     goto fillMissingArguments;
 }

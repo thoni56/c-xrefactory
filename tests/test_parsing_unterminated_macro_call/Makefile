@@ -1,12 +1,13 @@
 include ../Makefile.server
 
 # Verifies that a file that ends inside the arguments of a macro call, or
-# right after its '(', is still parsed and answered.
+# right after its '(', is still parsed and answered, and reported where the
+# macro is used.
 
 $(TEST):
 	@rm -rf output output.tmp server-buffer run.stdout run.stderr
 	-@$(SERVER_DRIVER) commands.input > run.stdout 2> run.stderr
-	@(grep -o "<error [^>]*>.*\|<goto>" run.stdout; true) \
+	@(grep -o "<log [^>]*>.*macro call.*\|<error [^>]*>.*\|<goto>" run.stdout; true) \
 	    | $(NORMALIZE) > output
 	$(VERIFY)
 
