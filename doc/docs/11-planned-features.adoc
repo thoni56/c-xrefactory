@@ -239,7 +239,7 @@ A unit that is only reparsed to refresh it keeps its old group until it is parse
 ==== What is left
 
 * The user manual: the buffer, and `M-g n` and `M-g p`.
-* The preprocessor's own messages, e.g. "unmatched #elif". 19 of them in `yylex.c` are still behind guards that never fire, so they send nothing.
+* Some of the preprocessor's own messages, e.g. "end of file in cpp conditional". They are still behind guards in `yylex.c` that never fire, so they send nothing.
 * A message about tokens from a macro expansion gives their place in the macro body. It should also say where the macro is used, as gcc does.
 * The report below. The same missing header is reported by every unit that includes it, so a generated `config.h` included by two hundred files is two hundred messages and one fact.
 

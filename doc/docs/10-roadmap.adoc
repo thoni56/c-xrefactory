@@ -67,9 +67,9 @@ convergence is **complete**; the mechanism lives in <<06-principles.adoc#,Princi
  <<06-principles.adoc#,Principles>> (Editor Buffers Are the Content Source).
 
 |Report what did not parse
-|19 preprocessor messages in `yylex.c`, e.g. "unmatched #elif", are still behind
- `options.mode != ServerMode` guards that never fire, so they send nothing. Replace them with
- calls to `parsingMessage()`.
+|Some preprocessor messages in `yylex.c`, e.g. "end of file in cpp conditional", are
+ still behind `options.mode != ServerMode` guards that never fire, so they send nothing.
+ Replace them with calls to `parsingMessageAt()`.
 
 |Batch prime
 |An explicit request — `-parse-all` — that parses every compilation unit the scan

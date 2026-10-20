@@ -99,12 +99,14 @@ graph from them on every push, linked at the end of this file, and `utils/backlo
     `*c-xref-diagnostics*` with its position, grouped by unit, and `next-error` visits it.
     Left: the user manual (the buffer, `M-g n` and `M-g p`); and the report of unresolved
     includes, with a suggested `-I`. The preprocessor's messages are #6, a macro's place of use is #63.
-- (#6) <a id="report-errors-flag"></a>**Replace the 19 `options.mode != ServerMode` guards in `src/yylex.c`** with
-   calls to `parsingMessage()`. With XrefMode gone the guards never fire, so today the
-   server reports nothing they guard. Roadmap, "Report what did not parse". Restore
-   `tests/test_multipass`'s error-position assertion: it was dropped when that test moved
-   to the server, which gave no position until `parsingMessage()` did.
-   Decide here too whether a file that is not valid UTF-8 is reported, once per file.
+- (#6) <a id="report-errors-flag"></a>**Report the preprocessor's messages that are left in `src/yylex.c`** —
+   roadmap, "Report what did not parse". They are behind `options.mode != ServerMode`
+   guards that never fire. "end of file in cpp conditional" in `cppDeleteUntilEndElse()`
+   should be at the `#if` that is not closed, so the directive's position has to be
+   passed down through `processIfdefDirective()`, `processIfDirective()` and
+   `execCppIf()`. The six `__has_include` ones wait for #66, two of the macro call ones
+   for #67. The third, in `expandMacroCall()`, fires when a file ends on the name of a
+   function-like macro, which is no error. Decide here too whether a file that is not valid UTF-8 is reported, once per file.
    Since `convertUtf8()` (`src/encoding.c`) takes a lead byte without its continuation
    bytes as one character, a Latin-1 file reads right, but silently.
    The other `ServerMode` checks, in `src/semact.c`, `src/options.c`, `src/commons.c` and
