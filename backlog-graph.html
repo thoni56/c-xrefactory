@@ -26,8 +26,9 @@ flowchart BT
   openproject_tripwire["§1 · 4d · the assert that nothing before the future `-openproject` reads a project-scoped option"]
   project_extent["§1 · 4e · what a project consists of"]
   indexing_log_buffer["§2 · 23 · What is left of the diagnostics buffer"]
-  message_gates["§2 · 64 · One meaning per message gate"]
-  report_errors_flag["§2 · 6 · Replace the 19 `options.mode != ServerMode` guards in `src/yylex.c`"]
+  report_errors_flag["§2 · 6 · Report the preprocessor's messages that are left in `src/yylex.c`"]
+  malformed_has_include["§2 · 66 · A malformed `__has_include` stops the server"]
+  lsp_mode["§2 · 68 · An `LspMode`, and a sink for the messages"]
   startup_command_line["§2 · 7 · Decide, and enforce, what the startup command line may carry"]
   mode_checks["§2 · 8a · fold the last `options.mode` checks"]
   remove_bridge["§2 · 9 · Remove the `parseBufferUsingServer` bridge"]
@@ -96,7 +97,6 @@ flowchart BT
   adr_0030 --&gt; setup_into_openproject
   setup_into_openproject --&gt; openproject_tripwire
   adr_0031 --&gt; project_extent
-  message_gates --&gt; report_errors_flag
   request_target --&gt; behind_the_back
   startup_command_line --&gt; header_static_link_names
   header_filtered_siblings --&gt; scan_angle_includes
@@ -125,8 +125,9 @@ flowchart BT
   class openproject_tripwire blocked
   class project_extent ready
   class indexing_log_buffer ready
-  class message_gates ready
-  class report_errors_flag blocked
+  class report_errors_flag ready
+  class malformed_has_include ready
+  class lsp_mode ready
   class startup_command_line ready
   class mode_checks ready
   class remove_bridge ready

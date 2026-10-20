@@ -3536,9 +3536,9 @@ This was the last thing only the batch modes could do, i.e. <code>-create -error
 </tr>
 <tr>
 <td class="tableblock halign-left valign-top"><p class="tableblock">Report what did not parse</p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">19 preprocessor messages in <code>yylex.c</code>, e.g. "unmatched #elif", are still behind
- <code>options.mode != ServerMode</code> guards that never fire, so they send nothing. Replace them with
- calls to <code>parsingMessage()</code>.</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Some preprocessor messages in <code>yylex.c</code>, e.g. "end of file in cpp conditional", are
+ still behind <code>options.mode != ServerMode</code> guards that never fire, so they send nothing.
+ Replace them with calls to <code>parsingMessageAt()</code>.</p></td>
 </tr>
 <tr>
 <td class="tableblock halign-left valign-top"><p class="tableblock">Batch prime</p></td>
@@ -4355,7 +4355,7 @@ A unit that is only reparsed to refresh it keeps its old group until it is parse
 <p>The user manual: the buffer, and <code>M-g n</code> and <code>M-g p</code>.</p>
 </li>
 <li>
-<p>The preprocessor&#8217;s own messages, e.g. "unmatched #elif". 19 of them in <code>yylex.c</code> are still behind guards that never fire, so they send nothing.</p>
+<p>Some of the preprocessor&#8217;s own messages, e.g. "end of file in cpp conditional". They are still behind guards in <code>yylex.c</code> that never fire, so they send nothing.</p>
 </li>
 <li>
 <p>A message about tokens from a macro expansion gives their place in the macro body. It should also say where the macro is used, as gcc does.</p>
@@ -12436,7 +12436,7 @@ operation reads the in-memory table.</p>
 </div>
 <div id="footer">
 <div id="footer-text">
-Last updated 2026-10-20 10:16:47 UTC
+Last updated 2026-10-20 11:44:27 UTC
 </div>
 </div>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.18.3/highlight.min.js"></script>
