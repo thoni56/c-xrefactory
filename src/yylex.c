@@ -727,6 +727,10 @@ static void processInclude2(Position includePosition, char includeType, char *in
     }
 }
 
+static void ungetLexem(char *lexemStart) {
+    currentInput.read = lexemStart;
+}
+
 /* Non-static only for unittests */
 protected void processIncludeDirective(Position includePosition, bool is_include_next) {
     char *beginningOfLexem, *previousLexemP;
@@ -741,7 +745,7 @@ protected void processIncludeDirective(Position includePosition, bool is_include
         processInclude2(includePosition, *beginningOfLexem, beginningOfLexem+1, is_include_next);
     } else {
         // Not "abc" nor <abc>... Possibly a macro id that needs to be expanded?
-        currentInput.read = previousLexemP;		/* unget lexem */
+        ungetLexem(previousLexemP);		/* unget lexem */
         lexem = yylex();
         // TODO Do yylex() expand macros? If so we can get almost anything here...
         if (lexem == STRING_LITERAL) {
@@ -1297,10 +1301,6 @@ endOfFile:
     return;
 }
 
-static void ungetLexem(char *lexemStart) {
-    currentInput.read = lexemStart;
-}
-
 /* ********************************* #IF ************************** */
 
 /* Reads the name in <...> up to the '>' into nameBuffer, false if the line or the
@@ -1700,7 +1700,7 @@ static void prependMacroInput(LexemStream *argumentBuffer) {
     assert(macroStackIndex < MACRO_INPUT_STACK_SIZE-1);
     macroInputStack[macroStackIndex++] = currentInput;
     currentInput = *argumentBuffer;
-    currentInput.read = currentInput.begin;
+    ungetLexem(currentInput.begin);
     currentInput.streamType = MACRO_STREAM;
 }
 
@@ -2443,7 +2443,7 @@ static bool expandMacroCall(Symbol *macroSymbol, Position macroPosition) {
         ON_LEXEM_EXCEPTION_GOTO(lexem, endOfFile, endOfMacroArgument); /* CAUTION! Contains goto:s! */
 
         if (lexem != '(') {
-            currentInput.read = previousLexemP;		/* unget lexem */
+            ungetLexem(previousLexemP);
             ppmFreeUntil(ppmMarker);
             return false;
         }
@@ -2468,13 +2468,13 @@ static bool expandMacroCall(Symbol *macroSymbol, Position macroPosition) {
 endOfMacroArgument:
     /* unterminated macro call in argument */
     /* TODO unread the argument that was read */
-    currentInput.read = previousLexemP;
+    ungetLexem(previousLexemP);
     ppmFreeUntil(ppmMarker);
     return false;
 
  endOfFile:
     /* The name of a function-like macro last in the file, no call */
-    currentInput.read = previousLexemP;
+    ungetLexem(previousLexemP);
     ppmFreeUntil(ppmMarker);
     return false;
 }
@@ -2580,7 +2580,7 @@ LexemCode yylex(void) {
     if (lexem < 256) {          /* First non-single character symbol is 257 */
         if (lexem == '\n') {
             if (isProcessingPreprocessorIf) {
-                currentInput.read = previousLexem;
+                ungetLexem(previousLexem);
             } else {
                 skipExtraLexemInformationWithCountLines(lexem, &currentInput.read, !insideMacro());
                 for(;;) {
