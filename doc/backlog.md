@@ -109,6 +109,9 @@ graph from them on every push, linked at the end of this file, and `utils/backlo
    bytes as one character, a Latin-1 file reads right, but silently.
    The other `ServerMode` checks, in `src/semact.c`, `src/options.c`, `src/commons.c` and
    `src/startup.c`, are true in both modes too, LSP sets it (`src/parsing.c:140`).
+- (#66) <a id="malformed-has-include"></a>**A malformed `__has_include` stops the server** —
+    `tests/test_parsing_malformed_has_include_survives/.suspended`. Its six messages wait
+    for it.
 - (#7) <a id="startup-command-line"></a>**Decide, and enforce, what the startup command line may carry** — *no repo home yet.*
    Bigger than `c-xref file.c`, and it needs code, not just a decision. Once XrefMode is
    gone the server takes no file at startup: every request names its own, and the same
