@@ -1212,17 +1212,6 @@ static bool processMOption(int *argi, ArgumentsVector args) {
     return true;
 }
 
-static bool processNOption(int *argi, ArgumentsVector args) {
-    int i = * argi;
-    if (0) {}
-    else if (strcmp(args.argv[i], "-no-errors")==0)
-        options.noErrors = true;
-    else
-        return false;
-    *argi = i;
-    return true;
-}
-
 static bool processOOption(int *argi, ArgumentsVector args) {
     int i = * argi;
     if (0) {}
@@ -1683,9 +1672,6 @@ void processOptions(ArgumentsVector args, ProcessFileArguments doProcessFiles) {
                 break;
             case 'm': case 'M':
                 matched = processMOption(&i, args);
-                break;
-            case 'n': case 'N':
-                matched = processNOption(&i, args);
                 break;
             case 'o': case 'O':
                 matched = processOOption(&i, args);
