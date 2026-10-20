@@ -1343,7 +1343,8 @@ static LexemCode handleHasIncludeOperator(char *operatorName,
     }
     getExtraLexemInformationFor(lexem, &currentInput.read, NULL, NULL, &position, NULL, NULL, true);
 
-    lexem = getNonBlankLexemAndData(NULL, &position, NULL, NULL, NULL);
+    char *lexemStart;
+    lexem = getNonBlankLexemAndData(&lexemStart, &position, NULL, NULL, NULL);
     ON_LEXEM_EXCEPTION_GOTO(lexem, error, error); /* CAUTION! Contains goto:s! */
 
     char *includeName;
@@ -1384,6 +1385,7 @@ static LexemCode handleHasIncludeOperator(char *operatorName,
             sprintf(message, "expected string literal or < in %s", operatorName);
             warningMessage(ERR_ST, message);
         }
+        currentInput.read = lexemStart;     /* unget lexem */
         return 0;
     }
 
@@ -2514,6 +2516,7 @@ static LexemCode lookupIdentifier(char *id, Position position) {
     Symbol *symbol = NULL;
     unsigned hash = hashFun(id) % symbolTable->size;
 
+    lastLexemPosition = position;
     log_debug("looking for C id '%s' in symbol table %p", id, symbolTable);
     for (Symbol *s=symbolTable->tab[hash]; s!=NULL; s=s->next) {
         if (strcmp(s->name, id) == 0) {

@@ -109,9 +109,10 @@ every push, `After` dashed and `Goes with` not at all, linked at the end of this
    passed down through `processIfdefDirective()`, `processIfDirective()` and
    `execCppIf()`. The six `__has_include` ones wait for #66.
     After: malformed-has-include
-- (#66) <a id="malformed-has-include"></a>**A malformed `__has_include` stops the server** —
-    `tests/test_parsing_malformed_has_include_survives/.suspended`. Its six messages wait
-    for it.
+- (#66) <a id="malformed-has-include"></a>**A malformed `__has_include` leaves its lexem unread** — *no repo home yet.*
+    When the `(` is missing or the `<...>` is unterminated, `handleHasIncludeOperator()`
+    (`src/yylex.c`) returns without giving back the lexem, so the rest of the line is read
+    as garbage. Their messages wait for it.
 - (#68) <a id="lsp-mode"></a>**An `LspMode`, and a sink for the messages** — *no repo home yet.*
     LSP sets `ServerMode` (`src/parsing.c:140`), a stop-gap for the `assert(options.mode)`
     that are gone now. Once #8a has folded the checks of the mode, `Mode` is `ServerMode`
