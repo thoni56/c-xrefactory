@@ -553,6 +553,42 @@ There the count also comes back as the return value, so packing a copy at the ca
 Passing a pointer to the packed struct, and reading the count back after the call, would work, but is not pretty.
 How the UI marks the parameters, and what to do with such a count, is not decided.
 
+=== Extract Function with Jumps out of the Region
+
+**Status**: Not implemented.
+
+==== Background
+
+Extract Function refuses a region that a `return`, `break`, `continue` or `goto` leaves ("There are jumps in or out of region", `makeExtraction()` in `extract.c`).
+Only Extract Macro lets them through, since a macro is text and the jump lands where it was.
+The case was the loop in `__has_include(<...>)` (`yylex.c`), which ends with a `break` at the `>` and a `return 0` at the end of the line.
+
+The program graph already has what it takes to find them.
+A `return` is a reference to the internal label `-1`, `break` and `continue` to the label of the innermost loop, and `goto` to the user's label (`jump_statement` in `c_parser.y`).
+Each such node knows its target, which side of the region both are on, and its own position.
+What the graph does not have is the value of a `return`, since a constant is no reference, and where the statement ends.
+Both can be read from the text, from the position to the `;`.
+
+==== Proposed Behaviour
+
+The new function returns how it ended, and the call site acts on it:
+
+[source,c]
+----
+int exit = newFunction_(...);
+if (exit == EXIT_BREAK)
+    break;
+else if (exit == EXIT_RETURN)
+    return 0;
+----
+
+It has to be `if` and not `switch`, since a `break` in a `switch` leaves the `switch` and not the loop.
+
+The first case to do is probably a region that is only left by `return <constant>;`, or `return;` in a `void` function, and has no result of its own.
+The new function then returns a `bool`, and the call is `if (newFunction_(...)) return 0;`.
+A `break` out of a loop around the region comes next.
+A region that already returns a value, or a `return` of a local's value, needs an out parameter as well, and could be refused to start with.
+
 === Inline Output Parameter
 
 **Status**: Not implemented.
@@ -565,6 +601,9 @@ That is safe, but the copies are usually the first thing you want gone.
 ==== Proposed Behaviour
 
 With the cursor on such a parameter, *Inline Output Parameter* replaces every read of the local with `*_cuCount`, every write with an assignment through the pointer, and removes both copies.
+The parameter then takes the local's name, `cuCount`, which is free now.
+A read that is an operand gets parentheses, so `count++` becomes `(*count)++` and not `*count++`.
+If the local was declared together with others, e.g. `char *name, type;`, only its declarator goes.
 It should refuse if the address of the local is taken, or if not every return writes it back.
 
 The steps for one parameter have to be applied together.
