@@ -1195,6 +1195,13 @@ static bool anyOpenIf(void) {
     return currentFile.ifStack != NULL;
 }
 
+static void reportUnterminatedIfs(void) {
+    while (anyOpenIf()) {
+        parsingMessageAt(innermostOpenIf(), ERR_ST, "unterminated #if");
+        popOpenIf();
+    }
+}
+
 static void genCppIfElseReference(int level, Position position, int usage) {
     char                ttt[TMP_STRING_SIZE];
     Position			dp;
@@ -1255,9 +1262,6 @@ static DeleteUntil cppDeleteUntilEndElse(bool untilEnd) {
 endOfMacroArgument:
     assert(0);
 endOfFile:;
-    if (options.mode!=ServerMode) {
-        warningMessage(ERR_ST,"end of file in cpp conditional");
-    }
     return UNTIL_ENDIF;
 }
 
@@ -2720,6 +2724,7 @@ LexemCode yylex(void) {
     assert(0);
 
  endOfFile:
+    reportUnterminatedIfs();
     if (includeStack.pointer != 0) {
         popInclude();
         goto nextYylex;

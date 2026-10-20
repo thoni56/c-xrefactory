@@ -100,20 +100,13 @@ every push, `After` dashed and `Goes with` not at all, linked at the end of this
     `doc/docs/11-planned-features.adoc` (Diagnostics Buffer). What did not parse reaches
     `*c-xref-diagnostics*` with its position, grouped by unit, and `next-error` visits it.
     Left: the user manual (the buffer, `M-g n` and `M-g p`); and the report of unresolved
-    includes, with a suggested `-I`. The preprocessor's messages are #6, a macro's place of use is #63.
+    includes, with a suggested `-I`. A macro's place of use is #63.
     After: message-at-macro-use
-- (#6) <a id="report-errors-flag"></a>**Report the preprocessor's messages that are left in `src/yylex.c`** —
-   roadmap, "Report what did not parse". They are behind `options.mode != ServerMode`
-   guards that never fire. "end of file in cpp conditional" in `cppDeleteUntilEndElse()`
-   should be at the `#if` that is not closed, so the directive's position has to be
-   passed down through `processIfdefDirective()`, `processIfDirective()` and
-   `execCppIf()`.
 - (#68) <a id="lsp-mode"></a>**An `LspMode`, and a sink for the messages** — *no repo home yet.*
     LSP sets `ServerMode` (`src/parsing.c:140`), a stop-gap for the `assert(options.mode)`
     that are gone now. Once #8a has folded the checks of the mode, `Mode` is `ServerMode`
-    or `LspMode`, set once from argv, and it replaces `cxrefProtocol`. The guarded messages
-    in `src/yylex.c` (#6) only need a look first, under LSP they would go to the log. A check of the mode deep in the code is
-    where packing is mixed into collecting. `src/commons.c` then sends messages to a sink
+    or `LspMode`, set once from argv, and it replaces `cxrefProtocol`. A
+    check of the mode deep in the code is where packing is mixed into collecting. `src/commons.c` then sends messages to a sink
     chosen at startup: `<log>` and `<analysing>` for `-server`,
     `textDocument/publishDiagnostics` for `-lsp`, which replaces a document's diagnostics
     as a reparse replaces a unit's group. The first case of what #25 needs.
@@ -173,9 +166,8 @@ every push, `After` dashed and `Goes with` not at all, linked at the end of this
       input file), `src/commons.c:379,390` (`fileAbortEnabled` and the `longjmp`, probably
       dead), `src/semact.c:923,935` (parameter positions), `src/options.c` (quotes in an
       options file), the completion check in `src/yylex.c` and `src/yylex.c:345` with
-      `src/lexer.c:801,810` (`inServerMode`). The guards on messages are item 6's. Then
-      `Mode` becomes `ServerMode` or `LspMode` (#68).
-      Goes with: report-errors-flag
+      `src/lexer.c:801,810` (`inServerMode`). Then `Mode`
+      becomes `ServerMode` or `LspMode` (#68).
 - (#9) <a id="remove-bridge"></a>**Remove the `parseBufferUsingServer` bridge** — §17.3; 9 refactoring call sites
    re-entering `callServer`. Independent of the rest of this section, but it is the last
    divergent parse path.
@@ -302,7 +294,6 @@ every push, `After` dashed and `Goes with` not at all, linked at the end of this
     `next-error` goes to the `#define`, often in a header. gcc reports the place of use and
     adds a note for the definition. Needs the outermost macro call of the expansion
     (`expandMacroCall()`, `src/yylex.c`). `test_parsing_include_using_macro` shows it.
-    After: report-errors-flag
 - (#69) <a id="latin-1-lookalikes"></a>**Latin-1 that looks like UTF-8 is read as one character** — *no repo home yet.*
     `convertUtf8()` (`src/encoding.c`) takes a lead byte with its continuation bytes as
     one character, so `å°` and one more byte in 0x80–0xBF, in Latin-1, become one space

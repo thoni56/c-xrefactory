@@ -66,11 +66,6 @@ convergence is **complete**; the mechanism lives in <<06-principles.adoc#,Princi
  recheck for non-preloaded buffers would close it — see
  <<06-principles.adoc#,Principles>> (Editor Buffers Are the Content Source).
 
-|Report what did not parse
-|Some preprocessor messages in `yylex.c`, e.g. "end of file in cpp conditional", are
- still behind `options.mode != ServerMode` guards that never fire, so they send nothing.
- Replace them with calls to `parsingMessageAt()`.
-
 |Batch prime
 |An explicit request — `-parse-all` — that parses every compilation unit the scan
  found and has not parsed yet. Whatever wants a whole-project parse then asks for it:

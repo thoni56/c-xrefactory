@@ -1,0 +1,2 @@
+<log len=<n>>CURDIR/skipped.c:2:1: unterminated #if
+<log len=<n>>CURDIR/taken.c:2:1: unterminated #if
