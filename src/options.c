@@ -42,8 +42,6 @@ Options presetOptions = {
     .commandlog = NULL,
     .outputFileName = NULL,
     .errors = false,
-    .debug = false,
-    .trace = false,
     .lexemTrace = false,
     .fileTrace = false,
     .statistics = false,
@@ -1050,14 +1048,14 @@ static bool processDOption(int *argi, ArgumentsVector args) {
     int i = *argi;
 
     if (0) {}                   /* For copy/paste/re-order convenience, all tests can start with "else if.." */
-    else if (strncmp(args.argv[i], "-delay=", 7)==0)
-        /* Startup delay already handled in main() */ ;
-    else if (strncmp(args.argv[i], "-dump=", 6)==0) {
+    else if (strncmp(args.argv[i], "-delay=", 7)==0) {
+        /* Startup delay already handled in main() */
+    } else if (strcmp(args.argv[i], "-debug")==0) {
+        /* -debug already handled in initLogging() */
+    } else if (strncmp(args.argv[i], "-dump=", 6)==0) {
         options.dumpSelection = allocateStringForOption(&options.dumpSelection, &args.argv[i][6]);
         options.serverOperation = OP_DUMP;
     }
-    else if (strcmp(args.argv[i], "-debug")==0)
-        options.debug = true;
     else if (strncmp(args.argv[i], "-D",2)==0) {
         // Save this definition so that it can be turned into a pre-processor definition
         // at file processing start, which we will implement later
@@ -1540,7 +1538,7 @@ static bool processTOption(int *argi, ArgumentsVector args) {
     int i = * argi;
     if (0) {}
     else if (strcmp(args.argv[i], "-trace")==0) {
-        options.trace = true;
+        /* -trace already handled in initLogging() */
     }
     else return false;
     *argi = i;

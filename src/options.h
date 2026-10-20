@@ -73,8 +73,6 @@ typedef struct options {
     char *commandlog;                           /* SESSION */
     char *outputFileName;                       /* SESSION */
     bool errors;                                /* SESSION */
-    bool debug;                                 /* SESSION */
-    bool trace;                                 /* SESSION */
     bool lexemTrace;                            /* SESSION */
     bool fileTrace;                             /* SESSION */
     bool statistics;                            /* SESSION */
