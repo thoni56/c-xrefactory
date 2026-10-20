@@ -106,17 +106,29 @@ graph from them on every push, linked at the end of this file, and `utils/backlo
    passed down through `processIfdefDirective()`, `processIfDirective()` and
    `execCppIf()`. The six `__has_include` ones wait for #66, two of the macro call ones
    for #67. The third, in `expandMacroCall()`, fires when a file ends on the name of a
-   function-like macro, which is no error. Decide here too whether a file that is not valid UTF-8 is reported, once per file.
-   Since `convertUtf8()` (`src/encoding.c`) takes a lead byte without its continuation
-   bytes as one character, a Latin-1 file reads right, but silently.
-   The other `ServerMode` checks, in `src/semact.c`, `src/options.c`, `src/commons.c` and
-   `src/startup.c`, are true in both modes too, LSP sets it (`src/parsing.c:140`).
+   function-like macro, which is no error. Decide here too whether a file that is not
+   valid UTF-8 is reported, once per file. Since `convertUtf8()` (`src/encoding.c`) takes
+   a lead byte without its continuation bytes as one character, a Latin-1 file reads
+   right, but silently.
 - (#66) <a id="malformed-has-include"></a>**A malformed `__has_include` stops the server** —
     `tests/test_parsing_malformed_has_include_survives/.suspended`. Its six messages wait
     for it.
 - (#67) <a id="eof-in-macro-call"></a>**A file that ends inside a macro call stops the
     server** — `tests/test_parsing_unterminated_macro_call/.suspended`. Its two messages
     wait for it.
+- (#68) <a id="lsp-mode"></a>**An `LspMode`, and a sink for the messages** — *no repo home yet.*
+    LSP sets `ServerMode` (`src/parsing.c:140`), a stop-gap for the `assert(options.mode)`
+    that are gone now. First remove the checks for `ServerMode` that are true in both
+    modes: `src/semact.c`, `src/options.c`, `src/commons.c`, `src/startup.c`, and in
+    `src/yylex.c` the two that are not messages (`buildLexemFromCharacters()`, the
+    completion check). The guarded messages in `src/yylex.c` (#6) only need a look first,
+    under LSP they would go to the log. Then `Mode` is `ServerMode` or `LspMode`, set once
+    from argv, and it replaces `cxrefProtocol`. A check of the mode deep in the code is
+    where packing is mixed into collecting. `src/commons.c` then sends messages to a sink
+    chosen at startup: `<log>` and `<analysing>` for `-server`,
+    `textDocument/publishDiagnostics` for `-lsp`, which replaces a document's diagnostics
+    as a reparse replaces a unit's group. The first case of what #25 needs.
+    Goes with: startup-command-line, partition-options, lsp-position-encoding
 - (#7) <a id="startup-command-line"></a>**Decide, and enforce, what the startup command line may carry** — *no repo home yet.*
    Bigger than `c-xref file.c`, and it needs code, not just a decision. Once XrefMode is
    gone the server takes no file at startup: every request names its own, and the same
