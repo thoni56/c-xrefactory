@@ -1266,15 +1266,9 @@ endOfFile:;
 }
 
 static void execCppIf(bool deleteSource) {
-    DeleteUntil onElse;
-    if (!deleteSource)
-        currentFile.ifDepth ++;
-    else {
-        onElse = cppDeleteUntilEndElse(false);
-        if (onElse==UNTIL_ELSE) {
-            /* #if #else */
-            currentFile.ifDepth ++;
-        } else if (onElse==UNTIL_ELIF)
+    if (deleteSource) {
+        DeleteUntil onElse = cppDeleteUntilEndElse(false);
+        if (onElse==UNTIL_ELIF)
             processIfDirective();
     }
 }
@@ -1608,9 +1602,8 @@ static bool processPreprocessorConstruct(LexemCode lexem) {
         break;
     case CPP_ELIF:
         log_debug("#elif");
-        if (currentFile.ifDepth) {
+        if (anyOpenIf()) {
             genCppIfElseReference(0, position, UsageUsed);
-            currentFile.ifDepth --;
             cppDeleteUntilEndElse(true);
         } else {
             parsingMessageAt(position, ERR_ST, "unmatched #elif");
@@ -1618,9 +1611,8 @@ static bool processPreprocessorConstruct(LexemCode lexem) {
         break;
     case CPP_ELSE:
         log_debug("#else");
-        if (currentFile.ifDepth) {
+        if (anyOpenIf()) {
             genCppIfElseReference(0, position, UsageUsed);
-            currentFile.ifDepth --;
             cppDeleteUntilEndElse(true);
         } else {
             parsingMessageAt(position, ERR_ST, "unmatched #else");
@@ -1628,8 +1620,7 @@ static bool processPreprocessorConstruct(LexemCode lexem) {
         break;
     case CPP_ENDIF:
         log_debug("#endif");
-        if (currentFile.ifDepth) {
-            currentFile.ifDepth --;
+        if (anyOpenIf()) {
             genCppIfElseReference(-1, position, UsageUsed);
         } else {
             parsingMessageAt(position, ERR_ST, "unmatched #endif");

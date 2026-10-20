@@ -8,7 +8,6 @@
 typedef struct fileDescriptor {
     char *fileName ;
     int lineNumber ;
-    int ifDepth;                  /* Depth of #ifs */
     struct cppIfStack *ifStack;   /* #if stack */
     LexemBuffer        lexemBuffer;
     CharacterBuffer    characterBuffer;
