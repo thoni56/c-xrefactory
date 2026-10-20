@@ -101,13 +101,12 @@ graph from them on every push, linked at the end of this file, and `utils/backlo
     includes, with a suggested `-I`. The preprocessor's messages are #6, a macro's place of use is #63.
 - (#64) <a id="message-gates"></a>**One meaning per message gate** — *no repo home yet.* Two
     gates decide where a message goes, in `src/commons.c`: `cxrefProtocol` (set by `-server`
-    only, so the same as the mode) and `displayingErrorMessages()` (`-errors` or `-debug`,
+    only, so the same as the mode) and `displayingErrorMessages()` (`-errors`,
     `src/semact.c`). `-errors` gates only the log for `warningMessage()` and
     `errorMessage()`, but the protocol for `parsingMessageAt()` and `announceAnalysing()`,
-    whose log ignores it. `-debug` adds `<log>` records to the protocol stream. Let
-    `-errors` mean only "the client wants parse messages", and leave the log to the log
-    level. `styyErrorRecovery()` checks `debug && displayingErrorMessages()`, which is
-    `debug`.
+    whose log ignores it. Let `-errors` mean only "the client wants parse messages", and
+    leave the log to the log level. `main()` also reads `-errors` as a console log level.
+    `options.debug` is no longer read, `-debug` itself is only a log level (`main()`).
 - (#65) <a id="move-into-itself-is-an-error"></a>**Moving a function into itself is refused
     as an error** — *no repo home yet.* `src/move_function.c:381` sends "You can't move
     something into itself." as `<information>`. It is a refusal, like "Invalid target place"

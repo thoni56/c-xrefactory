@@ -63,9 +63,7 @@ void noSuchMemberError(char *memberName) {
 }
 
 int styyErrorRecovery(void) {
-    if (options.debug && displayingErrorMessages()) {
-        errorMessage(ERR_ST, "recovery");
-    }
+    log_debug("recovery");
     return 0;
 }
 
