@@ -40,10 +40,6 @@ void resumeMessages(void) {
     mock();
 }
 
-void infoMessage(char message[]) {
-    mock(message);
-}
-
 void warningMessage(int code, char *message) {
     mock(code, message);
 }

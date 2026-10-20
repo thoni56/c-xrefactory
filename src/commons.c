@@ -363,14 +363,6 @@ void parsingMessage(int errCode, char *message) {
     parsingMessageAt(positionOfLastLexem(), errCode, message);
 }
 
-void infoMessage(char message[]) {
-    if (options.cxrefProtocol) {
-        ppcGenRecord(PPC_INFORMATION, message);
-    } else {
-        log_info(message);
-    }
-}
-
 
 static void writeErrorMessage(int errorCode, char *message) {
     char buffer[MAX_PPC_RECORD_SIZE];

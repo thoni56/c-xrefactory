@@ -18,7 +18,6 @@ extern void reInitCwd(char *dffname, char *dffsect);
 
 extern void silenceMessages(void);
 extern void resumeMessages(void);
-extern void infoMessage(char message[]);
 extern void parsingMessage(int code, char *message);
 extern void parsingMessageAt(Position position, int code, char *message);
 extern void announceAnalysing(char *fileName);
