@@ -1,1 +1,7 @@
+<log len=<n>>CURDIR/source.c:1:19: expected string literal or < in __has_include
+<log len=<n>>CURDIR/source.c:1:5: Syntax error on: __has_include
+<log len=<n>>CURDIR/source.c:3:5: expected '(' after __has_include
+<log len=<n>>CURDIR/source.c:3:5: Syntax error on: __has_include
+<log len=<n>>CURDIR/source.c:5:19: unterminated < in __has_include
+<log len=<n>>CURDIR/source.c:5:5: Syntax error on: __has_include
 <goto>

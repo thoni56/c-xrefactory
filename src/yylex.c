@@ -730,6 +730,14 @@ static void ungetLexem(char *lexemStart) {
     currentInput.read = lexemStart;
 }
 
+/* The position of the lexem just read, without reading past its data */
+static Position positionOfLexem(LexemCode lexem) {
+    char *read = currentInput.read;
+    Position position;
+    getExtraLexemInformationFor(lexem, &read, NULL, NULL, &position, NULL, NULL, false);
+    return position;
+}
+
 /* Non-static only for unittests */
 protected void processIncludeDirective(Position includePosition, bool is_include_next) {
     char *beginningOfLexem, *previousLexemP;
@@ -1342,10 +1350,8 @@ static LexemCode handleHasIncludeOperator(char *operatorName,
     ON_LEXEM_EXCEPTION_GOTO(lexem, error, error); /* CAUTION! Contains goto:s! */
 
     if (lexem != '(') {
-        if (options.mode!=ServerMode) {
-            sprintf(message, "expected '(' after %s", operatorName);
-            warningMessage(ERR_ST, message);
-        }
+        sprintf(message, "expected '(' after %s", operatorName);
+        parsingMessageAt(positionOfLastLexem(), ERR_ST, message);
         ungetLexem(lexemStart);
         return 0;
     }
@@ -1371,10 +1377,8 @@ static LexemCode handleHasIncludeOperator(char *operatorName,
                                     true);
 
         if (!readNameInAngleBrackets(nameBuffer)) {
-            if (options.mode!=ServerMode) {
-                sprintf(message, "unterminated < in %s", operatorName);
-                warningMessage(ERR_ST, message);
-            }
+            sprintf(message, "unterminated < in %s", operatorName);
+            parsingMessageAt(position, ERR_ST, message);
             return 0;
         }
         includeName = nameBuffer;
@@ -1388,10 +1392,8 @@ static LexemCode handleHasIncludeOperator(char *operatorName,
             parsingMessageAt(position, ERR_ST, message);
         }
     } else {
-        if (options.mode!=ServerMode) {
-            sprintf(message, "expected string literal or < in %s", operatorName);
-            warningMessage(ERR_ST, message);
-        }
+        sprintf(message, "expected string literal or < in %s", operatorName);
+        parsingMessageAt(positionOfLexem(lexem), ERR_ST, message);
         ungetLexem(lexemStart);
         return 0;
     }

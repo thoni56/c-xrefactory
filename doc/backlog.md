@@ -107,11 +107,7 @@ every push, `After` dashed and `Goes with` not at all, linked at the end of this
    guards that never fire. "end of file in cpp conditional" in `cppDeleteUntilEndElse()`
    should be at the `#if` that is not closed, so the directive's position has to be
    passed down through `processIfdefDirective()`, `processIfDirective()` and
-   `execCppIf()`. The six `__has_include` ones wait for #66.
-    After: malformed-has-include
-- (#66) <a id="malformed-has-include"></a>**A malformed `__has_include` is not reported** — *no repo home yet.*
-    The three `warningMessage()` calls in `handleHasIncludeOperator()` (`src/yylex.c`) are
-    still guarded by `ServerMode`, and become `parsingMessageAt()`.
+   `execCppIf()`.
 - (#68) <a id="lsp-mode"></a>**An `LspMode`, and a sink for the messages** — *no repo home yet.*
     LSP sets `ServerMode` (`src/parsing.c:140`), a stop-gap for the `assert(options.mode)`
     that are gone now. Once #8a has folded the checks of the mode, `Mode` is `ServerMode`
@@ -320,6 +316,15 @@ every push, `After` dashed and `Goes with` not at all, linked at the end of this
     `getMatchOnNthLine()` (`src/match.c`) counts wrapped lines and returns NULL only for an
     empty list, so the session entry `selectCompletion()` found probably had no matches.
     The completion request also got a syntax error at the cursor (858:45).
+- (#71) <a id="newline-position"></a>**A `'\n'` lexem has the next line's number** — *no repo home yet.*
+    `handleNewline()` (`src/lexer.c`) puts the `'\n'` after the newline, and the blanks and
+    comments after it, have been read. Its column is where the line ended, its line is that
+    of the next lexem. A message at the end of a line lands on the line below, e.g.
+    `#if __has_include(` with nothing after it.
+- (#72) <a id="if-syntax-error-twice"></a>**A malformed `#if` is reported twice** — *no repo home yet.*
+    When `handleHasIncludeOperator()` (`src/yylex.c`) has reported what is wrong and
+    returns 0, `cppexp_yyparse()` adds "Syntax error on: `__has_include`"
+    through `styyerror()` (`src/semact.c`). The second message says nothing more.
 
 ## 4. Performance, in strict dependency order
 
