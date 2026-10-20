@@ -1637,8 +1637,8 @@ static bool processPreprocessorConstruct(LexemCode lexem) {
             genCppIfElseReference(0, position, UsageUsed);
             currentFile.ifDepth --;
             cppDeleteUntilEndElse(true);
-        } else if (options.mode!=ServerMode) {
-            warningMessage(ERR_ST,"unmatched #elif");
+        } else {
+            parsingMessageAt(position, ERR_ST, "unmatched #elif");
         }
         break;
     case CPP_ELSE:
@@ -1647,8 +1647,8 @@ static bool processPreprocessorConstruct(LexemCode lexem) {
             genCppIfElseReference(0, position, UsageUsed);
             currentFile.ifDepth --;
             cppDeleteUntilEndElse(true);
-        } else if (options.mode!=ServerMode) {
-            warningMessage(ERR_ST,"unmatched #else");
+        } else {
+            parsingMessageAt(position, ERR_ST, "unmatched #else");
         }
         break;
     case CPP_ENDIF:
@@ -1656,8 +1656,8 @@ static bool processPreprocessorConstruct(LexemCode lexem) {
         if (currentFile.ifDepth) {
             currentFile.ifDepth --;
             genCppIfElseReference(-1, position, UsageUsed);
-        } else if (options.mode!=ServerMode) {
-            warningMessage(ERR_ST,"unmatched #endif");
+        } else {
+            parsingMessageAt(position, ERR_ST, "unmatched #endif");
         }
         break;
     case CPP_PRAGMA:
