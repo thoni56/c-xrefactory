@@ -420,6 +420,56 @@ to do first. Anything more needs more than text substitution. An argument with s
 effects must not be evaluated twice, and a name in the body can collide with one at the
 call site. Refusing with a reason is fine there.
 
+==== First Slice
+
+A body that is one statement, or `return expr;`, where no parameter is assigned or has
+its address taken. Each argument replaces its parameter, in parentheses. The parameters'
+references tell if they are assigned, so this needs no data flow analysis.
+Both cases so far fit, the wrappers in `startup.c` and `displayingErrorMessages()`,
+which only returns `options.errors`.
+
+==== Bodies with More Statements
+
+Extract Function copies the region verbatim and puts what is needed at the edges, e.g.
+`int b = *_b;` first in the new function and `*_b = b;` last. Inline can do the same the
+other way round. Each parameter becomes a local in a block, initialised with its
+argument, and the body is copied verbatim:
+
+[source,c]
+----
+x = f(a + 1, g());
+
+/* becomes */
+{
+    int p = a + 1;
+    char *q = g();
+    /* the body of f() */
+}
+----
+
+Each argument is then evaluated once, and a body that assigns to a parameter, or takes
+its address, still works. Extract already makes such declarations from a local's link
+name (`getLocalVariableDeclarationFromLinkName()`), and a parameter is a local.
+A parameter that is never assigned, with an argument that is a name or a constant, can
+still be replaced directly instead.
+
+What is left is the `return`. A `return e;` last in the body becomes `x = e;`, or `e;`
+if the value is not used. A call inside an expression has no room for a block, so there
+only a body that is `return expr;` can be inlined. More than one `return` is refused.
+
+Names can collide both ways. An argument can use a name that an earlier parameter's local
+hides (`int p = p + 1;`). The body can use a global that a local at the call site
+hides. Both show in the references, which say what each name resolves to.
+A body with a `static` local, a recursive or variadic function, and a `goto` into the
+body are refused.
+
+The parts that exist are finding every call (as for Rename), the extent of a function
+definition (Move Function) and the position of an argument at a call (the parameter
+refactorings).
+
+*Inline Macro* is closer, because a macro means its text. The arguments replace the
+parameters verbatim, and only `#` and `##` need care.
+
 === Extract an Expression as a Function
 
 **Status**: Not implemented. Issue #28.
