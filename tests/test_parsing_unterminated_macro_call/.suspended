@@ -1,0 +1,21 @@
+Bug: A file that ends inside a macro call stops the server
+
+`int j = F(1` last in a file, with `#define F(x) x`, ends in a segmentation fault
+(exit code -11). valgrind puts it in getActualMacroArguments() (src/yylex.c), at
+`log_debug("getActualMacroArgument: %s", lexemEnumNames[lexem])`: at the end of the
+file lexem is END_OF_FILE_EXCEPTION (-2), so the table is read out of range. The
+arguments are evaluated whatever the log level.
+
+Skipping the lookup for an exception (`(int)lexem < 0`, LexemCode is unsigned) gets
+past it, but then the server does not answer within 60 seconds, so something loops on
+the end of the file after that. Not followed further. The commented-out
+ON_LEXEM_EXCEPTION_GOTO just above would go to endOfFile, which returns NULL, and
+its own comment says that will probably crash the caller.
+
+`F(` last in a file (after.c) has not been tried on its own.
+
+When it is fixed, the two `warningMessage(..."unterminated macro call")` calls in
+getActualMacroArgument() and getActualMacroArguments() can become
+parsingMessageAt(macroPosition, ...) and be asserted here. The one in
+expandMacroCall() fires when a file ends right after the name of a function-like
+macro, before any '(', which is no unterminated call, so it should probably go.

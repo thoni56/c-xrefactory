@@ -1,0 +1,8 @@
+CXREF -server -errors
+-getproject CURDIR/inside.c
+<sync>
+-push -olcursor=19 CURDIR/inside.c
+<sync>
+-push -olcursor=19 CURDIR/after.c
+<sync>
+<exit>

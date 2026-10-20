@@ -112,6 +112,9 @@ graph from them on every push, linked at the end of this file, and `utils/backlo
 - (#66) <a id="malformed-has-include"></a>**A malformed `__has_include` stops the server** —
     `tests/test_parsing_malformed_has_include_survives/.suspended`. Its six messages wait
     for it.
+- (#67) <a id="eof-in-macro-call"></a>**A file that ends inside a macro call stops the
+    server** — `tests/test_parsing_unterminated_macro_call/.suspended`. Its two messages
+    wait for it.
 - (#7) <a id="startup-command-line"></a>**Decide, and enforce, what the startup command line may carry** — *no repo home yet.*
    Bigger than `c-xref file.c`, and it needs code, not just a decision. Once XrefMode is
    gone the server takes no file at startup: every request names its own, and the same
