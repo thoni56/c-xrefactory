@@ -109,6 +109,7 @@ Ensure(Memory, should_fatal_if_reallocing_not_last_allocated) {
 
     fatalErrorAllowed = true;
     internalCheckFailAllowed = true;
+    expect(log_log, when(level, is_equal_to(LOG_FATAL)), times(3));
     if (setjmp(internalCheckJmpbuf) == 0)
         memoryRealloc(&testMemory, pointer+1, 5, 6);
 

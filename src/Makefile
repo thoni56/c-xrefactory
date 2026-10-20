@@ -731,7 +731,7 @@ endef
 $(eval $(call UNITTEST,browsingmenu,log protocol type position memory stackmemory usage))
 $(eval $(call UNITTEST,characterreader,log))
 $(eval $(call UNITTEST,commandlogger))
-$(eval $(call UNITTEST,commons,log protocol stringlist))
+$(eval $(call UNITTEST,commons,protocol stringlist))
 $(eval $(call UNITTEST,complete,log protocol type memory stackmemory position))
 $(eval $(call UNITTEST,completion,log memory usage position))
 $(eval $(call UNITTEST,counters))
