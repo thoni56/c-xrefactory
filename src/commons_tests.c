@@ -69,3 +69,37 @@ Ensure(Commons, reports_and_resolves_against_the_root_when_the_working_directory
     assert_that(cwd, is_equal_to_string("/"));
     options.cxrefProtocol = false;
 }
+
+/* Without the protocol a message goes to the log, whose level decides */
+
+static char logged[1000];
+
+static void captureLog(log_Event *event) {
+    vsnprintf(logged, sizeof(logged), event->fmt, event->ap);
+}
+
+static void captureWarningsInLog(void) {
+    static bool added = false;
+    if (!added)
+        log_add_callback(captureLog, NULL, LOG_WARN);
+    added = true;
+    logged[0] = '\0';
+    options.cxrefProtocol = false;
+    options.errors = false;
+}
+
+Ensure(Commons, logs_a_warning_without_the_errors_option) {
+    captureWarningsInLog();
+
+    warningMessage(ERR_ST, "a warning");
+
+    assert_that(logged, contains_string("a warning"));
+}
+
+Ensure(Commons, logs_an_error_without_the_errors_option) {
+    captureWarningsInLog();
+
+    errorMessage(ERR_ST, "an error");
+
+    assert_that(logged, contains_string("an error"));
+}

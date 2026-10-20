@@ -325,8 +325,7 @@ void warningMessage(int errCode, char *message) {
         strcat(buffer, "\n");
         ppcGenRecord(PPC_WARNING, buffer);
     } else {
-        if (options.errors)
-            log_warn("%s", buffer);
+        log_warn("%s", buffer);
     }
 }
 
@@ -373,8 +372,7 @@ static void writeErrorMessage(int errorCode, char *message) {
         strcat(buffer, "\n");
         ppcGenRecord(PPC_ERROR, buffer);
     } else {
-        if (options.errors)
-            log_error("%s", buffer);
+        log_error("%s", buffer);
     }
 }
 

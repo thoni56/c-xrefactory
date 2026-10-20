@@ -99,16 +99,6 @@ graph from them on every push, linked at the end of this file, and `utils/backlo
     `*c-xref-diagnostics*` with its position, grouped by unit, and `next-error` visits it.
     Left: the user manual (the buffer, `M-g n` and `M-g p`); and the report of unresolved
     includes, with a suggested `-I`. The preprocessor's messages are #6, a macro's place of use is #63.
-- (#64) <a id="message-gates"></a>**One meaning per message gate** — *no repo home yet.* Two
-    gates decide where a message goes, in `src/commons.c`: `cxrefProtocol` (set by `-server`
-    only, so the same as the mode) and `displayingErrorMessages()` (`-errors`,
-    `src/semact.c`). `-errors` gates only the log for `warningMessage()` and
-    `errorMessage()`, but the protocol for `parsingMessageAt()` and `announceAnalysing()`,
-    whose log ignores it. Let `-errors` mean only "the client wants parse messages", and
-    leave the log to the log level. `main()` also reads `-errors` as a console log level.
-    `displayingErrorMessages()` only returns `options.errors`, inline it. The checks for
-    `ServerMode` are true in both modes, LSP sets it too (`src/parsing.c:140`), so they
-    can go. #6 removes those in `src/yylex.c`.
 - (#6) <a id="report-errors-flag"></a>**Replace the 19 `options.mode != ServerMode` guards in `src/yylex.c`** with
    calls to `parsingMessage()`. With XrefMode gone the guards never fire, so today the
    server reports nothing they guard. Roadmap, "Report what did not parse". Restore
@@ -117,7 +107,8 @@ graph from them on every push, linked at the end of this file, and `utils/backlo
    Decide here too whether a file that is not valid UTF-8 is reported, once per file.
    Since `convertUtf8()` (`src/encoding.c`) takes a lead byte without its continuation
    bytes as one character, a Latin-1 file reads right, but silently.
-   Waits for: message-gates
+   The other `ServerMode` checks, in `src/semact.c`, `src/options.c`, `src/commons.c` and
+   `src/startup.c`, are true in both modes too, LSP sets it (`src/parsing.c:140`).
 - (#7) <a id="startup-command-line"></a>**Decide, and enforce, what the startup command line may carry** — *no repo home yet.*
    Bigger than `c-xref file.c`, and it needs code, not just a decision. Once XrefMode is
    gone the server takes no file at startup: every request names its own, and the same
@@ -127,7 +118,9 @@ graph from them on every push, linked at the end of this file, and `utils/backlo
      before anything else: the mode; the transport (`-o <answerfile>` —
      `editors/emacs/c-xref.el:1615`); logging
      (`-log=`, `-debug`, `-trace`, `-info`, `-errors`, `-warnings`, `-infos`, scanned in
-     `main()` before the mode is even known); and `-statistics`.
+     `main()` before the mode is even known); and `-statistics`. `-errors` means two
+     things: the client wants parse messages (`src/commons.c`), and `main()` makes it the
+     console log level. One of them should get a name of its own.
    - Everything project-scoped — `-p`, `-I`, `-D`, `-optinclude` — belongs to
      the config and binds at the future `-openproject`, not here.
    - **`-exactpositionresolve` has no strategy.** It is real: it changes link names
