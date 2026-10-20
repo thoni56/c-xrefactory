@@ -2522,9 +2522,7 @@ endOfMacroArgument:
     return false;
 
  endOfFile:
-    if (options.mode!=ServerMode) {
-        warningMessage(ERR_ST,"[macroCallExpand] unterminated macro call");
-    }
+    /* The name of a function-like macro last in the file, no call */
     currentInput.read = previousLexemP;
     ppmFreeUntil(ppmMarker);
     return false;

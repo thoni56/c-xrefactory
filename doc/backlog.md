@@ -107,9 +107,7 @@ every push, `After` dashed and `Goes with` not at all, linked at the end of this
    guards that never fire. "end of file in cpp conditional" in `cppDeleteUntilEndElse()`
    should be at the `#if` that is not closed, so the directive's position has to be
    passed down through `processIfdefDirective()`, `processIfDirective()` and
-   `execCppIf()`. The six `__has_include` ones wait for #66. Of the three "unterminated
-   macro call", the one in `expandMacroCall()` fires when a file ends on the name of a
-   function-like macro, which is no error.
+   `execCppIf()`. The six `__has_include` ones wait for #66.
     After: malformed-has-include
 - (#66) <a id="malformed-has-include"></a>**A malformed `__has_include` stops the server** —
     `tests/test_parsing_malformed_has_include_survives/.suspended`. Its six messages wait
