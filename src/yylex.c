@@ -852,13 +852,13 @@ static MacroBody *newMacroBody(int macroSize, int argCount, char *name, char *bo
 }
 
 
-static LexemCode getNonBlankLexemAndData(Position *positionP, int *lineNumber, int *value, int *length) {
+static LexemCode getNonBlankLexemAndData(char **previousLexemP, Position *positionP, int *lineNumber, int *value, int *length) {
     LexemCode lexem;
 
-    lexem = getLexem();
+    lexem = getLexemAndSavePointerToPrevious(previousLexemP);
     while (lexem == LINE_TOKEN) {
         getExtraLexemInformationFor(lexem, &currentInput.read, lineNumber, value, positionP, length, NULL, true);
-        lexem = getLexem();
+        lexem = getLexemAndSavePointerToPrevious(previousLexemP);
     }
     return lexem;
 }
@@ -935,7 +935,7 @@ protected void processDefineDirective(bool hasArguments) {
         Position previousDelimiterPosition = NO_POSITION;
         Position currentDelimiterPosition = NO_POSITION;
 
-        lexem = getNonBlankLexemAndData(&position, NULL, NULL, NULL);
+        lexem = getNonBlankLexemAndData(NULL, &position, NULL, NULL, NULL);
         ON_LEXEM_EXCEPTION_GOTO(lexem, endOfFile, endOfMacroArgument); /* CAUTION! Contains goto:s! */
 
         getExtraLexemInformationFor(lexem, &currentInput.read, NULL, NULL, &currentDelimiterPosition,
@@ -944,7 +944,7 @@ protected void processDefineDirective(bool hasArguments) {
         if (lexem != '(')
             goto errorlabel;
         argumentCount++;
-        lexem = getNonBlankLexemAndData(&position, NULL, NULL, NULL);
+        lexem = getNonBlankLexemAndData(NULL, &position, NULL, NULL, NULL);
         ON_LEXEM_EXCEPTION_GOTO(lexem, endOfFile, endOfMacroArgument); /* CAUTION! Contains goto:s! */
 
         if (lexem != ')') {
@@ -971,7 +971,7 @@ protected void processDefineDirective(bool hasArguments) {
                 int argumentIndex = addMacroArgument(macroArgumentTableElement);
                 argumentCount++;
 
-                lexem = getNonBlankLexemAndData(&position, NULL, NULL, NULL);
+                lexem = getNonBlankLexemAndData(NULL, &position, NULL, NULL, NULL);
                 ON_LEXEM_EXCEPTION_GOTO(lexem, endOfFile, endOfMacroArgument); /* CAUTION! Contains goto:s! */
 
                 swapPositions(&previousDelimiterPosition, &currentDelimiterPosition);
@@ -986,7 +986,7 @@ protected void processDefineDirective(bool hasArguments) {
                                                             currentDelimiterPosition, false);
                 }
                 if (lexem == ELLIPSIS) {
-                    lexem = getNonBlankLexemAndData(&position, NULL, NULL, NULL);
+                    lexem = getNonBlankLexemAndData(NULL, &position, NULL, NULL, NULL);
                     ON_LEXEM_EXCEPTION_GOTO(lexem, endOfFile, endOfMacroArgument); /* CAUTION! Contains goto:s! */
                     getExtraLexemInformationFor(lexem, &currentInput.read, NULL, NULL,
                                                 &currentDelimiterPosition, NULL, NULL, true);
@@ -996,7 +996,7 @@ protected void processDefineDirective(bool hasArguments) {
                 if (lexem != ',')
                     break;
 
-                lexem = getNonBlankLexemAndData(&position, NULL, NULL, NULL);
+                lexem = getNonBlankLexemAndData(NULL, &position, NULL, NULL, NULL);
                 ON_LEXEM_EXCEPTION_GOTO(lexem, endOfFile, endOfMacroArgument); /* CAUTION! Contains goto:s! */
             }
             handleMacroDefinitionParameterPositions(argumentCount, macroPosition,
@@ -1020,7 +1020,7 @@ protected void processDefineDirective(bool hasArguments) {
     isReadingBody = true;
 
     Position position;
-    lexem = getNonBlankLexemAndData(&position, NULL, NULL, NULL);
+    lexem = getNonBlankLexemAndData(NULL, &position, NULL, NULL, NULL);
     ON_LEXEM_EXCEPTION_GOTO(lexem, endOfFile, endOfMacroArgument); /* CAUTION! Contains goto:s! */
 
     currentLexemStart = currentInput.read;
@@ -1060,7 +1060,7 @@ protected void processDefineDirective(bool hasArguments) {
                     *lexemDestination = *currentLexemStart;
             }
             macroSize = lexemDestination - body;
-            lexem = getNonBlankLexemAndData(&position, NULL, NULL, NULL);
+            lexem = getNonBlankLexemAndData(NULL, &position, NULL, NULL, NULL);
             ON_LEXEM_EXCEPTION_GOTO(lexem, endOfFile, endOfMacroArgument); /* CAUTION! Contains goto:s! */
 
             currentLexemStart = currentInput.read;
@@ -1331,7 +1331,7 @@ static LexemCode handleHasIncludeOperator(char *operatorName,
                                           bool (*canFind)(char includeType, char *name)) {
     Position position;
     char message[TMP_STRING_SIZE];
-    LexemCode lexem = getNonBlankLexemAndData(&position, NULL, NULL, NULL);
+    LexemCode lexem = getNonBlankLexemAndData(NULL, &position, NULL, NULL, NULL);
     ON_LEXEM_EXCEPTION_GOTO(lexem, error, error); /* CAUTION! Contains goto:s! */
 
     if (lexem != '(') {
@@ -1343,7 +1343,7 @@ static LexemCode handleHasIncludeOperator(char *operatorName,
     }
     getExtraLexemInformationFor(lexem, &currentInput.read, NULL, NULL, &position, NULL, NULL, true);
 
-    lexem = getNonBlankLexemAndData(&position, NULL, NULL, NULL);
+    lexem = getNonBlankLexemAndData(NULL, &position, NULL, NULL, NULL);
     ON_LEXEM_EXCEPTION_GOTO(lexem, error, error); /* CAUTION! Contains goto:s! */
 
     char *includeName;
@@ -1371,7 +1371,7 @@ static LexemCode handleHasIncludeOperator(char *operatorName,
         }
         includeName = nameBuffer;
         /* For angle brackets, we need to read the closing ')' */
-        lexem = getNonBlankLexemAndData(&position, NULL, NULL, NULL);
+        lexem = getNonBlankLexemAndData(NULL, &position, NULL, NULL, NULL);
         ON_LEXEM_EXCEPTION_GOTO(lexem, error, error);
         getExtraLexemInformationFor(lexem, &currentInput.read, NULL, NULL, &position, NULL, NULL,
                                     true);
@@ -1389,7 +1389,7 @@ static LexemCode handleHasIncludeOperator(char *operatorName,
 
     /* For string literals, read the closing ')' */
     if (includeType != '<') {
-        lexem = getNonBlankLexemAndData(&position, NULL, NULL, NULL);
+        lexem = getNonBlankLexemAndData(NULL, &position, NULL, NULL, NULL);
         ON_LEXEM_EXCEPTION_GOTO(lexem, error, error);
         getExtraLexemInformationFor(lexem, &currentInput.read, NULL, NULL, &position, NULL, NULL,
                                     true);
@@ -1416,7 +1416,7 @@ static LexemCode handleHasIncludeNextOp(void) {
 
 static LexemCode handleDefinedOp(void) {
     Position position;
-    LexemCode lexem = getNonBlankLexemAndData(&position, NULL, NULL, NULL);
+    LexemCode lexem = getNonBlankLexemAndData(NULL, &position, NULL, NULL, NULL);
     ON_LEXEM_EXCEPTION_GOTO(lexem, error, error); /* CAUTION! Contains goto:s! */
 
     char *ch = currentInput.read;
@@ -1426,7 +1426,7 @@ static LexemCode handleDefinedOp(void) {
     if (lexem == '(') {
         haveParenthesis = true;
 
-        lexem = getNonBlankLexemAndData(&position, NULL, NULL, NULL);
+        lexem = getNonBlankLexemAndData(NULL, &position, NULL, NULL, NULL);
         ON_LEXEM_EXCEPTION_GOTO(lexem, error, error); /* CAUTION! Contains goto:s! */
 
         ch = currentInput.read;
@@ -1450,7 +1450,7 @@ static LexemCode handleDefinedOp(void) {
     /* following call sets uniyylval */
     LexemCode res = cppexpTranslateToken(CONSTANT, macroSymbolFound);
     if (haveParenthesis) {
-        lexem = getNonBlankLexemAndData(&position, NULL, NULL, NULL);
+        lexem = getNonBlankLexemAndData(NULL, &position, NULL, NULL, NULL);
         ON_LEXEM_EXCEPTION_GOTO(lexem, error, error); /* CAUTION! Contains goto:s! */
 
         getExtraLexemInformationFor(lexem, &currentInput.read, NULL, NULL, &position, NULL, NULL,
