@@ -2,16 +2,14 @@ include ../Makefile.server
 
 # Multi-pass parsing with pass-specific defines: the config gives -pass1 -DPASS1
 # and -pass2 -DPASS2, and symbols from both #ifdef branches must end up in one
-# table, without spillover.
-#
-# The other half of the original XrefMode test, that the syntax error planted in
-# the PASS2 branch is reported with file and line, is not here: formatMessage()
-# drops the position in server mode.
+# table, without spillover. The syntax error planted in the PASS2 branch is
+# reported with its position.
 
 $(TEST): .c-xrefrc
-	@rm -rf output output.tmp server-buffer
-	@$(SERVER_DRIVER) commands.input $(EXTRA) > /dev/null
+	@rm -rf output output.tmp server-buffer run.stdout
+	@$(SERVER_DRIVER) commands.input $(EXTRA) > run.stdout
 	@../../utils/cxref_reader .c-xref/db > output
+	@(grep -o "<log [^>]*>.*" run.stdout; true) | $(NORMALIZE) >> output
 	$(VERIFY)
 
 trace: EXTRA = --extra '-debug -log=trace'

@@ -8,3 +8,5 @@ pass1
     @multipass.c:6:4
 pass2
     @multipass.c:11:4
+<log len=<n>>CURDIR/multipass.c:10:12: Syntax error on: error
+<log len=<n>>CURDIR/multipass.c:10:18: Syntax error on: !
