@@ -106,7 +106,8 @@ graph from them on every push, linked at the end of this file, and `utils/backlo
     `errorMessage()`, but the protocol for `parsingMessageAt()` and `announceAnalysing()`,
     whose log ignores it. Let `-errors` mean only "the client wants parse messages", and
     leave the log to the log level. `main()` also reads `-errors` as a console log level.
-    `options.debug` is no longer read, `-debug` itself is only a log level (`main()`).
+    `displayingErrorMessages()` only returns `options.errors`, inline it. Make
+    `cxrefProtocol` and `options.mode == ServerMode` one flag.
 - (#65) <a id="move-into-itself-is-an-error"></a>**Moving a function into itself is refused
     as an error** — *no repo home yet.* `src/move_function.c:381` sends "You can't move
     something into itself." as `<information>`. It is a refusal, like "Invalid target place"
