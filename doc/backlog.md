@@ -670,6 +670,11 @@ Mac (session `05984816`), 2026-10-07.
     probably the shortest route. From reading the code (WSL, session `d25255b8`,
     2026-10-11). Until then WSL works, but on files under `/mnt/c` each `stat` goes
     through 9P to the Windows side, at about a millisecond each.
+- (#73) <a id="refactoring-catalogue"></a>**Every known refactoring, with its status** — a list,
+    one row per refactoring, done, planned or left out, linking to its design in
+    `doc/docs/11-planned-features.adoc` and its recipe in `19-refactoring-recipes.adoc`.
+    It shows how many of them c-xrefactory can do, so probably in the user manual or the
+    README. *No repo home yet.*
 
 ## Foundation
 
