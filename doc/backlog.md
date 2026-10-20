@@ -109,10 +109,7 @@ every push, `After` dashed and `Goes with` not at all, linked at the end of this
    passed down through `processIfdefDirective()`, `processIfDirective()` and
    `execCppIf()`. The six `__has_include` ones wait for #66, two of the macro call ones
    for #67. The third, in `expandMacroCall()`, fires when a file ends on the name of a
-   function-like macro, which is no error. Decide here too whether a file that is not
-   valid UTF-8 is reported, once per file. Since `convertUtf8()` (`src/encoding.c`) takes
-   a lead byte without its continuation bytes as one character, a Latin-1 file reads
-   right, but silently.
+   function-like macro, which is no error.
     After: eof-in-macro-call
 - (#66) <a id="malformed-has-include"></a>**A malformed `__has_include` stops the server** —
     `tests/test_parsing_malformed_has_include_survives/.suspended`. Its six messages wait
@@ -315,6 +312,12 @@ every push, `After` dashed and `Goes with` not at all, linked at the end of this
     adds a note for the definition. Needs the outermost macro call of the expansion
     (`expandMacroCall()`, `src/yylex.c`). `test_parsing_include_using_macro` shows it.
     After: report-errors-flag
+- (#69) <a id="latin-1-lookalikes"></a>**Latin-1 that looks like UTF-8 is read as one character** — *no repo home yet.*
+    `convertUtf8()` (`src/encoding.c`) takes a lead byte with its continuation bytes as
+    one character, so `å°` and one more byte in 0x80–0xBF, in Latin-1, become one space
+    and every position after it on the line is two characters early. Read a sequence that
+    would be an overlong or invalid code point as single bytes. A file that is not UTF-8
+    is not reported, it parses.
 
 ## 4. Performance, in strict dependency order
 
