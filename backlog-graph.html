@@ -26,8 +26,6 @@ flowchart BT
   openproject_tripwire["§1 · 4d · the assert that nothing before the future `-openproject` reads a project-scoped option"]
   project_extent["§1 · 4e · what a project consists of"]
   indexing_log_buffer["§2 · 23 · What is left of the diagnostics buffer"]
-  report_errors_flag["§2 · 6 · Report the preprocessor's messages that are left in `src/yylex.c`"]
-  malformed_has_include["§2 · 66 · A malformed `__has_include` stops the server"]
   lsp_mode["§2 · 68 · An `LspMode`, and a sink for the messages"]
   startup_command_line["§2 · 7 · Decide, and enforce, what the startup command line may carry"]
   mode_checks["§2 · 8a · fold the last `options.mode` checks"]
@@ -48,6 +46,9 @@ flowchart BT
   include_bracket_from_macro["§3 · 60 · `#include MACRO` where the macro is `#lt;...#gt;`"]
   message_at_macro_use["§3 · 63 · A parse message in a macro expansion also says where the macro is used"]
   latin_1_lookalikes["§3 · 69 · Latin-1 that looks like UTF-8 is read as one character"]
+  completion_select_out_of_range["§3 · 70 · Selecting a completion says #quot;selection out of range#quot;"]
+  newline_position["§3 · 71 · A `'\n'` lexem has the next line's number"]
+  if_syntax_error_twice["§3 · 72 · A malformed `#if` is reported twice"]
   header_filtered_siblings["§4 · 16 · Header-filtered sibling parsing"]
   scan_angle_includes["§4 · 17 · Extend the lightweight scan to `#lt;...#gt;` includes"]
   lexing_cache["§4 · 18 · Lexing cache re-introduction"]
@@ -85,6 +86,7 @@ flowchart BT
   readme_first_screen["§8 · 51 · The README sells on its first screen"]
   announce["§8 · 52 · Announce"]
   windows_build["§8 · 53 · A Windows build"]
+  refactoring_catalogue["§8 · 73 · Every known refactoring, with its status"]
   entry_refresh["Entry refresh before every request (ADR-0020)"]
   adr_0029["ADR-0029: the project's identity is its root path"]
   adr_0030["ADR-0030: opening a project and asking about a file are separate"]
@@ -122,14 +124,12 @@ flowchart BT
   install_server --&gt; announce
   readme_first_screen --&gt; announce
   message_at_macro_use -.-&gt; indexing_log_buffer
-  malformed_has_include -.-&gt; report_errors_flag
   freshness_docs -.-&gt; docs_audit
   sweep -.-&gt; refactoring_refusals
   adr_0031 -.-&gt; relative_include_path
   time_budget -.-&gt; truncated_reference_set
   lsp_mode -.-&gt; lsp_position_encoding
   lsp_position_encoding -.-&gt; lsp_input_ends
-  report_errors_flag -.-&gt; message_at_macro_use
   request_target -.-&gt; header_filtered_siblings
   lsp_mode -.-&gt; lsp_tiers
   move_function_comment_prompt -.-&gt; move_function_next
@@ -146,8 +146,6 @@ flowchart BT
   class openproject_tripwire blocked
   class project_extent ready
   class indexing_log_buffer ready
-  class report_errors_flag ready
-  class malformed_has_include ready
   class lsp_mode blocked
   class startup_command_line ready
   class mode_checks ready
@@ -168,6 +166,9 @@ flowchart BT
   class include_bracket_from_macro ready
   class message_at_macro_use ready
   class latin_1_lookalikes ready
+  class completion_select_out_of_range ready
+  class newline_position ready
+  class if_syntax_error_twice ready
   class header_filtered_siblings ready
   class scan_angle_includes blocked
   class lexing_cache blocked
@@ -205,6 +206,7 @@ flowchart BT
   class readme_first_screen ready
   class announce blocked
   class windows_build ready
+  class refactoring_catalogue ready
   class entry_refresh done
   class adr_0029 done
   class adr_0030 done

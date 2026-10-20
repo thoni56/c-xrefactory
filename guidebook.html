@@ -533,11 +533,12 @@ body.book #toc,body.book #preamble,body.book h1.sect0,body.book .sect1>h2{page-b
 <li><a href="#_modernize_function">11.14. Modernize Function</a></li>
 <li><a href="#_unify_parameter_names">11.15. Unify Parameter Names</a></li>
 <li><a href="#_introduce_parameter_object">11.16. Introduce Parameter Object</a></li>
-<li><a href="#_inline_output_parameter">11.17. Inline Output Parameter</a></li>
-<li><a href="#_finish_extract_variable">11.18. Finish Extract Variable</a></li>
-<li><a href="#_inline_variable">11.19. Inline Variable</a></li>
-<li><a href="#_name_and_define_constant">11.20. Name and Define Constant</a></li>
-<li><a href="#_background_work">11.21. Background Work</a></li>
+<li><a href="#_extract_function_with_jumps_out_of_the_region">11.17. Extract Function with Jumps out of the Region</a></li>
+<li><a href="#_inline_output_parameter">11.18. Inline Output Parameter</a></li>
+<li><a href="#_finish_extract_variable">11.19. Finish Extract Variable</a></li>
+<li><a href="#_inline_variable">11.20. Inline Variable</a></li>
+<li><a href="#_name_and_define_constant">11.21. Name and Define Constant</a></li>
+<li><a href="#_background_work">11.22. Background Work</a></li>
 </ul>
 </li>
 <li><a href="#components">12. Components</a>
@@ -3535,12 +3536,6 @@ This was the last thing only the batch modes could do, i.e. <code>-create -error
  <a href="06-principles.html">Principles</a> (Editor Buffers Are the Content Source).</p></td>
 </tr>
 <tr>
-<td class="tableblock halign-left valign-top"><p class="tableblock">Report what did not parse</p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">Some preprocessor messages in <code>yylex.c</code>, e.g. "end of file in cpp conditional", are
- still behind <code>options.mode != ServerMode</code> guards that never fire, so they send nothing.
- Replace them with calls to <code>parsingMessageAt()</code>.</p></td>
-</tr>
-<tr>
 <td class="tableblock halign-left valign-top"><p class="tableblock">Batch prime</p></td>
 <td class="tableblock halign-left valign-top"><p class="tableblock">An explicit request — <code>-parse-all</code> — that parses every compilation unit the scan
  found and has not parsed yet. Whatever wants a whole-project parse then asks for it:
@@ -4355,9 +4350,6 @@ A unit that is only reparsed to refresh it keeps its old group until it is parse
 <p>The user manual: the buffer, and <code>M-g n</code> and <code>M-g p</code>.</p>
 </li>
 <li>
-<p>Some of the preprocessor&#8217;s own messages, e.g. "end of file in cpp conditional". They are still behind guards in <code>yylex.c</code> that never fire, so they send nothing.</p>
-</li>
-<li>
 <p>A message about tokens from a macro expansion gives their place in the macro body. It should also say where the macro is used, as gcc does.</p>
 </li>
 <li>
@@ -4787,21 +4779,69 @@ How the UI marks the parameters, and what to do with such a count, is not decide
 </div>
 </div>
 <div class="sect2">
-<h3 id="_inline_output_parameter">11.17. Inline Output Parameter</h3>
+<h3 id="_extract_function_with_jumps_out_of_the_region">11.17. Extract Function with Jumps out of the Region</h3>
 <div class="paragraph">
 <p><strong>Status</strong>: Not implemented.</p>
 </div>
 <div class="sect3">
 <h4 id="_background_12">11.17.1. Background</h4>
 <div class="paragraph">
-<p>For each local the region changes, Extract Function copies it in from a pointer parameter at the start of the new function and back at the end, e.g. <code>int cuCount = *_cuCount;</code> and <code>*_cuCount = cuCount;</code>.
-That is safe, but the copies are usually the first thing you want gone.</p>
+<p>Extract Function refuses a region that a <code>return</code>, <code>break</code>, <code>continue</code> or <code>goto</code> leaves ("There are jumps in or out of region", <code>makeExtraction()</code> in <code>extract.c</code>).
+Only Extract Macro lets them through, since a macro is text and the jump lands where it was.
+The case was the loop in <code>__has_include(&lt;&#8230;&#8203;&gt;)</code> (<code>yylex.c</code>), which ends with a <code>break</code> at the <code>&gt;</code> and a <code>return 0</code> at the end of the line.</p>
+</div>
+<div class="paragraph">
+<p>The program graph already has what it takes to find them.
+A <code>return</code> is a reference to the internal label <code>-1</code>, <code>break</code> and <code>continue</code> to the label of the innermost loop, and <code>goto</code> to the user&#8217;s label (<code>jump_statement</code> in <code>c_parser.y</code>).
+Each such node knows its target, which side of the region both are on, and its own position.
+What the graph does not have is the value of a <code>return</code>, since a constant is no reference, and where the statement ends.
+Both can be read from the text, from the position to the <code>;</code>.</p>
 </div>
 </div>
 <div class="sect3">
 <h4 id="_proposed_behaviour_8">11.17.2. Proposed Behaviour</h4>
 <div class="paragraph">
+<p>The new function returns how it ended, and the call site acts on it:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-c hljs" data-lang="c">int exit = newFunction_(...);
+if (exit == EXIT_BREAK)
+    break;
+else if (exit == EXIT_RETURN)
+    return 0;</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>It has to be <code>if</code> and not <code>switch</code>, since a <code>break</code> in a <code>switch</code> leaves the <code>switch</code> and not the loop.</p>
+</div>
+<div class="paragraph">
+<p>The first case to do is probably a region that is only left by <code>return &lt;constant&gt;;</code>, or <code>return;</code> in a <code>void</code> function, and has no result of its own.
+The new function then returns a <code>bool</code>, and the call is <code>if (newFunction_(&#8230;&#8203;)) return 0;</code>.
+A <code>break</code> out of a loop around the region comes next.
+A region that already returns a value, or a <code>return</code> of a local&#8217;s value, needs an out parameter as well, and could be refused to start with.</p>
+</div>
+</div>
+</div>
+<div class="sect2">
+<h3 id="_inline_output_parameter">11.18. Inline Output Parameter</h3>
+<div class="paragraph">
+<p><strong>Status</strong>: Not implemented.</p>
+</div>
+<div class="sect3">
+<h4 id="_background_13">11.18.1. Background</h4>
+<div class="paragraph">
+<p>For each local the region changes, Extract Function copies it in from a pointer parameter at the start of the new function and back at the end, e.g. <code>int cuCount = *_cuCount;</code> and <code>*_cuCount = cuCount;</code>.
+That is safe, but the copies are usually the first thing you want gone.</p>
+</div>
+</div>
+<div class="sect3">
+<h4 id="_proposed_behaviour_9">11.18.2. Proposed Behaviour</h4>
+<div class="paragraph">
 <p>With the cursor on such a parameter, <strong>Inline Output Parameter</strong> replaces every read of the local with <code>*_cuCount</code>, every write with an assignment through the pointer, and removes both copies.
+The parameter then takes the local&#8217;s name, <code>cuCount</code>, which is free now.
+A read that is an operand gets parentheses, so <code>count` becomes `(*count)</code> and not <code>*count++</code>.
+If the local was declared together with others, e.g. <code>char *name, type;</code>, only its declarator goes.
 It should refuse if the address of the local is taken, or if not every return writes it back.</p>
 </div>
 <div class="paragraph">
@@ -4814,12 +4854,12 @@ Done one at a time, the local is set but never read in between, and <code>-Werro
 </div>
 </div>
 <div class="sect2">
-<h3 id="_finish_extract_variable">11.18. Finish Extract Variable</h3>
+<h3 id="_finish_extract_variable">11.19. Finish Extract Variable</h3>
 <div class="paragraph">
 <p><strong>Status</strong>: Partially implemented.</p>
 </div>
 <div class="sect3">
-<h4 id="_background_13">11.18.1. Background</h4>
+<h4 id="_background_14">11.19.1. Background</h4>
 <div class="paragraph">
 <p><strong>Extract Variable</strong> replaces the marked expression with a new variable and declares it, initialized to the expression.
 The declaration is always <code>int</code>, since the type of the expression is not known (<code>generateNewVariableDeclaration()</code> in <code>extract.c</code>).
@@ -4833,7 +4873,7 @@ The case was <code>handle_invalid_request()</code> and <code>handle_method_not_f
 </div>
 </div>
 <div class="sect3">
-<h4 id="_proposed_behaviour_9">11.18.2. Proposed Behaviour</h4>
+<h4 id="_proposed_behaviour_10">11.19.2. Proposed Behaviour</h4>
 <div class="paragraph">
 <p>The declaration gets the type of the expression, and goes in before the statement that held it.
 This is the same type that <strong>Extract an Expression as a Function</strong> needs, so the two probably share it.</p>
@@ -4841,18 +4881,18 @@ This is the same type that <strong>Extract an Expression as a Function</strong> 
 </div>
 </div>
 <div class="sect2">
-<h3 id="_inline_variable">11.19. Inline Variable</h3>
+<h3 id="_inline_variable">11.20. Inline Variable</h3>
 <div class="paragraph">
 <p><strong>Status</strong>: Not implemented.</p>
 </div>
 <div class="sect3">
-<h4 id="_background_14">11.19.1. Background</h4>
+<h4 id="_background_15">11.20.1. Background</h4>
 <div class="paragraph">
 <p>The generalization above ended with inlining the extracted variables again at the first call site, by hand.</p>
 </div>
 </div>
 <div class="sect3">
-<h4 id="_proposed_behaviour_10">11.19.2. Proposed Behaviour</h4>
+<h4 id="_proposed_behaviour_11">11.20.2. Proposed Behaviour</h4>
 <div class="paragraph">
 <p>With the cursor on a local that is assigned once, <strong>Inline Variable</strong> replaces each use with its initializer and removes the declaration.
 It should refuse if the variable is assigned again, or if its address is taken.
@@ -4861,33 +4901,34 @@ An initializer with side effects, or one that reads something changed between th
 </div>
 </div>
 <div class="sect2">
-<h3 id="_name_and_define_constant">11.20. Name and Define Constant</h3>
+<h3 id="_name_and_define_constant">11.21. Name and Define Constant</h3>
 <div class="paragraph">
 <p><strong>Status</strong>: Not implemented.</p>
 </div>
 <div class="sect3">
-<h4 id="_background_15">11.20.1. Background</h4>
+<h4 id="_background_16">11.21.1. Background</h4>
 <div class="paragraph">
 <p>A literal that means something, e.g. an exit code the protocol prescribes, is better as a name.
 Today that is a <code>#define</code>, or an enum member, written by hand and then a search for the other occurrences.</p>
 </div>
 </div>
 <div class="sect3">
-<h4 id="_proposed_behaviour_11">11.20.2. Proposed Behaviour</h4>
+<h4 id="_proposed_behaviour_12">11.21.2. Proposed Behaviour</h4>
 <div class="paragraph">
 <p>With the cursor on a literal, <strong>Name and Define Constant</strong> asks for a name, defines it, and replaces the literal with the name.
 Other occurrences of the same literal could be offered, but only the user can tell which of them mean the same thing.
+The type does not tell either, e.g. two functions that return <code>LexemCode</code> can both return 0 for different reasons.
 Where the definition goes, i.e. in the file or in a header, and as a <code>#define</code> or an enum member, is not decided.</p>
 </div>
 </div>
 </div>
 <div class="sect2">
-<h3 id="_background_work">11.21. Background Work</h3>
+<h3 id="_background_work">11.22. Background Work</h3>
 <div class="paragraph">
 <p><strong>Status</strong>: Possible. Waits for the sweep (ADR-0033, <code>sweep</code> in <code>doc/backlog.md</code>).</p>
 </div>
 <div class="sect3">
-<h4 id="_background_16">11.21.1. Background</h4>
+<h4 id="_background_17">11.22.1. Background</h4>
 <div class="paragraph">
 <p>The server only works when a request arrives, and then the user waits.
 Out-of-date knowledge outside every request&#8217;s goal is never brought up to date, and on a large project the first request carries the whole initialization.
@@ -4895,7 +4936,7 @@ With the sweep, bringing knowledge up to date a part at a time is safe, since ea
 </div>
 </div>
 <div class="sect3">
-<h4 id="_proposed_behaviour_12">11.21.2. Proposed Behaviour</h4>
+<h4 id="_proposed_behaviour_13">11.22.2. Proposed Behaviour</h4>
 <div class="paragraph">
 <p>When no request is waiting, the server does one unit of work, e.g. builds the knowledge of one out-of-date CU, and then checks for a request again.
 Answers fill in while you work, and a cold start answers what it knows at once.
@@ -4903,7 +4944,7 @@ Other candidates are the sweep itself, saving the snapshot, and checking the cha
 </div>
 </div>
 <div class="sect3">
-<h4 id="_design_6">11.21.3. Design</h4>
+<h4 id="_design_6">11.22.3. Design</h4>
 <div class="paragraph">
 <p>The server has no threads and blocks in <code>readOptionsFromPipe()</code> until the next request.
 With all its global state, threads are not an option, so the work would be cooperative: wait for input with a timeout, and work when it expires.
@@ -8554,7 +8595,7 @@ setup.</p>
 <div class="sect2">
 <h3 id="_incremental_cxfile_c_cleanup">16.1. Incremental <code>cxfile.c</code> Cleanup</h3>
 <div class="sect3">
-<h4 id="_background_17">16.1.1. Background</h4>
+<h4 id="_background_18">16.1.1. Background</h4>
 <div class="paragraph">
 <p>The <code>cxfile</code> module was designed when the <code>.cx</code> files on disk were the reference database. Operations like "show all references to symbol X" or "find unused symbols" were table-driven scans over the disk format — hash the symbol name, stream the right partition, apply a per-operation filter. This was efficient for the batch cross-referencer that <code>c-xrefactory</code> evolved from, where the workflow was <code>c-xref -create</code> → <code>c-xref -update</code> → query the on-disk database.</p>
 </div>
@@ -12436,7 +12477,7 @@ operation reads the in-memory table.</p>
 </div>
 <div id="footer">
 <div id="footer-text">
-Last updated 2026-10-20 13:24:28 UTC
+Last updated 2026-10-20 21:37:38 UTC
 </div>
 </div>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.18.3/highlight.min.js"></script>
