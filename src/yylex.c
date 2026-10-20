@@ -1331,7 +1331,8 @@ static LexemCode handleHasIncludeOperator(char *operatorName,
                                           bool (*canFind)(char includeType, char *name)) {
     Position position;
     char message[TMP_STRING_SIZE];
-    LexemCode lexem = getNonBlankLexemAndData(NULL, &position, NULL, NULL, NULL);
+    char *lexemStart;
+    LexemCode lexem = getNonBlankLexemAndData(&lexemStart, &position, NULL, NULL, NULL);
     ON_LEXEM_EXCEPTION_GOTO(lexem, error, error); /* CAUTION! Contains goto:s! */
 
     if (lexem != '(') {
@@ -1339,11 +1340,11 @@ static LexemCode handleHasIncludeOperator(char *operatorName,
             sprintf(message, "expected '(' after %s", operatorName);
             warningMessage(ERR_ST, message);
         }
+        currentInput.read = lexemStart;     /* unget lexem */
         return 0;
     }
     getExtraLexemInformationFor(lexem, &currentInput.read, NULL, NULL, &position, NULL, NULL, true);
 
-    char *lexemStart;
     lexem = getNonBlankLexemAndData(&lexemStart, &position, NULL, NULL, NULL);
     ON_LEXEM_EXCEPTION_GOTO(lexem, error, error); /* CAUTION! Contains goto:s! */
 
