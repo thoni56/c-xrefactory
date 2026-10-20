@@ -122,12 +122,9 @@ every push, `After` dashed and `Goes with` not at all, linked at the end of this
     After: malformed-has-include
 - (#68) <a id="lsp-mode"></a>**An `LspMode`, and a sink for the messages** — *no repo home yet.*
     LSP sets `ServerMode` (`src/parsing.c:140`), a stop-gap for the `assert(options.mode)`
-    that are gone now. First remove the checks for `ServerMode` that are true in both
-    modes: `src/semact.c`, `src/options.c`, `src/commons.c`, `src/startup.c`, and in
-    `src/yylex.c` the two that are not messages (`buildLexemFromCharacters()`, the
-    completion check). The guarded messages in `src/yylex.c` (#6) only need a look first,
-    under LSP they would go to the log. Then `Mode` is `ServerMode` or `LspMode`, set once
-    from argv, and it replaces `cxrefProtocol`. A check of the mode deep in the code is
+    that are gone now. Once #8a has folded the checks of the mode, `Mode` is `ServerMode`
+    or `LspMode`, set once from argv, and it replaces `cxrefProtocol`. The guarded messages
+    in `src/yylex.c` (#6) only need a look first, under LSP they would go to the log. A check of the mode deep in the code is
     where packing is mixed into collecting. `src/commons.c` then sends messages to a sink
     chosen at startup: `<log>` and `<analysing>` for `-server`,
     `textDocument/publishDiagnostics` for `-lsp`, which replaces a document's diagnostics
@@ -186,9 +183,10 @@ every push, `After` dashed and `Goes with` not at all, linked at the end of this
    a. <a id="mode-checks"></a>**fold the last `options.mode` checks**, one at a time, since
       each changes behaviour where the mode is not yet known: `src/startup.c:633` (no
       input file), `src/commons.c:379,390` (`fileAbortEnabled` and the `longjmp`, probably
-      dead), `src/semact.c:923,935` (parameter positions) and `src/yylex.c:345` with
+      dead), `src/semact.c:923,935` (parameter positions), `src/options.c` (quotes in an
+      options file), the completion check in `src/yylex.c` and `src/yylex.c:345` with
       `src/lexer.c:801,810` (`inServerMode`). The guards on messages are item 6's. Then
-      `options.mode` and `Mode` go.
+      `Mode` becomes `ServerMode` or `LspMode` (#68).
       Goes with: report-errors-flag
 - (#9) <a id="remove-bridge"></a>**Remove the `parseBufferUsingServer` bridge** — §17.3; 9 refactoring call sites
    re-entering `callServer`. Independent of the rest of this section, but it is the last
