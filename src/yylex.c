@@ -1176,21 +1176,37 @@ endOfFile:
 
 static void processIfDirective();
 
+static void pushOpenIf(Position position) {
+    CppIfStack *ss = ppmAlloc(sizeof(CppIfStack));
+    ss->position = position;
+    ss->next = currentFile.ifStack;
+    currentFile.ifStack = ss;
+}
+
+static Position innermostOpenIf(void) {
+    return currentFile.ifStack->position;
+}
+
+static void popOpenIf(void) {
+    currentFile.ifStack = currentFile.ifStack->next;
+}
+
+static bool anyOpenIf(void) {
+    return currentFile.ifStack != NULL;
+}
+
 static void genCppIfElseReference(int level, Position position, int usage) {
     char                ttt[TMP_STRING_SIZE];
     Position			dp;
-    CppIfStack       *ss;
     if (level > 0) {
-        ss = ppmAlloc(sizeof(CppIfStack));
-        ss->position = position;
-        ss->next = currentFile.ifStack;
-        currentFile.ifStack = ss;
+        pushOpenIf(position);
     }
-    if (currentFile.ifStack!=NULL) {
-        dp = currentFile.ifStack->position;
+    if (anyOpenIf()) {
+        dp = innermostOpenIf();
         sprintf(ttt,"CppIf%x-%x-%d", dp.file, dp.col, dp.line);
         addTrivialCxReference(ttt, TypeCppIfElse, StorageDefault, position, usage);
-        if (level < 0) currentFile.ifStack = currentFile.ifStack->next;
+        if (level < 0)
+            popOpenIf();
     }
 }
 
