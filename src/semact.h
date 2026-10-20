@@ -31,7 +31,6 @@ extern void initSymStructSpec(StructSpec *symStruct, Symbol *records);
 extern void fillStructMemberFindInfo(StructMemberFindInfo *info, Symbol *currentStructure,
                                      Symbol *nextRecord, unsigned memberFindCount);
 extern void unpackPointers(Symbol *pp);
-extern bool displayingErrorMessages(void);
 extern void noSuchMemberError(char *memberName);
 extern void deleteSymDef(void *p);
 extern void addSymbolToFrame(SymbolTable *tab, Symbol *pp);

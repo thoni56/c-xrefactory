@@ -8,7 +8,6 @@
 #include "globals.h"
 #include "options.h"
 #include "protocol.h"
-#include "semact.h"             /* displayingErrorMessages() */
 
 #include "fileio.h"
 #include "filetable.h"
@@ -326,13 +325,13 @@ void warningMessage(int errCode, char *message) {
         strcat(buffer, "\n");
         ppcGenRecord(PPC_WARNING, buffer);
     } else {
-        if (displayingErrorMessages())
+        if (options.errors)
             log_warn("%s", buffer);
     }
 }
 
 static bool sendsParsingMessages(void) {
-    return options.cxrefProtocol && displayingErrorMessages();
+    return options.cxrefProtocol && options.errors;
 }
 
 /* The messages that follow are from the parse of this file */
@@ -374,7 +373,7 @@ static void writeErrorMessage(int errorCode, char *message) {
         strcat(buffer, "\n");
         ppcGenRecord(PPC_ERROR, buffer);
     } else {
-        if (displayingErrorMessages())
+        if (options.errors)
             log_error("%s", buffer);
     }
 }

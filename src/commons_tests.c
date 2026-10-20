@@ -13,7 +13,6 @@
 #include "misc.mock"
 #include "options.mock"
 #include "ppc.mock"
-#include "semact.mock"
 #include "yylex.mock"
 
 Describe(Commons);

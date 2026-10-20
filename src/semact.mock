@@ -20,10 +20,6 @@ void unpackPointers(Symbol *pp) {
     mock(pp);
 }
 
-bool displayingErrorMessages(void) {
-    return (int) mock();
-}
-
 void noSuchMemberError(char *memberName) {
     mock(memberName);
 }

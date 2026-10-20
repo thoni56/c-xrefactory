@@ -36,12 +36,6 @@ void fillStructMemberFindInfo(StructMemberFindInfo *info, Symbol *currentStructu
     info->anonymousUnionsCount = 0;
 }
 
-bool displayingErrorMessages(void) {
-    if (options.errors)
-        return true;
-    return false;
-}
-
 int styyerror(char *message) {
     char tmpBuff[TMP_BUFF_SIZE];
 
