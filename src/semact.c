@@ -37,7 +37,7 @@ void fillStructMemberFindInfo(StructMemberFindInfo *info, Symbol *currentStructu
 }
 
 bool displayingErrorMessages(void) {
-    if (options.debug || options.errors)
+    if (options.errors)
         return true;
     return false;
 }
