@@ -658,6 +658,7 @@ Today that is a `#define`, or an enum member, written by hand and then a search 
 
 With the cursor on a literal, *Name and Define Constant* asks for a name, defines it, and replaces the literal with the name.
 Other occurrences of the same literal could be offered, but only the user can tell which of them mean the same thing.
+The type does not tell either, e.g. two functions that return `LexemCode` can both return 0 for different reasons.
 Where the definition goes, i.e. in the file or in a header, and as a `#define` or an enum member, is not decided.
 
 === Background Work
