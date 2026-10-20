@@ -306,28 +306,28 @@ static void formatMessage(char *out, int errCode, char *text) {
 }
 
 /* A parse that only refreshes another file's references reports nothing */
-static bool silenced = false;
+static bool messagesAreSilenced = false;
 
 void silenceMessages(void) {
-    silenced = true;
+    messagesAreSilenced = true;
 }
 
 void resumeMessages(void) {
-    silenced = false;
+    messagesAreSilenced = false;
 }
 
 void warningMessage(int errCode, char *message) {
     char buffer[MAX_PPC_RECORD_SIZE];
 
-    if (!silenced) {
-        formatMessage(buffer, errCode, message);
-        if (options.cxrefProtocol) {
-            strcat(buffer, "\n");
-            ppcGenRecord(PPC_WARNING, buffer);
-        } else {
-            if (displayingErrorMessages())
-                log_warn("%s", buffer);
-        }
+    if (messagesAreSilenced)
+        return;
+    formatMessage(buffer, errCode, message);
+    if (options.cxrefProtocol) {
+        strcat(buffer, "\n");
+        ppcGenRecord(PPC_WARNING, buffer);
+    } else {
+        if (displayingErrorMessages())
+            log_warn("%s", buffer);
     }
 }
 
@@ -335,32 +335,34 @@ static bool sendsParsingMessages(void) {
     return options.cxrefProtocol && displayingErrorMessages();
 }
 
-void parsingMessageAt(Position position, int errCode, char *message) {
-    char buffer[MAX_PPC_RECORD_SIZE];
-
-    if (!silenced) {
-        /* Columns are counted from 1, as compilers do */
-        int prefixLength = sprintf(buffer, "%s:%d:%d: ", getFileItemWithFileNumber(position.file)->name,
-                                   position.line, position.col + 1);
-        formatMessage(buffer + prefixLength, errCode, message);
-        if (sendsParsingMessages()) {
-            strcat(buffer, "\n");
-            ppcGenRecord(PPC_LOG, buffer);
-        } else {
-            log_warn("%s", buffer);
-        }
-    }
-}
-
 /* The messages that follow are from the parse of this file */
 void announceAnalysing(char *fileName) {
-    if (!silenced && sendsParsingMessages())
+    if (messagesAreSilenced)
+        return;
+    if (sendsParsingMessages())
         ppcGenRecord(PPC_ANALYSING, fileName);
 }
 
+void parsingMessageAt(Position position, int errorCode, char *message) {
+    char buffer[MAX_PPC_RECORD_SIZE];
+
+    if (messagesAreSilenced)
+        return;
+    /* Columns are counted from 1, as compilers do */
+    int prefixLength = sprintf(buffer, "%s:%d:%d: ", getFileItemWithFileNumber(position.file)->name,
+                               position.line, position.col + 1);
+    formatMessage(buffer + prefixLength, errorCode, message);
+    if (sendsParsingMessages()) {
+        strcat(buffer, "\n");
+        ppcGenRecord(PPC_LOG, buffer);
+    } else {
+        log_warn("%s", buffer);
+    }
+}
+
 /* At the lexem the parser got last, the lexer has already passed it */
-void parsingMessage(int errCode, char *message) {
-    parsingMessageAt(positionOfLastLexem(), errCode, message);
+void parsingMessage(int errorCode, char *message) {
+    parsingMessageAt(positionOfLastLexem(), errorCode, message);
 }
 
 
@@ -377,10 +379,10 @@ static void writeErrorMessage(int errorCode, char *message) {
     }
 }
 
-void errorMessage(int errCode, char *mess) {
-    if (!silenced) {
-        writeErrorMessage(errCode, mess);
-    }
+void errorMessage(int errorCode, char *message) {
+    if (messagesAreSilenced)
+        return;
+    writeErrorMessage(errorCode, message);
 }
 
 static void emergencyExit(int exitStatus) {

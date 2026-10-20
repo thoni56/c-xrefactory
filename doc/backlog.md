@@ -107,7 +107,7 @@ graph from them on every push, linked at the end of this file, and `utils/backlo
     whose log ignores it. `-debug` adds `<log>` records to the protocol stream. Let
     `-errors` mean only "the client wants parse messages", and leave the log to the log
     level. `styyErrorRecovery()` checks `debug && displayingErrorMessages()`, which is
-    `debug`. The message functions check `silenced` each in its own way.
+    `debug`.
 - (#65) <a id="move-into-itself-is-an-error"></a>**Moving a function into itself is refused
     as an error** — *no repo home yet.* `src/move_function.c:381` sends "You can't move
     something into itself." as `<information>`. It is a refusal, like "Invalid target place"
