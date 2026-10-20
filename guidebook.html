@@ -5,7 +5,7 @@
 <meta http-equiv="X-UA-Compatible" content="IE=edge">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <meta name="generator" content="Asciidoctor 2.0.26">
-<meta name="author" content="v{VERSION} - Generated 2026-10-19">
+<meta name="author" content="v{VERSION} - Generated 2026-10-20">
 <title>C-xrefactory - a C/Yacc refactoring and code browsing tool - Design Documentation</title>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Open+Sans:300,300italic,400,400italic,600,600italic%7CNoto+Serif:400,400italic,700,700italic%7CDroid+Sans+Mono:400,700">
 <style>
@@ -441,7 +441,7 @@ body.book #toc,body.book #preamble,body.book h1.sect0,body.book .sect1>h2{page-b
 <div id="header">
 <h1>C-xrefactory - a C/Yacc refactoring and code browsing tool - Design Documentation</h1>
 <div class="details">
-<span id="author" class="author">v{VERSION} - Generated 2026-10-19</span><br>
+<span id="author" class="author">v{VERSION} - Generated 2026-10-20</span><br>
 </div>
 <div id="toc" class="toc2">
 <div id="toctitle">Table of Contents</div>
@@ -4341,7 +4341,7 @@ A server&#8217;s stdout and stderr cannot be used either, since they are the syn
 <div class="paragraph">
 <p>In the server, a message about the code goes through <code>parsingMessage()</code>, which gives the position of the lexem the parser got last.
 The lexer and the preprocessor are ahead of the parser, so they use <code>parsingMessageAt()</code> with a position of their own, e.g. that of the <code>#include</code>.
-They send nothing unless the server was started with <code>-errors</code>, which the client does, and nothing in the parses that only refresh other files (<code>noErrors</code>).
+They send nothing unless the server was started with <code>-errors</code>, which the client does, and nothing in the parses that only refresh other files.
 So what is reported is what the request&#8217;s own parse found.
 A unit that is only reparsed to refresh it keeps its old group until it is parsed for a request again.
 <code>warningMessage()</code> and <code>errorMessage()</code> stay for what an operation itself has to say, and those are modal.</p>
@@ -4613,6 +4613,65 @@ same for a macro.</p>
 to do first. Anything more needs more than text substitution. An argument with side
 effects must not be evaluated twice, and a name in the body can collide with one at the
 call site. Refusing with a reason is fine there.</p>
+</div>
+</div>
+<div class="sect3">
+<h4 id="_first_slice">11.12.3. First Slice</h4>
+<div class="paragraph">
+<p>A body that is one statement, or <code>return expr;</code>, where no parameter is assigned or has
+its address taken. Each argument replaces its parameter, in parentheses. The parameters'
+references tell if they are assigned, so this needs no data flow analysis.
+Both cases so far fit, the wrappers in <code>startup.c</code> and <code>displayingErrorMessages()</code>,
+which only returns <code>options.errors</code>.</p>
+</div>
+</div>
+<div class="sect3">
+<h4 id="_bodies_with_more_statements">11.12.4. Bodies with More Statements</h4>
+<div class="paragraph">
+<p>Extract Function copies the region verbatim and puts what is needed at the edges, e.g.
+<code>int b = *_b;</code> first in the new function and <code>*_b = b;</code> last. Inline can do the same the
+other way round. Each parameter becomes a local in a block, initialised with its
+argument, and the body is copied verbatim:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-c hljs" data-lang="c">x = f(a + 1, g());
+
+/* becomes */
+{
+    int p = a + 1;
+    char *q = g();
+    /* the body of f() */
+}</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>Each argument is then evaluated once, and a body that assigns to a parameter, or takes
+its address, still works. Extract already makes such declarations from a local&#8217;s link
+name (<code>getLocalVariableDeclarationFromLinkName()</code>), and a parameter is a local.
+A parameter that is never assigned, with an argument that is a name or a constant, can
+still be replaced directly instead.</p>
+</div>
+<div class="paragraph">
+<p>What is left is the <code>return</code>. A <code>return e;</code> last in the body becomes <code>x = e;</code>, or <code>e;</code>
+if the value is not used. A call inside an expression has no room for a block, so there
+only a body that is <code>return expr;</code> can be inlined. More than one <code>return</code> is refused.</p>
+</div>
+<div class="paragraph">
+<p>Names can collide both ways. An argument can use a name that an earlier parameter&#8217;s local
+hides (<code>int p = p + 1;</code>). The body can use a global that a local at the call site
+hides. Both show in the references, which say what each name resolves to.
+A body with a <code>static</code> local, a recursive or variadic function, and a <code>goto</code> into the
+body are refused.</p>
+</div>
+<div class="paragraph">
+<p>The parts that exist are finding every call (as for Rename), the extent of a function
+definition (Move Function) and the position of an argument at a call (the parameter
+refactorings).</p>
+</div>
+<div class="paragraph">
+<p><strong>Inline Macro</strong> is closer, because a macro means its text. The arguments replace the
+parameters verbatim, and only <code><mark></code> and <code></mark>#</code> need care.</p>
 </div>
 </div>
 </div>
@@ -12377,7 +12436,7 @@ operation reads the in-memory table.</p>
 </div>
 <div id="footer">
 <div id="footer-text">
-Last updated 2026-10-19 14:25:23 UTC
+Last updated 2026-10-20 10:16:47 UTC
 </div>
 </div>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.18.3/highlight.min.js"></script>
