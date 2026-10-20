@@ -14,10 +14,12 @@ once the work gets a chapter, a test or a `.suspended` note.
 Ordering principle: first the one item that gates the most rows, then the chains that unblock, then bugs and
 features. Relative effort only — no dates (#noestimates).
 
-Each item has a name, the `<a id>` before its title. A `Waits for:` line names what it
-waits for, and `Goes with:` what it belongs with. The docs build draws the dependency
-graph from them on every push, linked at the end of this file, and `utils/backlog_graph
---check`, run with the tests, fails if a name is unknown.
+Each item has a name, the `<a id>` before its title, and the title is on one line. A
+`Waits for:` line names what it waits for. An `After:` line names the one item it should
+preferably come after, an order that can be skipped, and these make the themes trees.
+`Goes with:` names what it belongs with. The docs build draws the dependency graph on
+every push, `After` dashed and `Goes with` not at all, linked at the end of this file, and
+`utils/backlog_graph --check`, run with the tests, fails if a name is unknown.
 
 ## 1. The foundational one
 
@@ -99,6 +101,7 @@ graph from them on every push, linked at the end of this file, and `utils/backlo
     `*c-xref-diagnostics*` with its position, grouped by unit, and `next-error` visits it.
     Left: the user manual (the buffer, `M-g n` and `M-g p`); and the report of unresolved
     includes, with a suggested `-I`. The preprocessor's messages are #6, a macro's place of use is #63.
+    After: message-at-macro-use
 - (#6) <a id="report-errors-flag"></a>**Report the preprocessor's messages that are left in `src/yylex.c`** —
    roadmap, "Report what did not parse". They are behind `options.mode != ServerMode`
    guards that never fire. "end of file in cpp conditional" in `cppDeleteUntilEndElse()`
@@ -110,11 +113,13 @@ graph from them on every push, linked at the end of this file, and `utils/backlo
    valid UTF-8 is reported, once per file. Since `convertUtf8()` (`src/encoding.c`) takes
    a lead byte without its continuation bytes as one character, a Latin-1 file reads
    right, but silently.
+    After: eof-in-macro-call
 - (#66) <a id="malformed-has-include"></a>**A malformed `__has_include` stops the server** —
     `tests/test_parsing_malformed_has_include_survives/.suspended`. Its six messages wait
     for it.
 - (#67) <a id="eof-in-macro-call"></a>**A file that ends inside a macro call stops the server** —
     `tests/test_parsing_unterminated_macro_call/.suspended`. Its two messages wait for it.
+    After: malformed-has-include
 - (#68) <a id="lsp-mode"></a>**An `LspMode`, and a sink for the messages** — *no repo home yet.*
     LSP sets `ServerMode` (`src/parsing.c:140`), a stop-gap for the `assert(options.mode)`
     that are gone now. First remove the checks for `ServerMode` that are true in both
@@ -127,7 +132,8 @@ graph from them on every push, linked at the end of this file, and `utils/backlo
     chosen at startup: `<log>` and `<analysing>` for `-server`,
     `textDocument/publishDiagnostics` for `-lsp`, which replaces a document's diagnostics
     as a reparse replaces a unit's group. The first case of what #25 needs.
-    Goes with: startup-command-line, partition-options, lsp-position-encoding
+    Goes with: startup-command-line, partition-options
+    Waits for: mode-checks
 - (#7) <a id="startup-command-line"></a>**Decide, and enforce, what the startup command line may carry** — *no repo home yet.*
    Bigger than `c-xref file.c`, and it needs code, not just a decision. Once XrefMode is
    gone the server takes no file at startup: every request names its own, and the same
@@ -191,7 +197,7 @@ graph from them on every push, linked at the end of this file, and `utils/backlo
     written while the batch modes and the disk database were the truth. Each chapter is
     read against the code as it is, and what is stale is fixed or becomes a line here.
     `06-principles` first, e.g. the snapshot paragraph in "Reference Database and Parsing".
-    Goes with: freshness-docs
+    After: freshness-docs
 
 ## 3. Correctness, by (quiet × cheap)
 
@@ -211,7 +217,8 @@ graph from them on every push, linked at the end of this file, and `utils/backlo
     by changing a shared header on disk. Ghosts can be made that way today, so this does
     not wait for `sweep`. The message "try re-saving the file" no longer fits. Found by
     reading the code (Mac, session `05984816`, 2026-10-06), not tested.
-    Goes with: behind-the-back, sweep
+    Goes with: behind-the-back
+    After: sweep
 - (#11) <a id="behind-the-back"></a>**A header changed on disk, which the editor does not hold, keeps its old references** —
     it is stripped only when the request file is it or includes it directly, and all its
     includers are built. An includer built later adds the new references beside the old
@@ -245,7 +252,7 @@ graph from them on every push, linked at the end of this file, and `utils/backlo
       resolved in between. If `getcwd()` fails, `cwd` is `/` in that window, so relative
       names resolve under the root. Resolving the config's relative paths against the
       config's directory, not `cwd`, fixes both (Mac, session `05984816`, 2026-10-14).
-      Goes with: adr-0031
+      After: adr-0031
    e. <a id="warm-start-fatal"></a>**A warm start trips `FATAL cxref.c:1494: 'browsingStack.top' is not true`** —
       *no repo home yet*. Running `tests/test_browsing_pop_needs_refresh` a second time
       from the first run's `.c-xref` snapshot dies on the assert, so the same requests
@@ -260,7 +267,8 @@ graph from them on every push, linked at the end of this file, and `utils/backlo
       ffmpeg, but it needs a header included by more than ~130 CUs, and c-xrefactory has
       79 with a worst fan-in of 39, so it cannot happen here. That, and not its severity,
       is why it sits here.
-      Goes with: time-budget, refactoring-refusals
+      Goes with: refactoring-refusals
+      After: time-budget
    j. <a id="lsp-position-encoding"></a>**The LSP server announces `positionEncoding: "utf-8"` but counts code points** —
       *no repo home yet* (`src/lsp_handler.c`). In LSP 3.17 "utf-8" means columns in
       bytes, while the encoding collapse makes every server column a character column, so
@@ -272,12 +280,14 @@ graph from them on every push, linked at the end of this file, and `utils/backlo
       the protocol has it in `result.capabilities`, so a client ignores it and assumes
       "utf-16". `test_lsp_simple_lifecycle` pins it there (WSL, session `d25255b8`,
       2026-10-10).
+      After: lsp-mode
    k. <a id="lsp-input-ends"></a>**The LSP server exits as a JSON parse error when its input ends** —
       *no repo home yet* (`src/lsp.c`). At end of file the header reader returns a length
       of 0, the empty content does not parse, and the exit code is
       `LSP_RETURN_ERROR_JSON_PARSE_ERROR`. The protocol does not say what an ending input
       means, but a client that died without `exit` should not look like a parse error.
       From reading the code (WSL, session `d25255b8`, 2026-10-10), not tested.
+      After: lsp-position-encoding
 
 - (#58) <a id="search-result-line-zero"></a>**The client asks for search result number 0** — suspected, not
     reproduced. Typing a search string gave `-olcxsearchgoto0` at once, twice, each time
@@ -306,6 +316,7 @@ graph from them on every push, linked at the end of this file, and `utils/backlo
     `next-error` goes to the `#define`, often in a header. gcc reports the place of use and
     adds a note for the definition. Needs the outermost macro call of the expansion
     (`expandMacroCall()`, `src/yylex.c`). `test_parsing_include_using_macro` shows it.
+    After: report-errors-flag
 
 ## 4. Performance, in strict dependency order
 
@@ -319,7 +330,8 @@ Roadmap → Optimization has the baseline: a cold-start PUSH on ffmpeg, measured
     in the table (`cursor-parse-reuse`) gives the symbol first, when the request CU is
     current. It narrows what `request-target` widens: the reach of the symbol, not of the
     request file's closure.
-    Goes with: cursor-parse-reuse, request-target
+    Goes with: cursor-parse-reuse
+    After: request-target
 - (#17) <a id="scan-angle-includes"></a>**Extend the lightweight scan to `<...>` includes** — blocked on header-filtered
     sibling parsing, or ubiquitous system headers drag in nearly every CU. Also removes
     the cold-start double progress bar.
@@ -373,6 +385,7 @@ Roadmap → Optimization has the baseline: a cold-start PUSH on ffmpeg, measured
     them. Today they write native protocol records as they go (`ppc…()` calls in
     `refactory.c`, `extract.c` and `cxref.c`). The `assert(options.cxrefProtocol)` lines
     roughly map where an operation depends on the native protocol, so keep them until then.
+    After: lsp-mode
 - (#26) <a id="move-function-next"></a>**Move Function next steps**, then **Delete Function**. Also **`-parse-all`, a request that parses every compilation
     unit the scan found and has not parsed** — what ADR-0024's CreateMode reduces to
     once the priming is a request rather than a mode; `test_ffmpeg` and
@@ -400,11 +413,12 @@ Roadmap → Optimization has the baseline: a cold-start PUSH on ffmpeg, measured
     Parameter**, **Finish Extract Variable**, **Inline Variable**, **Name and Define
     Constant**, **C11 `_Generic`** (`tests/test_parsing_generics`). All in
     `11-planned-features.adoc`.
+    After: move-function-comment-prompt
 - (#27) <a id="local-config-fragments"></a>**Local config fragments: the config names, the fragment binds** —
     ADR-0034, proposed. Decide it, with where the fragment lives and the syntax of a
     default. Then: expand defaults, report an unbound name, read the fragment before the
     environment, and ignore the personal options in a config, with a warning.
-    Goes with: project-extent
+    After: project-extent
 - (#28) <a id="chapter-17-hygiene"></a>**Chapter 17 hygiene, opportunistically** — incremental `cxfile.c` cleanup, extract
     the macro expansion module, hashtab → hashlist, split the editor module, rename server
     operations, elisp recompiled and deleted on every build.
@@ -426,7 +440,8 @@ Roadmap → Optimization has the baseline: a cold-start PUSH on ffmpeg, measured
     *no repo home yet.* Nothing reads it today. CMake and Meson write one, and `bear`
     makes one for Make. It decides whether a stranger's first project works without
     learning `.c-xrefrc` (section 8).
-    Goes with: project-extent, local-config-fragments, partition-options
+    Goes with: project-extent, partition-options
+    After: local-config-fragments
 
 ## 6. Developer tooling
 
@@ -503,7 +518,6 @@ are noted in `cu-inputs`, `out-of-date`, `time-budget` and `sweep-cost`.
     change time, asked for once. Left: the config's change time (`out-of-date`). The
     closure can hold the scan's includes beside the parse's, which for the predicate only
     costs a parse.
-    Goes with: out-of-date
 - (#36) <a id="out-of-date"></a>**The config as an input of `knowledgeIsOutOfDate()`** — it
     replaces `markAllCompilationUnitsStale()`, and the zero sentinel goes. The config is the
     `.c-xrefrc` and its local fragment (ADR-0034), and its change time is the later of the
@@ -512,7 +526,8 @@ are noted in `cu-inputs`, `out-of-date`, `time-budget` and `sweep-cost`.
     has no measured reason, and evaluating change first, i.e. `stat` each known file once
     and walk the reverse include graph to the CUs whose knowledge is older, costs in
     proportion to what changed.
-    Goes with: cu-inputs, local-config-fragments
+    Goes with: local-config-fragments
+    After: cu-inputs
 - (#37) <a id="request-target"></a>**What a request needs** — the CUs that reach the request
     file's closure, and the whole project for an operation on a name. Left: when its array
     of 256 files is full, `collectCUsIncluding()` walks no further up, silently, which on
@@ -520,7 +535,6 @@ are noted in `cu-inputs`, `out-of-date`, `time-budget` and `sweep-cost`.
     includes (`scan-angle-includes`), so for a project that includes its own headers that
     way, reach misses CUs never parsed.
     Waits for: adr-0032
-    Goes with: header-filtered-siblings
 - (#54) <a id="request-through-includers"></a>**A request in a header is parsed through its includers** —
     never on its own (ADR-0032, amended 2026-10-11), as for a macro body. No includer
     gives a message saying that no compilation unit includes the file. Includers that
@@ -532,7 +546,7 @@ are noted in `cu-inputs`, `out-of-date`, `time-budget` and `sweep-cost`.
     expands it. ADR-0032 says to reuse the references when the knowledge is current,
     which needs a lookup of the reference at a position in the table. Completion, extract
     and the macro body need the parse.
-    Goes with: request-through-includers
+    After: request-through-includers
 - (#39) <a id="header-not-half"></a>**A changed header the editor holds is stripped also when not all its includers fit** —
     `stripChangedHeldHeaders()` (`src/rebuild.c`) strips it and adds its includers to the
     build list only up to the cap. A reference in the header that only the others emit,
@@ -541,7 +555,7 @@ are noted in `cu-inputs`, `out-of-date`, `time-budget` and `sweep-cost`.
     `fileNumberIsStale()`, which has no coarse-clock gap, and records the header as parsed. Not needed once `sweep` is in.
 - (#56) <a id="closed-buffer-strip"></a>**A header whose buffer the client stops sending is stripped, and none of its includers built** —
     `tests/test_reverted_held_header_keeps_its_references/.suspended`.
-    Goes with: header-not-half
+    After: header-not-half
 - (#40) <a id="time-budget"></a>**A time budget instead of the cap** — the cap (`MAX_CUS_TO_REPARSE`,
     128 today) becomes a time budget, and above it the question
     with an estimate. Browsing remembers a "no" for the session, an operation that edits
@@ -598,7 +612,7 @@ are noted in `cu-inputs`, `out-of-date`, `time-budget` and `sweep-cost`.
     only, `navigation.c` once per menu item. Per request on ffmpeg, 1376 `stat`s took
     about 5 ms and 2434 include closures about 50 ms (WSL, session `d25255b8`,
     2026-10-11).
-    Goes with: sweep
+    After: sweep
 
 ## 8. Real users: installing and being found
 
