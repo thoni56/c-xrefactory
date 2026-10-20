@@ -1297,6 +1297,10 @@ endOfFile:
     return;
 }
 
+static void ungetLexem(char *lexemStart) {
+    currentInput.read = lexemStart;
+}
+
 /* ********************************* #IF ************************** */
 
 /* Reads the name in <...> up to the '>' into nameBuffer, false if the line or the
@@ -1304,14 +1308,17 @@ endOfFile:
 static bool readNameInAngleBrackets(char *nameBuffer) {
     char *p = nameBuffer;
     for (;;) {
-        LexemCode lexem = getLexem();
+        char *lexemStart;
+        LexemCode lexem = getLexemAndSavePointerToPrevious(&lexemStart);
         ON_LEXEM_EXCEPTION_GOTO(lexem, unterminated, unterminated);
         if (lexem == '>') {
             getExtraLexemInformationFor(lexem, &currentInput.read, NULL, NULL, NULL, NULL, NULL, true);
             break;
         }
-        if (lexem == '\n' || p >= nameBuffer + MAX_FILE_NAME_SIZE - 1)
+        if (lexem == '\n' || p >= nameBuffer + MAX_FILE_NAME_SIZE - 1) {
+            ungetLexem(lexemStart);
             return false;
+        }
         /* Copy the lexem text */
         char *lexemText = currentInput.read;
         getExtraLexemInformationFor(lexem, &currentInput.read, NULL, NULL, NULL, NULL, NULL, true);
@@ -1340,7 +1347,7 @@ static LexemCode handleHasIncludeOperator(char *operatorName,
             sprintf(message, "expected '(' after %s", operatorName);
             warningMessage(ERR_ST, message);
         }
-        currentInput.read = lexemStart;     /* unget lexem */
+        ungetLexem(lexemStart);
         return 0;
     }
     getExtraLexemInformationFor(lexem, &currentInput.read, NULL, NULL, &position, NULL, NULL, true);
@@ -1386,7 +1393,7 @@ static LexemCode handleHasIncludeOperator(char *operatorName,
             sprintf(message, "expected string literal or < in %s", operatorName);
             warningMessage(ERR_ST, message);
         }
-        currentInput.read = lexemStart;     /* unget lexem */
+        ungetLexem(lexemStart);
         return 0;
     }
 
