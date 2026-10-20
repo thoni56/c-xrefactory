@@ -1299,6 +1299,33 @@ endOfFile:
 
 /* ********************************* #IF ************************** */
 
+/* Reads the name in <...> up to the '>' into nameBuffer, false if the line or the
+ * buffer ends first */
+static bool readNameInAngleBrackets(char *nameBuffer) {
+    char *p = nameBuffer;
+    for (;;) {
+        LexemCode lexem = getLexem();
+        ON_LEXEM_EXCEPTION_GOTO(lexem, unterminated, unterminated);
+        if (lexem == '>') {
+            getExtraLexemInformationFor(lexem, &currentInput.read, NULL, NULL, NULL, NULL, NULL, true);
+            break;
+        }
+        if (lexem == '\n' || p >= nameBuffer + MAX_FILE_NAME_SIZE - 1)
+            return false;
+        /* Copy the lexem text */
+        char *lexemText = currentInput.read;
+        getExtraLexemInformationFor(lexem, &currentInput.read, NULL, NULL, NULL, NULL, NULL, true);
+        while (lexemText < currentInput.read && p < nameBuffer + MAX_FILE_NAME_SIZE - 1) {
+            *p++ = *lexemText++;
+        }
+    }
+    *p = '\0';
+    return true;
+
+unterminated:
+    return false;
+}
+
 /* __has_include and __has_include_next differ only in how the file is searched for */
 static LexemCode handleHasIncludeOperator(char *operatorName,
                                           bool (*canFind)(char includeType, char *name)) {
@@ -1327,40 +1354,21 @@ static LexemCode handleHasIncludeOperator(char *operatorName,
         includeName = currentInput.read;
         getExtraLexemInformationFor(lexem, &currentInput.read, NULL, NULL, &position, NULL, NULL,
                                     true);
-        includeType = *includeName;  /* First char is " or < */
-        includeName++;  /* Skip the quote */
+        includeType = '"';      /* Found "..." */
+        includeName++;          /* Skip over the leading quote */
     } else if (lexem == '<') {
         /* Handle <header> format */
         includeType = '<';
         getExtraLexemInformationFor(lexem, &currentInput.read, NULL, NULL, &position, NULL, NULL,
                                     true);
 
-        /* Read until we find '>' */
-        char *p = nameBuffer;
-        for (;;) {
-            lexem = getLexem();
-            ON_LEXEM_EXCEPTION_GOTO(lexem, error, error);
-            if (lexem == '>') {
-                getExtraLexemInformationFor(lexem, &currentInput.read, NULL, NULL, &position, NULL,
-                                            NULL, true);
-                break;
+        if (!readNameInAngleBrackets(nameBuffer)) {
+            if (options.mode!=ServerMode) {
+                sprintf(message, "unterminated < in %s", operatorName);
+                warningMessage(ERR_ST, message);
             }
-            if (lexem == '\n' || p >= nameBuffer + MAX_FILE_NAME_SIZE - 1) {
-                if (options.mode!=ServerMode) {
-                    sprintf(message, "unterminated < in %s", operatorName);
-                    warningMessage(ERR_ST, message);
-                }
-                return 0;
-            }
-            /* Copy the lexem text */
-            char *lexemText = currentInput.read;
-            getExtraLexemInformationFor(lexem, &currentInput.read, NULL, NULL, &position, NULL, NULL,
-                                        true);
-            while (lexemText < currentInput.read && p < nameBuffer + MAX_FILE_NAME_SIZE - 1) {
-                *p++ = *lexemText++;
-            }
+            return 0;
         }
-        *p = '\0';
         includeName = nameBuffer;
         /* For angle brackets, we need to read the closing ')' */
         lexem = getNonBlankLexemAndData(&position, NULL, NULL, NULL);
