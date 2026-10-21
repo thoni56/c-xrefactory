@@ -152,12 +152,9 @@ extern void usage(void);
 extern void setOptionVariable(char *name, char *val);
 extern char *getOptionVariable(char *name);
 
-extern void dirInputFile(MAP_FUN_SIGNATURE);
-extern bool fileNameShouldBePruned(char *fn);
 extern StringList *resolvePrunePaths(void);
 extern void recoverMemoryFromIncludeList(void);
 
-extern void processFileArguments(void);
 extern void clearRequestFileArgument(void);
 extern int addRequestFileToFileTable(void);
 extern void processOptions(ArgumentsVector args, ProcessFileArguments infilesFlag);
@@ -171,7 +168,6 @@ extern char *expandPredefinedSpecialVariables_static(char *output, char *inputFi
 
 extern bool readOptionsIntoArgs(FILE *file, ArgumentsVector *outArgs, Memory *memory,
                                         char *sectionFile, char *project, char *section);
-extern void readOptionsFromCommand(char *command, ArgumentsVector *outArgs, char *sectionFile);
 extern int getOptionFromFile(FILE *file, char *foundText, int *chars_read);
 extern ArgumentsVector readOptionsFromFile(char *fileName, char *project, char *foundProjectName);
 extern ArgumentsVector readOptionsFromPipe(void);

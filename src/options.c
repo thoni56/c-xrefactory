@@ -424,28 +424,8 @@ char *getOptionVariable(char *name) {
  * request and reads it right after. */
 static char *requestFileArgumentName = NULL;
 
-static void scheduleCommandLineEnteredFileToProcess(char *fn) {
-    ENTER();
-    int fileNumber = addFileNameToFileTable(fn);
-    FileItem *fileItem = getFileItemWithFileNumber(fileNumber);
-    log_debug("recursively process command line argument file #%d '%s'", fileNumber, fileItem->name);
-    LEAVE();
-}
-
-bool fileNameShouldBePruned(char *fn) {
-    for (StringList *s = options.pruneNames; s != NULL; s = s->next) {
-        char resolved[MAX_FILE_NAME_SIZE];
-        snprintf(resolved, sizeof(resolved), "%s%c%s",
-                 options.detectedProjectRoot, FILE_PATH_SEPARATOR, s->string);
-        if (compareFileNames(resolved, fn) == 0)
-            return true;
-    }
-    return false;
-}
-
 /* Resolve each -prune entry into an absolute path anchored at the detected
- * project root (same resolution as fileNameShouldBePruned, but materialised as
- * a list). The lightweight scan compares discovered directory entries against
+ * project root. The lightweight scan compares discovered directory entries against
  * these to gate descent. Caller owns the returned list (freeStringList). */
 StringList *resolvePrunePaths(void) {
     StringList *result = NULL;
@@ -456,65 +436,6 @@ StringList *resolvePrunePaths(void) {
         result = newStringList(resolved, result);
     }
     return result;
-}
-
-void dirInputFile(MAP_FUN_SIGNATURE) {
-    char            *dir,*fname;
-    void            *recurseFlag;
-    void            *nrecurseFlag;
-    char            dirName[MAX_FILE_NAME_SIZE];
-    int             isTopDirectory;
-
-    dir = a1;
-    fname = file;
-    recurseFlag = a4;
-    isTopDirectory = *a5;
-
-    if (isTopDirectory == 0) {
-        if (strcmp(fname, ".")==0 || strcmp(fname, "..")==0)
-            return;
-        if (fileNameShouldBePruned(fname))
-            return;
-        sprintf(dirName, "%s%c%s", dir, FILE_PATH_SEPARATOR, fname);
-        strcpy(dirName, normalizeFileName_static(dirName, cwd));
-        if (fileNameShouldBePruned(dirName))
-            return;
-    } else {
-        strcpy(dirName, normalizeFileName_static(fname, cwd));
-    }
-    if (strlen(dirName) >= MAX_FILE_NAME_SIZE) {
-        char tmpBuff[TMP_BUFF_SIZE];
-        sprintf(tmpBuff, "file name %s is too long", dirName);
-        FATAL_ERROR(ERR_ST, tmpBuff, EXIT_FAILURE);
-    }
-
-    // Directories are never in editor buffers...
-    if (isDirectory(dirName)) {
-        if (recurseFlag!=NULL) {
-            isTopDirectory = 0;
-            nrecurseFlag = &isTopDirectory;
-            mapOverDirectoryFiles(dirName, dirInputFile, DO_NOT_ALLOW_EDITOR_FILES,
-                              dirName, NULL, NULL, nrecurseFlag, &isTopDirectory);
-            editorMapOnNonExistantFiles(dirName, dirInputFile, DEPTH_ANY,
-                                        dirName, NULL, NULL, nrecurseFlag, &isTopDirectory);
-        }
-    } else if (editorFileExists(dirName)) {
-        if (isTopDirectory==0 && !isCompilationUnit(fname)) {
-            return;
-        }
-        scheduleCommandLineEnteredFileToProcess(dirName);
-    } else if (containsWildcard(dirName)) {
-        char wildcardPath[MAX_OPTION_LEN];
-        expandWildcardsInOnePath(dirName, wildcardPath, MAX_OPTION_LEN);
-        MAP_OVER_PATHS(wildcardPath, { dirInputFile(currentPath, "", NULL, NULL, recurseFlag, &isTopDirectory); });
-    } else if (isTopDirectory) {
-        if (options.mode!=ServerMode) {
-            errorMessage(ERR_CANT_OPEN, dirName);
-        } else {
-            // Needed to be able to complete in buffer without existing file
-            scheduleCommandLineEnteredFileToProcess(dirName);
-        }
-    }
 }
 
 void recoverMemoryFromIncludeList(void) {
@@ -952,17 +873,6 @@ ArgumentsVector readOptionsFromFile(char *fileName, char *section, char *project
     readOptionsIntoArgs(file, &args, &ppmMemory, section, project, unused);
     closeFile(file);
     return args;
-}
-
-void readOptionsFromCommand(char *command, ArgumentsVector *outArgs, char *section) {
-    FILE *file;
-    char unused[MAX_FILE_NAME_SIZE];
-
-    file = popen(command, "r");
-    if (file==NULL)
-        FATAL_ERROR(ERR_CANT_OPEN, command, EXIT_FAILURE);
-    readOptionsIntoArgs(file, outArgs, &ppmMemory, section, NULL, unused);
-    closeFile(file);
 }
 
 ArgumentsVector readOptionsFromPipe(void) {
@@ -1687,49 +1597,6 @@ void processOptions(ArgumentsVector args, ProcessFileArguments doProcessFiles) {
         }
     }
     LEAVE();
-}
-
-static void scheduleFileArgumentToFileTable(char *infile) {
-    int   topCallFlag;
-    void *recurseFlag;
-
-    topCallFlag = 1;
-    recurseFlag = &topCallFlag;
-    MAP_OVER_PATHS(infile, { dirInputFile(currentPath, "", NULL, NULL, recurseFlag, &topCallFlag); });
-}
-
-static void processFileArgument(char *fileArgument) {
-    if (fileArgument[0] == '`' && fileArgument[strlen(fileArgument) - 1] == '`') {
-        // TODO: So what does backquoted filenames mean?
-        // A command to be run that returns a set of files?
-        char command[MAX_OPTION_LEN];
-
-        // Un-backtick the command
-        strcpy(command, fileArgument + 1);
-        char *pp = strchr(command, '`');
-        if (pp != NULL)
-            *pp = 0;
-
-        ArgumentsVector args;
-        // Run the command and get options incl. more file arguments
-        readOptionsFromCommand(command, &args, "");
-        for (int i = 1; i < args.argc; i++) {
-            // Only handle file names?
-            if (args.argv[i][0] != '-' && args.argv[i][0] != '`') {
-                scheduleFileArgumentToFileTable(args.argv[i]);
-            }
-        }
-
-    } else {
-        scheduleFileArgumentToFileTable(fileArgument);
-    }
-}
-
-void processFileArguments(void) {
-    for (StringList *l = options.inputFiles; l != NULL; l = l->next) {
-        log_debug("processing file argument '%s'", l->string);
-        processFileArgument(l->string);
-    }
 }
 
 void clearRequestFileArgument(void) {

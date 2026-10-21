@@ -614,18 +614,6 @@ Ensure(Options, can_parse_target_line_option) {
     assert_that(options.refactor_target_line, is_equal_to_string("99"));
 }
 
-Ensure(Options, prunes_relative_path_resolved_against_detected_project_root) {
-    options.detectedProjectRoot = "/project";
-    addToStringListOption(&options.pruneNames, "subdir");
-
-    expect(compareFileNames,
-           when(ss1, is_equal_to_string("/project/subdir")),
-           when(ss2, is_equal_to_string("/project/subdir")),
-           will_return(0));
-
-    assert_that(fileNameShouldBePruned("/project/subdir"), is_true);
-}
-
 /* When asked to collect file arguments, the parser must route bare path tokens
  * into options.inputFiles while NOT mistaking a separate-token option VALUE
  * (here, -prune's argument) for a path. This is the classification that

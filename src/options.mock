@@ -14,10 +14,6 @@ void usage(void) {
     mock();
 }
 
-void processFileArguments(void) {
-    mock();
-}
-
 void clearRequestFileArgument(void) {
     mock();
 }
@@ -54,14 +50,6 @@ void addToStringListOption(StringList **optlist, char *argvi) {
     mock(optlist, argvi);
 }
 
-void dirInputFile(char *file, char *a1, char *a2, Completions *a3, void *a4, int *a5) {
-  mock(file, a1, a2, a3, a4, a5);
-}
-
-bool fileNameShouldBePruned(char *fn) {
-    return (bool) mock(fn);
-}
-
 StringList *resolvePrunePaths(void) {
     return (StringList *) mock();
 }
@@ -89,10 +77,6 @@ bool readOptionsIntoArgs(FILE *file, ArgumentsVector *outArgs, Memory *memory, c
 
 ArgumentsVector readOptionsFromFile(char *fileName, char *section, char *project) {
     return *(ArgumentsVector *)mock(fileName, section, project);
-}
-
-void readOptionsFromCommand(char *command, ArgumentsVector *outArgs, char *sectionFile) {
-  mock(command, outArgs->argc, outArgs->argv, sectionFile);
 }
 
 ArgumentsVector readOptionsFromPipe(void) {
