@@ -43,7 +43,54 @@
 static bool isProcessingPreprocessorIf; /* Flag for yylex, to not filter '\n' */
 static Position lastLexemPosition;      /* The one yylex() gave the parser last */
 
-static void rememberLastLexemPosition(Position position);
+
+/* MacroStack */
+int macroStackIndex=0;
+static LexemStream macroInputStack[MACRO_INPUT_STACK_SIZE];
+
+
+/* MacroArgumentsMemory */
+static Memory macroArgumentsMemory;
+
+static void initMacroArgumentsMemory(void) {
+    memoryInit(&macroArgumentsMemory, "macro arguments", MacroArgumentsMemorySize);
+}
+
+static void *mamAlloc(size_t size) {
+    return memoryAlloc(&macroArgumentsMemory, size);
+}
+
+
+/* MacroExpansion */
+typedef struct {
+    char *macroName;
+    Position callPosition;
+} MacroExpansion;
+
+/* The expansions the last lexem came from, outermost first, and its place in the innermost body */
+static MacroExpansion lastLexemExpansions[MACRO_INPUT_STACK_SIZE];
+static int lastLexemExpansionCount;
+static Position lastLexemBodyPosition;
+
+static void addExpansionOf(LexemStream *stream) {
+    if (stream->streamType == MACRO_STREAM)
+        lastLexemExpansions[lastLexemExpansionCount++] =
+            (MacroExpansion){.macroName = stream->macroName, .callPosition = stream->macroCallPosition};
+}
+
+/* A lexem from a macro expansion is reported where the outermost macro is used */
+static void rememberLastLexemPosition(Position position) {
+    lastLexemExpansionCount = 0;
+    for (int i = 0; i < macroStackIndex; i++)
+        addExpansionOf(&macroInputStack[i]);
+    addExpansionOf(&currentInput);
+
+    lastLexemBodyPosition = position;
+    if (lastLexemExpansionCount > 0)
+        lastLexemPosition = lastLexemExpansions[0].callPosition;
+    else
+        lastLexemPosition = position;
+}
 
 Position positionOfLastLexem(void) {
     return lastLexemPosition;
@@ -91,18 +138,6 @@ static void setYylvalsForInteger(int val, Position position, int length) {
     }
 
 
-int macroStackIndex=0;
-static LexemStream macroInputStack[MACRO_INPUT_STACK_SIZE];
-
-static Memory macroArgumentsMemory;
-
-static void initMacroArgumentsMemory(void) {
-    memoryInit(&macroArgumentsMemory, "macro arguments", MacroArgumentsMemorySize);
-}
-
-static void *mamAlloc(size_t size) {
-    return memoryAlloc(&macroArgumentsMemory, size);
-}
 
 
 /* Macro body memory - MBM */
@@ -333,36 +368,6 @@ static void skipExtraLexemInformationWithCountLines(LexemCode lexem, char **read
 
 static bool insideMacro(void) {
     return macroStackIndex > 0;
-}
-
-typedef struct {
-    char *macroName;
-    Position callPosition;
-} MacroExpansion;
-
-/* The expansions the last lexem came from, outermost first, and its place in the innermost body */
-static MacroExpansion lastLexemExpansions[MACRO_INPUT_STACK_SIZE];
-static int lastLexemExpansionCount;
-static Position lastLexemBodyPosition;
-
-static void addExpansionOf(LexemStream *stream) {
-    if (stream->streamType == MACRO_STREAM)
-        lastLexemExpansions[lastLexemExpansionCount++] =
-            (MacroExpansion){.macroName = stream->macroName, .callPosition = stream->macroCallPosition};
-}
-
-/* A lexem from a macro expansion is reported where the outermost macro is used */
-static void rememberLastLexemPosition(Position position) {
-    lastLexemExpansionCount = 0;
-    for (int i = 0; i < macroStackIndex; i++)
-        addExpansionOf(&macroInputStack[i]);
-    addExpansionOf(&currentInput);
-
-    lastLexemBodyPosition = position;
-    if (lastLexemExpansionCount > 0)
-        lastLexemPosition = lastLexemExpansions[0].callPosition;
-    else
-        lastLexemPosition = position;
 }
 
 /* A note for each macro the last lexem was expanded from, as clang gives them */
