@@ -361,6 +361,7 @@ void parsingMessageAt(Position position, int errorCode, char *message) {
 /* At the lexem the parser got last, the lexer has already passed it */
 void parsingMessage(int errorCode, char *message) {
     parsingMessageAt(positionOfLastLexem(), errorCode, message);
+    noteMacroExpansionsOfLastLexem();
 }
 
 

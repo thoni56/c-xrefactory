@@ -1,1 +1,3 @@
 <log len=<n>>CURDIR/source.c:3:14: Syntax error on: )
+<log len=<n>>CURDIR/macro.h:2:15: note: expanded from macro 'OUTER'
+<log len=<n>>CURDIR/macro.h:1:15: note: expanded from macro 'INNER'

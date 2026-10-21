@@ -313,11 +313,6 @@ every push, `After` dashed and `Goes with` not at all, linked at the end of this
     as the `"..."` branch does, so they reach the parser as syntax errors
     (`processIncludeDirective()`, `src/yylex.c`). `test_parsing_include_using_macro` pins
     both; its two syntax errors go when this is fixed.
-- (#63) <a id="message-at-macro-use"></a>**A parse message in a macro expansion also notes the macro's definition** —
-    the message is given where the outermost macro is used, so `next-error` does not show
-    the `#define` that the token came from. clang adds a note per level ("expanded from
-    macro"). Needs the chain of calls, not only the outermost (`expandMacroCall()`,
-    `src/yylex.c`). `test_parsing_message_at_macro_use` is the case to extend.
 - (#69) <a id="latin-1-lookalikes"></a>**Latin-1 that looks like UTF-8 is read as one character** — *no repo home yet.*
     `convertUtf8()` (`src/encoding.c`) takes a lead byte with its continuation bytes as
     one character, so `å°` and one more byte in 0x80–0xBF, in Latin-1, become one space

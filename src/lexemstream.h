@@ -3,6 +3,7 @@
 
 #include <stdbool.h>
 #include "lexem.h"
+#include "position.h"
 
 /* Stream type discriminates buffer ownership and cleanup strategy in refillInputIfEmpty():
  * - NORMAL_STREAM: Buffer from file's lexemBuffer (not owned, no cleanup needed)
@@ -23,6 +24,7 @@ typedef struct {
     char *read;                 /* Next lexem to read */
     char *write;                /* End of valid lexems */
     char *macroName;            /* For MACRO_STREAM: macro being expanded, else NULL */
+    Position macroCallPosition; /* For MACRO_STREAM: where the macro is used */
     LexemStreamType streamType; /* Discriminates buffer ownership and cleanup strategy */
 } LexemStream;
 

@@ -42,20 +42,11 @@
 
 static bool isProcessingPreprocessorIf; /* Flag for yylex, to not filter '\n' */
 static Position lastLexemPosition;      /* The one yylex() gave the parser last */
-static Position outermostMacroCallPosition;
 
-static bool insideMacro(void);
+static void rememberLastLexemPosition(Position position);
 
 Position positionOfLastLexem(void) {
     return lastLexemPosition;
-}
-
-/* A lexem from a macro expansion is reported where the outermost macro is used */
-static void rememberLastLexemPosition(Position position) {
-    if (insideMacro())
-        lastLexemPosition = outermostMacroCallPosition;
-    else
-        lastLexemPosition = position;
 }
 
 static void setYylvalsForIdentifier(char *name, Symbol *symbol, Position position) {
@@ -342,6 +333,47 @@ static void skipExtraLexemInformationWithCountLines(LexemCode lexem, char **read
 
 static bool insideMacro(void) {
     return macroStackIndex > 0;
+}
+
+typedef struct {
+    char *macroName;
+    Position callPosition;
+} MacroExpansion;
+
+/* The expansions the last lexem came from, outermost first, and its place in the innermost body */
+static MacroExpansion lastLexemExpansions[MACRO_INPUT_STACK_SIZE];
+static int lastLexemExpansionCount;
+static Position lastLexemBodyPosition;
+
+static void addExpansionOf(LexemStream *stream) {
+    if (stream->streamType == MACRO_STREAM)
+        lastLexemExpansions[lastLexemExpansionCount++] =
+            (MacroExpansion){.macroName = stream->macroName, .callPosition = stream->macroCallPosition};
+}
+
+/* A lexem from a macro expansion is reported where the outermost macro is used */
+static void rememberLastLexemPosition(Position position) {
+    lastLexemExpansionCount = 0;
+    for (int i = 0; i < macroStackIndex; i++)
+        addExpansionOf(&macroInputStack[i]);
+    addExpansionOf(&currentInput);
+
+    lastLexemBodyPosition = position;
+    if (lastLexemExpansionCount > 0)
+        lastLexemPosition = lastLexemExpansions[0].callPosition;
+    else
+        lastLexemPosition = position;
+}
+
+/* A note for each macro the last lexem was expanded from, as clang gives them */
+void noteMacroExpansionsOfLastLexem(void) {
+    for (int i = 0; i < lastLexemExpansionCount; i++) {
+        Position position = i + 1 < lastLexemExpansionCount ? lastLexemExpansions[i + 1].callPosition
+                                                            : lastLexemBodyPosition;
+        char message[TMP_STRING_SIZE];
+        snprintf(message, sizeof(message), "note: expanded from macro '%s'", lastLexemExpansions[i].macroName);
+        parsingMessageAt(position, ERR_ST, message);
+    }
 }
 
 /* Refills currentInput when exhausted. Returns exception codes or 0 on success.
@@ -2451,7 +2483,6 @@ static bool expandMacroCall(Symbol *macroSymbol, Position macroPosition) {
         return false;	/* !!!!!         tricky,  undefined macro */
     if (!insideMacro()) { /* call from top level, init memory */
         mbmInit();
-        outermostMacroCallPosition = macroPosition;
     }
     log_debug("trying to expand macro '%s'", macroBody->name);
     if (cyclicCall(macroBody))
@@ -2482,6 +2513,7 @@ static bool expandMacroCall(Symbol *macroSymbol, Position macroPosition) {
     log_debug("create macro body '%s' as new input", macroBody->name);
 
     LexemStream macroBodyInput = createMacroBodyAsNewStream(macroBody, actualArgumentsInput);
+    macroBodyInput.macroCallPosition = macroPosition;
 
     prependMacroInput(&macroBodyInput);
     log_debug("expanded macro '%s'", macroBody->name);
