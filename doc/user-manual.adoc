@@ -10,7 +10,8 @@ v{VERSION} - Generated {localdate}
 
 == Introduction
 
-C-xrefactory is a code browser and refactoring tool for C and Yacc, integrated with Emacs. It lets you navigate symbols, find usages, complete code, and safely refactor—all while understanding your code semantically.
+C-xrefactory is a code browser and refactoring tool for C and Yacc, integrated with Emacs.
+It lets you navigate symbols, find usages, complete code, and safely refactor—all while understanding your code semantically.
 
 All functions are available from the *c-xref* menu in Emacs.
 
@@ -33,15 +34,18 @@ See the https://github.com/thoni56/c-xrefactory/blob/main/README.md[README] for 
 
 === Projects
 
-C-xrefactory is "project-based", meaning that it handles files within one project. C-xrefactory auto-detects projects based on the file you're editing when you do you initial C-xrefactory operation. The path of the file is investigated upwards until a `.c-xrefrc` (C-xrefactory project config) file is found.
+C-xrefactory is "project-based", meaning that it handles files within one project.
+C-xrefactory auto-detects projects based on the file you're editing when you do your initial C-xrefactory operation.
+The path of the file is investigated upwards until a `.c-xrefrc` (C-xrefactory project config) file is found.
 
-If no config file could be found, you'll be prompted to create a project. The active project is shown in the modeline after each action.
+If no config file could be found, you'll be prompted to create a project.
+The active project is shown in the modeline after each action.
 
 === Project Configuration
 
-The `.c-xrefrc` file marks the root of a source tree. The directory containing
-`.c-xrefrc` and its subdirectories are always scanned for compilation units. A
-minimal config only needs a section header naming the project:
+The `.c-xrefrc` file marks the root of a source tree.
+The directory containing `.c-xrefrc` and its subdirectories are always scanned for compilation units.
+A minimal config only needs a section header naming the project:
 
 [source]
 ----
@@ -51,10 +55,8 @@ minimal config only needs a section header naming the project:
 The section header `[...]` names the project.
 Lines below it configure the project:
 
-Source directories:: The project root (where `.c-xrefrc` lives) and its
-  subdirectories are always scanned automatically. Additional source directories
-  only need to be listed for multi-directory projects, e.g. when source files
-  live outside the project root:
+Source directories:: The project root (where `.c-xrefrc` lives) and its subdirectories are always scanned automatically.
+  Additional source directories only need to be listed for multi-directory projects, e.g. when source files live outside the project root:
 +
 [source]
 ----
@@ -62,8 +64,7 @@ Source directories:: The project root (where `.c-xrefrc` lives) and its
   ../shared/library
 ----
 
-Include paths:: `-I` options tell c-xrefactory where to find header files, just
-  like the compiler flag:
+Include paths:: `-I` options tell c-xrefactory where to find header files, just like the compiler flag:
 +
 [source]
 ----
@@ -74,10 +75,9 @@ Include paths:: `-I` options tell c-xrefactory where to find header files, just
 Preprocessor defines:: `-D` options define macros, equivalent to the compiler flag.
   Useful when the project uses conditional compilation.
 
-Excluding subtrees:: `-prune` keeps a directory subtree out of the scan. The
-  argument is a path *relative to the project root* (the directory holding
-  `.c-xrefrc`), matched exactly; the named directory and everything beneath it
-  are skipped. Useful for build outputs or vendored third-party code:
+Excluding subtrees:: `-prune` keeps a directory subtree out of the scan.
+  The argument is a path *relative to the project root* (the directory holding `.c-xrefrc`), matched exactly; the named directory and everything beneath it are skipped.
+  Useful for build outputs or vendored third-party code:
 +
 [source]
 ----
@@ -86,14 +86,11 @@ Excluding subtrees:: `-prune` keeps a directory subtree out of the scan. The
   -prune third_party/vendored
 ----
 +
-NOTE: The path is anchored to the project root, not matched by name. `-prune
-build` skips `<root>/build` but not a nested `src/build`. (Earlier versions
-matched a bare directory name anywhere in the tree, so a config using e.g.
-`-prune build` to skip every `build/` directory must be changed to the
-root-relative path.)
+NOTE: The path is anchored to the project root, not matched by name.
+`-prune build` skips `<root>/build` but not a nested `src/build`.
+(Earlier versions matched a bare directory name anywhere in the tree, so a config using e.g. `-prune build` to skip every `build/` directory must be changed to the root-relative path.)
 
-TIP: Paths in `.c-xrefrc` are resolved relative to the config file's directory,
-so the configuration is portable and can be checked into version control.
+TIP: Paths in `.c-xrefrc` are resolved relative to the config file's directory, so the configuration is portable and can be checked into version control.
 
 === When Something Does Not Parse
 
@@ -113,22 +110,27 @@ kbd:[M-g n] skips the notes (as it does with compiler output), so use kbd:[RET] 
 
 == Browsing
 
-Browsing uses a list of references (occurrences of a symbol), including definition, declarations and usages, which allows you to navigate that list. `c-xrefactory` handles not only normal C variables, types etc. but also labels and include file references. In addition Yacc non-terminals can be browsed.
+Browsing uses a list of references (occurrences of a symbol), including definition, declarations and usages, which allows you to navigate that list.
+`c-xrefactory` handles not only normal C variables, types etc. but also labels and include file references.
+In addition Yacc non-terminals can be browsed.
 
 === Basic Navigation
 
 The core workflow uses four actions:
 
 * *Push Symbol and Goto Definition* — resolve the symbol at cursor, create the list of references and jump to its definition
-* *Pop Symbol* — return to where you were before pushing discarding the current list and picking up the previous list of references
-* *Next Reference* — step to the next occurence of the current symbol
-* *Previous Reference* — step to the previous occurance
+* *Pop Symbol* — return to where you were before pushing, discarding the current list and picking up the previous list of references
+* *Next Reference* — step to the next occurrence of the current symbol
+* *Previous Reference* — step to the previous occurrence
 
-Place cursor on a symbol, push it, then step through references. When done, pop to return.
+Place cursor on a symbol, push it, then step through references.
+When done, pop to return.
 
 === The Browser Stack
 
-You can browse multiple symbols simultaneously. Each push adds to a stack level. Each stack level holds the references for that symbol or referenceable item.
+You can browse multiple symbols simultaneously.
+Each push adds to a stack level.
+Each stack level holds the references for that symbol or referenceable item.
 
 1. While browsing `variable`, you see it passed to `function`
 2. Place cursor on `function` and Push to see its definition
@@ -139,16 +141,18 @@ You can Re-Push the symbol you just popped.
 
 === Push by Name
 
-*Push Name and Goto Definition* finds symbols by name only, ignoring scope. Useful when you know a symbol's name but aren't looking at an occurrence of it.
+*Push Name and Goto Definition* finds symbols by name only, ignoring scope.
+Useful when you know a symbol's name but aren't looking at an occurrence of it.
 
 === Browser Dialog
 
 Opens a visual representation of the browser stack with two panes:
 
 * *Symbol Pane* — shows matched symbols and where they're defined
-* *References Pane* — lists all occurences with source context
+* *References Pane* — lists all occurrences with source context
 
-Click a reference to jump to it. Multi-select symbols to combine their references into a navigable list of references.
+Click a reference to jump to it.
+Multi-select symbols to combine their references into a navigable list of references.
 
 == Searching
 
@@ -161,24 +165,18 @@ Use it when you:
 
 There are two search operations available from the menu:
 
-*Search Symbol*:: Finds all symbols whose name matches the pattern —
-functions, variables, types, macros, and any other symbol known to
-c-xrefactory.
+*Search Symbol*:: Finds all symbols whose name matches the pattern — functions, variables, types, macros, and any other symbol known to c-xrefactory.
 
-*Search Definition*:: Finds only symbols that have a definition within
-the project. Symbols that are merely used but not defined (e.g. called
-from an external library) are excluded.
+*Search Definition*:: Finds only symbols that have a definition within the project.
+Symbols that are merely used but not defined (e.g. called from an external library) are excluded.
 
 === Navigating Results
 
-The search results are presented in a list. Use up/down arrow keys to
-move between entries. Press RET to inspect a symbol — this navigates
-to its definition and enters the reference browser where Next/Previous
-Reference can be used to visit all references.
+The search results are presented in a list.
+Use up/down arrow keys to move between entries.
+Press RET to inspect a symbol — this navigates to its definition and enters the reference browser where Next/Previous Reference can be used to visit all references.
 
-Pressing `p` and `n` navigates the _search history_ — returning to
-the results of a previous or next search, not moving between entries
-in the current list.
+Pressing `p` and `n` navigates the _search history_ — returning to the results of a previous or next search, not moving between entries in the current list.
 
 === Patterns
 
@@ -215,7 +213,8 @@ When multiple completions exist, a dialog appears showing each candidate with it
 
 == Refactoring
 
-All refactorings are invoked from the *Refactor* menu with cursor on the relevant symbol. C-xrefactory checks that changes won't alter program behavior.
+All refactorings are invoked from the *Refactor* menu with cursor on the relevant symbol.
+C-xrefactory checks that changes won't alter program behaviour.
 
 === Renaming
 
@@ -235,7 +234,8 @@ These work on functions and macros:
 
 === Extracting Code
 
-*Extract Function* / *Extract Macro* — select a region of code, then extract it into a new function or macro. C-xrefactory analyzes the code to determine parameters and return values.
+*Extract Function* / *Extract Macro* — select a region of code, then extract it into a new function or macro.
+C-xrefactory analyses the code to determine parameters and return values.
 
 === Finding Unused Code
 
