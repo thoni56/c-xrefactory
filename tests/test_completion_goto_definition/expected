@@ -1,4 +1,4 @@
-CXREF  src/main.c -server -log=log.log -commandlog=commands.log -o server-buffer
+CXREF -server -log=log.log -commandlog=commands.log -o server-buffer
 -getproject  CURDIR/src/main.c
 end-of-options
 
