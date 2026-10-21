@@ -160,6 +160,16 @@ every push, `After` dashed and `Goes with` not at all, linked at the end of this
      look. Auto-discovery gives you the tree under the config; anything outside it still
      has to be named. Likely home: the config, or the machine-specific sibling, since an
      external source tree is usually a local path.
+- (#74) <a id="include-dir-wildcards"></a>**An `-I` directory is one directory, no wildcards or path lists** — *no repo home yet.*
+    `canFindIncludeFile()`, `canFindIncludeFileNext()` and `openInclude()` (`src/yylex.c`)
+    expand each `-I` with `expandWildcardsInOnePath()` and split it on `PATH_SEPARATOR`.
+    No compiler does either, several `-I` lines say the same, and wildcard matches come in
+    `readdir()` order, so which of two same-named headers wins depends on the filesystem.
+    Coverage shows neither used by any test. The wildcard is in `doc/c-xref.man` (`-I`),
+    which changes in the same commit. Test first: a wildcard `-I` is no longer expanded.
+    `shellMatch()` and `MAP_OVER_PATHS` stay, other code uses them; the three loops are
+    then copies of a short loop and can become one (Mac, session `4839a129`, 2026-10-21).
+    After: startup-command-line
 - (#8) <a id="finish-after-xrefmode"></a>**Finish after XrefMode**, in these pieces:
    a. <a id="mode-checks"></a>**fold the last `options.mode` checks**, one at a time, since
       each changes behaviour where the mode is not yet known: `src/startup.c:633` (no
