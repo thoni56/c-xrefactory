@@ -46,7 +46,6 @@ flowchart BT
   lsp_input_ends["§3 · 15k · The LSP server exits as a JSON parse error when its input ends"]
   search_result_line_zero["§3 · 58 · The client asks for search result number 0"]
   include_bracket_from_macro["§3 · 60 · `#include MACRO` where the macro is `#lt;...#gt;`"]
-  message_at_macro_use["§3 · 63 · A parse message in a macro expansion also says where the macro is used"]
   latin_1_lookalikes["§3 · 69 · Latin-1 that looks like UTF-8 is read as one character"]
   completion_select_out_of_range["§3 · 70 · Selecting a completion says #quot;selection out of range#quot;"]
   newline_position["§3 · 71 · A `'\n'` lexem has the next line's number"]
@@ -125,7 +124,6 @@ flowchart BT
   refactoring_refusals --&gt; announce
   install_server --&gt; announce
   readme_first_screen --&gt; announce
-  message_at_macro_use -.-&gt; indexing_log_buffer
   startup_command_line -.-&gt; bare_words_returned
   startup_command_line -.-&gt; include_dir_wildcards
   freshness_docs -.-&gt; docs_audit
@@ -170,7 +168,6 @@ flowchart BT
   class lsp_input_ends ready
   class search_result_line_zero ready
   class include_bracket_from_macro ready
-  class message_at_macro_use ready
   class latin_1_lookalikes ready
   class completion_select_out_of_range ready
   class newline_position ready
