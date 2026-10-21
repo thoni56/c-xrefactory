@@ -239,7 +239,7 @@ A unit that is only reparsed to refresh it keeps its old group until it is parse
 ==== What is left
 
 * The user manual: the buffer, and `M-g n` and `M-g p`.
-* A message about tokens from a macro expansion gives their place in the macro body. It should also say where the macro is used, as gcc does.
+* A message about tokens from a macro expansion is given where the outermost macro is used. It could also have a note at the definition, as clang does.
 * The report below. The same missing header is reported by every unit that includes it, so a generated `config.h` included by two hundred files is two hundred messages and one fact.
 
 ==== What the report should contain

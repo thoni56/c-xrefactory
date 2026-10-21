@@ -100,8 +100,7 @@ every push, `After` dashed and `Goes with` not at all, linked at the end of this
     `doc/docs/11-planned-features.adoc` (Diagnostics Buffer). What did not parse reaches
     `*c-xref-diagnostics*` with its position, grouped by unit, and `next-error` visits it.
     Left: the user manual (the buffer, `M-g n` and `M-g p`); and the report of unresolved
-    includes, with a suggested `-I`. A macro's place of use is #63.
-    After: message-at-macro-use
+    includes, with a suggested `-I`.
 - (#68) <a id="lsp-mode"></a>**An `LspMode`, and a sink for the messages** — *no repo home yet.*
     LSP sets `ServerMode` (`src/parsing.c:140`), a stop-gap for the `assert(options.mode)`
     that are gone now. Once #8a has folded the checks of the mode, `Mode` is `ServerMode`
@@ -314,11 +313,11 @@ every push, `After` dashed and `Goes with` not at all, linked at the end of this
     as the `"..."` branch does, so they reach the parser as syntax errors
     (`processIncludeDirective()`, `src/yylex.c`). `test_parsing_include_using_macro` pins
     both; its two syntax errors go when this is fixed.
-- (#63) <a id="message-at-macro-use"></a>**A parse message in a macro expansion also says where the macro is used** —
-    a token from an expansion has its position in the macro body, so
-    `next-error` goes to the `#define`, often in a header. gcc reports the place of use and
-    adds a note for the definition. Needs the outermost macro call of the expansion
-    (`expandMacroCall()`, `src/yylex.c`). `test_parsing_include_using_macro` shows it.
+- (#63) <a id="message-at-macro-use"></a>**A parse message in a macro expansion also notes the macro's definition** —
+    the message is given where the outermost macro is used, so `next-error` does not show
+    the `#define` that the token came from. clang adds a note per level ("expanded from
+    macro"). Needs the chain of calls, not only the outermost (`expandMacroCall()`,
+    `src/yylex.c`). `test_parsing_message_at_macro_use` is the case to extend.
 - (#69) <a id="latin-1-lookalikes"></a>**Latin-1 that looks like UTF-8 is read as one character** — *no repo home yet.*
     `convertUtf8()` (`src/encoding.c`) takes a lead byte with its continuation bytes as
     one character, so `å°` and one more byte in 0x80–0xBF, in Latin-1, become one space
