@@ -42,9 +42,20 @@
 
 static bool isProcessingPreprocessorIf; /* Flag for yylex, to not filter '\n' */
 static Position lastLexemPosition;      /* The one yylex() gave the parser last */
+static Position outermostMacroCallPosition;
+
+static bool insideMacro(void);
 
 Position positionOfLastLexem(void) {
     return lastLexemPosition;
+}
+
+/* A lexem from a macro expansion is reported where the outermost macro is used */
+static void rememberLastLexemPosition(Position position) {
+    if (insideMacro())
+        lastLexemPosition = outermostMacroCallPosition;
+    else
+        lastLexemPosition = position;
 }
 
 static void setYylvalsForIdentifier(char *name, Symbol *symbol, Position position) {
@@ -53,14 +64,14 @@ static void setYylvalsForIdentifier(char *name, Symbol *symbol, Position positio
     yyIdBufferIndex++;
     yyIdBufferIndex %= (YYIDBUFFER_SIZE);
     yytext              = name;
-    lastLexemPosition = position;
+    rememberLastLexemPosition(position);
     uniyylval->ast_id.begin = position;
     uniyylval->ast_id.end = position;
     uniyylval->ast_id.end.col += strlen(yytext);
 }
 
 static void setYylvalsForPosition(Position position, int length) {
-    lastLexemPosition = position;
+    rememberLastLexemPosition(position);
     uniyylval->ast_position.data = position;
     uniyylval->ast_position.begin = position;
     uniyylval->ast_position.end = position;
@@ -68,7 +79,7 @@ static void setYylvalsForPosition(Position position, int length) {
 }
 
 static void setYylvalsForInteger(int val, Position position, int length) {
-    lastLexemPosition = position;
+    rememberLastLexemPosition(position);
     uniyylval->ast_integer.data = val;
     uniyylval->ast_integer.begin = position;
     uniyylval->ast_integer.end = position;
@@ -2440,6 +2451,7 @@ static bool expandMacroCall(Symbol *macroSymbol, Position macroPosition) {
         return false;	/* !!!!!         tricky,  undefined macro */
     if (!insideMacro()) { /* call from top level, init memory */
         mbmInit();
+        outermostMacroCallPosition = macroPosition;
     }
     log_debug("trying to expand macro '%s'", macroBody->name);
     if (cyclicCall(macroBody))
@@ -2536,7 +2548,7 @@ static LexemCode lookupIdentifier(char *id, Position position) {
     Symbol *symbol = NULL;
     unsigned hash = hashFun(id) % symbolTable->size;
 
-    lastLexemPosition = position;
+    rememberLastLexemPosition(position);
     log_debug("looking for C id '%s' in symbol table %p", id, symbolTable);
     for (Symbol *s=symbolTable->tab[hash]; s!=NULL; s=s->next) {
         if (strcmp(s->name, id) == 0) {

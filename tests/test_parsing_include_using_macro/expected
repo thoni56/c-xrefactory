@@ -1,3 +1,3 @@
 <log len=<n>>CURDIR/source.c:2:1: #include <...> from a macro is not supported, use "..."
-<log len=<n>>CURDIR/source.c:1:24: Syntax error on: .
-<log len=<n>>CURDIR/source.c:1:26: Syntax error on: >
+<log len=<n>>CURDIR/source.c:2:10: Syntax error on: .
+<log len=<n>>CURDIR/source.c:2:10: Syntax error on: >
