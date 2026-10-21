@@ -738,9 +738,9 @@ void mainTaskEntryInitialisations(ArgumentsVector args) {
     previousProjectConfigurationFile[0] = 0;
     previousProjectConfigurationSection[0] = 0;
 
-    /* now pre-read the option file */
+    /* YES only so that a bare word is told from an option's value; main()
+     * refuses any that land in options.inputFiles */
     processOptions(args, PROCESS_FILE_ARGUMENTS_YES);
-    processFileArguments();
 
     LEAVE();
 }

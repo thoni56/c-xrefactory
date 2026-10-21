@@ -99,7 +99,12 @@ int main(int argc, char *argv[]) {
     else if (argumentsContain(args, "-server")) {
         totalTaskEntryInitialisations();
         mainTaskEntryInitialisations(args);
-        server(args);
+        if (options.inputFiles != NULL) {
+            fprintf(stderr, "-server takes no file, a request names its own: %s\n",
+                    options.inputFiles->string);
+            exitCode = EXIT_FAILURE;
+        } else
+            server(args);
     } else {
         fprintf(stderr, "No mode given, use -server or -lsp\n");
         exitCode = EXIT_FAILURE;
