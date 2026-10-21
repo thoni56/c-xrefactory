@@ -95,6 +95,22 @@ root-relative path.)
 TIP: Paths in `.c-xrefrc` are resolved relative to the config file's directory,
 so the configuration is portable and can be checked into version control.
 
+=== When Something Does Not Parse
+
+Missing references are usually caused by a file that could not be analysed properly.
+What C-xrefactory could not parse is shown in the `\*c-xref-diagnostics*` buffer.
+Most of the time it points to something missing in the configuration, e.g. an include path (`-I`) or a define (`-D`).
+
+After an operation the echo area tells you if there are new messages, e.g. "2 new messages in \*c-xref-diagnostics*, M-g n to visit".
+Step through them with kbd:[M-g n] and kbd:[M-g p], or use kbd:[RET] on a message in the buffer.
+
+The messages are grouped under a heading for each file that was analysed.
+When a file is analysed again, its group is replaced.
+
+A message about code from a macro is given where the macro is used.
+The `note:` lines below it lead to the macro definitions.
+kbd:[M-g n] skips the notes (as it does with compiler output), so use kbd:[RET] on a note to go there.
+
 == Browsing
 
 Browsing uses a list of references (occurrences of a symbol), including definition, declarations and usages, which allows you to navigate that list. `c-xrefactory` handles not only normal C variables, types etc. but also labels and include file references. In addition Yacc non-terminals can be browsed.
@@ -256,6 +272,9 @@ Select the code → Refactor → Extract Function → name the new function
 
 *Find all globals starting with "config":*
 Symbol Retriever → enter `config*` → browse results
+
+*Find out why references are missing:*
+kbd:[M-g n] → read the message → add the missing `-I` or `-D` to `.c-xrefrc`
 
 == Feedback
 
