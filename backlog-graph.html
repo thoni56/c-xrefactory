@@ -28,6 +28,8 @@ flowchart BT
   indexing_log_buffer["§2 · 23 · What is left of the diagnostics buffer"]
   lsp_mode["§2 · 68 · An `LspMode`, and a sink for the messages"]
   startup_command_line["§2 · 7 · Decide, and enforce, what the startup command line may carry"]
+  bare_words_returned["§2 · 75 · Bare words are handed back by `processOptions`, not kept in `options.inputFiles`"]
+  include_dir_wildcards["§2 · 74 · An `-I` directory is one directory, no wildcards or path lists"]
   mode_checks["§2 · 8a · fold the last `options.mode` checks"]
   remove_bridge["§2 · 9 · Remove the `parseBufferUsingServer` bridge"]
   docs_audit["§2 · 62 · Audit the docs, chapter by chapter"]
@@ -124,6 +126,8 @@ flowchart BT
   install_server --&gt; announce
   readme_first_screen --&gt; announce
   message_at_macro_use -.-&gt; indexing_log_buffer
+  startup_command_line -.-&gt; bare_words_returned
+  startup_command_line -.-&gt; include_dir_wildcards
   freshness_docs -.-&gt; docs_audit
   sweep -.-&gt; refactoring_refusals
   adr_0031 -.-&gt; relative_include_path
@@ -148,6 +152,8 @@ flowchart BT
   class indexing_log_buffer ready
   class lsp_mode blocked
   class startup_command_line ready
+  class bare_words_returned ready
+  class include_dir_wildcards ready
   class mode_checks ready
   class remove_bridge ready
   class docs_audit ready
