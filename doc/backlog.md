@@ -135,22 +135,21 @@ every push, `After` dashed and `Goes with` not at all, linked at the end of this
      `-about` by scanning argv, before any option is processed, so only `-server` runs the
      initialisations. That scan is where the check belongs: `-lsp`, `-about` and `-help`
      take nothing else, and `-server` takes the startup options above.
-   - The code: `startup.c:807` processes the command line with
-     `PROCESS_FILE_ARGUMENTS_YES`, which is why `c-xref -server file.c` silently schedules
-     that file. Flip it to `NO`, now that XrefMode is gone. But `NO` only *ignores*: `matched =
-     true` sits outside the `if` in `options.c`, so a bare word vanishes without a word.
-     Rejecting it means reporting there. `c-xref file.c` already answers "No mode given",
-     pinned by `tests/test_options_mode_required`.
+   - Done: `c-xref -server file.c` is refused, `main()` reports the bare word and exits
+     (`tests/test_server_refuses_startup_file`), as `c-xref file.c` answers "No mode
+     given" (`tests/test_options_mode_required`).
    - **File arguments: none at startup, exactly one per request.** A request's only bare
      argument is the current buffer's file (`c-xref-server-call-on-current-buffer`,
      `editors/emacs/c-xref.el`), which may not exist on disk yet; other buffers travel as
      `-preload`. The server only enters it in the file table: the structure scan and the
      snapshot know the rest of the project, and goal and reach (ADR-0032) decide what to
-     parse. The XrefMode argument language — backquoted commands, path lists, wildcards,
-     the directory walk in `dirInputFile()` (`src/options.c`) — served a run whose input
-     set was its arguments, and goes with the startup file arguments. A request already
-     enters its file directly (`addRequestFileToFileTable()`), so only `startup.c` still
-     walks file arguments, through `processFileArguments()`.
+     parse. Nothing walks a file argument any more: a request enters its file directly
+     (`addRequestFileToFileTable()`), and the walk, with its backquoted commands and
+     `dirInputFile()`, is gone. Wildcards and path lists live on in `-I`, #74. Left: two
+     bare words in a request are not reported, which #75 makes easy. The docs still
+     describe the walk: `doc/docs/14-code.adoc` (the `processFileArguments()` call tree,
+     and "All files scheduled ONCE") and `doc/docs/12-components.adoc` ("schedule input
+     file", and the "legacy `processFileArguments()` path" as fallback).
    - `.c-xrefrc` is also read with `YES` (`startup.c:446`), for the source directories
      listed in it. Do not assume that list is legacy. What dies with `-p` is the
      *registry*: several `[project]` sections, each covering directories, one selected by
@@ -160,6 +159,22 @@ every push, `After` dashed and `Goes with` not at all, linked at the end of this
      look. Auto-discovery gives you the tree under the config; anything outside it still
      has to be named. Likely home: the config, or the machine-specific sibling, since an
      external source tree is usually a local path.
+- (#75) <a id="bare-words-returned"></a>**Bare words are handed back by `processOptions`, not kept in `options.inputFiles`** — *no repo home yet.*
+    Startup refuses them, the config read makes them `projectConfig.sourceDirs`, a
+    request takes one as its file; nothing else reads them since the startup walk went.
+    Let `processOptions` return them through a `StringList **` (`NULL`: not wanted,
+    replacing `COLLECT_ARGUMENTS_NO`), each caller with a local list. Then
+    `options.inputFiles` goes, with the clears at `startup.c` (around the second
+    `getAndProcessProjectConfig()`, whose comment about `server.c` adding "." is stale)
+    and `refactory.c` (`parseBufferUsingServer`), the `requestFileArgumentName` global
+    and `clearRequestFileArgument()` in `options.c`, and the `ProcessFileArguments` enum.
+    Today the list grows within a request, is reset from `savedOptions` at the next, and
+    the `-getproject` lock (`cxref.c`) copies the request's file into `savedOptions`;
+    harmless only because no one reads it. Test first: `options_tests.c`'s
+    `collects_bare_paths_as_input_files_not_option_values` asserts the returned list.
+    A step towards #3's pure `parseCommandLine()` (Mac, session `4839a129`, 2026-10-21).
+    After: startup-command-line
+    Goes with: partition-options
 - (#74) <a id="include-dir-wildcards"></a>**An `-I` directory is one directory, no wildcards or path lists** — *no repo home yet.*
     `canFindIncludeFile()`, `canFindIncludeFileNext()` and `openInclude()` (`src/yylex.c`)
     expand each `-I` with `expandWildcardsInOnePath()` and split it on `PATH_SEPARATOR`.
