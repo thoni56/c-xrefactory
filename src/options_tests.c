@@ -161,7 +161,7 @@ Ensure(Options, can_parse_about_command_line_option) {
     char *argv[] = {"", "-about"};
     ArgumentsVector args = {2, argv};
 
-    processOptions(args, PROCESS_FILE_ARGUMENTS_NO);
+    processOptions(args, COLLECT_ARGUMENTS_NO);
     assert_that(options.serverOperation, is_equal_to(OP_ABOUT));
 }
 
@@ -169,7 +169,7 @@ Ensure(Options, can_parse_version_command_line_option) {
     char *argv[] = {"", "-version"};
     ArgumentsVector args = {2, argv};
 
-    processOptions(args, PROCESS_FILE_ARGUMENTS_NO);
+    processOptions(args, COLLECT_ARGUMENTS_NO);
     assert_that(options.serverOperation, is_equal_to(OP_ABOUT));
 }
 
@@ -177,7 +177,7 @@ Ensure(Options, can_parse_double_dash_version_command_line_option) {
     char *argv[] = {"", "--version"};
     ArgumentsVector args = {2, argv};
 
-    processOptions(args, PROCESS_FILE_ARGUMENTS_NO);
+    processOptions(args, COLLECT_ARGUMENTS_NO);
     assert_that(options.serverOperation, is_equal_to(OP_ABOUT));
 }
 
@@ -192,13 +192,13 @@ Ensure(Options, notes_xrefrc_option_with_equals_without_reporting_it) {
     ArgumentsVector args = {2, argv};
 
     never_expect(errorMessage);
-    processOptions(args, PROCESS_FILE_ARGUMENTS_NO);
+    processOptions(args, COLLECT_ARGUMENTS_NO);
 }
 
 Ensure(Options, reports_a_noted_xrefrc_option_as_no_longer_supported) {
     char *argv[] = {"", "-xrefrc=abc"};
     ArgumentsVector args = {2, argv};
-    processOptions(args, PROCESS_FILE_ARGUMENTS_NO);
+    processOptions(args, COLLECT_ARGUMENTS_NO);
 
     expect(errorMessage);
     reportUnsupportedOptions();
@@ -211,7 +211,7 @@ Ensure(Options, notes_xrefrc_option_with_filename_separate_without_reporting_it_
     ArgumentsVector args = {3, argv};
 
     never_expect(errorMessage);
-    processOptions(args, PROCESS_FILE_ARGUMENTS_YES);
+    processOptions(args, COLLECT_ARGUMENTS_YES);
     assert_that(options.inputFiles, is_null);
 }
 
@@ -623,7 +623,7 @@ Ensure(Options, collects_bare_paths_as_input_files_not_option_values) {
     char *arguments[] = {"", "-prune", "NAME", "/abs/path"};
     ArgumentsVector args = {4, arguments};
 
-    processOptions(args, PROCESS_FILE_ARGUMENTS_YES);
+    processOptions(args, COLLECT_ARGUMENTS_YES);
 
     /* -prune's value is classified as a prune name, not a path */
     assert_that(options.pruneNames, is_not_null);
@@ -877,7 +877,7 @@ Ensure(Options, enters_the_file_the_request_named_in_the_file_table) {
     ArgumentsVector args = {2, arguments};
 
     clearRequestFileArgument();
-    processOptions(args, PROCESS_FILE_ARGUMENTS_YES);
+    processOptions(args, COLLECT_ARGUMENTS_YES);
 
     expect(addFileNameToFileTable, when(fileName, is_equal_to_string("new.c")),
            will_return(42));

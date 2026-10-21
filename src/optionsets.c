@@ -106,5 +106,5 @@ void applyOptionSet(StringList *optionList) {
     if (optionList == NULL)
         return;
     ArgumentsVector args = argsFromOptionList(optionList, &options.memory);
-    processOptions(args, PROCESS_FILE_ARGUMENTS_NO);
+    processOptions(args, COLLECT_ARGUMENTS_NO);
 }

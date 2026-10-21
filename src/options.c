@@ -899,7 +899,7 @@ static int handleIncludeOption(int i, ArgumentsVector args) {
     ensureNextArgumentIsAFileName(&i, args);
 
     includedArgs = readOptionsFromFile(args.argv[i], "", NULL);
-    processOptions(includedArgs, PROCESS_FILE_ARGUMENTS_NO);
+    processOptions(includedArgs, COLLECT_ARGUMENTS_NO);
 
     return i;
 }
@@ -1585,7 +1585,7 @@ void processOptions(ArgumentsVector args, ProcessFileArguments doProcessFiles) {
         } else {
             /* input file */
             matched = true;
-            if (doProcessFiles == PROCESS_FILE_ARGUMENTS_YES) {
+            if (doProcessFiles == COLLECT_ARGUMENTS_YES) {
                 addToStringListOption(&options.inputFiles, args.argv[i]);
                 requestFileArgumentName = args.argv[i];
             }

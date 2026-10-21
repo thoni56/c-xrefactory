@@ -151,7 +151,7 @@ static void beInteractive(void) {
         deepCopyOptionsFromTo(&localSavedOptions, &options);
 
         ArgumentsVector args = {.argc = argument_count(serverDefaultArguments), .argv = serverDefaultArguments};
-        processOptions(args, PROCESS_FILE_ARGUMENTS_NO);
+        processOptions(args, COLLECT_ARGUMENTS_NO);
 
         ArgumentsVector pipedOptions = readOptionsFromPipe();
         openOutputFile(refactoringOptions.outputFileName);

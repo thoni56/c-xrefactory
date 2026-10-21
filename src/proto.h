@@ -31,8 +31,8 @@ typedef enum resolveDialog {
 } ResolveDialog;
 
 typedef enum {
-    PROCESS_FILE_ARGUMENTS_NO,
-    PROCESS_FILE_ARGUMENTS_YES
+    COLLECT_ARGUMENTS_NO,
+    COLLECT_ARGUMENTS_YES
 } ProcessFileArguments;
 
 typedef enum {
