@@ -11,9 +11,9 @@ v{VERSION} - Generated {localdate}
 == Introduction
 
 C-xrefactory is a code browser and refactoring tool for C and Yacc, integrated with Emacs.
-It lets you navigate symbols, find usages, complete code, and safely refactor—all while understanding your code semantically.
+It lets you navigate symbols, find usages, complete code and refactor it.
 
-All functions are available from the *c-xref* menu in Emacs.
+All functions are available from the *C-xref* menu in Emacs.
 
 == Getting Started
 
@@ -39,7 +39,7 @@ C-xrefactory auto-detects projects based on the file you're editing when you do 
 The path of the file is investigated upwards until a `.c-xrefrc` (C-xrefactory project config) file is found.
 
 If no config file could be found, you'll be prompted to create a project.
-The active project is shown in the modeline after each action.
+The active project is shown in the echo area after each action.
 
 === Project Configuration
 
@@ -88,7 +88,6 @@ Excluding subtrees:: `-prune` keeps a directory subtree out of the scan.
 +
 NOTE: The path is anchored to the project root, not matched by name.
 `-prune build` skips `<root>/build` but not a nested `src/build`.
-(Earlier versions matched a bare directory name anywhere in the tree, so a config using e.g. `-prune build` to skip every `build/` directory must be changed to the root-relative path.)
 
 TIP: Paths in `.c-xrefrc` are resolved relative to the config file's directory, so the configuration is portable and can be checked into version control.
 
@@ -118,8 +117,8 @@ In addition Yacc non-terminals can be browsed.
 
 The core workflow uses four actions:
 
-* *Push Symbol and Goto Definition* — resolve the symbol at cursor, create the list of references and jump to its definition
-* *Pop Symbol* — return to where you were before pushing, discarding the current list and picking up the previous list of references
+* *Push This Symbol and Goto Definition* — resolve the symbol at cursor, create the list of references and jump to its definition
+* *Pop Symbol and Return* — return to where you were before pushing, discarding the current list and picking up the previous list of references
 * *Next Reference* — step to the next occurrence of the current symbol
 * *Previous Reference* — step to the previous occurrence
 
@@ -137,16 +136,16 @@ Each stack level holds the references for that symbol or referenceable item.
 3. Use Next/Previous to navigate all occurrences of `function`
 4. Pop to return and continue browsing `variable`
 
-You can Re-Push the symbol you just popped.
+You can *Re-push Popped Symbol* to get back the symbol you just popped.
 
 === Push by Name
 
-*Push Name and Goto Definition* finds symbols by name only, ignoring scope.
+*Push Symbol by Name* finds symbols by name only, ignoring scope.
 Useful when you know a symbol's name but aren't looking at an occurrence of it.
 
 === Browser Dialog
 
-Opens a visual representation of the browser stack with two panes:
+*Display Browser* opens a visual representation of the browser stack with two panes:
 
 * *Symbol Pane* — shows matched symbols and where they're defined
 * *References Pane* — lists all occurrences with source context
@@ -156,7 +155,7 @@ Multi-select symbols to combine their references into a navigable list of refere
 
 == Searching
 
-The Symbol Retriever finds symbols by pattern matching across your entire project.
+Searching finds symbols by pattern matching across your entire project.
 
 Use it when you:
 
@@ -174,9 +173,10 @@ Symbols that are merely used but not defined (e.g. called from an external libra
 
 The search results are presented in a list.
 Use up/down arrow keys to move between entries.
-Press RET to inspect a symbol — this navigates to its definition and enters the reference browser where Next/Previous Reference can be used to visit all references.
+Press kbd:[RET] or kbd:[Space] to inspect a symbol — this navigates to its definition and enters the reference browser where Next/Previous Reference can be used to visit all references.
 
 Pressing `p` and `n` navigates the _search history_ — returning to the results of a previous or next search, not moving between entries in the current list.
+`q` or kbd:[Escape] closes the list.
 
 === Patterns
 
@@ -188,7 +188,7 @@ Patterns use shell-style wildcards:
 * `[a-z]` — character range
 * `[^0-9]` — negation (any non-digit)
 
-Searching is case-insensitive except within `[]`.
+Searching is case-insensitive, also within `[]`.
 
 === Examples
 
@@ -214,19 +214,21 @@ When multiple completions exist, a dialog appears showing each candidate with it
 == Refactoring
 
 All refactorings are invoked from the *Refactor* menu with cursor on the relevant symbol.
-C-xrefactory checks that changes won't alter program behaviour.
+C-xrefactory checks that a change does not alter what the program does (that's at least the intention).
 
 === Renaming
 
 *Rename Symbol* — changes all occurrences of a variable, function, type, or macro throughout the project.
 
-*Rename Include File* — renames a header file and updates all `#include` directives that reference it.
+*Rename Included File* — renames a header file and updates all `#include` directives that reference it.
+
+*Rename Module* — with the cursor on the `#include` of a module's header, renames the header and its `.c` file, and updates the include guard and all `#include` directives.
 
 === Function Signatures
 
 These work on functions and macros:
 
-*Add Parameter* — adds a new parameter at a specified position, inserting a default value at all call sites.
+*Add Parameter* — adds a new parameter at a specified position, inserting the value you give at all call sites.
 
 *Delete Parameter* — removes a parameter from the signature and all calls.
 
@@ -237,11 +239,31 @@ These work on functions and macros:
 *Extract Function* / *Extract Macro* — select a region of code, then extract it into a new function or macro.
 C-xrefactory analyses the code to determine parameters and return values.
 
+*Extract Variable* — select an expression, then replace it with a new variable that is initialised to it.
+
+NOTE: Extract Variable is not finished.
+The new variable is always declared as `int`, and the declaration might not end up where it should.
+
+=== Moving Code
+
+*Move Function* — moves the function at cursor to another place, possibly in another file.
+Mark the place first with *Set Target for Next Moving Refactoring*.
+
+=== Includes
+
+*Organize Includes* — sorts and groups the `#include` directives of the file.
+
+=== Undo
+
+*Undo Last Refactoring* — undoes the last refactoring, in all the buffers it changed.
+Doing it again redoes what was undone.
+It is also in the *C-xref* menu.
+
 === Finding Unused Code
 
-*Browse File Local Unused* — finds unused local variables, parameters, and labels in the current file.
+*Unused Symbols → ... in File* — finds unused local variables, parameters, and labels in the current file.
 
-*Browse Global Unused* — finds unused symbols across the project.
+*Unused Symbols → ... in Project* — finds unused symbols across the project.
 
 == Quick Reference
 
@@ -251,11 +273,17 @@ C-xrefactory analyses the code to determine parameters and return values.
 |===
 |Key |Action
 
-|kbd:[F6] |Push Symbol and Goto Definition
-|kbd:[F5] |Pop Symbol
+|kbd:[F6] |Push This Symbol and Goto Definition
+|kbd:[C-F6] |Push This Symbol and Display Browser
+|kbd:[M-F6] |Search Definition
+|kbd:[F5] |Pop Symbol and Return
+|kbd:[C-F5] |Re-push Popped Symbol
 |kbd:[F3] |Previous Reference
 |kbd:[F4] |Next Reference
-|kbd:[F8] |Complete
+|kbd:[C-F3] |Previous Reference to This Symbol (or Alternatives)
+|kbd:[C-F4] |Next Reference to This Symbol (or Alternatives)
+|kbd:[F7] |Delete One Window
+|kbd:[F8] |Complete Identifier
 |kbd:[F11] |Refactor Menu
 |===
 
@@ -271,7 +299,7 @@ Cursor on symbol → Refactor → Rename Symbol → enter new name
 Select the code → Refactor → Extract Function → name the new function
 
 *Find all globals starting with "config":*
-Symbol Retriever → enter `config*` → browse results
+Search Symbol → enter `config*` → browse results
 
 *Find out why references are missing:*
 kbd:[M-g n] → read the message → add the missing `-I` or `-D` to `.c-xrefrc`
