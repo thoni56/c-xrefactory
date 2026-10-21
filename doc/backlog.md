@@ -96,11 +96,10 @@ every push, `After` dashed and `Goes with` not at all, linked at the end of this
 
 ## 2. After XrefMode
 
-- (#23) <a id="indexing-log-buffer"></a>**What is left of the diagnostics buffer** —
+- (#23) <a id="indexing-log-buffer"></a>**The diagnostics buffer reports unresolved includes, with a suggested `-I`** —
     `doc/docs/11-planned-features.adoc` (Diagnostics Buffer). What did not parse reaches
     `*c-xref-diagnostics*` with its position, grouped by unit, and `next-error` visits it.
-    Left: the user manual (the buffer, `M-g n` and `M-g p`); and the report of unresolved
-    includes, with a suggested `-I`.
+    Left: the report of unresolved includes.
 - (#68) <a id="lsp-mode"></a>**An `LspMode`, and a sink for the messages** — *no repo home yet.*
     LSP sets `ServerMode` (`src/parsing.c:140`), a stop-gap for the `assert(options.mode)`
     that are gone now. Once #8a has folded the checks of the mode, `Mode` is `ServerMode`

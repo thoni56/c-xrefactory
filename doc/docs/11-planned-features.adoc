@@ -238,7 +238,6 @@ A unit that is only reparsed to refresh it keeps its old group until it is parse
 
 ==== What is left
 
-* The user manual: the buffer, and `M-g n` and `M-g p`.
 * The report below. The same missing header is reported by every unit that includes it, so a generated `config.h` included by two hundred files is two hundred messages and one fact.
 
 ==== What the report should contain
