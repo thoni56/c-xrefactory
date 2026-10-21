@@ -1,0 +1,2 @@
+-server takes no file, a request names its own: source.c
+exit=1

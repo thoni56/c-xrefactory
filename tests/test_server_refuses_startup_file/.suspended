@@ -1,0 +1,12 @@
+Missing: -server refuses a file on the startup command line
+
+A request names its own file and the client starts the server with -server
+alone, so a bare word at startup is a mistake. Today mainTaskEntryInitialisations()
+(src/startup.c) still processes it with PROCESS_FILE_ARGUMENTS_YES and walks it
+into the file table through processFileArguments(), silently.
+
+Fix: keep processing with YES, so processOptions() still tells option values
+from bare words, but drop the walk; main() then reports the first entry of
+options.inputFiles on stderr and exits non-zero without starting the server,
+as it does for "No mode given". The server exits 1 at end of stdin as well, so
+only the message tells the two apart. Backlog #7 (startup-command-line).
