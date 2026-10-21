@@ -1,5 +1,6 @@
 :source-highlighter: highlightjs
 :icons: font
+:experimental:
 :numbered:
 :toc: left
 :title-page:
