@@ -397,8 +397,7 @@ static LexemCode refillCurrentInputIfExhausted(char **previousLexemP) {
             currentInput = macroInputStack[--macroStackIndex];
         } else if (inputType == NORMAL_STREAM) {
             setCurrentFileConsistency(&currentFile, &currentInput);
-            bool built = buildLexemFromCharacters(&currentFile.characterBuffer, &currentFile.lexemBuffer,
-                                                  true);
+            bool built = buildLexemFromCharacters(&currentFile.characterBuffer, &currentFile.lexemBuffer);
             /* The lexem buffer has moved also at the end of the file, and inside a macro
              * call the input is used again after it */
             setCurrentInputConsistency(&currentInput, &currentFile);

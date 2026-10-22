@@ -6,6 +6,6 @@
 #include "lexembuffer.h"
 
 
-extern bool buildLexemFromCharacters(CharacterBuffer *cb, LexemBuffer *lb, bool inServerMode);
+extern bool buildLexemFromCharacters(CharacterBuffer *cb, LexemBuffer *lb);
 
 #endif

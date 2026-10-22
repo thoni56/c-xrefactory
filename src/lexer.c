@@ -484,7 +484,7 @@ static int postProcessLexemForServerOperations(CharacterBuffer *cb, LexemBuffer 
     return ch;
 }
 
-bool buildLexemFromCharacters(CharacterBuffer *cb, LexemBuffer *lb, bool inServerMode) {
+bool buildLexemFromCharacters(CharacterBuffer *cb, LexemBuffer *lb) {
     LexemCode lexem;
     int lexemStartingColumn;
     int fileOffsetForLexemStart;
