@@ -10,8 +10,6 @@
 char *lockedProject = NULL;
 char *lockedProjectRoot = NULL;
 
-bool fileAbortEnabled;
-
 Symbol errorSymbol;
 
 bool olStringSecondProcessing;
@@ -19,8 +17,6 @@ bool cxResizingBlocked;
 
 ParsedInfo parsedInfo;
 Position parsedPositions[IPP_MAX];
-
-jmp_buf errorLongJumpBuffer;
 
 int currentPass;
 int maxPasses;

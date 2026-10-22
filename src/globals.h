@@ -1,7 +1,6 @@
 #ifndef GLOBALS_H_INCLUDED
 #define GLOBALS_H_INCLUDED
 
-#include <setjmp.h>
 #include <stdio.h>
 
 #include "completion.h"
@@ -24,7 +23,6 @@ extern Position parsedPositions[IPP_MAX];
 extern char cwd[MAX_FILE_NAME_SIZE]; /* current working directory */
 extern char ppcTmpBuff[MAX_PPC_RECORD_SIZE];
 
-extern bool fileAbortEnabled;
 
 extern bool cxResizingBlocked;
 extern unsigned memberFindCount;
@@ -68,7 +66,6 @@ extern int tokenNameLengthsTable[];
 
 extern int requestFileNumber;
 
-extern jmp_buf errorLongJumpBuffer;
 
 extern char *inputFileName;
 

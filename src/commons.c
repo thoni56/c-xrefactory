@@ -413,24 +413,14 @@ void internalCheckFail(char *expr, char *file, int line) {
     log_with_explicit_file_and_line(LOG_FATAL, file, line, "'%s' is not true",  expr);
     writeErrorMessage(ERR_INTERNAL_CHECK,msg);
 
-    if (options.mode == ServerMode) {
-        if (options.cxrefProtocol) {
-            ppcGenRecord(PPC_FATAL_ERROR, msg);
-            ppcGenRecord(PPC_INFORMATION, "Exiting");
-            closeOutputFile();
-            ppcSynchronize();
-        } else {
-            fprintf(errOut, "\t exiting!\n");
-            fflush(errOut);
-        }
+    if (options.cxrefProtocol) {
+        ppcGenRecord(PPC_FATAL_ERROR, msg);
+        ppcGenRecord(PPC_INFORMATION, "Exiting");
+        closeOutputFile();
+        ppcSynchronize();
+    } else {
+        fprintf(errOut, "\t exiting!\n");
+        fflush(errOut);
     }
-    if (options.mode == ServerMode || !fileAbortEnabled) {
-        emergencyExit(EXIT_FAILURE);
-    }
-
-    fprintf(errOut, "\t file aborted!\n");
-    fflush(errOut);
-    // TODO: WAS: longjump is causing problems with refactory, the longjmp
-    // is missplaced. Is it? Test for this case?
-    longjmp(errorLongJumpBuffer, LONGJMP_REASON_FILE_ABORT);
+    emergencyExit(EXIT_FAILURE);
 }

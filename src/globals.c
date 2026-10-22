@@ -6,8 +6,6 @@
 #include "lexem.h"
 
 
-bool fileAbortEnabled;
-
 unsigned memberFindCount = 1;
 
 
@@ -82,8 +80,6 @@ Symbol errorSymbol;
 char cwd[MAX_FILE_NAME_SIZE]; /* current working directory */
 
 char ppcTmpBuff[MAX_PPC_RECORD_SIZE];
-
-jmp_buf errorLongJumpBuffer;
 
 /* ********************************************************************** */
 /*                            real constants                              */

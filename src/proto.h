@@ -19,11 +19,6 @@ typedef unsigned char uchar;
 
 */
 
-typedef enum longjmpReason {
-    LONGJMP_REASON_NONE = 0,    /* Make sure it's zero */
-    LONGJMP_REASON_FILE_ABORT
-} LongjmpReason;
-
 typedef enum resolveDialog {
     RESOLVE_DIALOG_DEFAULT,
     RESOLVE_DIALOG_ALWAYS,

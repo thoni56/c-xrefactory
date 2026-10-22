@@ -682,8 +682,6 @@ void totalTaskEntryInitialisations(void) {
     errOut = stderr;
     outputFile = stdout;
 
-    fileAbortEnabled = false;
-
     // Limits
     assert(MAX_TYPE < power(2,TYPE_BITS));
     assert(STORAGE_ENUMS_MAX < power(2,STORAGES_BITS));
@@ -717,8 +715,6 @@ void mainTaskEntryInitialisations(ArgumentsVector args) {
     ENTER();
 
     initializeCoreSubsystems();
-
-    fileAbortEnabled = false;
 
     // supposing that file table is still here, but reinit it
     mapOverFileTable(clearFileItem);
