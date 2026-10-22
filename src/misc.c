@@ -608,45 +608,6 @@ static int mapPatternFiles(char *pattern ,
 }
 #endif
 
-void mapOverDirectoryFiles(char *dirname, void (*fun)(MAP_FUN_SIGNATURE), int allowEditorFilesFlag, char *a1,
-                       char *a2, Completions *a3, void *a4, int *a5) {
-#ifdef __WIN32__
-    WIN32_FIND_DATA fdata;
-    HANDLE          handle;
-    char           *d;
-    char            tempBuffer[MAX_FILE_NAME_SIZE];
-
-    for (char *s = dirname, d = tempBuffer; *s; s++, d++) {
-        if (*s == '/')
-            *d = FILE_PATH_SEPARATOR;
-        else
-            *d = *s;
-    }
-    assert(d - tempBuffer < MAX_FILE_NAME_SIZE - 3);
-    sprintf(d, "%c*", FILE_PATH_SEPARATOR);
-    mapPatternFiles(tempBuffer, fun, a1, a2, a3, a4, a5);
-#else
-    DIR           *fd;
-    struct dirent *dirbuf;
-
-    if (isDirectory(dirname) && (fd = opendir(dirname)) != NULL) {
-        while ((dirbuf = readdir(fd)) != NULL) {
-            if (dirbuf->d_ino != 0 && strcmp(dirbuf->d_name, ".") != 0
-                && strcmp(dirbuf->d_name, "..") != 0) {
-                log_debug("mapping file '%s'", dirbuf->d_name);
-                (*fun)(dirbuf->d_name, a1, a2, a3, a4, a5);
-            }
-        }
-        closedir(fd);
-    }
-#endif
-    // as special case, during refactorings you have to examine
-    // also files stored in renamed buffers
-    if (allowEditorFilesFlag == ALLOW_EDITOR_FILES) {
-        editorMapOnNonExistantFiles(dirname, fun, DEPTH_ONE, a1, a2, a3, a4, a5);
-    }
-}
-
 /* Non-static just for unittesting */
 protected char *concatDirectoryWithFileName(char *output, char *directoryName, char *fileName) {
     char *charP;

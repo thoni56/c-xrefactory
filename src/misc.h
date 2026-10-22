@@ -33,9 +33,6 @@
         }                                                               \
     }
 
-extern void mapOverDirectoryFiles(char *dirname, void (*fun)(MAP_FUN_SIGNATURE),
-                                  int allowEditorFilesFlag, char *a1, char *a2, Completions *a3,
-                                  void *a4, int *a5);
 
 /* Dumping and prettyprinting */
 extern void dumpArguments(int nargc, char **nargv);

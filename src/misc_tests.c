@@ -15,8 +15,8 @@
 #include "globals.mock"
 #include "options.mock"
 #include "ppc.mock"
-#include "proto.h"
 #include "yylex.mock"
+
 
 Describe(Misc);
 BeforeEach(Misc) {
@@ -48,25 +48,6 @@ Ensure(Misc, can_see_if_string_contains_wildcard) {
     assert_that(containsWildcard("abc[abc]"));
 }
 
-static char       *my_a1 = "a1";
-static char       *my_a2 = "a2";
-static Completions completions;
-static void       *my_a4 = &my_a4;
-static int         i     = 0;
-
-static void mapFunction(MAP_FUN_SIGNATURE) {
-    assert_that(a1, is_equal_to(my_a1));
-    assert_that(a2, is_equal_to(my_a2));
-    assert_that(a3, is_equal_to(&completions));
-    assert_that(a4, is_equal_to(my_a4));
-    (*a5)++;
-}
-
-Ensure(Misc, can_map_over_directory_files) {
-    expect(isDirectory, will_return(true));
-    mapOverDirectoryFiles("/", mapFunction, true, my_a1, my_a2, &completions, my_a4, &i);
-    assert_that(i, is_greater_than(0));
-}
 
 Ensure(Misc, strmcpy_returns_pointer_to_after_copy) {
     char src[100] = "hello world!";
