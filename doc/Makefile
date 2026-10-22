@@ -4,13 +4,14 @@
 #   make view     - Generate diagrams and start Structurizr Lite viewer (default)
 #   make diagrams - Generate all custom diagram images from PlantUML sources
 #   make stop     - Stop the running Structurizr container
+#   make backlog-graph - Draw the backlog's dependency graph in dist/backlog-graph.html
 #
 # CI/HTML generation targets:
 #   make html     - Build static HTML documentation for GitHub Pages
 #   make ci       - Alias for 'html'
 #
 
-.PHONY: all view start stop diagrams clean-diagrams html ci exported-structurizr-diagrams
+.PHONY: all view start stop diagrams clean-diagrams html ci exported-structurizr-diagrams backlog-graph
 
 # Default target
 all: view
@@ -117,6 +118,8 @@ dist/index.html: index.adoc
 dist/user-manual.html: user-manual.adoc
 	@mkdir -p dist
 	asciidoctor $^ -D dist
+
+backlog-graph: dist/backlog-graph.html
 
 dist/backlog-graph.html: backlog.md ../utils/backlog_graph
 	@mkdir -p dist
