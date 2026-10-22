@@ -100,6 +100,12 @@ every push, `After` dashed and `Goes with` not at all, linked at the end of this
     `doc/docs/11-planned-features.adoc` (Diagnostics Buffer). What did not parse reaches
     `*c-xref-diagnostics*` with its position, grouped by unit, and `next-error` visits it.
     Left: the report of unresolved includes.
+- (#77) <a id="config-syntax-messages"></a>**An unterminated quote in `.c-xrefrc` is reported in the diagnostics buffer** — *no repo home yet.*
+    `getOptionFromFile()` (`src/options.c`) reads a `"` string to the end of the file, and a
+    `` ` `` string to the end of the line, without a word, so the rest of the config is
+    silently lost. Its messages were only for the batch mode and are gone. It should give a
+    message with its position, as a parse does (WSL, session `d25255b8`, 2026-10-22).
+    Test first: a `.c-xrefrc` with an unterminated `"` gives a message.
 - (#68) <a id="lsp-mode"></a>**An `LspMode`, and a sink for the messages** — *no repo home yet.*
     LSP sets `ServerMode` (`src/parsing.c:140`), a stop-gap for the `assert(options.mode)`
     that are gone now. Once #8a has folded the checks of the mode, `Mode` is `ServerMode`
@@ -172,9 +178,8 @@ every push, `After` dashed and `Goes with` not at all, linked at the end of this
     Goes with: partition-options
 - (#8) <a id="finish-after-xrefmode"></a>**Finish after XrefMode**, in these pieces:
    a. <a id="mode-checks"></a>**fold the last `options.mode` checks**, one at a time, since
-      each changes behaviour where the mode is not yet known: `src/options.c:611,624,647`
-      (quotes in an options file), the completion check at `src/yylex.c:2658` and
-      `src/yylex.c:401` with `src/lexer.c:801,810` (`inServerMode`). Then `Mode`
+      each changes behaviour where the mode is not yet known: the completion check at
+      `src/yylex.c:2658`, and `src/yylex.c:401` with `src/lexer.c:801,810` (`inServerMode`). Then `Mode`
       becomes `ServerMode` or `LspMode` (#68).
 - (#9) <a id="remove-bridge"></a>**Remove the `parseBufferUsingServer` bridge** — §17.3; 9 refactoring call sites
    re-entering `callServer`. Independent of the rest of this section, but it is the last
