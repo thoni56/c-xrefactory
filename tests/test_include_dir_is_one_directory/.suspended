@@ -1,0 +1,12 @@
+Bug: an -I is expanded as a wildcard and split on ':'
+
+A compiler takes an -I as one directory. canFindIncludeFile(),
+canFindIncludeFileNext() and openInclude() (src/yylex.c) run each entry through
+expandWildcardsInOnePath() and MAP_OVER_PATHS, so -Idir/include_* and -Ia:b
+find headers a compiler would not. Wildcard matches come in readdir() order,
+so which of two same-named headers wins depends on the filesystem.
+
+Fix: try <dir>/<name> for the one directory and drop the expansion and the
+split; then expandWildcardsInOnePath() has no callers. shellMatch() and
+MAP_OVER_PATHS stay, other code uses them. doc/c-xref.man (-I) promises the
+wildcard and changes in the same commit. Backlog #74.
