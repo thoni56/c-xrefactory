@@ -71,16 +71,10 @@ void setToNull(void *p) {
 
 
 /* Used as action in addToFrame(), thus void* argument */
-void deleteSymDef(void *p) {
-    Symbol        *pp;
-
-    pp = (Symbol *) p;
-    log_debug("deleting %s %s", pp->name, pp->linkName);
-    if (symbolTableDelete(symbolTable,pp)==0) {
-        if (options.mode != ServerMode) {
-            errorMessage(ERR_INTERNAL,"symbol on deletion not found");
-        }
-    }
+void deleteSymDef(void *s) {
+    Symbol *symbol = (Symbol *) s;
+    log_debug("deleting %s %s", symbol->name, symbol->linkName);
+    symbolTableDelete(symbolTable,symbol);
 }
 
 void unpackPointers(Symbol *symbol) {

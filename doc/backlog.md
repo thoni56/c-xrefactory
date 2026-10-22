@@ -172,8 +172,8 @@ every push, `After` dashed and `Goes with` not at all, linked at the end of this
     Goes with: partition-options
 - (#8) <a id="finish-after-xrefmode"></a>**Finish after XrefMode**, in these pieces:
    a. <a id="mode-checks"></a>**fold the last `options.mode` checks**, one at a time, since
-      each changes behaviour where the mode is not yet known: `src/semact.c:80` (symbol on
-      deletion not found), `src/semact.c:908,920` (parameter positions), `src/options.c:611,624,647`
+      each changes behaviour where the mode is not yet known: `src/semact.c:908,920`
+      (parameter positions), `src/options.c:611,624,647`
       (quotes in an options file), the completion check at `src/yylex.c:2658` and
       `src/yylex.c:401` with `src/lexer.c:801,810` (`inServerMode`). Then `Mode`
       becomes `ServerMode` or `LspMode` (#68).
