@@ -5119,7 +5119,7 @@ void callParser(int fileNumber, Language language);</code></pre>
   │
   └─&gt; FOR EACH REQUEST:
        ├─&gt; Read options from pipe
-       ├─&gt; initServer() — process options, schedule input file
+       ├─&gt; initServer() — process options, enter the request's file
        ├─&gt; callServer() — main dispatch
        │    ├─&gt; loadAllOpenedEditorBuffers()
        │    ├─&gt; Reparse stale preloaded files (Pass 1: CUs, Pass 2: header includers)
@@ -5184,7 +5184,7 @@ void callParser(int fileNumber, Language language);</code></pre>
 <p><strong>Editor preloads</strong>. When the editor sends <code>-preload &lt;file&gt; &lt;tmpfile&gt;</code>, the file enters the file table via the editor buffer mechanism. Files created during a session — new source files the user opens — are discovered this way without any explicit rescan.</p>
 </div>
 <div class="paragraph">
-<p><strong>Project directory glob</strong> (<code>scanProjectForFilesAndIncludes()</code> → <code>listFilesInDirectory()</code>). At startup, after project context initialization, the server walks the project root recursively, filtering by known source suffixes (<code>.c</code>, <code>.y</code>, etc.) and honoring <code>-prune</code> paths (applied in <code>listFilesInDirectory</code> against the project-root-relative <code>-prune</code> entries). This discovers all compilation units in the project directory without requiring a prior <code>-create</code> invocation. (The legacy <code>processFileArguments()</code> path over <code>options.inputFiles</code> remains only as a fallback when no project root is auto-detected.)</p>
+<p><strong>Project directory glob</strong> (<code>scanProjectForFilesAndIncludes()</code> → <code>listFilesInDirectory()</code>). At startup, after project context initialization, the server walks the project root recursively, filtering by known source suffixes (<code>.c</code>, <code>.y</code>, etc.) and honoring <code>-prune</code> paths (applied in <code>listFilesInDirectory</code> against the project-root-relative <code>-prune</code> entries). This discovers all compilation units in the project directory without requiring a prior <code>-create</code> invocation.</p>
 </div>
 <div class="paragraph">
 <p>The three mechanisms are complementary: the disk database provides historical knowledge, preloads provide real-time updates during the session, and the project directory glob provides a fresh scan of what actually exists on disk at startup.</p>
@@ -6897,53 +6897,22 @@ request file. See
 </table>
 </div>
 <div class="sect3">
-<h4 id="_file_scheduling_how_files_get_marked_for_processing">13.3.1. File Scheduling - How Files Get Marked for Processing</h4>
+<h4 id="_the_requests_file">13.3.1. The Request&#8217;s File</h4>
 <div class="paragraph">
-<p>All modes begin by marking files for processing using the <code>isScheduled</code> flag in the file table.</p>
-</div>
-<div class="paragraph">
-<p><strong><em>Initial Scheduling (All Modes)</em></strong></p>
-</div>
-<div class="paragraph">
-<p><strong>Called from:</strong></p>
-</div>
-<div class="ulist">
-<ul>
-<li>
-<p>Server: <code>initServer()</code> → <code>processFileArguments()</code> [<code>server.c:151</code>]</p>
-</li>
-<li>
-<p>Startup: <code>mainTaskEntryInitialisations()</code> → <code>processFileArguments()</code></p>
-</li>
-</ul>
+<p>Nothing is scheduled. A request names one file, the editor&#8217;s current buffer, as the
+only bare word on its command line, and <code>initServer()</code> enters it in the file table with
+<code>addRequestFileToFileTable()</code>. The file need not exist on disk yet. Menu and filter
+operations name none. <code>prepareInputFileForRequest()</code> makes it the request&#8217;s
+<code>requestFileNumber</code>.</p>
 </div>
 <div class="paragraph">
-<p><strong>Flow:</strong></p>
-</div>
-<div class="listingblock">
-<div class="content">
-<pre class="highlightjs highlight"><code class="language-none hljs">processFileArguments() [options.c:1893]
-  │
-  └─&gt; FOR each file in options.inputFiles
-       │
-       └─&gt; processFileArgument(filename) [options.c:1864]
-            │
-            └─&gt; dirInputFile(...) [options.c:465]
-                 ├─ If directory: recursively map over files
-                 ├─ If file: scheduleCommandLineEnteredFileToProcess(filename)
-                 │           └─ SETS: fileItem-&gt;isScheduled = true [line 450]
-                 └─ If wildcard: expand and recurse</code></pre>
-</div>
+<p>The rest of the project is known without being named: the structure scan
+(<code>scanProjectForFilesAndIncludes()</code>) finds the compilation units and their includes,
+and the snapshot holds what was parsed before. See <a href="#unified-flow">Unified Server Flow (ADR 22)</a>.</p>
 </div>
 <div class="paragraph">
-<p><strong>Result:</strong> All command-line files (and directory contents if <code>-r</code> flag) are marked with <code>isScheduled = true</code>.</p>
-</div>
-<div class="paragraph">
-<p>On the auto-detect path, <code>processFileArguments()</code> has been replaced by
-<code>scanProjectForFilesAndIncludes()</code>, which discovers CUs by globbing the project directory
-and builds the include graph transitively by text-scanning <code>#include</code> lines and resolving
-paths via <code>options.includeDirs</code>. The legacy path still uses <code>processFileArguments()</code>.
-See <a href="#unified-flow">Unified Server Flow (ADR 22)</a>.</p>
+<p>The startup command line carries no file: <code>c-xref -server file.c</code> is refused before
+the server starts.</p>
 </div>
 </div>
 <div class="sect3">
@@ -7171,23 +7140,10 @@ target.
 <div class="ulist">
 <ul>
 <li>
-<p><strong>Scheduling</strong>: All files scheduled ONCE in <code>initServer()</code> → <code>processFileArguments()</code></p>
+<p><strong>File</strong>: the one the request names, entered by <code>initServer()</code> → <code>addRequestFileToFileTable()</code></p>
 </li>
 <li>
-<p><strong>Processing</strong>: Each request picks ONE file via <code>prepareInputFileForRequest()</code></p>
-<div class="ulist">
-<ul>
-<li>
-<p>Uses <code>getNextScheduledFile()</code> to get first scheduled file</p>
-</li>
-<li>
-<p>FLAWED: unschedules all higher-numbered files (works because <code>c-xref .</code> schedules all)</p>
-</li>
-<li>
-<p>Sets both <code>inputFileName</code> and <code>requestFileNumber</code></p>
-</li>
-</ul>
-</div>
+<p><strong>Processing</strong>: <code>prepareInputFileForRequest()</code> makes it <code>requestFileNumber</code></p>
 </li>
 <li>
 <p><strong>Loop</strong>: Infinite request loop in <code>server()</code> - different file per request</p>
@@ -12471,7 +12427,7 @@ operation reads the in-memory table.</p>
 </div>
 <div id="footer">
 <div id="footer-text">
-Last updated 2026-10-22 10:57:25 UTC
+Last updated 2026-10-22 11:54:22 UTC
 </div>
 </div>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.18.3/highlight.min.js"></script>
