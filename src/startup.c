@@ -630,12 +630,6 @@ bool initializeFileProcessing(ArgumentsVector baseArgs, ArgumentsVector requestA
         /* Before the input is opened: a -D is lexed through the same input */
         applyCurrentPassOptions();
 
-        if (options.mode != ServerMode && inputFileName == NULL) {
-            /* TODO Create a test that covers this */
-            inputOpened = false;
-            goto fini;
-        }
-
         /* === PHASE 5: Input Setup === */
         inputOpened = computeAndOpenInputFile(inputFileName);  /* Finally calls initInput() */
 
@@ -657,7 +651,6 @@ bool initializeFileProcessing(ArgumentsVector baseArgs, ArgumentsVector requestA
         inputOpened = computeAndOpenInputFile(inputFileName); /* Phase 5 only */
     }
 
- fini:
     initializationsPerInvocation();
 
     LEAVE();

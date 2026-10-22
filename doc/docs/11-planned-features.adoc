@@ -301,6 +301,31 @@ and checked during the `mapAddGlobalUnusedSymbolsToHkSelection` iteration. The c
 would match the filename of the definition reference against the exclude patterns using
 the existing shell-glob matching logic.
 
+=== Unused Detection: Write-only Symbols
+
+==== Background
+
+A variable that is assigned but never read is as unused as one that is never mentioned.
+Unused detection does not report it, since the assignments count as uses.
+
+A close relative is a variable that is read, but only ever assigned the value it starts
+with.
+`fileAbortEnabled` in c-xrefactory's own code was such a global: a `bool`, `false` from
+the start, that was only ever set to `false`, so its one check could never change anything.
+
+==== Proposed Behaviour
+
+Unused Symbols also reports a variable whose only references, apart from its definition
+and declarations, are assignments.
+The parser already records an assignment as `UsageLvalUsed`, so this should be a filter
+on the usages that are already there.
+A variable whose address is taken (`UsageAddrUsed`) might be read through the pointer, so
+it is not reported.
+
+The relative needs more, the value of each assignment, which the references do not
+carry.
+That is probably a later step, if at all.
+
 === Browsing includes
 
 ==== Background

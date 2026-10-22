@@ -172,11 +172,11 @@ every push, `After` dashed and `Goes with` not at all, linked at the end of this
     Goes with: partition-options
 - (#8) <a id="finish-after-xrefmode"></a>**Finish after XrefMode**, in these pieces:
    a. <a id="mode-checks"></a>**fold the last `options.mode` checks**, one at a time, since
-      each changes behaviour where the mode is not yet known: `src/startup.c:633` (no
-      input file), `src/commons.c:379,390` (`fileAbortEnabled` and the `longjmp`, probably
-      dead), `src/semact.c:923,935` (parameter positions), `src/options.c` (quotes in an
-      options file), the completion check in `src/yylex.c` and `src/yylex.c:345` with
-      `src/lexer.c:801,810` (`inServerMode`). Then `Mode`
+      each changes behaviour where the mode is not yet known: `src/commons.c:416,427`
+      (`fileAbortEnabled` and the `longjmp`, dead), `src/semact.c:80` (symbol on deletion
+      not found), `src/semact.c:908,920` (parameter positions), `src/options.c:611,624,647`
+      (quotes in an options file), the completion check at `src/yylex.c:2658` and
+      `src/yylex.c:401` with `src/lexer.c:801,810` (`inServerMode`). Then `Mode`
       becomes `ServerMode` or `LspMode` (#68).
 - (#9) <a id="remove-bridge"></a>**Remove the `parseBufferUsingServer` bridge** — §17.3; 9 refactoring call sites
    re-entering `callServer`. Independent of the rest of this section, but it is the last
@@ -423,9 +423,15 @@ Roadmap → Optimization has the baseline: a cold-start PUSH on ffmpeg, measured
     default. Then: expand defaults, report an unbound name, read the fragment before the
     environment, and ignore the personal options in a config, with a warning.
     After: project-extent
-- (#28) <a id="chapter-17-hygiene"></a>**Chapter 17 hygiene, opportunistically** — incremental `cxfile.c` cleanup, extract
-    the macro expansion module, hashtab → hashlist, split the editor module, rename server
+- (#28) <a id="chapter-17-hygiene"></a>**Chapter 17 hygiene, opportunistically** — incremental `cxfile.c` cleanup,
+    hashtab → hashlist, split the editor module, rename server
     operations, elisp recompiled and deleted on every build.
+- (#76) <a id="macro-expansion-module"></a>**Extract the macro expansion module from `src/yylex.c`** — §17.2.
+    `yylex.c` is 2794 lines. The macro stack, the macro arguments memory and the
+    expansions of the last lexem (`lastLexemExpansions`, `noteMacroExpansionsOfLastLexem()`)
+    now sit together at its top, under section comments. The plan in §17.2 is older than
+    that, and says 2353 lines, so check it against the code first (WSL, session
+    `d25255b8`, 2026-10-22).
 - (#29) <a id="dump-reference-database"></a>**Dump Reference Database** — `-dump=knowledge` answers from the
     in-memory table (`src/dump.c`), one record per fact. The selection names which facts,
     so a new kind of fact never changes the answer for an old one. Left are selections for
