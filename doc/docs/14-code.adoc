@@ -44,10 +44,9 @@ The file processing architecture differs significantly between Server mode and L
 mode, with confusing global state and naming inconsistencies that make the code
 hard to follow.
 
-NOTE: The auto-detect server path uses a unified flow where lightweight file structure
-scanning replaced the legacy `-create`/`callXref()` pattern (ADR 22). The legacy path
-runs when no project root was auto-detected, i.e. no `.c-xrefrc` was found above the
-request file. See
+NOTE: The server uses a unified flow where lightweight file structure scanning replaced
+the legacy `-create`/`callXref()` pattern (ADR 22). There is no other path: when no
+`.c-xrefrc` is found above the request file, the request is answered with an error. See
 <<unified-flow>> below.
 
 ==== The Request's File
