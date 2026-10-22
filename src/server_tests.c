@@ -167,6 +167,14 @@ Ensure(Server, cursor_parse_for_an_operation_that_does_not_parse_leaves_the_file
     assert_true(fileTimestampIsZero(fileItem.knowledgeTime));
 }
 
+/* A project is found with its root and its config, as initializeProjectContext() finds one */
+static ProjectConfig foundProjectConfig;
+static void expectAProjectToBeFound(void) {
+    options.detectedProjectRoot = "/project";
+    expect(initializeProjectContext, will_return(true));
+    always_expect(getProjectConfig, will_return(&foundProjectConfig));
+}
+
 /* Search answers from the table, so a stripped request file would lose its references
  * for good */
 Ensure(Server, search_does_not_strip_its_request_file) {
@@ -176,7 +184,7 @@ Ensure(Server, search_does_not_strip_its_request_file) {
 
     cgreen_mocks_are(loose_mocks);
     always_expect(getFileItemWithFileNumber, will_return(&fileItem));
-    expect(initializeProjectContext, will_return(true));
+    expectAProjectToBeFound();
     never_expect(collectRequestCU);
 
     ArgumentsVector args = {.argc = 0, .argv = NULL};
@@ -190,7 +198,7 @@ Ensure(Server, push_collects_its_request_file_for_stripping) {
 
     cgreen_mocks_are(loose_mocks);
     always_expect(getFileItemWithFileNumber, will_return(&fileItem));
-    expect(initializeProjectContext, will_return(true));
+    expectAProjectToBeFound();
     expect(collectRequestCU, when(requestFileNumber, is_equal_to(42)));
 
     ArgumentsVector args = {.argc = 0, .argv = NULL};

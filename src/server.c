@@ -367,13 +367,13 @@ void callServer(ArgumentsVector baseArgs, ArgumentsVector requestArgs) {
         }
     }
 
-    /* CONFIG-CHANGE-AWARE SCAN (auto-detect path only).
+    /* CONFIG-CHANGE-AWARE SCAN.
      * First request: !scanDone triggers the scan.
      * Config change: re-reads .c-xrefrc (updates options.includeDirs and
      * savedOptions), then re-runs scan with new include dirs. */
-    if (projectContextInitialized
-        && options.detectedProjectRoot != NULL
-        && options.detectedProjectRoot[0] != '\0') {
+    if (projectContextInitialized) {
+        /* A project is only found with its root, see applyConventionBasedDatabasePath() */
+        assert(options.detectedProjectRoot[0] != '\0');
         bool configChanged = isProjectConfigChanged();
         if (configChanged) {
             reloadProjectConfig(baseArgs, requestArgs);
@@ -400,8 +400,7 @@ void callServer(ArgumentsVector baseArgs, ArgumentsVector requestArgs) {
 
     /* Sibling CUs that share headers with the request file but are out of date,
      * e.g. on a cold start */
-    if (projectContextInitialized && hasInputFile && !answeredWithoutReferences(options.serverOperation)
-        && options.detectedProjectRoot != NULL && options.detectedProjectRoot[0] != '\0')
+    if (projectContextInitialized && hasInputFile && !answeredWithoutReferences(options.serverOperation))
         collectSiblingCUs(buildList, inputs, requestFileNumber);
 
     stripRequestCU(buildList, requestFileNumber);
