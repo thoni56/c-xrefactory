@@ -108,14 +108,13 @@ every push, `After` dashed and `Goes with` not at all, linked at the end of this
     Test first: a `.c-xrefrc` with an unterminated `"` gives a message.
 - (#68) <a id="lsp-mode"></a>**An `LspMode`, and a sink for the messages** — *no repo home yet.*
     LSP sets `ServerMode` (`src/parsing.c:140`), a stop-gap for the `assert(options.mode)`
-    that are gone now. Once #8a has folded the checks of the mode, `Mode` is `ServerMode`
+    that are gone now, and nothing reads the mode any more. `Mode` becomes `ServerMode`
     or `LspMode`, set once from argv, and it replaces `cxrefProtocol`. A
     check of the mode deep in the code is where packing is mixed into collecting. `src/commons.c` then sends messages to a sink
     chosen at startup: `<log>` and `<analysing>` for `-server`,
     `textDocument/publishDiagnostics` for `-lsp`, which replaces a document's diagnostics
     as a reparse replaces a unit's group. The first case of what #25 needs.
     Goes with: startup-command-line, partition-options
-    Waits for: mode-checks
 - (#7) <a id="startup-command-line"></a>**Decide, and enforce, what the startup command line may carry** — *no repo home yet.*
    Bigger than `c-xref file.c`, and it needs code, not just a decision. Once XrefMode is
    gone the server takes no file at startup: every request names its own, and the same
@@ -176,11 +175,6 @@ every push, `After` dashed and `Goes with` not at all, linked at the end of this
     A step towards #3's pure `parseCommandLine()` (Mac, session `4839a129`, 2026-10-21).
     After: startup-command-line
     Goes with: partition-options
-- (#8) <a id="finish-after-xrefmode"></a>**Finish after XrefMode**, in these pieces:
-   a. <a id="mode-checks"></a>**fold the last `options.mode` checks** — left: the
-      `inServerMode` parameter of `buildLexemFromCharacters()` (`src/lexer.c`) is always
-      `true`, and goes. Then nothing reads `options.mode`, and `Mode` becomes `ServerMode`
-      or `LspMode` (#68).
 - (#9) <a id="remove-bridge"></a>**Remove the `parseBufferUsingServer` bridge** — §17.3; 9 refactoring call sites
    re-entering `callServer`. Independent of the rest of this section, but it is the last
    divergent parse path.
