@@ -55,7 +55,6 @@ extern int getNextExistingFileNumber(int index);
 
 extern void mapOverFileTable(void (*fun)(FileItem *));
 extern void mapOverFileTableWithIndex(void (*fun)(FileItem *, int));
-extern void mapOverFileTableWithBool(void (*fun)(FileItem *, bool), bool);
 extern void mapOverFileTableWithPointer(void (*fun)(FileItem *, void *), void *pointer);
 
 

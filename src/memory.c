@@ -164,10 +164,6 @@ bool cxMemoryPointerIsBetween(void *pointer, int low, int high) {
     return memoryIsBetween(&cxMemory, pointer, low, high);
 }
 
-void cxFreeUntil(void *pointer) {
-    (void)memoryFreeUntil(&cxMemory, pointer);
-}
-
 void printMemoryStatisticsFor(Memory *memory) {
     printf("Max memory use for %s : %d\n", memory->name, memory->max);
 }

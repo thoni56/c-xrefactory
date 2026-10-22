@@ -52,7 +52,6 @@ extern Memory cxMemory;
 extern void initCxMemory(size_t size);
 extern void *cxAlloc(size_t size);
 extern bool cxMemoryPointerIsBetween(void *pointer, int low, int high);
-extern void cxFreeUntil(void *until);
 
 extern void printMemoryStatisticsFor(Memory *memory);
 extern void printMemoryStatistics(void);

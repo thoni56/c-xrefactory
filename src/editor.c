@@ -50,15 +50,6 @@ FileTimestamp editorFileModificationTime(char *path) {
     return fileModificationTime(path);
 }
 
-size_t editorFileSize(char *path) {
-    EditorBuffer *buffer;
-
-    buffer = getEditorBufferForFile(path);
-    if (buffer != NULL)
-        return buffer->size;
-    return fileSize(path);
-}
-
 bool editorFileExists(char *path) {
     EditorBuffer *buffer;
 
@@ -505,85 +496,6 @@ static void freeEditorBufferListButNotBuffers(EditorBufferList *list) {
         free(l);
         l = n;
     }
-}
-
-static int editorBufferNameLess(EditorBufferList*l1, EditorBufferList*l2) {
-    return strcmp(l1->buffer->fileName, l2->buffer->fileName);
-}
-
-static bool directoryPrefixMatches(char *fileName, char *dirname) {
-    int dirNameLength = strlen(dirname);
-    return filenameCompare(fileName, dirname, dirNameLength) == 0
-        && (fileName[dirNameLength] == '/'
-            || fileName[dirNameLength] == '\\');
-}
-
-// TODO, do all this stuff better!
-// This is still quadratic on number of opened buffers
-// for recursive search
-bool editorMapOnNonExistantFiles(char *dirname,
-                                void (*fun)(MAP_FUN_SIGNATURE),
-                                SearchDepth depth,
-                                char *a1,
-                                char *a2,
-                                Completions *a3,
-                                void *a4,
-                                int *a5
-) {
-    // In order to avoid mapping of the same directory several
-    // times, first just create list of all files, sort it, and then
-    // map them
-    EditorBufferList *listOfAllBuffers   = computeListOfAllEditorBuffers();
-    LIST_MERGE_SORT(EditorBufferList, listOfAllBuffers, editorBufferNameLess);
-
-    EditorBufferList *list = listOfAllBuffers;
-
-    bool found = false;
-    while(list!=NULL) {
-        if (directoryPrefixMatches(list->buffer->fileName, dirname)) {
-            int dirNameLength = strlen(dirname);
-            char fname[MAX_FILE_NAME_SIZE];
-            int fileNameLength;
-            if (depth == DEPTH_ONE) {
-                char *pathDelimiter = strchr(list->buffer->fileName+dirNameLength+1, '/');
-                if (pathDelimiter==NULL)
-                    pathDelimiter = strchr(list->buffer->fileName+dirNameLength+1, '\\');
-                if (pathDelimiter==NULL) {
-                    strcpy(fname, list->buffer->fileName+dirNameLength+1);
-                    fileNameLength = strlen(fname);
-                } else {
-                    fileNameLength = pathDelimiter-(list->buffer->fileName+dirNameLength+1);
-                    strncpy(fname, list->buffer->fileName+dirNameLength+1, fileNameLength);
-                    fname[fileNameLength]=0;
-                }
-            } else {
-                strcpy(fname, list->buffer->fileName+dirNameLength+1);
-                fileNameLength = strlen(fname);
-            }
-            // Only map on nonexistant files
-            if (!fileExists(list->buffer->fileName)) {
-                // get file name
-                (*fun)(fname, a1, a2, a3, a4, a5);
-                found = true;
-                // skip all files in the same directory
-                char *lastMapped = list->buffer->fileName;
-                int lastMappedLength = dirNameLength+1+fileNameLength;
-                list = list->next;
-                while (list!=NULL
-                       && filenameCompare(list->buffer->fileName, lastMapped, lastMappedLength)==0
-                       && (list->buffer->fileName[lastMappedLength]=='/' || list->buffer->fileName[lastMappedLength]=='\\')) {
-                    list = list->next;
-                }
-            } else {
-                list = list->next;
-            }
-        } else {
-            list = list->next;
-        }
-    }
-    freeEditorBufferListButNotBuffers(listOfAllBuffers);
-
-    return found;
 }
 
 static bool bufferIsCloseable(EditorBuffer *buffer) {
