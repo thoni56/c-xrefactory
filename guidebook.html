@@ -525,20 +525,21 @@ body.book #toc,body.book #preamble,body.book h1.sect0,body.book .sect1>h2{page-b
 <li><a href="#_retry_the_request_that_created_the_project">11.6. Retry the request that created the project</a></li>
 <li><a href="#_diagnostics_buffer">11.7. Diagnostics Buffer</a></li>
 <li><a href="#_unused_detection_exclude_patterns">11.8. Unused Detection: Exclude Patterns</a></li>
-<li><a href="#_browsing_includes">11.9. Browsing includes</a></li>
-<li><a href="#_semantic_read_only_files_include_path_ownership">11.10. Semantic Read-only Files (Include Path Ownership)</a></li>
-<li><a href="#generic-selection">11.11. C11 <code>_Generic</code></a></li>
-<li><a href="#_inline_function_and_inline_macro">11.12. Inline Function and Inline Macro</a></li>
-<li><a href="#_extract_an_expression_as_a_function">11.13. Extract an Expression as a Function</a></li>
-<li><a href="#_modernize_function">11.14. Modernize Function</a></li>
-<li><a href="#_unify_parameter_names">11.15. Unify Parameter Names</a></li>
-<li><a href="#_introduce_parameter_object">11.16. Introduce Parameter Object</a></li>
-<li><a href="#_extract_function_with_jumps_out_of_the_region">11.17. Extract Function with Jumps out of the Region</a></li>
-<li><a href="#_inline_output_parameter">11.18. Inline Output Parameter</a></li>
-<li><a href="#_finish_extract_variable">11.19. Finish Extract Variable</a></li>
-<li><a href="#_inline_variable">11.20. Inline Variable</a></li>
-<li><a href="#_name_and_define_constant">11.21. Name and Define Constant</a></li>
-<li><a href="#_background_work">11.22. Background Work</a></li>
+<li><a href="#_unused_detection_write_only_symbols">11.9. Unused Detection: Write-only Symbols</a></li>
+<li><a href="#_browsing_includes">11.10. Browsing includes</a></li>
+<li><a href="#_semantic_read_only_files_include_path_ownership">11.11. Semantic Read-only Files (Include Path Ownership)</a></li>
+<li><a href="#generic-selection">11.12. C11 <code>_Generic</code></a></li>
+<li><a href="#_inline_function_and_inline_macro">11.13. Inline Function and Inline Macro</a></li>
+<li><a href="#_extract_an_expression_as_a_function">11.14. Extract an Expression as a Function</a></li>
+<li><a href="#_modernize_function">11.15. Modernize Function</a></li>
+<li><a href="#_unify_parameter_names">11.16. Unify Parameter Names</a></li>
+<li><a href="#_introduce_parameter_object">11.17. Introduce Parameter Object</a></li>
+<li><a href="#_extract_function_with_jumps_out_of_the_region">11.18. Extract Function with Jumps out of the Region</a></li>
+<li><a href="#_inline_output_parameter">11.19. Inline Output Parameter</a></li>
+<li><a href="#_finish_extract_variable">11.20. Finish Extract Variable</a></li>
+<li><a href="#_inline_variable">11.21. Inline Variable</a></li>
+<li><a href="#_name_and_define_constant">11.22. Name and Define Constant</a></li>
+<li><a href="#_background_work">11.23. Background Work</a></li>
 </ul>
 </li>
 <li><a href="#components">12. Components</a>
@@ -4439,9 +4440,41 @@ the existing shell-glob matching logic.</p>
 </div>
 </div>
 <div class="sect2">
-<h3 id="_browsing_includes">11.9. Browsing includes</h3>
+<h3 id="_unused_detection_write_only_symbols">11.9. Unused Detection: Write-only Symbols</h3>
 <div class="sect3">
 <h4 id="_background_5">11.9.1. Background</h4>
+<div class="paragraph">
+<p>A variable that is assigned but never read is as unused as one that is never mentioned.
+Unused detection does not report it, since the assignments count as uses.</p>
+</div>
+<div class="paragraph">
+<p>A close relative is a variable that is read, but only ever assigned the value it starts
+with.
+<code>fileAbortEnabled</code> in c-xrefactory&#8217;s own code was such a global: a <code>bool</code>, <code>false</code> from
+the start, that was only ever set to <code>false</code>, so its one check could never change anything.</p>
+</div>
+</div>
+<div class="sect3">
+<h4 id="_proposed_behaviour_2">11.9.2. Proposed Behaviour</h4>
+<div class="paragraph">
+<p>Unused Symbols also reports a variable whose only references, apart from its definition
+and declarations, are assignments.
+The parser already records an assignment as <code>UsageLvalUsed</code>, so this should be a filter
+on the usages that are already there.
+A variable whose address is taken (<code>UsageAddrUsed</code>) might be read through the pointer, so
+it is not reported.</p>
+</div>
+<div class="paragraph">
+<p>The relative needs more, the value of each assignment, which the references do not
+carry.
+That is probably a later step, if at all.</p>
+</div>
+</div>
+</div>
+<div class="sect2">
+<h3 id="_browsing_includes">11.10. Browsing includes</h3>
+<div class="sect3">
+<h4 id="_background_6">11.10.1. Background</h4>
 <div class="paragraph">
 <p>The <code>#include</code> preprocessor statments are referenceable items just like typenames and
 variables. That means it is logical to expect that placing the cursor on an <code>#include</code>
@@ -4454,16 +4487,16 @@ this case would be the next #include statement for that file.</p>
 </div>
 </div>
 <div class="sect3">
-<h4 id="_design_3">11.9.2. Design</h4>
+<h4 id="_design_3">11.10.2. Design</h4>
 <div class="paragraph">
 <p>This needs to be investigated and understood before an attempt to design a solution can be made.</p>
 </div>
 </div>
 </div>
 <div class="sect2">
-<h3 id="_semantic_read_only_files_include_path_ownership">11.10. Semantic Read-only Files (Include Path Ownership)</h3>
+<h3 id="_semantic_read_only_files_include_path_ownership">11.11. Semantic Read-only Files (Include Path Ownership)</h3>
 <div class="sect3">
-<h4 id="_background_6">11.10.1. Background</h4>
+<h4 id="_background_7">11.11.1. Background</h4>
 <div class="paragraph">
 <p>Files discovered through <code>-I</code> include paths are currently treated the same as project-owned
 files for navigation purposes. However, these files typically belong to external libraries
@@ -4483,7 +4516,7 @@ self-contained, but with the modern include-path-based project scope (see
 </div>
 </div>
 <div class="sect3">
-<h4 id="_proposed_behaviour_2">11.10.2. Proposed Behaviour</h4>
+<h4 id="_proposed_behaviour_3">11.11.2. Proposed Behaviour</h4>
 <div class="paragraph">
 <p>Files discovered through <code>-I</code> paths (but not listed as source directories in the
 configuration file) would be marked as <strong>read-only for refactoring purposes</strong>:</p>
@@ -4506,7 +4539,7 @@ cross-boundary refactoring for specific operations</p>
 </div>
 </div>
 <div class="sect3">
-<h4 id="_design_4">11.10.3. Design</h4>
+<h4 id="_design_4">11.11.3. Design</h4>
 <div class="paragraph">
 <p>This requires a per-file or per-directory ownership flag in the file table, checked by
 the refactoring engine before applying edits. The flag would be set during the lightweight
@@ -4519,12 +4552,12 @@ include path (read-only).</p>
 </div>
 </div>
 <div class="sect2">
-<h3 id="generic-selection">11.11. C11 <code>_Generic</code></h3>
+<h3 id="generic-selection">11.12. C11 <code>_Generic</code></h3>
 <div class="paragraph">
 <p><strong>Status</strong>: Not implemented. Pinned by the suspended <code>test_parsing_generics</code>.</p>
 </div>
 <div class="sect3">
-<h4 id="_use_case_3">11.11.1. Use Case</h4>
+<h4 id="_use_case_3">11.12.1. Use Case</h4>
 <div class="paragraph">
 <p><code>_Generic</code> selects an expression by the type of a controlling expression, most often to
 pick one of several functions, as in <code>&lt;tgmath.h&gt;</code>:</p>
@@ -4541,7 +4574,7 @@ loses others, such as the <code>default:</code> branch and a typedef used as an 
 </div>
 </div>
 <div class="sect3">
-<h4 id="_design_5">11.11.2. Design</h4>
+<h4 id="_design_5">11.12.2. Design</h4>
 <div class="paragraph">
 <p>Parse every association and record the references in all of them. Do <strong>not</strong> select the
 branch the controlling expression&#8217;s type would pick.</p>
@@ -4572,12 +4605,12 @@ result (<code>_Generic(&#8230;&#8203;).field</code>), which is rare.</p>
 </div>
 </div>
 <div class="sect2">
-<h3 id="_inline_function_and_inline_macro">11.12. Inline Function and Inline Macro</h3>
+<h3 id="_inline_function_and_inline_macro">11.13. Inline Function and Inline Macro</h3>
 <div class="paragraph">
 <p><strong>Status</strong>: Not implemented.</p>
 </div>
 <div class="sect3">
-<h4 id="_background_7">11.12.1. Background</h4>
+<h4 id="_background_8">11.13.1. Background</h4>
 <div class="paragraph">
 <p>There is no way to inline a function or a macro. The case that asked for it was two
 wrappers in <code>startup.c</code>, <code>saveMemoryCheckPoint()</code> and <code>restoreMemoryCheckPoint()</code>, that
@@ -4587,7 +4620,7 @@ the stub in <code>startup.mock</code>.</p>
 </div>
 </div>
 <div class="sect3">
-<h4 id="_proposed_behaviour_3">11.12.2. Proposed Behaviour</h4>
+<h4 id="_proposed_behaviour_4">11.13.2. Proposed Behaviour</h4>
 <div class="paragraph">
 <p>With the cursor on a function, or on a call to it, <strong>Inline Function</strong> replaces each call
 with the body, the arguments substituted for the parameters, and removes the definition.
@@ -4602,7 +4635,7 @@ call site. Refusing with a reason is fine there.</p>
 </div>
 </div>
 <div class="sect3">
-<h4 id="_first_slice">11.12.3. First Slice</h4>
+<h4 id="_first_slice">11.13.3. First Slice</h4>
 <div class="paragraph">
 <p>A body that is one statement, or <code>return expr;</code>, where no parameter is assigned or has
 its address taken. Each argument replaces its parameter, in parentheses. The parameters'
@@ -4612,7 +4645,7 @@ which only returns <code>options.errors</code>.</p>
 </div>
 </div>
 <div class="sect3">
-<h4 id="_bodies_with_more_statements">11.12.4. Bodies with More Statements</h4>
+<h4 id="_bodies_with_more_statements">11.13.4. Bodies with More Statements</h4>
 <div class="paragraph">
 <p>Extract Function copies the region verbatim and puts what is needed at the edges, e.g.
 <code>int b = *_b;</code> first in the new function and <code>*_b = b;</code> last. Inline can do the same the
@@ -4662,12 +4695,12 @@ parameters verbatim, and only <code><mark></code> and <code></mark>#</code> need
 </div>
 </div>
 <div class="sect2">
-<h3 id="_extract_an_expression_as_a_function">11.13. Extract an Expression as a Function</h3>
+<h3 id="_extract_an_expression_as_a_function">11.14. Extract an Expression as a Function</h3>
 <div class="paragraph">
 <p><strong>Status</strong>: Not implemented. Issue #28.</p>
 </div>
 <div class="sect3">
-<h4 id="_background_8">11.13.1. Background</h4>
+<h4 id="_background_9">11.14.1. Background</h4>
 <div class="paragraph">
 <p>Extract Function only works on statements.
 Marking part of an expression, e.g. one operand of <code>||</code> in an <code>if</code> condition, gives a <code>void</code> function, which is not what you wanted.
@@ -4675,7 +4708,7 @@ The case that asked for it was <code>isPreloaded(buffer) || buffer&#8594;modifie
 </div>
 </div>
 <div class="sect3">
-<h4 id="_proposed_behaviour_4">11.13.2. Proposed Behaviour</h4>
+<h4 id="_proposed_behaviour_5">11.14.2. Proposed Behaviour</h4>
 <div class="paragraph">
 <p>When the marked text is an expression, extract a function that returns it, with the type of the expression, and replace the text with a call.</p>
 </div>
@@ -4687,19 +4720,19 @@ That probably covers most of the cases that come up.</p>
 </div>
 </div>
 <div class="sect2">
-<h3 id="_modernize_function">11.14. Modernize Function</h3>
+<h3 id="_modernize_function">11.15. Modernize Function</h3>
 <div class="paragraph">
 <p><strong>Status</strong>: Not implemented.</p>
 </div>
 <div class="sect3">
-<h4 id="_background_9">11.14.1. Background</h4>
+<h4 id="_background_10">11.15.1. Background</h4>
 <div class="paragraph">
 <p>Old C code often has K&amp;R function definitions, where the parameter types are declared between the parameter list and the body.
 There is no way to turn such a definition into one with a prototype.</p>
 </div>
 </div>
 <div class="sect3">
-<h4 id="_proposed_behaviour_5">11.14.2. Proposed Behaviour</h4>
+<h4 id="_proposed_behaviour_6">11.15.2. Proposed Behaviour</h4>
 <div class="paragraph">
 <p>With the cursor on a K&amp;R function definition, <strong>Modernize Function</strong> (or <strong>Prototype Function</strong>) moves the parameter declarations into the parameter list.
 A declaration without parameters elsewhere, e.g. <code>int f();</code> in a header, gets the same parameter list.
@@ -4713,12 +4746,12 @@ Refusing, or at least warning, is probably right there.</p>
 </div>
 </div>
 <div class="sect2">
-<h3 id="_unify_parameter_names">11.15. Unify Parameter Names</h3>
+<h3 id="_unify_parameter_names">11.16. Unify Parameter Names</h3>
 <div class="paragraph">
 <p><strong>Status</strong>: Not implemented.</p>
 </div>
 <div class="sect3">
-<h4 id="_background_10">11.15.1. Background</h4>
+<h4 id="_background_11">11.16.1. Background</h4>
 <div class="paragraph">
 <p>A parameter&#8217;s name is given again in every declaration of its function, i.e. in the header, in a forward declaration, in the definition and in a mock.
 Each is a symbol of its own, so Rename changes one of them.
@@ -4726,7 +4759,7 @@ Giving a parameter the same new name everywhere means one Rename for each defini
 </div>
 </div>
 <div class="sect3">
-<h4 id="_proposed_behaviour_6">11.15.2. Proposed Behaviour</h4>
+<h4 id="_proposed_behaviour_7">11.16.2. Proposed Behaviour</h4>
 <div class="paragraph">
 <p>With the cursor on a parameter, <strong>Unify Parameter Name</strong> asks for a name and gives the parameter that name in every declaration and definition of the function.
 In a definition that is a rename of the parameter, uses included.
@@ -4736,12 +4769,12 @@ A declaration that has no name for the parameter could get one, or be left as it
 </div>
 </div>
 <div class="sect2">
-<h3 id="_introduce_parameter_object">11.16. Introduce Parameter Object</h3>
+<h3 id="_introduce_parameter_object">11.17. Introduce Parameter Object</h3>
 <div class="paragraph">
 <p><strong>Status</strong>: Not implemented.</p>
 </div>
 <div class="sect3">
-<h4 id="_background_11">11.16.1. Background</h4>
+<h4 id="_background_12">11.17.1. Background</h4>
 <div class="paragraph">
 <p>Extract Function gives one parameter for each local the region uses, and an in/out pointer for each one it changes.
 When the region works on a group of locals that always go together, the parameter list gets long.
@@ -4751,7 +4784,7 @@ Four of them were the selection being built, i.e. the array of file numbers, its
 </div>
 </div>
 <div class="sect3">
-<h4 id="_proposed_behaviour_7">11.16.2. Proposed Behaviour</h4>
+<h4 id="_proposed_behaviour_8">11.17.2. Proposed Behaviour</h4>
 <div class="paragraph">
 <p>With some locals marked, <strong>Introduce Parameter Object</strong> (or <strong>Group Locals into Struct</strong>) asks for a type name, declares a struct with those locals as fields, and replaces them with one local of that type.
 Every use becomes a field access, e.g. <code>selection.count</code>.
@@ -4773,12 +4806,12 @@ How the UI marks the parameters, and what to do with such a count, is not decide
 </div>
 </div>
 <div class="sect2">
-<h3 id="_extract_function_with_jumps_out_of_the_region">11.17. Extract Function with Jumps out of the Region</h3>
+<h3 id="_extract_function_with_jumps_out_of_the_region">11.18. Extract Function with Jumps out of the Region</h3>
 <div class="paragraph">
 <p><strong>Status</strong>: Not implemented.</p>
 </div>
 <div class="sect3">
-<h4 id="_background_12">11.17.1. Background</h4>
+<h4 id="_background_13">11.18.1. Background</h4>
 <div class="paragraph">
 <p>Extract Function refuses a region that a <code>return</code>, <code>break</code>, <code>continue</code> or <code>goto</code> leaves ("There are jumps in or out of region", <code>makeExtraction()</code> in <code>extract.c</code>).
 Only Extract Macro lets them through, since a macro is text and the jump lands where it was.
@@ -4793,7 +4826,7 @@ Both can be read from the text, from the position to the <code>;</code>.</p>
 </div>
 </div>
 <div class="sect3">
-<h4 id="_proposed_behaviour_8">11.17.2. Proposed Behaviour</h4>
+<h4 id="_proposed_behaviour_9">11.18.2. Proposed Behaviour</h4>
 <div class="paragraph">
 <p>The new function returns how it ended, and the call site acts on it:</p>
 </div>
@@ -4818,19 +4851,19 @@ A region that already returns a value, or a <code>return</code> of a local&#8217
 </div>
 </div>
 <div class="sect2">
-<h3 id="_inline_output_parameter">11.18. Inline Output Parameter</h3>
+<h3 id="_inline_output_parameter">11.19. Inline Output Parameter</h3>
 <div class="paragraph">
 <p><strong>Status</strong>: Not implemented.</p>
 </div>
 <div class="sect3">
-<h4 id="_background_13">11.18.1. Background</h4>
+<h4 id="_background_14">11.19.1. Background</h4>
 <div class="paragraph">
 <p>For each local the region changes, Extract Function copies it in from a pointer parameter at the start of the new function and back at the end, e.g. <code>int cuCount = *_cuCount;</code> and <code>*_cuCount = cuCount;</code>.
 That is safe, but the copies are usually the first thing you want gone.</p>
 </div>
 </div>
 <div class="sect3">
-<h4 id="_proposed_behaviour_9">11.18.2. Proposed Behaviour</h4>
+<h4 id="_proposed_behaviour_10">11.19.2. Proposed Behaviour</h4>
 <div class="paragraph">
 <p>With the cursor on such a parameter, <strong>Inline Output Parameter</strong> replaces every read of the local with <code>*_cuCount</code>, every write with an assignment through the pointer, and removes both copies.
 The parameter then takes the local&#8217;s name, <code>cuCount</code>, which is free now.
@@ -4848,12 +4881,12 @@ Done one at a time, the local is set but never read in between, and <code>-Werro
 </div>
 </div>
 <div class="sect2">
-<h3 id="_finish_extract_variable">11.19. Finish Extract Variable</h3>
+<h3 id="_finish_extract_variable">11.20. Finish Extract Variable</h3>
 <div class="paragraph">
 <p><strong>Status</strong>: Partially implemented.</p>
 </div>
 <div class="sect3">
-<h4 id="_background_14">11.19.1. Background</h4>
+<h4 id="_background_15">11.20.1. Background</h4>
 <div class="paragraph">
 <p><strong>Extract Variable</strong> replaces the marked expression with a new variable and declares it, initialized to the expression.
 The declaration is always <code>int</code>, since the type of the expression is not known (<code>generateNewVariableDeclaration()</code> in <code>extract.c</code>).
@@ -4867,7 +4900,7 @@ The case was <code>handle_invalid_request()</code> and <code>handle_method_not_f
 </div>
 </div>
 <div class="sect3">
-<h4 id="_proposed_behaviour_10">11.19.2. Proposed Behaviour</h4>
+<h4 id="_proposed_behaviour_11">11.20.2. Proposed Behaviour</h4>
 <div class="paragraph">
 <p>The declaration gets the type of the expression, and goes in before the statement that held it.
 This is the same type that <strong>Extract an Expression as a Function</strong> needs, so the two probably share it.</p>
@@ -4875,18 +4908,18 @@ This is the same type that <strong>Extract an Expression as a Function</strong> 
 </div>
 </div>
 <div class="sect2">
-<h3 id="_inline_variable">11.20. Inline Variable</h3>
+<h3 id="_inline_variable">11.21. Inline Variable</h3>
 <div class="paragraph">
 <p><strong>Status</strong>: Not implemented.</p>
 </div>
 <div class="sect3">
-<h4 id="_background_15">11.20.1. Background</h4>
+<h4 id="_background_16">11.21.1. Background</h4>
 <div class="paragraph">
 <p>The generalization above ended with inlining the extracted variables again at the first call site, by hand.</p>
 </div>
 </div>
 <div class="sect3">
-<h4 id="_proposed_behaviour_11">11.20.2. Proposed Behaviour</h4>
+<h4 id="_proposed_behaviour_12">11.21.2. Proposed Behaviour</h4>
 <div class="paragraph">
 <p>With the cursor on a local that is assigned once, <strong>Inline Variable</strong> replaces each use with its initializer and removes the declaration.
 It should refuse if the variable is assigned again, or if its address is taken.
@@ -4895,19 +4928,19 @@ An initializer with side effects, or one that reads something changed between th
 </div>
 </div>
 <div class="sect2">
-<h3 id="_name_and_define_constant">11.21. Name and Define Constant</h3>
+<h3 id="_name_and_define_constant">11.22. Name and Define Constant</h3>
 <div class="paragraph">
 <p><strong>Status</strong>: Not implemented.</p>
 </div>
 <div class="sect3">
-<h4 id="_background_16">11.21.1. Background</h4>
+<h4 id="_background_17">11.22.1. Background</h4>
 <div class="paragraph">
 <p>A literal that means something, e.g. an exit code the protocol prescribes, is better as a name.
 Today that is a <code>#define</code>, or an enum member, written by hand and then a search for the other occurrences.</p>
 </div>
 </div>
 <div class="sect3">
-<h4 id="_proposed_behaviour_12">11.21.2. Proposed Behaviour</h4>
+<h4 id="_proposed_behaviour_13">11.22.2. Proposed Behaviour</h4>
 <div class="paragraph">
 <p>With the cursor on a literal, <strong>Name and Define Constant</strong> asks for a name, defines it, and replaces the literal with the name.
 Other occurrences of the same literal could be offered, but only the user can tell which of them mean the same thing.
@@ -4917,12 +4950,12 @@ Where the definition goes, i.e. in the file or in a header, and as a <code>#defi
 </div>
 </div>
 <div class="sect2">
-<h3 id="_background_work">11.22. Background Work</h3>
+<h3 id="_background_work">11.23. Background Work</h3>
 <div class="paragraph">
 <p><strong>Status</strong>: Possible. Waits for the sweep (ADR-0033, <code>sweep</code> in <code>doc/backlog.md</code>).</p>
 </div>
 <div class="sect3">
-<h4 id="_background_17">11.22.1. Background</h4>
+<h4 id="_background_18">11.23.1. Background</h4>
 <div class="paragraph">
 <p>The server only works when a request arrives, and then the user waits.
 Out-of-date knowledge outside every request&#8217;s goal is never brought up to date, and on a large project the first request carries the whole initialization.
@@ -4930,7 +4963,7 @@ With the sweep, bringing knowledge up to date a part at a time is safe, since ea
 </div>
 </div>
 <div class="sect3">
-<h4 id="_proposed_behaviour_13">11.22.2. Proposed Behaviour</h4>
+<h4 id="_proposed_behaviour_14">11.23.2. Proposed Behaviour</h4>
 <div class="paragraph">
 <p>When no request is waiting, the server does one unit of work, e.g. builds the knowledge of one out-of-date CU, and then checks for a request again.
 Answers fill in while you work, and a cold start answers what it knows at once.
@@ -4938,7 +4971,7 @@ Other candidates are the sweep itself, saving the snapshot, and checking the cha
 </div>
 </div>
 <div class="sect3">
-<h4 id="_design_6">11.22.3. Design</h4>
+<h4 id="_design_6">11.23.3. Design</h4>
 <div class="paragraph">
 <p>The server has no threads and blocks in <code>readOptionsFromPipe()</code> until the next request.
 With all its global state, threads are not an option, so the work would be cooperative: wait for input with a timeout, and work when it expires.
@@ -8544,7 +8577,7 @@ setup.</p>
 <div class="sect2">
 <h3 id="_incremental_cxfile_c_cleanup">16.1. Incremental <code>cxfile.c</code> Cleanup</h3>
 <div class="sect3">
-<h4 id="_background_18">16.1.1. Background</h4>
+<h4 id="_background_19">16.1.1. Background</h4>
 <div class="paragraph">
 <p>The <code>cxfile</code> module was designed when the <code>.cx</code> files on disk were the reference database. Operations like "show all references to symbol X" or "find unused symbols" were table-driven scans over the disk format — hash the symbol name, stream the right partition, apply a per-operation filter. This was efficient for the batch cross-referencer that <code>c-xrefactory</code> evolved from, where the workflow was <code>c-xref -create</code> → <code>c-xref -update</code> → query the on-disk database.</p>
 </div>
@@ -12426,7 +12459,7 @@ operation reads the in-memory table.</p>
 </div>
 <div id="footer">
 <div id="footer-text">
-Last updated 2026-10-22 13:48:34 UTC
+Last updated 2026-10-22 21:57:58 UTC
 </div>
 </div>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.18.3/highlight.min.js"></script>
