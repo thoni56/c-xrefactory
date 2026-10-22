@@ -47,8 +47,7 @@ These belong in the
 Add
 .I dir
 to the end of the directories searched for include files, in the order
-given. The directory may contain the wildcard characters '*', '?' and
-\&'[...]', which can make the search slow.
+given.
 
 .TP
 .BI "\-D" "name"

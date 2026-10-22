@@ -523,7 +523,6 @@ static bool canFindIncludeFile(char includeType, char *name) {
     EditorBuffer *editorBuffer = NULL;
     FILE *file = NULL;
     StringList *includeDirP;
-    char wildcardExpandedPaths[MAX_OPTION_LEN];
     char normalizedName[MAX_FILE_NAME_SIZE];
     char path[MAX_FILE_NAME_SIZE];
 
@@ -548,24 +547,20 @@ static bool canFindIncludeFile(char includeType, char *name) {
 
     /* If not found we need to walk the include paths... */
     for (includeDirP = parsingConfig.includeDirs; includeDirP != NULL && editorBuffer == NULL && file == NULL; includeDirP = includeDirP->next) {
+        int length;
         strcpy(normalizedName, normalizeFileName_static(includeDirP->string, cwd));
-        expandWildcardsInOnePath(normalizedName, wildcardExpandedPaths, MAX_OPTION_LEN);
-        MAP_OVER_PATHS(wildcardExpandedPaths, {
-            int length;
-            strcpy(normalizedName, currentPath);
-            length = strlen(normalizedName);
-            if (length > 0 && normalizedName[length - 1] != FILE_PATH_SEPARATOR) {
-                normalizedName[length] = FILE_PATH_SEPARATOR;
-                length++;
-            }
-            strcpy(normalizedName + length, name);
-            log_debug("trying to find '%s'", normalizedName);
-            editorBuffer = findOrCreateAndLoadEditorBufferForFile(normalizedName);
-            if (editorBuffer == NULL)
-                file = openFile(normalizedName, "r");
-            if (editorBuffer != NULL || file != NULL)
-                goto found;
-        });
+        length = strlen(normalizedName);
+        if (length > 0 && normalizedName[length - 1] != FILE_PATH_SEPARATOR) {
+            normalizedName[length] = FILE_PATH_SEPARATOR;
+            length++;
+        }
+        strcpy(normalizedName + length, name);
+        log_debug("trying to find '%s'", normalizedName);
+        editorBuffer = findOrCreateAndLoadEditorBufferForFile(normalizedName);
+        if (editorBuffer == NULL)
+            file = openFile(normalizedName, "r");
+        if (editorBuffer != NULL || file != NULL)
+            goto found;
     }
     log_debug("failed to find '%s'", name);
     return false;
@@ -581,7 +576,6 @@ static bool canFindIncludeFileNext(char includeType, char *name) {
     EditorBuffer *editorBuffer = NULL;
     FILE *file = NULL;
     StringList *includeDirP;
-    char wildcardExpandedPaths[MAX_OPTION_LEN];
     char normalizedName[MAX_FILE_NAME_SIZE];
     char path[MAX_FILE_NAME_SIZE];
 
@@ -609,24 +603,20 @@ static bool canFindIncludeFileNext(char includeType, char *name) {
 
     /* Walk the include paths starting from the next one */
     for (includeDirP = start; includeDirP != NULL && editorBuffer == NULL && file == NULL; includeDirP = includeDirP->next) {
+        int length;
         strcpy(normalizedName, normalizeFileName_static(includeDirP->string, cwd));
-        expandWildcardsInOnePath(normalizedName, wildcardExpandedPaths, MAX_OPTION_LEN);
-        MAP_OVER_PATHS(wildcardExpandedPaths, {
-            int length;
-            strcpy(normalizedName, currentPath);
-            length = strlen(normalizedName);
-            if (length > 0 && normalizedName[length - 1] != FILE_PATH_SEPARATOR) {
-                normalizedName[length] = FILE_PATH_SEPARATOR;
-                length++;
-            }
-            strcpy(normalizedName + length, name);
-            log_debug("trying to find '%s'", normalizedName);
-            editorBuffer = findOrCreateAndLoadEditorBufferForFile(normalizedName);
-            if (editorBuffer == NULL)
-                file = openFile(normalizedName, "r");
-            if (editorBuffer != NULL || file != NULL)
-                goto found;
-        });
+        length = strlen(normalizedName);
+        if (length > 0 && normalizedName[length - 1] != FILE_PATH_SEPARATOR) {
+            normalizedName[length] = FILE_PATH_SEPARATOR;
+            length++;
+        }
+        strcpy(normalizedName + length, name);
+        log_debug("trying to find '%s'", normalizedName);
+        editorBuffer = findOrCreateAndLoadEditorBufferForFile(normalizedName);
+        if (editorBuffer == NULL)
+            file = openFile(normalizedName, "r");
+        if (editorBuffer != NULL || file != NULL)
+            goto found;
     }
     log_debug("failed to find '%s'", name);
     return false;
@@ -641,7 +631,6 @@ static bool openInclude(char includeType, char *name, bool is_include_next) {
     EditorBuffer *editorBuffer = NULL;
     FILE *file = NULL;
     StringList *includeDirP;
-    char wildcardExpandedPaths[MAX_OPTION_LEN];
     char normalizedName[MAX_FILE_NAME_SIZE];
     char path[MAX_FILE_NAME_SIZE];
 
@@ -681,24 +670,20 @@ static bool openInclude(char includeType, char *name, bool is_include_next) {
     /* If not found we need to walk the include paths... */
  search:
     for (includeDirP = start; includeDirP != NULL && editorBuffer == NULL && file == NULL; includeDirP = includeDirP->next) {
+        int length;
         strcpy(normalizedName, normalizeFileName_static(includeDirP->string, cwd));
-        expandWildcardsInOnePath(normalizedName, wildcardExpandedPaths, MAX_OPTION_LEN);
-        MAP_OVER_PATHS(wildcardExpandedPaths, {
-            int length;
-            strcpy(normalizedName, currentPath);
-            length = strlen(normalizedName);
-            if (length > 0 && normalizedName[length - 1] != FILE_PATH_SEPARATOR) {
-                normalizedName[length] = FILE_PATH_SEPARATOR;
-                length++;
-            }
-            strcpy(normalizedName + length, name);
-            log_debug("trying to open '%s'", normalizedName);
-            editorBuffer = findOrCreateAndLoadEditorBufferForFile(normalizedName);
-            if (editorBuffer == NULL)
-                file = openFile(normalizedName, "r");
-            if (editorBuffer != NULL || file != NULL)
-                goto found;
-        });
+        length = strlen(normalizedName);
+        if (length > 0 && normalizedName[length - 1] != FILE_PATH_SEPARATOR) {
+            normalizedName[length] = FILE_PATH_SEPARATOR;
+            length++;
+        }
+        strcpy(normalizedName + length, name);
+        log_debug("trying to open '%s'", normalizedName);
+        editorBuffer = findOrCreateAndLoadEditorBufferForFile(normalizedName);
+        if (editorBuffer == NULL)
+            file = openFile(normalizedName, "r");
+        if (editorBuffer != NULL || file != NULL)
+            goto found;
     }
     if (editorBuffer==NULL && file==NULL) {
         log_debug("failed to open '%s'", name);

@@ -187,16 +187,12 @@ Ensure(Yylex, can_process_include_directive_with_include_paths_match_in_second) 
     /* ... and it should not exist in cwd either... */
     expect(openFile, when(fileName, is_equal_to_string("path1/include.h")), will_return(NULL));
 
-    /* So now we search through include paths (parsingConfig.includeDirs) which may include wildcards */
-    expect(normalizeFileName_static, when(name, is_equal_to_string("path1")), will_return("path1/include.h"));
-    expect(expandWildcardsInOnePath, when(filename, is_equal_to_string("path1/include.h")),
-           will_set_contents_of_parameter(outpaths, "path1", sizeof(char *)));
+    /* So now we search through include paths (parsingConfig.includeDirs), each one directory */
+    expect(normalizeFileName_static, when(name, is_equal_to_string("path1")), will_return("path1"));
     /* Not found in this directory... */
     expect(openFile, when(fileName, is_equal_to_string("path1/include.h")), will_return(NULL));
 
-    expect(normalizeFileName_static, when(name, is_equal_to_string("path2")), will_return("path2/include.h"));
-    expect(expandWildcardsInOnePath, when(filename, is_equal_to_string("path2/include.h")),
-           will_set_contents_of_parameter(outpaths, "path2", sizeof(char *)));
+    expect(normalizeFileName_static, when(name, is_equal_to_string("path2")), will_return("path2"));
     /* But in this... */
     expect(openFile, when(fileName, is_equal_to_string("path2/include.h")), will_return(&file));
 
@@ -249,10 +245,7 @@ Ensure(Yylex, can_process_include_next_directive_and_find_next_with_same_name) {
 
     /* So now we search through include paths (parsingConfig.includeDirs) starting at the one after path2... */
     expect(normalizeFileName_static, when(name, is_equal_to_string("path3")),
-           when(relative_to, is_equal_to_string("cwd")), will_return("path3/include.h"));
-    /* And it might contain wildcards, so ... */
-    expect(expandWildcardsInOnePath, when(filename, is_equal_to_string("path3/include.h")),
-           will_set_contents_of_parameter(outpaths, "path3", sizeof(char *)));
+           when(relative_to, is_equal_to_string("cwd")), will_return("path3"));
     /* Editor should not have any file open... */
     always_expect(findOrCreateAndLoadEditorBufferForFile, will_return(NULL));
     /* ... but opening it works */

@@ -143,11 +143,8 @@ every push, `After` dashed and `Goes with` not at all, linked at the end of this
      snapshot know the rest of the project, and goal and reach (ADR-0032) decide what to
      parse. Nothing walks a file argument any more: a request enters its file directly
      (`addRequestFileToFileTable()`), and the walk, with its backquoted commands and
-     `dirInputFile()`, is gone. Wildcards and path lists live on in `-I`, #74. Left: two
-     bare words in a request are not reported, which #75 makes easy. The docs still
-     describe the walk: `doc/docs/14-code.adoc` (the `processFileArguments()` call tree,
-     and "All files scheduled ONCE") and `doc/docs/12-components.adoc` ("schedule input
-     file", and the "legacy `processFileArguments()` path" as fallback).
+     `dirInputFile()`, is gone, and an `-I` is one directory. Left: two
+     bare words in a request are not reported, which #75 makes easy.
    - `.c-xrefrc` is also read with `YES` (`startup.c:446`), for the source directories
      listed in it. Do not assume that list is legacy. What dies with `-p` is the
      *registry*: several `[project]` sections, each covering directories, one selected by
@@ -173,16 +170,6 @@ every push, `After` dashed and `Goes with` not at all, linked at the end of this
     A step towards #3's pure `parseCommandLine()` (Mac, session `4839a129`, 2026-10-21).
     After: startup-command-line
     Goes with: partition-options
-- (#74) <a id="include-dir-wildcards"></a>**An `-I` directory is one directory, no wildcards or path lists** — *no repo home yet.*
-    `canFindIncludeFile()`, `canFindIncludeFileNext()` and `openInclude()` (`src/yylex.c`)
-    expand each `-I` with `expandWildcardsInOnePath()` and split it on `PATH_SEPARATOR`.
-    No compiler does either, several `-I` lines say the same, and wildcard matches come in
-    `readdir()` order, so which of two same-named headers wins depends on the filesystem.
-    Coverage shows neither used by any test. The wildcard is in `doc/c-xref.man` (`-I`),
-    which changes in the same commit. Test first: a wildcard `-I` is no longer expanded.
-    `shellMatch()` and `MAP_OVER_PATHS` stay, other code uses them; the three loops are
-    then copies of a short loop and can become one (Mac, session `4839a129`, 2026-10-21).
-    After: startup-command-line
 - (#8) <a id="finish-after-xrefmode"></a>**Finish after XrefMode**, in these pieces:
    a. <a id="mode-checks"></a>**fold the last `options.mode` checks**, one at a time, since
       each changes behaviour where the mode is not yet known: `src/startup.c:633` (no
