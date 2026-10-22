@@ -177,10 +177,10 @@ every push, `After` dashed and `Goes with` not at all, linked at the end of this
     After: startup-command-line
     Goes with: partition-options
 - (#8) <a id="finish-after-xrefmode"></a>**Finish after XrefMode**, in these pieces:
-   a. <a id="mode-checks"></a>**fold the last `options.mode` checks**, one at a time, since
-      each changes behaviour where the mode is not yet known: the completion check at
-      `src/yylex.c:2658`, and `src/yylex.c:401` with `src/lexer.c:801,810` (`inServerMode`). Then `Mode`
-      becomes `ServerMode` or `LspMode` (#68).
+   a. <a id="mode-checks"></a>**fold the last `options.mode` checks** — left: the
+      `inServerMode` parameter of `buildLexemFromCharacters()` (`src/lexer.c`) is always
+      `true`, and goes. Then nothing reads `options.mode`, and `Mode` becomes `ServerMode`
+      or `LspMode` (#68).
 - (#9) <a id="remove-bridge"></a>**Remove the `parseBufferUsingServer` bridge** — §17.3; 9 refactoring call sites
    re-entering `callServer`. Independent of the rest of this section, but it is the last
    divergent parse path.

@@ -398,7 +398,7 @@ static LexemCode refillCurrentInputIfExhausted(char **previousLexemP) {
         } else if (inputType == NORMAL_STREAM) {
             setCurrentFileConsistency(&currentFile, &currentInput);
             bool built = buildLexemFromCharacters(&currentFile.characterBuffer, &currentFile.lexemBuffer,
-                                                  options.mode == ServerMode);
+                                                  true);
             /* The lexem buffer has moved also at the end of the file, and inside a macro
              * call the input is used again after it */
             setCurrentInputConsistency(&currentInput, &currentFile);
@@ -2655,10 +2655,7 @@ LexemCode yylex(void) {
         Position position;
         getExtraLexemInformationFor(lexem, &currentInput.read, NULL, NULL, &position, NULL,
                                     NULL, !insideMacro());
-        if (options.mode == ServerMode) {
-            // TODO: ???????????? isn't this useless
-            lexem = checkCompletionsForId(lexem, yytext, position);
-        }
+        lexem = checkCompletionsForId(lexem, yytext, position);
         log_debug("id '%s' position %d, %d, %d", yytext, position.file, position.line, position.col);
 
         Symbol *foundMacroSymbol = findMacroSymbol(yytext);

@@ -52,7 +52,6 @@ BeforeEach(Yylex) {
     log_set_level(LOG_ERROR);
     initOuterCodeBlock();
 
-    options.mode = ServerMode;
     allocateMacroArgumentTable(MAX_MACRO_ARGS);
     initFileTable(100);
 
