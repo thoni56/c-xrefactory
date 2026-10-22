@@ -50,41 +50,20 @@ runs when no project root was auto-detected, i.e. no `.c-xrefrc` was found above
 request file. See
 <<unified-flow>> below.
 
-==== File Scheduling - How Files Get Marked for Processing
+==== The Request's File
 
-All modes begin by marking files for processing using the `isScheduled` flag in the file table.
+Nothing is scheduled. A request names one file, the editor's current buffer, as the
+only bare word on its command line, and `initServer()` enters it in the file table with
+`addRequestFileToFileTable()`. The file need not exist on disk yet. Menu and filter
+operations name none. `prepareInputFileForRequest()` makes it the request's
+`requestFileNumber`.
 
-*_Initial Scheduling (All Modes)_*
+The rest of the project is known without being named: the structure scan
+(`scanProjectForFilesAndIncludes()`) finds the compilation units and their includes,
+and the snapshot holds what was parsed before. See <<unified-flow>>.
 
-*Called from:*
-
-* Server: `initServer()` → `processFileArguments()` [`server.c:151`]
-* Startup: `mainTaskEntryInitialisations()` → `processFileArguments()`
-
-*Flow:*
-
-[source]
-----
-processFileArguments() [options.c:1893]
-  │
-  └─> FOR each file in options.inputFiles
-       │
-       └─> processFileArgument(filename) [options.c:1864]
-            │
-            └─> dirInputFile(...) [options.c:465]
-                 ├─ If directory: recursively map over files
-                 ├─ If file: scheduleCommandLineEnteredFileToProcess(filename)
-                 │           └─ SETS: fileItem->isScheduled = true [line 450]
-                 └─ If wildcard: expand and recurse
-----
-
-*Result:* All command-line files (and directory contents if `-r` flag) are marked with `isScheduled = true`.
-
-On the auto-detect path, `processFileArguments()` has been replaced by
-`scanProjectForFilesAndIncludes()`, which discovers CUs by globbing the project directory
-and builds the include graph transitively by text-scanning `#include` lines and resolving
-paths via `options.includeDirs`. The legacy path still uses `processFileArguments()`.
-See <<unified-flow>>.
+The startup command line carries no file: `c-xref -server file.c` is refused before
+the server starts.
 
 ==== Server Mode Flow
 
@@ -243,11 +222,8 @@ If they represent the same concept (the file being processed), they should have 
 
 *_Server Mode - Single File Per Request_*
 
-* *Scheduling*: All files scheduled ONCE in `initServer()` → `processFileArguments()`
-* *Processing*: Each request picks ONE file via `prepareInputFileForRequest()`
-** Uses `getNextScheduledFile()` to get first scheduled file
-** FLAWED: unschedules all higher-numbered files (works because `c-xref .` schedules all)
-** Sets both `inputFileName` and `requestFileNumber`
+* *File*: the one the request names, entered by `initServer()` → `addRequestFileToFileTable()`
+* *Processing*: `prepareInputFileForRequest()` makes it `requestFileNumber`
 * *Loop*: Infinite request loop in `server()` - different file per request
 
 *_LSP Mode - Single File Per Request_*
