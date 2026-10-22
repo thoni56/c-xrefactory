@@ -44,7 +44,6 @@ Ensure(Semact, can_capture_positions_for_empty_parameter_list) {
     Position lpar = {.file = 42, .line = 5, .col = 20};
     Position rpar = {.file = 42, .line = 5, .col = 21};
 
-    options.mode = ServerMode;
     parsingConfig.operation = PARSE_TO_TRACK_PARAMETERS;
     parsingConfig.positionOfSelectedReference = symbol.position;
     /* No position list (commas) for no parameters */
@@ -62,7 +61,6 @@ Ensure(Semact, can_capture_positions_for_one_parameter) {
     Position lpar = {.file = 42, .line = 5, .col = 20};
     Position rpar = {.file = 42, .line = 5, .col = 28};
 
-    options.mode = ServerMode;
     parsingConfig.operation = PARSE_TO_TRACK_PARAMETERS;
     parsingConfig.targetParameterIndex = 1;
     parsingConfig.positionOfSelectedReference = symbol.position;
@@ -82,7 +80,6 @@ Ensure(Semact, can_capture_positions_for_two_parameters) {
     Position comma = {.file = 5, .line = 5, .col = 28};
     PositionList commas = { .position = comma, .next = NULL };
 
-    options.mode = ServerMode;
     parsingConfig.operation = PARSE_TO_TRACK_PARAMETERS;
     parsingConfig.targetParameterIndex = 1;
     parsingConfig.positionOfSelectedReference = symbol.position;
@@ -100,7 +97,6 @@ Ensure(Semact, can_capture_positions_for_void_parameter_list) {
     Position lpar = {.file = 42, .line = 5, .col = 20};
     Position rpar = {.file = 42, .line = 5, .col = 25};
 
-    options.mode = ServerMode;
     parsingConfig.operation = PARSE_TO_TRACK_PARAMETERS;
     parsingConfig.targetParameterIndex = 1;
     parsingConfig.positionOfSelectedReference = symbol.position;

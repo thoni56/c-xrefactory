@@ -899,8 +899,6 @@ Symbol *createEmptyField(void) {
 void handleDeclaratorParamPositions(Symbol *symbol, Position lparPosition,
                                     PositionList *commaPositions, Position rparPositions,
                                     bool hasParameters, bool isVoid) {
-    if (options.mode != ServerMode)
-        return;
     if (parsingConfig.operation != PARSE_TO_TRACK_PARAMETERS)
         return;
     if (positionsAreNotEqual(symbol->position, parsingConfig.positionOfSelectedReference))
@@ -911,8 +909,6 @@ void handleDeclaratorParamPositions(Symbol *symbol, Position lparPosition,
 void handleInvocationParameterPositions(Reference *reference, Position lparPosition,
                                         PositionList *commaPositions, Position rparPosition,
                                         bool hasParameters) {
-    if (options.mode != ServerMode)
-        return;
     if (parsingConfig.operation != PARSE_TO_TRACK_PARAMETERS)
         return;
     if (reference==NULL || positionsAreNotEqual(reference->position, parsingConfig.positionOfSelectedReference))
