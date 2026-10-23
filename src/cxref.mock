@@ -33,7 +33,7 @@ void processSelectedReferences(SessionStackEntry *rstack, void (*referencesMapFu
     mock(rstack, referencesMapFun);
 }
 
-void popFromSession(void) {
+void popReferenceOnly(void) {
     mock();
 }
 

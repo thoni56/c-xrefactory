@@ -31,7 +31,7 @@ extern void recomputeSelectedReferenceable(SessionStackEntry *refs );
 extern void processSelectedReferences(SessionStackEntry *rstack,
                                         void (*referencesMapFun)(SessionStackEntry *rstack,
                                                                  BrowsingMenu *ss));
-extern void popFromSession(void);
+extern void popReferenceOnly(void);
 extern void deleteEntryFromSessionStack(SessionStackEntry *refs);
 extern int getFileNumberFromName(char *name);
 extern Reference *handleFoundSymbolReference(Symbol *symbol, Position position, Usage usage, int includedFileNumber);

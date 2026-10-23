@@ -505,7 +505,7 @@ static void orderRefsAndGotoDefinition(SessionStackEntry *sessionEntry) {
     }
 }
 
-static void olcxOrderRefsAndGotoDefinition(void) {
+static void orderReferencesAndGotoDefinition(void) {
     SessionStackEntry *sessionEntry;
 
     if (!sessionHasReferencesValidForOperation(&sessionEntry, CHECK_NULL_YES))
@@ -736,7 +736,7 @@ static void olcxPrintRefList(char *commandString, SessionStackEntry *sessionEntr
     fflush(outputFile);
 }
 
-static void olcxReferenceList(char *commandString) {
+static void referenceList(char *commandString) {
     SessionStackEntry    *sessionEntry;
     if (!sessionHasReferencesValidForOperation(&sessionEntry, CHECK_NULL_YES))
         return;
@@ -751,7 +751,7 @@ static void gotoCurrentReference(SessionStackEntry *sessionEntry) {
     }
 }
 
-static void olcxPushOnly(void) {
+static void pushOnly(void) {
     SessionStackEntry    *sessionEntry;
     if (!sessionHasReferencesValidForOperation(&sessionEntry, CHECK_NULL_YES))
         return;
@@ -759,7 +759,7 @@ static void olcxPushOnly(void) {
     gotoCurrentReference(sessionEntry);
 }
 
-static void olcxPushAndCallMacro(void) {
+static void pushAndCallMacro(void) {
     SessionStackEntry    *sessionEntry;
     char                symbol[MAX_CX_SYMBOL_SIZE];
 
@@ -989,7 +989,7 @@ static void toggleMenuSelect(void) {
     }
 }
 
-static void olcxMenuSelectOnly(void) {
+static void menuSelectOnly(void) {
     SessionStackEntry *stackEntry;
     if (!sessionHasReferencesValidForOperation(&stackEntry, CHECK_NULL_YES))
         return;
@@ -1054,7 +1054,7 @@ static void selectUnusedSymbols(BrowsingMenu *menu, void *mapParameter1) {
 }
 
 
-static void olcxMenuSelectAll(bool selected) {
+static void menuSelectAll(bool selected) {
     SessionStackEntry *sessionEntry;
 
     assert(options.cxrefProtocol);
@@ -1118,7 +1118,7 @@ static void setSelectedVisibleItems(BrowsingMenu *menu, ServerOperation command,
     setDefaultSelectedVisibleItems(menu, visible, selected);
 }
 
-static void olcxMenuSelectPlusolcxMenuSelectFilterSet(int flevel) {
+static void menuSelectAndSetFilter(int flevel) {
     SessionStackEntry    *sessionEntry;
 
     assert(options.cxrefProtocol);
@@ -1139,7 +1139,7 @@ static void olcxMenuSelectPlusolcxMenuSelectFilterSet(int flevel) {
     }
 }
 
-static void olcxReferenceFilterSet(int filterLevel) {
+static void setFilter(int filterLevel) {
     SessionStackEntry *sessionEntry;
 
     assert(options.cxrefProtocol);
@@ -1155,7 +1155,7 @@ static void olcxReferenceFilterSet(int filterLevel) {
 }
 
 
-static void olcxReferenceRePush(void) {
+static void rePush(void) {
     SessionStackEntry *sessionEntry, *next;
 
     assert(options.cxrefProtocol);
@@ -1171,7 +1171,7 @@ static void olcxReferenceRePush(void) {
     }
 }
 
-static void olcxReferencePop(void) {
+static void popReference(void) {
     SessionStackEntry *sessionEntry;
     if (!sessionHasReferencesValidForOperation(&sessionEntry, CHECK_NULL_YES))
         return;
@@ -1185,7 +1185,7 @@ static void olcxReferencePop(void) {
     olcxPrintSymbolName(browsingStack.top);
 }
 
-void popFromSession(void) {
+void popReferenceOnly(void) {
     SessionStackEntry *entry;
 
     /* Why this check? */
@@ -1296,7 +1296,7 @@ static Reference *olcxCreateFileShiftedRefListForCheck(Reference *reference) {
     return res;
 }
 
-static void olcxSafetyCheck(void) {
+static void safetyCheck(void) {
     SessionStackEntry *sessionEntry, *origrefs, *newrefs, *diffrefs;
     Reference *shifted;
     int pbflag=0;
@@ -1365,7 +1365,7 @@ static void completionForward(void) {
     }
 }
 
-static void olcxNoSymbolFoundErrorMessage(void) {
+static void noSymbolFoundErrorMessage(void) {
     if (options.serverOperation == OP_BROWSE_PUSH_NAME) {
         ppcGenRecord(PPC_ERROR,"No symbol found.");
     } else {
@@ -1500,7 +1500,7 @@ void olcxPushSpecialCheckMenuSym(char *symname) {
     rstack->menu = createSpecialMenuItem(symname, NO_FILE_NUMBER, StorageDefault);
 }
 
-static void olcxProcessGetRequest(void) {
+static void getEnvValue(void) {
     char *name, *value;
 
     name = options.variableToGet;
@@ -1517,24 +1517,24 @@ static void olcxProcessGetRequest(void) {
     }
 }
 
-static void olcxPrintPushingAction(ServerOperation operation) {
+static void printPushingAction(ServerOperation operation) {
     switch (operation) {
     case OP_BROWSE_PUSH:
         if (haveBrowsingMenu()) {
-            olcxOrderRefsAndGotoDefinition();
+            orderReferencesAndGotoDefinition();
         } else {
             // to auto repush symbol by name, but I do not like it.
             //& if (options.cxrefProtocol) ppcGenRecord(PPC_NO_SYMBOL, "");
             //& else
-            olcxNoSymbolFoundErrorMessage();
+            noSymbolFoundErrorMessage();
             deleteEntryFromSessionStack(browsingStack.top);
         }
         break;
     case OP_BROWSE_PUSH_NAME:
         if (haveBrowsingMenu()) {
-            olcxOrderRefsAndGotoDefinition();
+            orderReferencesAndGotoDefinition();
         } else {
-            olcxNoSymbolFoundErrorMessage();
+            noSymbolFoundErrorMessage();
             deleteEntryFromSessionStack(browsingStack.top);
         }
         break;
@@ -1544,46 +1544,46 @@ static void olcxPrintPushingAction(ServerOperation operation) {
         break;
     case OP_INTERNAL_LIST:
         if (haveBrowsingMenu()) {
-            olcxReferenceList(";");
+            referenceList(";");
         } else {
-            olcxNoSymbolFoundErrorMessage();
+            noSymbolFoundErrorMessage();
             deleteEntryFromSessionStack(browsingStack.top);
         }
         break;
     case OP_BROWSE_PUSH_ONLY:
         if (haveBrowsingMenu()) {
-            olcxPushOnly();
+            pushOnly();
         } else {
-            olcxNoSymbolFoundErrorMessage();
+            noSymbolFoundErrorMessage();
             deleteEntryFromSessionStack(browsingStack.top);
         }
         break;
     case OP_BROWSE_PUSH_AND_CALL_MACRO:
         if (haveBrowsingMenu()) {
-            olcxPushAndCallMacro();
+            pushAndCallMacro();
         } else {
-            olcxNoSymbolFoundErrorMessage();
+            noSymbolFoundErrorMessage();
             deleteEntryFromSessionStack(browsingStack.top);
         }
         break;
     case OP_INTERNAL_PUSH_FOR_USAGE_CHECK:
         if (haveBrowsingMenu())
-            olcxPushOnly();
+            pushOnly();
         else
-            olcxNoSymbolFoundErrorMessage();
+            noSymbolFoundErrorMessage();
         break;
     case OP_INTERNAL_PUSH_FOR_RENAME:
     case OP_INTERNAL_PUSH_FOR_ARGUMENT_MANIPULATION:
         if (haveBrowsingMenu())
             initializeRename();
         else
-            olcxNoSymbolFoundErrorMessage();
+            noSymbolFoundErrorMessage();
         break;
     case OP_INTERNAL_SAFETY_CHECK:
         if (haveBrowsingMenu())
-            olcxSafetyCheck();
+            safetyCheck();
         else
-            olcxNoSymbolFoundErrorMessage();
+            noSymbolFoundErrorMessage();
         break;
     default:
         assert(0);
@@ -1599,7 +1599,7 @@ static void dumpSelectionMenu(BrowsingMenu *menu) {
     }
 }
 
-static void mainAnswerReferencePushingAction(ServerOperation operation) {
+static void answerPushingAction(ServerOperation operation) {
     createSelectionMenuForOperation(operation);
 
     assert(options.cxrefProtocol);
@@ -1612,7 +1612,7 @@ static void mainAnswerReferencePushingAction(ServerOperation operation) {
         ppcGenRecord(PPC_DISPLAY_OR_UPDATE_BROWSER, "");
     } else {
         assert(browsingStack.top);
-        olcxPrintPushingAction(options.serverOperation);
+        printPushingAction(options.serverOperation);
     }
 }
 
@@ -1869,7 +1869,7 @@ void answerEditorAction(void) {
         break;
 
     case OP_GET_ENV_VALUE:
-        olcxProcessGetRequest();
+        getEnvValue();
         break;
 
     case OP_DUMP:
@@ -1898,23 +1898,23 @@ void answerEditorAction(void) {
     case OP_BROWSE_PUSH_ONLY:
     case OP_BROWSE_PUSH_AND_CALL_MACRO:
     case OP_INTERNAL_PUSH_FOR_USAGE_CHECK:
-        mainAnswerReferencePushingAction(options.serverOperation);
+        answerPushingAction(options.serverOperation);
         break;
     case OP_BROWSE_PUSH_NAME:
         pushSymbolByName(options.pushName);
-        mainAnswerReferencePushingAction(options.serverOperation);
+        answerPushingAction(options.serverOperation);
         break;
     case OP_BROWSE_REPUSH:
-        olcxReferenceRePush();
+        rePush();
         break;
     case OP_FILTER_SET:
-        olcxReferenceFilterSet(options.filterValue);
+        setFilter(options.filterValue);
         break;
     case OP_BROWSE_POP:
-        olcxReferencePop();
+        popReference();
         break;
     case OP_BROWSE_POP_ONLY:
-        popFromSession();
+        popReferenceOnly();
         break;
     case OP_BROWSE_NEXT: {
         SessionStackEntry *entry = getSessionEntryForOperation(OP_BROWSE_NEXT);
@@ -1943,16 +1943,16 @@ void answerEditorAction(void) {
         toggleMenuSelect();
         break;
     case OP_MENU_SELECT_ONLY:
-        olcxMenuSelectOnly();
+        menuSelectOnly();
         break;
     case OP_MENU_SELECT_ALL:
-        olcxMenuSelectAll(true);
+        menuSelectAll(true);
         break;
     case OP_MENU_SELECT_NONE:
-        olcxMenuSelectAll(false);
+        menuSelectAll(false);
         break;
     case OP_MENU_FILTER_SET:
-        olcxMenuSelectPlusolcxMenuSelectFilterSet(options.filterValue);
+        menuSelectAndSetFilter(options.filterValue);
         break;
 
         /* SEARCH */
@@ -2032,7 +2032,7 @@ void answerEditorAction(void) {
             sprintf(tmpBuff,"Cursor (point) has to be positioned on a method or constructor name before invocation of this refactoring, not on the parameter itself. Please move the cursor onto the method (constructor) name and reinvoke the refactoring.");
             errorMessage(ERR_ST, tmpBuff);
         } else {
-            mainAnswerReferencePushingAction(options.serverOperation);
+            answerPushingAction(options.serverOperation);
         }
         break;
     }

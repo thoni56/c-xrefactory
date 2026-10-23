@@ -436,7 +436,7 @@ static bool handleSafetyCheckDifferenceLists(EditorMarkerList *diff1, EditorMark
         pushMarkersAsReferences(&diff2, diffrefs, LINK_NAME_SAFETY_CHECK_MISSED);
         freeEditorMarkerListButNotMarkers(diff1);
         freeEditorMarkerListButNotMarkers(diff2);
-        popFromSession();
+        popReferenceOnly();
         if (refactoringOptions.theRefactoring == AVR_RENAME_MODULE) {
             /* TODO: Handle whatever this for C! Does it even happen!?!? */
             displayResolutionDialog("The module already exists and is referenced in the original"
@@ -900,7 +900,7 @@ static Result getParameterNamePosition(EditorMarker *point, char *fileName, int 
     assert(strcmp(nameOnPoint, fileName) == 0);
     sprintf(pushOptions, "-olcxgotoparname%d", argn);
     parseBufferUsingServer(refactoringOptions.project, point, NULL, pushOptions, NULL);
-    popFromSession();
+    popReferenceOnly();
     if (parameterPosition.file != NO_FILE_NUMBER) {
         return RESULT_OK;
     } else {
@@ -940,7 +940,7 @@ static Result getParameterPosition(EditorMarker *point, char *functionOrMacroNam
     clearParameterPositions();
     sprintf(pushOptions, "-olcxgetparamcoord%d", argn);
     parseBufferUsingServer(refactoringOptions.project, point, NULL, pushOptions, NULL);
-    popFromSession();
+    popReferenceOnly();
 
     Result result = RESULT_OK;
     if (parameterBeginPosition.file == NO_FILE_NUMBER || parameterEndPosition.file == NO_FILE_NUMBER ||
@@ -1054,7 +1054,7 @@ static int isThisSymbolUsed(EditorMarker *marker) {
     int refn;
     pushReferences(marker, "-olcxpushforusagecheck", STANDARD_SELECT_SYMBOLS_MESSAGE, PPCV_BROWSER_TYPE_INFO);
     LIST_LEN(refn, Reference, browsingStack.top->references);
-    popFromSession();
+    popReferenceOnly();
     return refn > 1;
 }
 
