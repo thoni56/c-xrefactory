@@ -69,3 +69,18 @@ Ensure(Commons, reports_and_resolves_against_the_root_when_the_working_directory
     assert_that(cwd, is_equal_to_string("/"));
     options.cxrefProtocol = false;
 }
+
+Ensure(Commons, stays_silenced_until_every_silence_is_resumed) {
+    options.cxrefProtocol = true;
+    options.errors = true;
+    silenceMessages();
+    silenceMessages();
+    resumeMessages();
+
+    never_expect(ppcGenRecord);
+    announceAnalysing("source.c");
+
+    resumeMessages();
+    options.cxrefProtocol = false;
+    options.errors = false;
+}

@@ -304,21 +304,27 @@ static void formatMessage(char *out, int errCode, char *text) {
     out += strlen(out);
 }
 
-/* A parse that only refreshes another file's references reports nothing */
-static bool messagesAreSilenced = false;
+/* A parse that only refreshes another file's references reports nothing.
+ * Silencing nests, a load of the config can happen inside such a parse. */
+static int silenceDepth = 0;
+
+static bool messagesAreSilenced(void) {
+    return silenceDepth > 0;
+}
 
 void silenceMessages(void) {
-    messagesAreSilenced = true;
+    silenceDepth++;
 }
 
 void resumeMessages(void) {
-    messagesAreSilenced = false;
+    assert(silenceDepth > 0);
+    silenceDepth--;
 }
 
 void warningMessage(int errCode, char *message) {
     char buffer[MAX_PPC_RECORD_SIZE];
 
-    if (messagesAreSilenced)
+    if (messagesAreSilenced())
         return;
     formatMessage(buffer, errCode, message);
     if (options.cxrefProtocol) {
@@ -335,7 +341,7 @@ static bool sendsParsingMessages(void) {
 
 /* The messages that follow are from the parse of this file */
 void announceAnalysing(char *fileName) {
-    if (messagesAreSilenced)
+    if (messagesAreSilenced())
         return;
     if (sendsParsingMessages())
         ppcGenRecord(PPC_ANALYSING, fileName);
@@ -344,7 +350,7 @@ void announceAnalysing(char *fileName) {
 void parsingMessageAt(Position position, int errorCode, char *message) {
     char buffer[MAX_PPC_RECORD_SIZE];
 
-    if (messagesAreSilenced)
+    if (messagesAreSilenced())
         return;
     /* Columns are counted from 1, as compilers do */
     int prefixLength = sprintf(buffer, "%s:%d:%d: ", getFileItemWithFileNumber(position.file)->name,
@@ -378,7 +384,7 @@ static void writeErrorMessage(int errorCode, char *message) {
 }
 
 void errorMessage(int errorCode, char *message) {
-    if (messagesAreSilenced)
+    if (messagesAreSilenced())
         return;
     writeErrorMessage(errorCode, message);
 }
