@@ -59,7 +59,7 @@ void readOptionSets(FILE *file, OptionSets *resultingDeltas) {
     char optionsText[MAX_OPTION_LEN];
 
     int passN = 0;
-    int ch = getOptionFromFile(file, optionsText, &charsRead);
+    int ch = getOptionFromFile(file, NULL, optionsText, &charsRead);
     while (ch != EOF) {
         int markerPass;
         PassMarker marker = readPassMarker(optionsText, &markerPass);
@@ -74,7 +74,7 @@ void readOptionSets(FILE *file, OptionSets *resultingDeltas) {
             assert(passN >= 0 && passN <= MAX_PASS_COUNT);
             LIST_APPEND(StringList, resultingDeltas->set[passN], newStringList(optionsText, NULL));
         }
-        ch = getOptionFromFile(file, optionsText, &charsRead);
+        ch = getOptionFromFile(file, NULL, optionsText, &charsRead);
     }
 }
 

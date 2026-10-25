@@ -15,7 +15,7 @@ include ../Makefile.server
 
 $(TEST):
 	@$(SERVER_DRIVER) commands.input > output.tmp
-	@grep "$(CURDIR)" .c-xref/db | grep "\\.c" | wc -l | tr -d ' ' > output
+	@grep "$(CURDIR)" .c-xref/db | grep -E "\\.c($$|[^-])" | wc -l | tr -d ' ' > output
 	$(VERIFY)
 
 prepare:

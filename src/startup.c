@@ -464,7 +464,10 @@ static void loadProjectSettings(ArgumentsVector baseArgs, ArgumentsVector reques
     /* Then for the particular pass. Discard the NO_PASS pass's file-argument
      * collection so only this pass's bare config paths land in inputFiles. */
     options.inputFiles = NULL;
+    /* The first read has reported what is wrong with the config. Reading it once is #3's. */
+    silenceMessages();
     getAndProcessProjectConfig(projectConfigFileName, projectSectionName);
+    resumeMessages();
     currentPass = savedPass;
 
     /* Collect source directories from the config into ProjectConfig.

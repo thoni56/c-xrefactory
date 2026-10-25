@@ -10,6 +10,7 @@
 #include "extract.h"
 #include "head.h"
 #include "memory.h"
+#include "position.h"
 #include "proto.h"
 #include "refactorings.h"
 #include "server.h"
@@ -166,9 +167,9 @@ extern void deepCopyOptionsFromTo(Options *src, Options *dest);
 
 extern char *expandPredefinedSpecialVariables_static(char *output, char *inputFilename);
 
-extern bool readOptionsIntoArgs(FILE *file, ArgumentsVector *outArgs, Memory *memory,
+extern bool readOptionsIntoArgs(FILE *file, Position *position, ArgumentsVector *outArgs, Memory *memory,
                                         char *sectionFile, char *project, char *section);
-extern int getOptionFromFile(FILE *file, char *foundText, int *chars_read);
+extern int getOptionFromFile(FILE *file, Position *position, char *foundText, int *chars_read);
 extern ArgumentsVector readOptionsFromFile(char *fileName, char *project, char *foundProjectName);
 extern ArgumentsVector readOptionsFromPipe(void);
 

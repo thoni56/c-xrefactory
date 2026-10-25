@@ -3,11 +3,13 @@ CXREF -errors -server -o server-buffer
 end-of-options
 
 <sync>
+<analysing len=<n>>CURDIR/.c-xrefrc</analysing>
 <set-info len=<n>>CURDIR</set-info>
 -browse-push-and-call-macro  -cursor=97 CURDIR/source.c
 end-of-options
 
 <sync>
+<analysing len=<n>>CURDIR/.c-xrefrc</analysing>
 <analysing len=<n>>CURDIR/source.c</analysing>
 <goto>
  <position-lc line=5 col=4 len=<n>>CURDIR/source.c</position-lc>

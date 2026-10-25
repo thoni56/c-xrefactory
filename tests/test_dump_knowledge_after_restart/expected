@@ -8,6 +8,7 @@ end-of-options
 end-of-options
 
 <sync>
+<information len=<n>>CURDIR/.c-xrefrc: no knowledge</information>
 <information len=<n>>CURDIR/a.c: knowledge</information>
 <information len=<n>>CURDIR/b.c: no knowledge</information>
 <information len=<n>>CURDIR/x.h: no knowledge</information>

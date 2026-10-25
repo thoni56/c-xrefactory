@@ -36,7 +36,7 @@ BeforeEach(Options) {
 AfterEach(Options) {}
 
 
-extern int getOptionFromFile(FILE *file, char *foundText, int *chars_read);
+extern int getOptionFromFile(FILE *file, Position *position, char *foundText, int *chars_read);
 
 Ensure(Options, will_return_eof_when_end_of_file_and_nothing_read) {
     FILE *someFile = NULL;
@@ -45,7 +45,7 @@ Ensure(Options, will_return_eof_when_end_of_file_and_nothing_read) {
 
     expect(readChar, will_return(EOF));
 
-    assert_that(getOptionFromFile(someFile, option_string_read, &chars_read), is_equal_to(EOF));
+    assert_that(getOptionFromFile(someFile, NULL, option_string_read, &chars_read), is_equal_to(EOF));
     assert_that(strlen(option_string_read), is_equal_to(0));
     assert_that(chars_read, is_equal_to(0));
 }
@@ -59,7 +59,7 @@ Ensure(Options, can_read_a_normal_option_string_delimited_by_a_space) {
     for (int i = 0; i <= 4; i++)
         expect(readChar, will_return(option_string[i]));
 
-    assert_that(getOptionFromFile(NULL, option_string_read, &length), is_not_equal_to(EOF));
+    assert_that(getOptionFromFile(NULL, NULL, option_string_read, &length), is_not_equal_to(EOF));
     assert_that(length, is_equal_to(strlen(expected_option_value)));
     assert_that(option_string_read, is_equal_to_string(expected_option_value));
 }
@@ -73,7 +73,7 @@ Ensure(Options, can_read_double_quoted_option_string) {
     for (int i = 0; i <= strlen(option_string) - 1; i++)
         expect(readChar, will_return(option_string[i]));
 
-    getOptionFromFile(NULL, option_string_read, &len);
+    getOptionFromFile(NULL, NULL, option_string_read, &len);
 
     assert_that(len, is_equal_to(strlen(expected_option_value)));
     assert_that(option_string_read, is_equal_to_string(expected_option_value));
@@ -87,7 +87,7 @@ Ensure(Options, can_read_backquoted_option_string) {
     for (int i = 0; i <= strlen(expected_option_value) - 1; i++)
         expect(readChar, will_return(expected_option_value[i]));
 
-    getOptionFromFile(NULL, option_string_read, &len);
+    getOptionFromFile(NULL, NULL, option_string_read, &len);
 
     assert_that(len, is_equal_to(strlen(expected_option_value)));
     assert_that(option_string_read, is_equal_to_string(expected_option_value));
@@ -101,7 +101,7 @@ Ensure(Options, can_read_square_bracketed_option_strings) {
     for (int i = 0; i <= strlen(expected_option_value) - 1; i++)
         expect(readChar, will_return(expected_option_value[i]));
 
-    getOptionFromFile(NULL, option_string_read, &len);
+    getOptionFromFile(NULL, NULL, option_string_read, &len);
 
     assert_that(len, is_equal_to(strlen(expected_option_value)));
     assert_that(option_string_read, is_equal_to_string(expected_option_value));
@@ -223,7 +223,7 @@ Ensure(Options, can_readOptionsFromFileIntoArgs) {
     expect(readChar, will_return(EOF));
 
     ArgumentsVector nargs;
-    readOptionsIntoArgs(file, &nargs, &ppmMemory, "", project, unused);
+    readOptionsIntoArgs(file, NULL, &nargs, &ppmMemory, "", project, unused);
 
     assert_that(nargs.argc, is_equal_to(1)); /* Which is actually no arguments... */
 }
@@ -254,7 +254,7 @@ Ensure(Options, collects_the_options_of_a_well_formed_pass_marker) {
     maxPasses = 1;
     expect_characters("-pass2\n-DSECONDPASS\n", true);
 
-    readOptionsIntoArgs(NULL, &nargs, &ppmMemory, "", project, unused);
+    readOptionsIntoArgs(NULL, NULL, &nargs, &ppmMemory, "", project, unused);
 
     assert_that(argsContain(nargs, "-DSECONDPASS"), is_true);
     assert_that(maxPasses, is_equal_to(2));
@@ -269,7 +269,7 @@ Ensure(Options, drops_the_section_of_a_pass_marker_without_a_number) {
     expect_characters("-pass1\n-DWANTED\n-passfoo\n-DUNWANTED\n", true);
     expect(errorMessage);
 
-    readOptionsIntoArgs(NULL, &nargs, &ppmMemory, "", project, unused);
+    readOptionsIntoArgs(NULL, NULL, &nargs, &ppmMemory, "", project, unused);
 
     assert_that(argsContain(nargs, "-DWANTED"), is_true);
     assert_that(argsContain(nargs, "-DUNWANTED"), is_false);
@@ -284,7 +284,7 @@ Ensure(Options, does_not_raise_maxPasses_above_the_maximum) {
     expect_characters("-pass12\n", true);
     expect(errorMessage);
 
-    readOptionsIntoArgs(NULL, &nargs, &ppmMemory, "", project, unused);
+    readOptionsIntoArgs(NULL, NULL, &nargs, &ppmMemory, "", project, unused);
 
     assert_that(maxPasses, is_equal_to(1));
 }
@@ -836,7 +836,7 @@ Ensure(Options, getOptionFromFile_returns_eof_when_readChar_returns_eof) {
 
     expect(readChar, will_return(EOF));
 
-    assert_that(getOptionFromFile(NULL, foundText, &charsRead), is_equal_to(EOF));
+    assert_that(getOptionFromFile(NULL, NULL, foundText, &charsRead), is_equal_to(EOF));
 }
 
 Ensure(Options, getOptionFromFile_returns_text_without_eof_if_delimited_by_whitespace) {
@@ -845,9 +845,9 @@ Ensure(Options, getOptionFromFile_returns_text_without_eof_if_delimited_by_white
 
     expect_characters("text\n", true);
 
-    assert_that(getOptionFromFile(NULL, foundText, &charsRead), is_not_equal_to(EOF));
+    assert_that(getOptionFromFile(NULL, NULL, foundText, &charsRead), is_not_equal_to(EOF));
     assert_that(foundText, is_equal_to_string("text"));
-    assert_that(getOptionFromFile(NULL, foundText, &charsRead), is_equal_to(EOF));
+    assert_that(getOptionFromFile(NULL, NULL, foundText, &charsRead), is_equal_to(EOF));
 }
 
 Ensure(Options, getOptionFromFile_does_not_return_eof_if_there_is_text) {
@@ -857,14 +857,14 @@ Ensure(Options, getOptionFromFile_does_not_return_eof_if_there_is_text) {
     expect_characters("text", true);
     expect(readChar, will_return(EOF));
 
-    int ch = getOptionFromFile(NULL, foundText, &charsRead);
+    int ch = getOptionFromFile(NULL, NULL, foundText, &charsRead);
     assert_that(ch, is_not_equal_to(EOF));
     assert_that(foundText, is_equal_to_string("text"));
     assert_that(charsRead, is_equal_to(4));
 
 
     foundText[0] = '\0';
-    ch = getOptionFromFile(NULL, foundText, &charsRead);
+    ch = getOptionFromFile(NULL, NULL, foundText, &charsRead);
     assert_that(ch, is_equal_to(EOF));
     assert_that(foundText, is_equal_to_string(""));
     assert_that(charsRead, is_equal_to(0));

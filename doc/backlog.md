@@ -100,12 +100,6 @@ every push, `After` dashed and `Goes with` not at all, linked at the end of this
     `doc/docs/11-planned-features.adoc` (Diagnostics Buffer). What did not parse reaches
     `*c-xref-diagnostics*` with its position, grouped by unit, and `next-error` visits it.
     Left: the report of unresolved includes.
-- (#77) <a id="config-syntax-messages"></a>**An unterminated quote in `.c-xrefrc` is reported in the diagnostics buffer** — *no repo home yet.*
-    `getOptionFromFile()` (`src/options.c`) reads a `"` string to the end of the file, and a
-    `` ` `` string to the end of the line, without a word, so the rest of the config is
-    silently lost. Its messages were only for the batch mode and are gone. It should give a
-    message with its position, as a parse does (WSL, session `d25255b8`, 2026-10-22).
-    Test first: a `.c-xrefrc` with an unterminated `"` gives a message.
 - (#68) <a id="lsp-mode"></a>**An `LspMode`, and a sink for the messages** — *no repo home yet.*
     LSP sets `ServerMode` (`src/parsing.c:140`), a stop-gap for the `assert(options.mode)`
     that are gone now, and nothing reads the mode any more. `Mode` becomes `ServerMode`
@@ -184,13 +178,13 @@ every push, `After` dashed and `Goes with` not at all, linked at the end of this
     already marks per field as SESSION, PROJECT and REQUEST.
     `processOptions()` takes the context instead of the `ProcessFileArguments` flag that
     #75 removes, and an option's entry states where it is allowed, e.g. a `-server` in
-    `.c-xrefrc` is reported, with its position, through the channel #77 gives config
-    messages. #7 decides the startup column. The replays in `loadProjectSettings()` and
+    `.c-xrefrc` is reported with its position, as an unterminated quote is. #7 decides the
+    startup column. The replays in `loadProjectSettings()` and
     `initializeFileProcessing()` are not a context, they go with #3.
     Test first: an `options_tests.c` case where a request-only option in the project
     context is refused (WSL, session `d25255b8`, 2026-10-25).
     After: bare-words-returned
-    Goes with: partition-options, startup-command-line, config-syntax-messages
+    Goes with: partition-options, startup-command-line
 - (#9) <a id="remove-bridge"></a>**Remove the `parseBufferUsingServer` bridge** — §17.3; 9 refactoring call sites
    re-entering `callServer`. Independent of the rest of this section, but it is the last
    divergent parse path. `-olexmacro` and `-olexvariable` only exist for it and go with it.

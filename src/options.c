@@ -575,21 +575,35 @@ static void expandEnvironmentVariables(char *original, int availableSize, int *l
     //&fprintf(dumpOut, "result '%s'\n", original);
 }
 
-/* Return EOF if at EOF, but can still return option text, return something else if not. */
+/* Moves the position past the character, unless there is none to move */
+static int readOptionChar(FILE *file, Position *position) {
+    int ch = readChar(file);
+    if (position != NULL && ch != EOF) {
+        if (ch == '\n') {
+            position->line++;
+            position->col = 0;
+        } else
+            position->col++;
+    }
+    return ch;
+}
+
+/* Return EOF if at EOF, but can still return option text, return something else if not.
+ * With a position, which is where the next character is read, a syntax error is reported. */
 /* TODO: improve contract - return true/false instead of EOF or 'A' */
-int getOptionFromFile(FILE *file, char *foundText, int *chars_read) {
+int getOptionFromFile(FILE *file, Position *position, char *foundText, int *chars_read) {
     int count, ch;
     int lastCharacter;
     bool inComment;
 
-    ch = readChar(file);
+    ch = readOptionChar(file, position);
     do {
         *chars_read = count = 0;
         inComment = false;
 
         /* Skip all white space? */
         while ((ch>=0 && ch<=' ') || ch=='\n' || ch=='\t')
-            ch=readChar(file);
+            ch=readOptionChar(file, position);
 
         if (ch==EOF) {
             lastCharacter = EOF;
@@ -597,32 +611,36 @@ int getOptionFromFile(FILE *file, char *foundText, int *chars_read) {
         }
 
         if (ch=='\"') {
+            Position quotePosition = position != NULL ? *position : (Position){0};
+            quotePosition.col--;
             /* Read a double quoted string */
-            ch=readChar(file);
+            ch=readOptionChar(file, position);
             // Escaping the double quote (\") is not allowed, it creates problems
             // when someone finished a section name by \ reverse slash
             while (ch!=EOF && ch!='\"') {
                 if (count < MAX_OPTION_LEN-1)
                     foundText[count++]=ch;
-                ch=readChar(file);
+                ch=readOptionChar(file, position);
             }
+            if (ch==EOF && position != NULL)
+                parsingMessageAt(quotePosition, ERR_ST, "missing terminating \" character");
         } else if (ch=='`') {
             foundText[count++]=ch;
-            ch=readChar(file);
+            ch=readOptionChar(file, position);
             while (ch!=EOF && ch!='\n' && ch!='`') {
                 if (count < MAX_OPTION_LEN-1)
                     foundText[count++]=ch;
-                ch=readChar(file);
+                ch=readOptionChar(file, position);
             }
             if (count < MAX_OPTION_LEN-1)
                 foundText[count++]=ch;
         } else if (ch=='[') {
             foundText[count++] = ch;
-            ch=readChar(file);
+            ch=readOptionChar(file, position);
             while (ch!=EOF && ch!='\n' && ch!=']') {
                 if (count < MAX_OPTION_LEN-1)
                     foundText[count++]=ch;
-                ch=readChar(file);
+                ch=readOptionChar(file, position);
             }
             if (ch==']')
                 foundText[count++]=ch;
@@ -630,14 +648,14 @@ int getOptionFromFile(FILE *file, char *foundText, int *chars_read) {
             while (ch!=EOF && ch>' ') {
                 if (count < MAX_OPTION_LEN-1)
                     foundText[count++]=ch;
-                ch=readChar(file);
+                ch=readOptionChar(file, position);
             }
         }
         foundText[count]=0;
         /* because QNX paths can start with // */
         if (count>=2 && foundText[0]=='/' && foundText[1]=='/') {
             while (ch!=EOF && ch!='\n')
-                ch=readChar(file);
+                ch=readOptionChar(file, position);
             inComment = true;
         }
     } while (inComment);
@@ -753,8 +771,8 @@ static int handleSetOption(int i, ArgumentsVector args) {
     return i;
 }
 
-bool readOptionsIntoArgs(FILE *file, ArgumentsVector *outArgs, Memory *memory, char *fileName, char *project,
-                         char *foundProjectName) {
+bool readOptionsIntoArgs(FILE *file, Position *position, ArgumentsVector *outArgs, Memory *memory, char *fileName,
+                         char *project, char *foundProjectName) {
     char optionText[MAX_OPTION_LEN];
     int len, ch, passNumber=0;
     bool projectUpdated, isActivePass;
@@ -775,7 +793,7 @@ bool readOptionsIntoArgs(FILE *file, ArgumentsVector *outArgs, Memory *memory, c
 
     ch = 'a';                    /* Something not EOF */
     while (ch!=EOF) {
-        ch = getOptionFromFile(file, optionText, &len);
+        ch = getOptionFromFile(file, position, optionText, &len);
         assert(strlen(optionText) == len);
         if (ch==EOF) {
             log_debug("got option from file (@EOF): '%s'", optionText);
@@ -801,12 +819,12 @@ bool readOptionsIntoArgs(FILE *file, ArgumentsVector *outArgs, Memory *memory, c
             if (memory != NULL) {
                 argc = addOptionToArgsInMemory(memory, optionText, argc, argv);
             }
-            ch = getOptionFromFile(file, optionText, &len);
+            ch = getOptionFromFile(file, position, optionText, &len);
             expandEnvironmentVariables(optionText, MAX_OPTION_LEN, &len, false);
             if (memory != NULL) {
                 argc = addOptionToArgsInMemory(memory, optionText, argc, argv);
             }
-            ch = getOptionFromFile(file, optionText, &len);
+            ch = getOptionFromFile(file, position, optionText, &len);
             expandEnvironmentVariables(optionText, MAX_OPTION_LEN, &len, false);
             if (memory != NULL) {
                 argc = addOptionToArgsInMemory(memory, optionText, argc, argv);
@@ -851,7 +869,10 @@ ArgumentsVector readOptionsFromFile(char *fileName, char *section, char *project
     file = openFile(fileName, "r");
     if (file==NULL)
         FATAL_ERROR(ERR_CANT_OPEN, fileName, EXIT_FAILURE);
-    readOptionsIntoArgs(file, &args, &ppmMemory, section, project, unused);
+    int fileNumber = addFileNameToFileTable(fileName);
+    announceAnalysing(getFileItemWithFileNumber(fileNumber)->name);
+    Position position = makePosition(fileNumber, 1, 0);
+    readOptionsIntoArgs(file, &position, &args, &ppmMemory, section, project, unused);
     closeFile(file);
     return args;
 }
@@ -860,7 +881,7 @@ ArgumentsVector readOptionsFromPipe(void) {
     ArgumentsVector args = {.argc = 0};
 
     char unused[MAX_FILE_NAME_SIZE];
-    readOptionsIntoArgs(stdin, &args, &optMemory, "", NULL, unused);
+    readOptionsIntoArgs(stdin, NULL, &args, &optMemory, "", NULL, unused);
     logCommands(args);
     /* those options can't contain include or define options, sections neither */
     int c = getc(stdin);

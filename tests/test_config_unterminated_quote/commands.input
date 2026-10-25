@@ -1,0 +1,9 @@
+CXREF -server -errors
+-getproject CURDIR/source.c
+<sync>
+-browse-push -cursor=5 CURDIR/source.c
+<sync>
+!touch .c-xrefrc
+-browse-push -cursor=5 CURDIR/source.c
+<sync>
+<exit>
