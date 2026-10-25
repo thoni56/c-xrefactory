@@ -28,8 +28,6 @@
     ENUM(OP_COMPLETION_PREVIOUS)                        \
     ENUM(OP_COMPLETION_SELECT)                          \
     ENUM(OP_DUMP)                                       \
-    ENUM(OP_FILTER_MINUS)                               \
-    ENUM(OP_FILTER_PLUS)                                \
     ENUM(OP_FILTER)                                     \
     ENUM(OP_GET_AVAILABLE_REFACTORINGS)                 \
     ENUM(OP_GET_ENV_VALUE)                              \
@@ -43,14 +41,11 @@
     ENUM(OP_INTERNAL_PUSH_FOR_USAGE_CHECK)              \
     ENUM(OP_INTERNAL_PUSH_FOR_RENAME)                   \
     ENUM(OP_INTERNAL_SAFETY_CHECK)                      \
-    ENUM(OP_MENU_FILTER_MINUS)                          \
-    ENUM(OP_MENU_FILTER_PLUS)                           \
     ENUM(OP_MENU_FILTER)                                \
     ENUM(OP_MENU_SELECT_ALL)                            \
     ENUM(OP_MENU_SELECT_NONE)                           \
     ENUM(OP_MENU_SELECT_ONLY)                           \
     ENUM(OP_MENU_TOGGLE_SELECT)                         \
-    ENUM(OP_ORGANIZE_INCLUDES)                          \
     ENUM(OP_REFACTORY)                                  \
     ENUM(OP_SEARCH)                                     \
     ENUM(OP_SEARCH_GOTO_N)                              \
