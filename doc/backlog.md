@@ -59,7 +59,10 @@ every push, `After` dashed and `Goes with` not at all, linked at the end of this
       `PROJECT_MISMATCH` carry the path, not the `[section]` name. Test first:
       `test_project_lock`'s `expected` gets the path, then the server, then the other
       `expected` files with named sections (about 15). The client's half is in `e476e396`,
-      its project is only what `-getproject` answers;
+      its project is only what `-getproject` answers. Where the client shows the project,
+      Project > Show Active (`c-xref-project-active`) and the mismatch dialog
+      (`c-xref-server-dispatch-project-mismatch`), it shows the path through
+      `abbreviate-file-name`. Project > New (`c-xref-project-new`) asks only for the root;
       Waits for: adr-0029
    b. <a id="client-stops-p"></a>**the client stops sending `-p` on every request** — ADR-0029: this is not tidying,
       it is what re-enables `PPC_PROJECT_MISMATCH`, since `handleProject()`
