@@ -1,6 +1,6 @@
 CXREF -server
 -getproject CURDIR/source.c
 <sync>
--search=int* -olcxlccursor=1:5 -olcursor=5 CURDIR/source.c -olcursor=85
+-search=int* -cursor-line-column=1:5 -cursor=5 CURDIR/source.c -cursor=85
 <sync>
 <exit>

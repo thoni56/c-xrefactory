@@ -1,8 +1,8 @@
 CXREF -server -log=log.log -commandlog=commands.log
 -getproject  CURDIR/src/main.c
 <sync>
--olcxcomplet CURDIR/src/main.c -olcursor=243
+-completion CURDIR/src/main.c -cursor=243
 <sync>
--olcxcgoto1
+-completion-goto=1
 <sync>
 <exit>

@@ -1,6 +1,6 @@
 CXREF -server
 -getproject CURDIR/src/main.c
 <sync>
--push -olmark=67072 -olcursor=104883 CURDIR/src/main.c
+-browse-push -mark=67072 -cursor=104883 CURDIR/src/main.c
 <sync>
 <exit>

@@ -6,7 +6,7 @@ end-of-options
 <error len=<n>>-xrefrc is no longer supported, the .c-xrefrc is found from the file
 </error>
 <set-info len=<n>>CURDIR</set-info>
--push -olcursor=4 CURDIR/source.c
+-browse-push -cursor=4 CURDIR/source.c
 end-of-options
 
 <sync>

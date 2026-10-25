@@ -1,6 +1,6 @@
 CXREF -server
 -getproject CURDIR/hello.c
 <sync>
--rfct-add-param -olcxparnum=1 "-rfct-parameter-name=int arg" -rfct-parameter-value=42 -olcursor=16 CURDIR/hello.c
+-rfct-add-param -parameter=1 "-rfct-parameter-name=int arg" -rfct-parameter-value=42 -cursor=16 CURDIR/hello.c
 <sync>
 <exit>

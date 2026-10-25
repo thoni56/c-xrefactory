@@ -1,12 +1,12 @@
 CXREF -server
 -getproject CURDIR/source.c
 <sync>
--push -olcursor=29 CURDIR/source.c
+-browse-push -cursor=29 CURDIR/source.c
 <sync>
--browse-next -olcursor=29 CURDIR/source.c
+-browse-next -cursor=29 CURDIR/source.c
 <sync>
--browse-next -olcursor=29 CURDIR/source.c
+-browse-next -cursor=29 CURDIR/source.c
 <sync>
--browse-next -preload CURDIR/source.c CURDIR/source.preload -olcursor=29 CURDIR/source.c
+-browse-next -preload CURDIR/source.c CURDIR/source.preload -cursor=29 CURDIR/source.c
 <sync>
 <exit>

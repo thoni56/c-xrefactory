@@ -1,11 +1,11 @@
 CXREF -server
 -getproject CURDIR/c.c
 <sync>
--push -preload CURDIR/c.c CURDIR/c.preload -olcursor=20 CURDIR/c.c
+-browse-push -preload CURDIR/c.c CURDIR/c.preload -cursor=20 CURDIR/c.c
 <sync>
 !cp CURDIR/a_v2.h CURDIR/a.h
--push -preload CURDIR/c.c CURDIR/c.preload -olcursor=5 CURDIR/d.c
+-browse-push -preload CURDIR/c.c CURDIR/c.preload -cursor=5 CURDIR/d.c
 <sync>
--olcxfilter=0 -olcursor=0 nil
+-filter=0 -cursor=0 nil
 <sync>
 <exit>

@@ -1,8 +1,8 @@
 CXREF -server
 -getproject CURDIR/source.c
 <sync>
--push -olcursor=83 CURDIR/source.c
+-browse-push -cursor=83 CURDIR/source.c
 <sync>
--rfct-rename -renameto=bar -preload CURDIR/header.h CURDIR/header_v2.h -olmark=83 -olcursor=83 CURDIR/source.c
+-rfct-rename -renameto=bar -preload CURDIR/header.h CURDIR/header_v2.h -mark=83 -cursor=83 CURDIR/source.c
 <sync>
 <exit>

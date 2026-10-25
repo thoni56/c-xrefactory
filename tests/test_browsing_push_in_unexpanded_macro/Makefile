@@ -3,7 +3,7 @@
 # The cursor is on calculate_area inside the body of GET_AREA in macro.h, which
 # is not a symbol until the macro is expanded. The server starts cold, with no
 # snapshot, and finds a CU that expands the macro by walking the include graph
-# from macro.h to source.c, which -getproject has already parsed. The -push
+# from macro.h to source.c, which -getproject has already parsed. The -browse-push
 # parses source.c again, with the cursor in the macro body, to resolve
 # calculate_area.
 #

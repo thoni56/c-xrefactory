@@ -1,8 +1,8 @@
 CXREF -server
 -getproject CURDIR/node.h
 <sync>
--push  -olcursor=24 CURDIR/node.h
+-browse-push  -cursor=24 CURDIR/node.h
 <sync>
--olcxmenufilter=0
+-menu-filter=0
 <sync>
 <exit>

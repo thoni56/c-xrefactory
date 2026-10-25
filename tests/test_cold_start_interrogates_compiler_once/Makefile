@@ -2,7 +2,7 @@
 #
 # The compiler is a script that logs how it was called and then runs gcc.
 # -getproject asks it for include paths and predefined macros and saves a
-# checkpoint. The -push that follows should restore that checkpoint instead
+# checkpoint. The -browse-push that follows should restore that checkpoint instead
 # of asking again.
 
 include ../Makefile.server

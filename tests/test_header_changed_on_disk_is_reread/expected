@@ -4,7 +4,7 @@ end-of-options
 
 <sync>
 <set-info len=<n>>CURDIR</set-info>
--push -olcursor=46 CURDIR/source.c
+-browse-push -cursor=46 CURDIR/source.c
 end-of-options
 
 <sync>
@@ -12,7 +12,7 @@ end-of-options
  <position-lc line=1 col=8 len=<n>>CURDIR/header.h</position-lc>
 </goto>
 shell: cp CURDIR/header_v2.h CURDIR/header.h
--push -olcursor=46 CURDIR/source.c
+-browse-push -cursor=46 CURDIR/source.c
 end-of-options
 
 <sync>

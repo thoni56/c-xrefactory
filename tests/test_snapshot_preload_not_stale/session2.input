@@ -1,8 +1,8 @@
 CXREF -server
 -getproject CURDIR/source.c
 <sync>
--push -olcursor=77 CURDIR/source.c
+-browse-push -cursor=77 CURDIR/source.c
 <sync>
--browse-next -olcursor=77 CURDIR/source.c
+-browse-next -cursor=77 CURDIR/source.c
 <sync>
 <exit>

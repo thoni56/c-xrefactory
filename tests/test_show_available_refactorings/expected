@@ -4,7 +4,7 @@ end-of-options
 
 <sync>
 <set-info len=<n>>CURDIR</set-info>
--olcxgetrefactorings -olmark=0 -olcursor=292 CURDIR/cexercise/refactorings/parameter.c
+-get-available-refactorings -mark=0 -cursor=292 CURDIR/cexercise/refactorings/parameter.c
 end-of-options
 
 <sync>

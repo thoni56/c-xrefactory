@@ -25,7 +25,7 @@
 #     ../../src/c-xref -xrefactory-II -server
 #     -getproject CURDIR/source.c
 #     <sync>
-#     -olcxcomplet CURDIR/source.c -olcursor=85
+#     -completion CURDIR/source.c -cursor=85
 #     <sync>
 #
 # If the line (probably the last) is '<exit>', the driver will send '-exit',

@@ -4,7 +4,7 @@ end-of-options
 
 <sync>
 <set-info len=<n>>CURDIR</set-info>
--rfct-rename -renameto=renameSympol -olcursor=484 CURDIR/cexercise/refactorings/rename.c
+-rfct-rename -renameto=renameSympol -cursor=484 CURDIR/cexercise/refactorings/rename.c
 end-of-options
 
 <sync>

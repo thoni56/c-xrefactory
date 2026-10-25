@@ -4,7 +4,7 @@ end-of-options
 
 <sync>
 <set-info len=<n>>CURDIR</set-info>
--push -preload CURDIR/main.c CURDIR/main.preload -olcursor=167 CURDIR/main.c
+-browse-push -preload CURDIR/main.c CURDIR/main.preload -cursor=167 CURDIR/main.c
 end-of-options
 
 <sync>

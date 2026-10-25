@@ -1,5 +1,5 @@
 CXREF -server
 -getproject CURDIR/main.c
 <sync>
--olcxpushname=counter -olcxlccursor=1:0 -olcursor=0 CURDIR/main.c
+-browse-push-name=counter -cursor-line-column=1:0 -cursor=0 CURDIR/main.c
 <sync>

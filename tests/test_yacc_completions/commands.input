@@ -1,8 +1,8 @@
 CXREF -server
 -getproject CURDIR/simple_grammar.y
 <sync>
--olcxcomplet -maxcompls=500 -olinelen=236  -olmark=496 -olcursor=411 CURDIR/simple_grammar.y
+-completion -maxcompls=500 -line-length=236  -mark=496 -cursor=411 CURDIR/simple_grammar.y
 <sync>
--olcxcomplet -maxcompls=500 -olinelen=236  -olmark=496 -olcursor=423 CURDIR/simple_grammar.y
+-completion -maxcompls=500 -line-length=236  -mark=496 -cursor=423 CURDIR/simple_grammar.y
 <sync>
 <exit>

@@ -1,6 +1,6 @@
 CXREF -server
 -getproject include.c
 <sync>
--push -olcursor=6 include.c
+-browse-push -cursor=6 include.c
 <sync>
 <exit>

@@ -5,7 +5,7 @@ include ../Makefile.server
 # Given a .c-xrefrc that sets -refs and -refnum
 # When the client asks for the project and then pushes
 # Then the -getproject answer warns that they are ignored
-# And the -push answer does not warn again
+# And the -browse-push answer does not warn again
 # And the snapshot is the single .c-xref/db file
 
 $(TEST):

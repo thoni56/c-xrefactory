@@ -4,7 +4,7 @@ end-of-options
 
 <sync>
 <set-info len=<n>>CURDIR</set-info>
--push -olcursor=301 CURDIR/source.y
+-browse-push -cursor=301 CURDIR/source.y
 end-of-options
 
 <sync>
@@ -16,7 +16,7 @@ end-of-options
 
 <sync>
 <set-info len=<n>>CURDIR</set-info>
--olcxgetrefactorings -olcursor=362 CURDIR/source.y
+-get-available-refactorings -cursor=362 CURDIR/source.y
 end-of-options
 
 <sync>
@@ -24,7 +24,7 @@ end-of-options
   <int val=10 len=<n>></int>
   <int val=300 len=<n>></int>
 </available-refactorings>
--rfct-rename -renameto=e1 -olcursor=362 CURDIR/source.y
+-rfct-rename -renameto=e1 -cursor=362 CURDIR/source.y
 end-of-options
 
 <sync>

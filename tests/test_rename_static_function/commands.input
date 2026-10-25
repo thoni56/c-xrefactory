@@ -1,8 +1,8 @@
 CXREF -server
 -getproject CURDIR/a/util.c
 <sync>
--push -olcursor=11 CURDIR/b/util.c
+-browse-push -cursor=11 CURDIR/b/util.c
 <sync>
--rfct-rename -renameto=helper2 -olcursor=11 CURDIR/a/util.c
+-rfct-rename -renameto=helper2 -cursor=11 CURDIR/a/util.c
 <sync>
 <exit>

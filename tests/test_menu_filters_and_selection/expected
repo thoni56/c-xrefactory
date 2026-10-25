@@ -4,21 +4,21 @@ end-of-options
 
 <sync>
 <set-info len=<n>>CURDIR</set-info>
--olcxpushonly  -olcursor=25 CURDIR/source.c
+-browse-push-only  -cursor=25 CURDIR/source.c
 end-of-options
 
 <sync>
 <goto>
  <position-lc line=2 col=8 len=<n>>CURDIR/source.c</position-lc>
 </goto>
--olcxmenufilter=2
+-menu-filter=2
 end-of-options
 
 <sync>
 <resolution>
  <symbol line=2 selected=1 base=0 drefn=1 refn=2 len=<n>>i</symbol>
 </resolution>
--olcxfilter=0  -olcursor=1 nil
+-filter=0  -cursor=1 nil
 end-of-options
 
 <sync>
@@ -27,7 +27,7 @@ end-of-options
 <src-line refn=1 len=<n>>source.c:3:    i = 1;</src-line>
 <src-line refn=1 len=<n>>source.c:4:    int j = i;</src-line>
 </reference-list>
--olcxmenuall
+-menu-select-all
 end-of-options
 
 <sync>
@@ -36,14 +36,14 @@ end-of-options
 <src-line refn=1 len=<n>>source.c:3:    i = 1;</src-line>
 <src-line refn=1 len=<n>>source.c:4:    int j = i;</src-line>
 </reference-list>
--olcxmenufilter=1
+-menu-filter=1
 end-of-options
 
 <sync>
 <resolution>
 <symbol line=2 selected=1 base=0 drefn=1 refn=2 len=<n>>i</symbol>
 </resolution>
--olcxfilter=0  -olcursor=1 nil
+-filter=0  -cursor=1 nil
 end-of-options
 
 <sync>
@@ -52,7 +52,7 @@ end-of-options
 <src-line refn=1 len=<n>>source.c:3:    i = 1;</src-line>
 <src-line refn=1 len=<n>>source.c:4:    int j = i;</src-line>
 </reference-list>
--olcxmenufilter=0
+-menu-filter=0
 end-of-options
 
 <sync>
@@ -60,7 +60,7 @@ end-of-options
 <symbol line=2 selected=1 base=0 drefn=1 refn=2 len=<n>>i</symbol>
 <symbol line=3 selected=0 base=0 drefn=1 refn=2 len=<n>>i</symbol>
 </resolution>
--olcxfilter=0  -olcursor=1 nil
+-filter=0  -cursor=1 nil
 end-of-options
 
 <sync>
@@ -69,13 +69,13 @@ end-of-options
 <src-line refn=1 len=<n>>source.c:3:    i = 1;</src-line>
 <src-line refn=1 len=<n>>source.c:4:    int j = i;</src-line>
 </reference-list>
--olcxmenunone
+-menu-select-none
 end-of-options
 
 <sync>
 <reference-list val=0 symbol="i">
 </reference-list>
--olcxmenuall
+-menu-select-all
 end-of-options
 
 <sync>
@@ -87,7 +87,7 @@ end-of-options
 <src-line refn=1 len=<n>>source.c:9:    i = 2;</src-line>
 <src-line refn=1 len=<n>>source.c:10:    int j = i;</src-line>
 </reference-list>
--olcxmenusingleselect3
+-menu-select-only=3
 end-of-options
 
 <sync>
@@ -99,7 +99,7 @@ end-of-options
 <goto>
 <position-lc line=8 col=8 len=<n>>CURDIR/source.c</position-lc>
 </goto>
--olcxmenuall
+-menu-select-all
 end-of-options
 
 <sync>
@@ -111,14 +111,14 @@ end-of-options
 <src-line refn=1 len=<n>>source.c:9:    i = 2;</src-line>
 <src-line refn=1 len=<n>>source.c:10:    int j = i;</src-line>
 </reference-list>
--olcxgoto2
+-browse-goto=2
 end-of-options
 
 <sync>
 <goto>
 <position-lc line=8 col=8 len=<n>>CURDIR/source.c</position-lc>
 </goto>
--olcxfilter=0  -olcursor=23 nil
+-filter=0  -cursor=23 nil
 end-of-options
 
 <sync>
@@ -130,7 +130,7 @@ end-of-options
 <src-line refn=1 len=<n>>source.c:9:    i = 2;</src-line>
 <src-line refn=1 len=<n>>source.c:10:    int j = i;</src-line>
 </reference-list>
--olcxfilter=1  -olcursor=0 nil
+-filter=1  -cursor=0 nil
 end-of-options
 
 <sync>
@@ -140,7 +140,7 @@ end-of-options
 <src-line refn=1 len=<n>>source.c:3:    i = 1;</src-line>
 <src-line refn=1 len=<n>>source.c:9:    i = 2;</src-line>
 </reference-list>
--olcxfilter=2  -olcursor=0 nil
+-filter=2  -cursor=0 nil
 end-of-options
 
 <sync>
@@ -150,7 +150,7 @@ end-of-options
 <src-line refn=1 len=<n>>source.c:3:    i = 1;</src-line>
 <src-line refn=1 len=<n>>source.c:9:    i = 2;</src-line>
 </reference-list>
--olcxfilter=3  -olcursor=0 nil
+-filter=3  -cursor=0 nil
 end-of-options
 
 <sync>
@@ -158,18 +158,18 @@ end-of-options
 <src-line refn=1 len=<n>>source.c:2:    int i;</src-line>
 <src-line refn=1 len=<n>>source.c:8:    int i;</src-line>
 </reference-list>
--olcxmenunone
+-menu-select-none
 end-of-options
 
 <sync>
 <reference-list val=0 symbol="i">
 </reference-list>
--olcxgoto0
+-browse-goto=0
 end-of-options
 
 <sync>
 <bottom-information len=<n>>No reference</bottom-information>
--olcxmenusingleselect3
+-menu-select-only=3
 end-of-options
 
 <sync>
@@ -179,12 +179,12 @@ end-of-options
 <goto>
 <position-lc line=8 col=8 len=<n>>CURDIR/source.c</position-lc>
 </goto>
--olcxgoto2
+-browse-goto=2
 end-of-options
 
 <sync>
 <bottom-information len=<n>>No reference</bottom-information>
--olcxgoto1
+-browse-goto=1
 end-of-options
 
 <sync>

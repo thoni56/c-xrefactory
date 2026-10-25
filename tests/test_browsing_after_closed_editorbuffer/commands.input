@@ -1,8 +1,8 @@
 CXREF -server
 -getproject CURDIR/source.c
 <sync>
--push -preload CURDIR/source.c CURDIR/source.preload -olcursor=50 CURDIR/source.c
+-browse-push -preload CURDIR/source.c CURDIR/source.preload -cursor=50 CURDIR/source.c
 <sync>
--browse-next -preload CURDIR/header.h CURDIR/header.preload -olcursor=6 CURDIR/header.h
+-browse-next -preload CURDIR/header.h CURDIR/header.preload -cursor=6 CURDIR/header.h
 <sync>
 <exit>

@@ -1,10 +1,10 @@
 CXREF -server
 -getproject CURDIR/ins.c
 <sync>
--push -olcursor=66 CURDIR/ins.c
+-browse-push -cursor=66 CURDIR/ins.c
 <sync>
--browse-next -olcursor=138 CURDIR/atr_x.h
+-browse-next -cursor=138 CURDIR/atr_x.h
 <sync>
--browse-next -olcursor=63 CURDIR/cla.c
+-browse-next -cursor=63 CURDIR/cla.c
 <sync>
 <exit>

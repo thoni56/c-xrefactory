@@ -1,14 +1,14 @@
 CXREF -server
 -getproject  CURDIR/parameter.c
 <sync>
--olcxgetrefactorings -olcursor=217 CURDIR/parameter.c
+-get-available-refactorings -cursor=217 CURDIR/parameter.c
 <sync>
--olcxgetrefactorings -olcursor=294 CURDIR/parameter.c
+-get-available-refactorings -cursor=294 CURDIR/parameter.c
 <sync>
--olcxgetrefactorings -olcursor=382 CURDIR/parameter.c
+-get-available-refactorings -cursor=382 CURDIR/parameter.c
 <sync>
--olcxgetrefactorings -olcursor=612 CURDIR/parameter.c
+-get-available-refactorings -cursor=612 CURDIR/parameter.c
 <sync>
--olcxgetrefactorings -olcursor=665 CURDIR/parameter.c
+-get-available-refactorings -cursor=665 CURDIR/parameter.c
 <sync>
 <exit>

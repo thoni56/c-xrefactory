@@ -8,7 +8,7 @@ end-of-options
 <warning len=<n>>-refnum is ignored, the snapshot is always a single file
 </warning>
 <set-info len=<n>>CURDIR</set-info>
--push -olcursor=37 CURDIR/source.c
+-browse-push -cursor=37 CURDIR/source.c
 end-of-options
 
 <sync>

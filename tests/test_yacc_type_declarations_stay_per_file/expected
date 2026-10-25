@@ -4,17 +4,17 @@ end-of-options
 
 <sync>
 <set-info len=<n>>CURDIR</set-info>
--push -olcursor=59 CURDIR/two.y
+-browse-push -cursor=59 CURDIR/two.y
 end-of-options
 
 <sync>
 <display-or-update-browser len=<n>></display-or-update-browser>
--push -olcursor=59 CURDIR/one.y
+-browse-push -cursor=59 CURDIR/one.y
 end-of-options
 
 <sync>
 <display-or-update-browser len=<n>></display-or-update-browser>
--olcxmenufilter=2
+-menu-filter=2
 end-of-options
 
 <sync>

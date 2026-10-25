@@ -4,14 +4,14 @@ end-of-options
 
 <sync>
 <set-info len=<n>>CURDIR</set-info>
--push -olcursor=14 CURDIR/counter.h
+-browse-push -cursor=14 CURDIR/counter.h
 end-of-options
 
 <sync>
 <goto>
  <position-lc line=3 col=4 len=<n>>CURDIR/first.c</position-lc>
 </goto>
--olcxfilter=0 -olcursor=0 nil
+-filter=0 -cursor=0 nil
 end-of-options
 
 <sync>

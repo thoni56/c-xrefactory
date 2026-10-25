@@ -1,6 +1,6 @@
 CXREF -server
 -getproject CURDIR/source.c
 <sync>
--search=feature_only -olcursor=1 CURDIR/source.c
+-search=feature_only -cursor=1 CURDIR/source.c
 <sync>
 <exit>

@@ -4,7 +4,7 @@ end-of-options
 
 <sync>
 <set-info len=<n>>CURDIR</set-info>
--olcursor=696 CURDIR/cexercise/refactorings/rename.c -olcxgetrefactorings
+-cursor=696 CURDIR/cexercise/refactorings/rename.c -get-available-refactorings
 end-of-options
 
 <sync>

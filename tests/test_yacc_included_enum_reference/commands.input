@@ -1,14 +1,14 @@
 CXREF -server
 -getproject CURDIR/file2.c
 <sync>
--push -olcursor=48 CURDIR/file2.c
+-browse-push -cursor=48 CURDIR/file2.c
 <sync>
--push -olcursor=49 CURDIR/file.y
+-browse-push -cursor=49 CURDIR/file.y
 <sync>
--browse-next -olcursor=49 CURDIR/file.y
+-browse-next -cursor=49 CURDIR/file.y
 <sync>
--browse-next -olcursor=49 CURDIR/file.y
+-browse-next -cursor=49 CURDIR/file.y
 <sync>
--browse-next -olcursor=49 CURDIR/file.y
+-browse-next -cursor=49 CURDIR/file.y
 <sync>
 <exit>

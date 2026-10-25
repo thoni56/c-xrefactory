@@ -1,12 +1,12 @@
 CXREF -server
 -getproject CURDIR/user.c
 <sync>
--push -preload CURDIR/definer.c CURDIR/definer.preload -olcursor=41 CURDIR/user.c
+-browse-push -preload CURDIR/definer.c CURDIR/definer.preload -cursor=41 CURDIR/user.c
 <sync>
 !cp CURDIR/header_v2.h CURDIR/header.h
 !sleep 0.1
--push -preload CURDIR/definer.c CURDIR/definer.preload -olcursor=41 CURDIR/user.c
+-browse-push -preload CURDIR/definer.c CURDIR/definer.preload -cursor=41 CURDIR/user.c
 <sync>
--olcxfilter=0 -olcursor=0 nil
+-filter=0 -cursor=0 nil
 <sync>
 <exit>

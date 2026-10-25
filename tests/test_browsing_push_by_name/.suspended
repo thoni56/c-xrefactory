@@ -1,7 +1,7 @@
 Missing: decided behaviour for push by name when the name has several bindings
 
 browsing.c has three bindings of 'i': the struct field at 10:22, the local at
-13:8 and another in the inner block at line 22. -olcxpushname=i answers
+13:8 and another in the inner block at line 22. -browse-push-name=i answers
 <display-or-update-browser> and browses the local.
 
 The expected here says it jumps to the struct field. That was recorded when

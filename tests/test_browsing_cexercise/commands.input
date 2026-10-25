@@ -1,122 +1,122 @@
 CXREF -server
 -getproject  CURDIR/cexercise/browsing.c
 <sync>
--push -olcursor=112 CURDIR/cexercise/browsing.c
+-browse-push -cursor=112 CURDIR/cexercise/browsing.c
 <sync>
 -getproject  CURDIR/cexercise/browsing.c
 <sync>
--push -olmark=0 -olcursor=418 CURDIR/cexercise/browsing.c
+-browse-push -mark=0 -cursor=418 CURDIR/cexercise/browsing.c
 <sync>
--browse-next -olmark=418 -olcursor=241 CURDIR/cexercise/browsing.c
+-browse-next -mark=418 -cursor=241 CURDIR/cexercise/browsing.c
 <sync>
--browse-next -olmark=241 -olcursor=418 CURDIR/cexercise/browsing.c
+-browse-next -mark=241 -cursor=418 CURDIR/cexercise/browsing.c
 <sync>
--browse-next -olmark=418 -olcursor=423 CURDIR/cexercise/browsing.c
+-browse-next -mark=418 -cursor=423 CURDIR/cexercise/browsing.c
 <sync>
--browse-next -olmark=423 -olcursor=429 CURDIR/cexercise/browsing.c
+-browse-next -mark=423 -cursor=429 CURDIR/cexercise/browsing.c
 <sync>
--browse-next -olmark=429 -olcursor=454 CURDIR/cexercise/browsing.c
+-browse-next -mark=429 -cursor=454 CURDIR/cexercise/browsing.c
 <sync>
--browse-next -olmark=454 -olcursor=904 CURDIR/cexercise/browsing.c
+-browse-next -mark=454 -cursor=904 CURDIR/cexercise/browsing.c
 <sync>
--browse-previous -olmark=904 -olcursor=241 CURDIR/cexercise/browsing.c
+-browse-previous -mark=904 -cursor=241 CURDIR/cexercise/browsing.c
 <sync>
--browse-previous -olmark=241 -olcursor=904 CURDIR/cexercise/browsing.c
+-browse-previous -mark=241 -cursor=904 CURDIR/cexercise/browsing.c
 <sync>
--browse-previous -olmark=904 -olcursor=454 CURDIR/cexercise/browsing.c
+-browse-previous -mark=904 -cursor=454 CURDIR/cexercise/browsing.c
 <sync>
--olcxpop -olmark=454 -olcursor=429 CURDIR/cexercise/browsing.c
-<sync>
--getproject  CURDIR/cexercise/browsing.c
-<sync>
--push -olmark=429 -olcursor=601 CURDIR/cexercise/browsing.c
-<sync>
--browse-next -olmark=601 -olcursor=588 CURDIR/cexercise/browsing.c
-<sync>
--olcxpop -olmark=588 -olcursor=597 CURDIR/cexercise/browsing.c
+-browse-pop -mark=454 -cursor=429 CURDIR/cexercise/browsing.c
 <sync>
 -getproject  CURDIR/cexercise/browsing.c
 <sync>
--push -olmark=597 -olcursor=744 CURDIR/cexercise/browsing.c
+-browse-push -mark=429 -cursor=601 CURDIR/cexercise/browsing.c
 <sync>
--browse-next -olmark=744 -olcursor=166 CURDIR/cexercise/browsing.c
+-browse-next -mark=601 -cursor=588 CURDIR/cexercise/browsing.c
 <sync>
--olcxpop -olmark=166 -olcursor=744 CURDIR/cexercise/browsing.c
-<sync>
--getproject  CURDIR/cexercise/browsing.c
-<sync>
--push -olmark=744 -olcursor=761 CURDIR/cexercise/browsing.c
-<sync>
--browse-next -olmark=761 -olcursor=146 CURDIR/cexercise/browsing.c
-<sync>
--olcxpop -olmark=146 -olcursor=761 CURDIR/cexercise/browsing.c
+-browse-pop -mark=588 -cursor=597 CURDIR/cexercise/browsing.c
 <sync>
 -getproject  CURDIR/cexercise/browsing.c
 <sync>
--olcxpushonly -olmark=761 -olcursor=904 CURDIR/cexercise/browsing.c
+-browse-push -mark=597 -cursor=744 CURDIR/cexercise/browsing.c
 <sync>
--olcxmenufilter=2
+-browse-next -mark=744 -cursor=166 CURDIR/cexercise/browsing.c
 <sync>
--olcxfilter=0 -olmark=0 -olcursor=1 nil
-<sync>
--browse-next -olmark=904 -olcursor=904 CURDIR/cexercise/browsing.c
-<sync>
--browse-next -olmark=904 -olcursor=241 CURDIR/cexercise/browsing.c
-<sync>
--browse-next -olmark=241 -olcursor=418 CURDIR/cexercise/browsing.c
-<sync>
--browse-next -olmark=418 -olcursor=423 CURDIR/cexercise/browsing.c
-<sync>
--browse-next -olmark=423 -olcursor=429 CURDIR/cexercise/browsing.c
-<sync>
--browse-next -olmark=429 -olcursor=454 CURDIR/cexercise/browsing.c
+-browse-pop -mark=166 -cursor=744 CURDIR/cexercise/browsing.c
 <sync>
 -getproject  CURDIR/cexercise/browsing.c
 <sync>
--push -olmark=454 -olcursor=1310 CURDIR/cexercise/browsing.c
+-browse-push -mark=744 -cursor=761 CURDIR/cexercise/browsing.c
 <sync>
--olcxfilter=0 -olmark=1310 -olcursor=220 CURDIR/cexercise/browsing.c
+-browse-next -mark=761 -cursor=146 CURDIR/cexercise/browsing.c
 <sync>
--olcxpop -olmark=1310 -olcursor=220 CURDIR/cexercise/browsing.c
-<sync>
--olcxfilter=0 -olmark=220 -olcursor=1309 CURDIR/cexercise/browsing.c
+-browse-pop -mark=146 -cursor=761 CURDIR/cexercise/browsing.c
 <sync>
 -getproject  CURDIR/cexercise/browsing.c
 <sync>
--olcxpushonly -olmark=220 -olcursor=1497 CURDIR/cexercise/browsing.c
+-browse-push-only -mark=761 -cursor=904 CURDIR/cexercise/browsing.c
 <sync>
--olcxmenufilter=2
+-menu-filter=2
 <sync>
--olcxfilter=0 -olmark=0 -olcursor=1 nil
+-filter=0 -mark=0 -cursor=1 nil
 <sync>
--olcxgoto2
+-browse-next -mark=904 -cursor=904 CURDIR/cexercise/browsing.c
 <sync>
--olcxgoto3
+-browse-next -mark=904 -cursor=241 CURDIR/cexercise/browsing.c
 <sync>
--olcxgoto4
+-browse-next -mark=241 -cursor=418 CURDIR/cexercise/browsing.c
 <sync>
--olcxgoto5
+-browse-next -mark=418 -cursor=423 CURDIR/cexercise/browsing.c
 <sync>
--olcxgoto5
+-browse-next -mark=423 -cursor=429 CURDIR/cexercise/browsing.c
 <sync>
--olcxgoto4
-<sync>
--olcxgoto2
-<sync>
--olcxgoto2
-<sync>
--olcxmenusingleselect2
-<sync>
--olcxpop -olmark=220 -olcursor=220 CURDIR/cexercise/browsing.c
+-browse-next -mark=429 -cursor=454 CURDIR/cexercise/browsing.c
 <sync>
 -getproject  CURDIR/cexercise/browsing.c
 <sync>
--push -olmark=220 -olcursor=1975 CURDIR/cexercise/browsing.c
+-browse-push -mark=454 -cursor=1310 CURDIR/cexercise/browsing.c
 <sync>
--olcxpop -olmark=0 -olcursor=0 /usr/include/stdlib.h
+-filter=0 -mark=1310 -cursor=220 CURDIR/cexercise/browsing.c
 <sync>
--olcxpop -olmark=1975 -olcursor=1961 CURDIR/cexercise/browsing.c
+-browse-pop -mark=1310 -cursor=220 CURDIR/cexercise/browsing.c
 <sync>
--olcxpop -olmark=1961 -olcursor=904 CURDIR/cexercise/browsing.c
+-filter=0 -mark=220 -cursor=1309 CURDIR/cexercise/browsing.c
+<sync>
+-getproject  CURDIR/cexercise/browsing.c
+<sync>
+-browse-push-only -mark=220 -cursor=1497 CURDIR/cexercise/browsing.c
+<sync>
+-menu-filter=2
+<sync>
+-filter=0 -mark=0 -cursor=1 nil
+<sync>
+-browse-goto=2
+<sync>
+-browse-goto=3
+<sync>
+-browse-goto=4
+<sync>
+-browse-goto=5
+<sync>
+-browse-goto=5
+<sync>
+-browse-goto=4
+<sync>
+-browse-goto=2
+<sync>
+-browse-goto=2
+<sync>
+-menu-select-only=2
+<sync>
+-browse-pop -mark=220 -cursor=220 CURDIR/cexercise/browsing.c
+<sync>
+-getproject  CURDIR/cexercise/browsing.c
+<sync>
+-browse-push -mark=220 -cursor=1975 CURDIR/cexercise/browsing.c
+<sync>
+-browse-pop -mark=0 -cursor=0 /usr/include/stdlib.h
+<sync>
+-browse-pop -mark=1975 -cursor=1961 CURDIR/cexercise/browsing.c
+<sync>
+-browse-pop -mark=1961 -cursor=904 CURDIR/cexercise/browsing.c
 <sync>
 <exit>

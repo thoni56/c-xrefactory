@@ -1,8 +1,8 @@
 CXREF -server
 -getproject CURDIR/source.c
 <sync>
--olcxcomplet -olcursor=76 CURDIR/source.c
+-completion -cursor=76 CURDIR/source.c
 <sync>
--olcxcomplet -olcursor=122 CURDIR/source.c
+-completion -cursor=122 CURDIR/source.c
 <sync>
 <exit>

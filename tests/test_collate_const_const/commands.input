@@ -1,6 +1,6 @@
 CXREF -server
 -getproject CURDIR/source.c
 <sync>
--search=number -olcursor=46 CURDIR/source.c
+-search=number -cursor=46 CURDIR/source.c
 <sync>
 <exit>

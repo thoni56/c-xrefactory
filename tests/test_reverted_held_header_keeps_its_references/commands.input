@@ -1,8 +1,8 @@
 CXREF -server
 -getproject CURDIR/a.c
 <sync>
--push -olcursor=24 -preload CURDIR/header.h CURDIR/header.preload CURDIR/a.c
+-browse-push -cursor=24 -preload CURDIR/header.h CURDIR/header.preload CURDIR/a.c
 <sync>
--olcxpushname=shared -olcursor=24 CURDIR/a.c
+-browse-push-name=shared -cursor=24 CURDIR/a.c
 <sync>
 <exit>

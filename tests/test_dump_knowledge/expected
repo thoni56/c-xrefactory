@@ -4,7 +4,7 @@ end-of-options
 
 <sync>
 <set-info len=<n>>CURDIR</set-info>
--push -olcursor=20 CURDIR/a.c
+-browse-push -cursor=20 CURDIR/a.c
 end-of-options
 
 <sync>

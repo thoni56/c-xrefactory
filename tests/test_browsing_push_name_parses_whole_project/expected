@@ -4,14 +4,14 @@ end-of-options
 
 <sync>
 <set-info len=<n>>CURDIR</set-info>
--olcxpushname=helper -olcxlccursor=1:0 -olcursor=0 CURDIR/main.c
+-browse-push-name=helper -cursor-line-column=1:0 -cursor=0 CURDIR/main.c
 end-of-options
 
 <sync>
 <goto>
  <position-lc line=3 col=4 len=<n>>CURDIR/helper.c</position-lc>
 </goto>
--olcxfilter=0 -olcursor=0 nil
+-filter=0 -cursor=0 nil
 end-of-options
 
 <sync>

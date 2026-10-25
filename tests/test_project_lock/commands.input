@@ -1,7 +1,7 @@
 CXREF -server
 -getproject CURDIR/project_a/source.c
 <sync>
--push -olcursor=4 CURDIR/project_a/source.c -p project_a
+-browse-push -cursor=4 CURDIR/project_a/source.c -p project_a
 <sync>
 -getproject CURDIR/project_b/source.c
 <sync>

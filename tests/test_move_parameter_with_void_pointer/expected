@@ -4,7 +4,7 @@ end-of-options
 
 <sync>
 <set-info len=<n>>CURDIR</set-info>
--rfct-move-param -olcxparnum=1 -olcxparnum2=2 -olcursor=17 CURDIR/source.c
+-rfct-move-param -parameter=1 -to-parameter=2 -cursor=17 CURDIR/source.c
 end-of-options
 
 <sync>

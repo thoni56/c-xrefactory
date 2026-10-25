@@ -4,7 +4,7 @@ end-of-options
 
 <sync>
 <set-info len=<n>>test_peek</set-info>
--push -olcursor=4 source.c
+-browse-push -cursor=4 source.c
 end-of-options
 
 <sync>
@@ -18,7 +18,7 @@ end-of-options
 <goto>
  <position-lc line=5 col=4 len=<n>>CURDIR/source.c</position-lc>
 </goto>
--olcxpushonly -olnodialog -olcursor=56 source.c
+-browse-push-only -resolve-dialog=never -cursor=56 source.c
 end-of-options
 
 <sync>
@@ -32,7 +32,7 @@ end-of-options
 <goto>
  <position-lc line=8 col=4 len=<n>>CURDIR/source.c</position-lc>
 </goto>
--olcxpoponly -olnodialog source.c
+-browse-pop-only -resolve-dialog=never source.c
 end-of-options
 
 <sync>

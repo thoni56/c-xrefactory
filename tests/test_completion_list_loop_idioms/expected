@@ -4,7 +4,7 @@ end-of-options
 
 <sync>
 <set-info len=<n>>CURDIR</set-info>
--olcxcomplet -olcursor=123 CURDIR/source.c
+-completion -cursor=123 CURDIR/source.c
 end-of-options
 
 <sync>
@@ -12,7 +12,7 @@ end-of-options
  <position-lc line=8 col=16 len=<n>>CURDIR/source.c</position-lc>
 </goto>
 <single-completion len=<n>>l!=NULL; </single-completion>
--olcxcomplet -olcursor=149 CURDIR/source.c
+-completion -cursor=149 CURDIR/source.c
 end-of-options
 
 <sync>

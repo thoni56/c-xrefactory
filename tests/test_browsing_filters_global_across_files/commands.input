@@ -1,22 +1,22 @@
 CXREF -server
 -getproject CURDIR/main.c
 <sync>
--push -olcursor=52 CURDIR/a.c
+-browse-push -cursor=52 CURDIR/a.c
 <sync>
--olcxpop
+-browse-pop
 <sync>
--push -olcursor=45 CURDIR/main.c
+-browse-push -cursor=45 CURDIR/main.c
 <sync>
--olcxmenufilter=0
+-menu-filter=0
 <sync>
--olcxmenufilter=1
+-menu-filter=1
 <sync>
--olcxfilter=0 -olcursor=0 nil
+-filter=0 -cursor=0 nil
 <sync>
--olcxfilter=1 -olcursor=0 nil
+-filter=1 -cursor=0 nil
 <sync>
--olcxfilter=2 -olcursor=0 nil
+-filter=2 -cursor=0 nil
 <sync>
--olcxfilter=3 -olcursor=0 nil
+-filter=3 -cursor=0 nil
 <sync>
 <exit>

@@ -1,8 +1,8 @@
 CXREF -server -errors
 -getproject CURDIR/skipped.c
 <sync>
--push -olcursor=4 CURDIR/skipped.c
+-browse-push -cursor=4 CURDIR/skipped.c
 <sync>
--push -olcursor=4 CURDIR/taken.c
+-browse-push -cursor=4 CURDIR/taken.c
 <sync>
 <exit>

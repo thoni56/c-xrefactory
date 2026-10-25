@@ -4,7 +4,7 @@ end-of-options
 
 <sync>
 <set-info len=<n>>CURDIR</set-info>
--push -olcursor=6 include.c
+-browse-push -cursor=6 include.c
 end-of-options
 
 <sync>

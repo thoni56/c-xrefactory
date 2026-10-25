@@ -1,6 +1,6 @@
 CXREF -server
 -getproject CURDIR/main.c
 <sync>
--olcxpushname=value -olcxlccursor=1:0 -olcursor=0 CURDIR/main.c
+-browse-push-name=value -cursor-line-column=1:0 -cursor=0 CURDIR/main.c
 <sync>
 <exit>

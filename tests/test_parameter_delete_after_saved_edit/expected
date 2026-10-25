@@ -4,7 +4,7 @@ end-of-options
 
 <sync>
 <set-info len=<n>>CURDIR</set-info>
--rfct-del-param -olcxparnum=1 -olmark=0 -olcursor=30 CURDIR/source.c
+-rfct-del-param -parameter=1 -mark=0 -cursor=30 CURDIR/source.c
 end-of-options
 
 <sync>
@@ -28,7 +28,7 @@ end-of-options
 </goto>
 shell: cp CURDIR/source.c.parameter_deleted CURDIR/source.c
 shell: cp CURDIR/source.c.line_removed CURDIR/source.c
--rfct-del-param -olcxparnum=1 -olmark=0 -olcursor=68 CURDIR/source.c
+-rfct-del-param -parameter=1 -mark=0 -cursor=68 CURDIR/source.c
 end-of-options
 
 <sync>

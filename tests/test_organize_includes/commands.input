@@ -1,6 +1,6 @@
 CXREF -server
 -getproject CURDIR/source.c
 <sync>
--rfct-organize-includes -olcursor=0 CURDIR/source.c
+-rfct-organize-includes -cursor=0 CURDIR/source.c
 <sync>
 <exit>

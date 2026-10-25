@@ -1,8 +1,8 @@
 CXREF -server
 -getproject CURDIR/counter.h
 <sync>
--push -olcursor=14 CURDIR/counter.h
+-browse-push -cursor=14 CURDIR/counter.h
 <sync>
--olcxfilter=0 -olcursor=0 nil
+-filter=0 -cursor=0 nil
 <sync>
 <exit>

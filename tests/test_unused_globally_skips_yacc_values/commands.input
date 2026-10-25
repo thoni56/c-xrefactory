@@ -1,8 +1,8 @@
 CXREF -server
 -getproject CURDIR/grammar.y
 <sync>
--olcxpushglobalunused CURDIR/grammar.y
+-unused-in-project CURDIR/grammar.y
 <sync>
--olcxmenufilter=2
+-menu-filter=2
 <sync>
 <exit>

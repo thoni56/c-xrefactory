@@ -34,7 +34,7 @@
       (with-current-buffer (messages-buffer)
         (let ((inhibit-read-only t)) (erase-buffer)))
       (unwind-protect
-          (c-xref-send-data-to-running-process "-olcxsearchgoto1" 'c-xref-test-server)
+          (c-xref-send-data-to-running-process "-search-goto=1" 'c-xref-test-server)
         (delete-process (car c-xref-test-server)))
       (with-current-buffer (messages-buffer) (buffer-string)))))
 

@@ -4,12 +4,12 @@ end-of-options
 
 <sync>
 <set-info len=<n>>CURDIR</set-info>
--olcxpushfileunused  CURDIR/source1.c
+-unused-in-file  CURDIR/source1.c
 end-of-options
 
 <sync>
 <display-or-update-browser len=<n>></display-or-update-browser>
--olcxmenufilter=2
+-menu-filter=2
 end-of-options
 
 <sync>
@@ -18,12 +18,12 @@ end-of-options
  <symbol line=3 selected=1 base=0 drefn=1 refn=0 len=<n>>argc</symbol>
  <symbol line=4 selected=1 base=0 drefn=1 refn=0 len=<n>>c</symbol>
 </resolution>
--olcxpushfileunused  CURDIR/source2.c
+-unused-in-file  CURDIR/source2.c
 end-of-options
 
 <sync>
 <display-or-update-browser len=<n>></display-or-update-browser>
--olcxmenufilter=2
+-menu-filter=2
 end-of-options
 
 <sync>

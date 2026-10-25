@@ -72,13 +72,13 @@ static void setArguments(char *argv[MAX_NARGV_OPTIONS_COUNT], char *project,
     }
     assert(i < MAX_NARGV_OPTIONS_COUNT);
     if (point != NULL) {
-        sprintf(optPoint, "-olcursor=%d", point->offset);
+        sprintf(optPoint, "-cursor=%d", point->offset);
         argv[i] = optPoint;
         i++;
     }
     assert(i < MAX_NARGV_OPTIONS_COUNT);
     if (mark != NULL) {
-        sprintf(optMark, "-olmark=%d", mark->offset);
+        sprintf(optMark, "-mark=%d", mark->offset);
         argv[i] = optMark;
         i++;
     }
@@ -203,7 +203,7 @@ static void pushReferences(EditorMarker *point, char *pushOption, char *resolveM
 }
 
 static void safetyCheck(char *project, EditorMarker *point) {
-    parseBufferUsingServer(project, point, NULL, "-olcxsafetycheck", NULL);
+    parseBufferUsingServer(project, point, NULL, "-internal-safety-check", NULL);
 
     assert(browsingStack.top != NULL);
     if (browsingStack.top->hkSelectedSym == NULL) {
@@ -625,7 +625,7 @@ static void simpleRename(EditorMarkerList *markerList, EditorMarker *marker, cha
 static EditorMarkerList *getReferences(EditorMarker *point, char *resolveMessage,
                                        int messageType) {
     EditorMarkerList *occs;
-    pushReferences(point, "-olcxrename", resolveMessage, messageType); /* TODO: WTF do we use "rename"?!? */
+    pushReferences(point, "-internal-push-for-rename", resolveMessage, messageType); /* TODO: WTF do we use "rename"?!? */
     assert(browsingStack.top && browsingStack.top->hkSelectedSym);
     occs = convertReferencesToEditorMarkers(browsingStack.top->references);
     return occs;
@@ -898,7 +898,7 @@ static Result getParameterNamePosition(EditorMarker *point, char *fileName, int 
     nameOnPoint = getIdentifierOnMarker_static(point);
     clearParameterPositions();
     assert(strcmp(nameOnPoint, fileName) == 0);
-    sprintf(pushOptions, "-olcxgotoparname%d", argn);
+    sprintf(pushOptions, "-internal-parse-to-goto-param-name=%d", argn);
     parseBufferUsingServer(refactoringOptions.project, point, NULL, pushOptions, NULL);
     popReferenceOnly();
     if (parameterPosition.file != NO_FILE_NUMBER) {
@@ -938,7 +938,7 @@ static Result getParameterPosition(EditorMarker *point, char *functionOrMacroNam
     }
 
     clearParameterPositions();
-    sprintf(pushOptions, "-olcxgetparamcoord%d", argn);
+    sprintf(pushOptions, "-internal-parse-to-get-param-coordinates=%d", argn);
     parseBufferUsingServer(refactoringOptions.project, point, NULL, pushOptions, NULL);
     popReferenceOnly();
 
@@ -1052,7 +1052,7 @@ static int addStringAsParameter(EditorMarker *point, EditorMarker *endMarkerOrMa
 
 static int isThisSymbolUsed(EditorMarker *marker) {
     int refn;
-    pushReferences(marker, "-olcxpushforusagecheck", STANDARD_SELECT_SYMBOLS_MESSAGE, PPCV_BROWSER_TYPE_INFO);
+    pushReferences(marker, "-internal-push-for-usage-check", STANDARD_SELECT_SYMBOLS_MESSAGE, PPCV_BROWSER_TYPE_INFO);
     LIST_LEN(refn, Reference, browsingStack.top->references);
     popReferenceOnly();
     return refn > 1;
@@ -1244,7 +1244,7 @@ static void applyParameterManipulation(EditorMarker *point, int manipulation, in
     EditorMarkerList *occurrences;
 
     strcpy(nameOnPoint, getIdentifierOnMarker_static(point));
-    pushReferences(point, "-olcxargmanip", STANDARD_SELECT_SYMBOLS_MESSAGE, PPCV_BROWSER_TYPE_INFO);
+    pushReferences(point, "-internal-push-for-argument-manipulation", STANDARD_SELECT_SYMBOLS_MESSAGE, PPCV_BROWSER_TYPE_INFO);
     occurrences = convertReferencesToEditorMarkers(browsingStack.top->references);
 
     ppcGotoMarker(point);
@@ -1264,15 +1264,15 @@ static void parameterManipulation(EditorMarker *point, int manip, int argn1, int
 // -------------------  Extract
 
 static void extractFunction(EditorMarker *point, EditorMarker *mark) {
-    parseBufferUsingServer(refactoringOptions.project, point, mark, "-olcxextract", NULL);
+    parseBufferUsingServer(refactoringOptions.project, point, mark, "-internal-parse-to-extract", NULL);
 }
 
 static void extractMacro(EditorMarker *point, EditorMarker *mark) {
-    parseBufferUsingServer(refactoringOptions.project, point, mark, "-olcxextract", "-olexmacro");
+    parseBufferUsingServer(refactoringOptions.project, point, mark, "-internal-parse-to-extract", "-olexmacro");
 }
 
 static void extractVariable(EditorMarker *point, EditorMarker *mark) {
-    parseBufferUsingServer(refactoringOptions.project, point, mark, "-olcxextract", "-olexvariable");
+    parseBufferUsingServer(refactoringOptions.project, point, mark, "-internal-parse-to-extract", "-olexvariable");
 }
 
 void serverPerformRefactoring(void) {

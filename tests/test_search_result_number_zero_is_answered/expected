@@ -4,7 +4,7 @@ end-of-options
 
 <sync>
 <set-info len=<n>>CURDIR</set-info>
--search=int* -olcxlccursor=1:5 -olcursor=5 CURDIR/source.c -olcursor=85
+-search=int* -cursor-line-column=1:5 -cursor=5 CURDIR/source.c -cursor=85
 end-of-options
 
 <sync>
@@ -12,19 +12,19 @@ end-of-options
  <str len=<n>>int_which_is_public :source.c :CURDIR/source.c</str>
  <str len=<n>>int_which_is_static :source.c :CURDIR/source.c</str>
 </symbol-list>
--olcxsearchgoto0
+-search-goto=0
 end-of-options
 
 <sync>
 <error len=<n>>There is no search result number 0
 </error>
--olcxsearchselect0
+-search-select=0
 end-of-options
 
 <sync>
 <error len=<n>>There is no search result number 0
 </error>
--olcxsearchgoto1
+-search-goto=1
 end-of-options
 
 <sync>

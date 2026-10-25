@@ -4,13 +4,13 @@ end-of-options
 
 <sync>
 <set-info len=<n>>CURDIR</set-info>
--olcxcomplet -maxcompls=500 -olinelen=120 -olcursor=1362 completions.c
+-completion -maxcompls=500 -line-length=120 -cursor=1362 completions.c
 end-of-options
 
 <sync>
 <all-completions nofocus=0 len=<n>>lll    :struct mylist  *lll
 lllll  :struct mylist  *lllll</all-completions>
--olcxcgoto1
+-completion-goto=1
 end-of-options
 
 <sync>

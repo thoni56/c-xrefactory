@@ -3,6 +3,6 @@ CXREF -server
 <sync>
 -get FROM_A
 <sync>
--push -olcursor=73 CURDIR/projectB/b.c
+-browse-push -cursor=73 CURDIR/projectB/b.c
 <sync>
 <exit>

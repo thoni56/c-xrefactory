@@ -1,10 +1,10 @@
 CXREF -server
 -getproject CURDIR/one.y
 <sync>
--push -olcursor=59 CURDIR/two.y
+-browse-push -cursor=59 CURDIR/two.y
 <sync>
--push -olcursor=59 CURDIR/one.y
+-browse-push -cursor=59 CURDIR/one.y
 <sync>
--olcxmenufilter=2
+-menu-filter=2
 <sync>
 <exit>

@@ -1,10 +1,10 @@
 CXREF -server -log=log.log -commandlog=commands.log
 -getproject  CURDIR/test_source/single_int1.c
 <sync>
--olcxcomplet CURDIR/test_source/single_int1.c -olcursor=85
+-completion CURDIR/test_source/single_int1.c -cursor=85
 <sync>
--olcxcomplet CURDIR/test_source/single_int1.c -olcursor=86
+-completion CURDIR/test_source/single_int1.c -cursor=86
 <sync>
--olcxcomplet CURDIR/test_source/single_int1.c -olcursor=164
+-completion CURDIR/test_source/single_int1.c -cursor=164
 <sync>
 <exit>

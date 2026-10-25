@@ -1,14 +1,14 @@
 CXREF -server
 -getproject CURDIR/browsing.c
 <sync>
--olcxpushname=browsing -olcxlccursor=2:0  -olcursor=19 CURDIR/browsing.c
+-browse-push-name=browsing -cursor-line-column=2:0  -cursor=19 CURDIR/browsing.c
 <sync>
 -continue
 <sync>
--olcxpushname=i -olcxlccursor=9:5  -olcursor=111 CURDIR/browsing.c
+-browse-push-name=i -cursor-line-column=9:5  -cursor=111 CURDIR/browsing.c
 <sync>
--browse-next  -olcursor=146 CURDIR/browsing.c
+-browse-next  -cursor=146 CURDIR/browsing.c
 <sync>
--browse-next  -olcursor=761 CURDIR/browsing.c
+-browse-next  -cursor=761 CURDIR/browsing.c
 <sync>
 <exit>

@@ -1,6 +1,6 @@
 CXREF -server
 -getproject CURDIR/source.c
 <sync>
--rfct-extract-function -olmark=93 -olcursor=114 CURDIR/source.c
+-rfct-extract-function -mark=93 -cursor=114 CURDIR/source.c
 <sync>
 <exit>

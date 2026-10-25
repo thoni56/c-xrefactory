@@ -1,6 +1,6 @@
 CXREF -server
 -getproject CURDIR/source.y
 <sync>
--search=non_existant_to_force_parse_all -olcursor=1 CURDIR/source.y
+-search=non_existant_to_force_parse_all -cursor=1 CURDIR/source.y
 <sync>
 <exit>

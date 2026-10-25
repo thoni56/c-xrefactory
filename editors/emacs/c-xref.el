@@ -1864,9 +1864,9 @@ be cleaned up when the buffer is saved or killed)."
 
 (defun c-xref-server-get-point-and-mark-options ()
   (let ((res))
-    (setq res (cons (format "-olcursor=%d" (- (point) 1)) res))
+    (setq res (cons (format "-cursor=%d" (- (point) 1)) res))
     (if (region-active-p)
-        (setq res (cons (format "-olmark=%d" (- (mark t) 1)) res))
+        (setq res (cons (format "-mark=%d" (- (mark t) 1)) res))
       )
     res
     ))
@@ -3609,7 +3609,7 @@ bug in its own right.
   (let ((lineno 1) (cw) (_offset))
     (unless (eq (point) (point-max))
       (setq lineno (count-lines 1 (+ (point) 1))))
-    (c-xref-send-data-to-process-and-dispatch (format "-olcomplselect%d" lineno) c-xref-completions-dispatch-data nil)
+    (c-xref-send-data-to-process-and-dispatch (format "-completion-select=%d" lineno) c-xref-completions-dispatch-data nil)
     (if (equal c-xref-completions-windows-counter  0)
             (c-xref-delete-completion-window)
       (setq c-xref-completions-windows-counter (1- c-xref-completions-windows-counter))
@@ -3628,14 +3628,14 @@ bug in its own right.
 (defun c-xref-interactive-completion-previous (_event)
   "Previous completions."
   (interactive "i")
-  (c-xref-send-data-to-process-and-dispatch "-olcomplback" c-xref-completions-dispatch-data nil)
+  (c-xref-send-data-to-process-and-dispatch "-completion-previous" c-xref-completions-dispatch-data nil)
   t
   )
 
 (defun c-xref-interactive-completion-next (_event)
   "Next completions."
   (interactive "i")
-  (c-xref-send-data-to-process-and-dispatch "-olcomplforward" c-xref-completions-dispatch-data nil)
+  (c-xref-send-data-to-process-and-dispatch "-completion-next" c-xref-completions-dispatch-data nil)
   t
   )
 
@@ -3713,7 +3713,7 @@ bug in its own right.
     (setq lineno (count-lines 1 (+ (point) 1)))
     (setq cw (selected-window))
     (c-xref-send-data-to-process-and-dispatch
-     (format "-olcxcgoto%d" lineno)
+     (format "-completion-goto=%d" lineno)
      c-xref-completions-dispatch-data
      nil)
     (sit-for 1)
@@ -3854,13 +3854,13 @@ separate window.
   (interactive "")
   (let ((opt))
     (c-xref-entry-point-make-initialisations)
-    (setq opt (format "-olcxcomplet -maxcompls=%d" c-xref-max-completions))
+    (setq opt (format "-completion -maxcompls=%d" c-xref-max-completions))
     (if c-xref-completion-case-sensitive
             (setq opt (format "%s -completioncasesensitive" opt))
       )
     (if c-xref-completion-truncate-lines
-            (setq opt (format "%s -olinelen=50000" opt))
-      (setq opt (format "%s -olinelen=%d" opt (window-width)))
+            (setq opt (format "%s -line-length=50000" opt))
+      (setq opt (format "%s -line-length=%d" opt (window-width)))
       )
     (setq c-xref-completion-id-after-point (c-xref-get-identifier-after (point)))
     (setq c-xref-completions-dispatch-data (c-xref-get-basic-server-dispatch-data 'c-xref-server-process))
@@ -4025,7 +4025,7 @@ on the browser stack.
     (c-xref-entry-point-make-initialisations)
 
     (setq oldwins (c-xref-is-browser-window-displayed))
-    (c-xref-call-process-with-basic-file-data-all-saves "-olcxpushonly")
+    (c-xref-call-process-with-basic-file-data-all-saves "-browse-push-only")
     (c-xref-update-browser-if-displayed oldwins)
     ))
 
@@ -4043,7 +4043,7 @@ definition.
 
     (setq oldwins (c-xref-is-browser-window-displayed))
     (c-xref-call-process-with-basic-file-data-all-saves
-     (concat "-push"))
+     (concat "-browse-push"))
     (c-xref-update-browser-if-displayed oldwins)
     ))
 
@@ -4070,7 +4070,7 @@ browser stack, and launches the C-xrefactory interactive browser.
   (interactive "")
   (c-xref-entry-point-make-initialisations)
   (c-xref-clean-unused-browser-buffers)
-  (c-xref-push-and-browse "-olcxpushonly")
+  (c-xref-push-and-browse "-browse-push-only")
   )
 
 (defun c-xref-push-global-unused-symbols ()
@@ -4083,7 +4083,7 @@ and declarations.
 "
   (interactive "")
   (c-xref-entry-point-make-initialisations)
-  (c-xref-push-and-browse "-olcxpushglobalunused")
+  (c-xref-push-and-browse "-unused-in-project")
   )
 
 
@@ -4097,7 +4097,7 @@ will (usually) be only definitions and declarations.
 "
   (interactive "")
   (c-xref-entry-point-make-initialisations)
-  (c-xref-push-and-browse "-olcxpushfileunused")
+  (c-xref-push-and-browse "-unused-in-file")
   )
 
 (defun c-xref-push-name ()
@@ -4122,7 +4122,7 @@ other browsing functions.
                                                 'c-xref-symbols-completionfun nil nil sym))
 
     (c-xref-call-process-with-basic-file-data-all-saves
-     (format "\"-olcxpushname=%s\" -olcxlccursor=%d:%d" sstr line col))
+     (format "\"-browse-push-name=%s\" -cursor-line-column=%d:%d" sstr line col))
     (c-xref-update-browser-if-displayed oldwins)
     ))
 
@@ -4152,7 +4152,7 @@ refactoring, changes made by this function can be undone with the
     (c-xref-multifile-undo-set-buffer-switch-point "mapping of a macro on all occurences")
 
     (setq oldwins (c-xref-is-browser-window-displayed))
-    (c-xref-call-process-with-basic-file-data-all-saves "-olcxpushandcallmacro")
+    (c-xref-call-process-with-basic-file-data-all-saves "-browse-push-and-call-macro")
     (c-xref-update-browser-if-displayed oldwins)
     ))
 
@@ -4167,9 +4167,9 @@ refactoring, changes made by this function can be undone with the
 
 (defun c-xref-peek (opt)
   (c-xref-entry-point-make-initialisations)
-  (c-xref-call-process-with-basic-file-data-all-saves "-olcxpushonly -olnodialog")
+  (c-xref-call-process-with-basic-file-data-all-saves "-browse-push-only -resolve-dialog=never")
   (c-xref-call-process-with-basic-file-data-no-saves opt)
-  (c-xref-call-process-with-basic-file-data-no-saves "-olcxpoponly -olnodialog")
+  (c-xref-call-process-with-basic-file-data-no-saves "-browse-pop-only -resolve-dialog=never")
   )
 
 (defun c-xref-previous-next-reference (option direction)
@@ -4223,7 +4223,7 @@ references were pushed.
             ;; O.K. here we are
             (c-xref-entry-point-make-initialisations-no-project-required)
             (setq oldwins (c-xref-is-browser-window-displayed))
-            (c-xref-call-process-with-basic-file-data-no-saves "-olcxpop")
+            (c-xref-call-process-with-basic-file-data-no-saves "-browse-pop")
             (c-xref-update-browser-if-displayed oldwins)
             ))
     ))
@@ -4235,7 +4235,7 @@ references were pushed.
   (let ((oldwins))
     (c-xref-entry-point-make-initialisations-no-project-required)
     (setq oldwins (c-xref-is-browser-window-displayed))
-    (c-xref-call-process-with-basic-file-data-no-saves "-olcxpoponly")
+    (c-xref-call-process-with-basic-file-data-no-saves "-browse-pop-only")
     (c-xref-update-browser-if-displayed oldwins)
     ))
 
@@ -4255,7 +4255,7 @@ This function also moves to the current reference.
             ;; O.K. here we are
             (c-xref-entry-point-make-initialisations-no-project-required)
             (setq oldwins (c-xref-is-browser-window-displayed))
-            (c-xref-call-process-with-basic-file-data-no-saves "-olcxrepush")
+            (c-xref-call-process-with-basic-file-data-no-saves "-browse-repush")
             (c-xref-update-browser-if-displayed oldwins)
             ))
     ))
@@ -4405,12 +4405,12 @@ symbols containing the entered string. For example, entering
 
 (defun c-xref-interactive-search-inspect (event)
   (interactive "i")
-  (c-xref-interactive-selectable-line-inspect event "-olcxsearchgoto" 0)
+  (c-xref-interactive-selectable-line-inspect event "-search-goto=" 0)
   )
 
 (defun c-xref-interactive-search-select (event)
   (interactive "i")
-  (c-xref-interactive-selectable-line-inspect event "-olcxsearchselect" 0)
+  (c-xref-interactive-selectable-line-inspect event "-search-select=" 0)
   )
 
 (defun c-xref-interactive-search-previous-next (option)
@@ -4430,22 +4430,22 @@ symbols containing the entered string. For example, entering
 
 (defun c-xref-interactive-search-next (_event)
   (interactive "i")
-  (c-xref-interactive-search-previous-next "-olcxsearchforward")
+  (c-xref-interactive-search-previous-next "-search-next")
   )
 
 (defun c-xref-interactive-search-previous (_event)
   (interactive "i")
-  (c-xref-interactive-search-previous-next "-olcxsearchback")
+  (c-xref-interactive-search-previous-next "-search-previous")
   )
 
 (defun c-xref-interactive-search-mouse-inspect (event)
   (interactive "e")
-  (c-xref-interactive-selectable-line-mouse-inspect event "-olcxsearchgoto" 0)
+  (c-xref-interactive-selectable-line-mouse-inspect event "-search-goto=" 0)
   )
 
 (defun c-xref-interactive-search-mouse-select (event)
   (interactive "e")
-  (c-xref-interactive-selectable-line-mouse-inspect event "-olcxsearchselect" 0)
+  (c-xref-interactive-selectable-line-mouse-inspect event "-search-select=" 0)
   )
 
 (defun c-xref-interactive-search-mouse-previous (event)
@@ -4501,7 +4501,7 @@ against the full symbol name.
     (setq sym (c-xref-get-search-string))
     (setq line (count-lines (point-min) (if (eobp) (point) (+ (point) 1))))
     (setq col (c-xref-current-column))
-    (setq syms (c-xref-get-search-results sym (format "-olinelen=%d -olcxlccursor=%d:%d" (window-width) line col)))
+    (setq syms (c-xref-get-search-results sym (format "-line-length=%d -cursor-line-column=%d:%d" (window-width) line col)))
     (c-xref-display-search-results syms c-xref-global-dispatch-data sym)
     ;;(profile-results)
     ))
@@ -4523,7 +4523,7 @@ given string(s).
     (setq sym (c-xref-get-search-string))
     (setq line (count-lines (point-min) (if (eobp) (point) (+ (point) 1))))
     (setq col (c-xref-current-column))
-    (setq syms (c-xref-get-search-results sym (format "-searchdef -olinelen=%d -olcxlccursor=%d:%d" (window-width) line col)))
+    (setq syms (c-xref-get-search-results sym (format "-searchdef -line-length=%d -cursor-line-column=%d:%d" (window-width) line col)))
     (c-xref-display-search-results syms c-xref-global-dispatch-data sym)
     ))
 
@@ -4660,7 +4660,7 @@ given string(s).
     (if (eq c-xref-this-buffer-type 'symbol-list)
             (progn
               (c-xref-browser-dialog-set-selection-sign-on-all 1)
-              (c-xref-send-data-to-process-and-dispatch "-olcxmenuall" dispatch-data nil)
+              (c-xref-send-data-to-process-and-dispatch "-menu-select-all" dispatch-data nil)
               ))
     (select-window sw)
     ))
@@ -4673,7 +4673,7 @@ given string(s).
     (if (eq c-xref-this-buffer-type 'symbol-list)
             (progn
               (c-xref-browser-dialog-set-selection-sign-on-all 0)
-              (c-xref-send-data-to-process-and-dispatch "-olcxmenunone" dispatch-data nil)
+              (c-xref-send-data-to-process-and-dispatch "-menu-select-none" dispatch-data nil)
               ))
     (select-window sw)
     ))
@@ -4691,14 +4691,14 @@ given string(s).
                   (progn
                         (c-xref-browser-dialog-set-selection-sign-on-all 0)
                         (c-xref-browser-dialog-set-selection-sign 1)
-                        (c-xref-call-task-on-line "-olcxmenusingleselect" c-xref-menu-selection-line-offset)
+                        (c-xref-call-task-on-line "-menu-select-only=" c-xref-menu-selection-line-offset)
                         (c-xref-select-dispach-data-caller-window dispatch-data)
                         (sit-for .5)
                         (select-window sw)
                         )))
       (if (eq c-xref-this-buffer-type 'reference-list)
               (progn
-                (c-xref-call-task-on-line "-olcxgoto" 0)
+                (c-xref-call-task-on-line "-browse-goto=" 0)
                 (c-xref-set-current-reference-list-pointer)
                 (c-xref-select-dispach-data-caller-window dispatch-data)
                 (sit-for .5)
@@ -4719,7 +4719,7 @@ given string(s).
                   (progn
                         (if (string-equal str " ") (setq ns 1) (setq ns 0))
                         (c-xref-browser-dialog-set-selection-sign ns)
-                        (c-xref-call-task-on-line "-olcxmenuselect" c-xref-menu-selection-line-offset)
+                        (c-xref-call-task-on-line "-menu-toggle-select=" c-xref-menu-selection-line-offset)
                         (c-xref-select-dispach-data-caller-window dispatch-data)
                         (sit-for .5)
                         (select-window sw)
@@ -4854,7 +4854,7 @@ given string(s).
 (defun c-xref-references-set-filter (level dispatch-data)
   ;; save all files, so that references refer to buffers rather than files
   (c-xref-server-call-on-current-buffer-all-saves
-   (format "-olcxfilter=%d" level)
+   (format "-filter=%d" level)
    dispatch-data)
   )
 
@@ -4862,7 +4862,7 @@ given string(s).
   (c-xref-select-dispach-data-resolution-window dispatch-data)
   (setq c-xref-this-buffer-filter-level level)
   (c-xref-send-data-to-process-and-dispatch
-   (format "-olcxmenufilter=%d" level)
+   (format "-menu-filter=%d" level)
    dispatch-data
    nil)
   (c-xref-references-set-filter 0 dispatch-data)
@@ -5727,7 +5727,7 @@ refactoring.
   (c-xref-entry-point-make-initialisations)
   (setq c-xref-global-dispatch-data (c-xref-get-basic-server-dispatch-data 'c-xref-server-process))
   (c-xref-server-call-on-current-buffer-no-saves
-   "-olcxgetrefactorings"
+   "-get-available-refactorings"
    c-xref-global-dispatch-data)
   )
 
@@ -5826,7 +5826,7 @@ refactoring.
    (format "insertion of %s's parameter" name))
   (c-xref-do-refactoring
    (list "-rfct-add-param"
-             (format "-olcxparnum=%s" arg)
+             (format "-parameter=%s" arg)
              (format "-rfct-parameter-name=%s" textdef);
              (format "-rfct-parameter-value=%s" textval)))
   (c-xref-refactoring-finish-actions)
@@ -5860,7 +5860,7 @@ refactoring.
   (c-xref-refactoring-init-actions
    (format "deletion of %s's parameter" name))
   (c-xref-do-refactoring
-   (list "-rfct-del-param" (format "-olcxparnum=%s" arg)))
+   (list "-rfct-del-param" (format "-parameter=%s" arg)))
   (c-xref-refactoring-finish-actions)
   )
 
@@ -5882,8 +5882,8 @@ refactoring.
    (format "move of %s's parameter" name))
   (c-xref-do-refactoring
    (list "-rfct-move-param"
-             (format "-olcxparnum=%s" arg1)
-             (format "-olcxparnum2=%s" arg2)))
+             (format "-parameter=%s" arg1)
+             (format "-to-parameter=%s" arg2)))
   (c-xref-refactoring-finish-actions)
   )
 

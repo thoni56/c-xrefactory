@@ -4,12 +4,12 @@ end-of-options
 
 <sync>
 <set-info len=<n>>CURDIR</set-info>
--push  -olcursor=24 CURDIR/node.h
+-browse-push  -cursor=24 CURDIR/node.h
 end-of-options
 
 <sync>
 <display-or-update-browser len=<n>></display-or-update-browser>
--olcxmenufilter=0
+-menu-filter=0
 end-of-options
 
 <sync>

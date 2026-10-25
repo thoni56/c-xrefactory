@@ -1,6 +1,6 @@
 CXREF -server
 -getproject CURDIR/main.c
 <sync>
--push -preload CURDIR/main.c CURDIR/main.preload -olcursor=167 CURDIR/main.c
+-browse-push -preload CURDIR/main.c CURDIR/main.preload -cursor=167 CURDIR/main.c
 <sync>
 <exit>

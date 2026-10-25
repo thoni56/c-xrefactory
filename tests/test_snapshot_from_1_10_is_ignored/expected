@@ -4,7 +4,7 @@ end-of-options
 
 <sync>
 <set-info len=<n>>test_snapshot_from_1_10_is_ignored</set-info>
--push -olcursor=47 CURDIR/source.c
+-browse-push -cursor=47 CURDIR/source.c
 end-of-options
 
 <sync>

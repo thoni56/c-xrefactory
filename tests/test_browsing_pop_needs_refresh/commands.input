@@ -1,14 +1,14 @@
 CXREF -server
 -getproject CURDIR/source.c
 <sync>
--push  -olcursor=68 CURDIR/source.c  -p CURDIR
+-browse-push  -cursor=68 CURDIR/source.c  -p CURDIR
 <sync>
--push  -olcursor=68 CURDIR/source.c  -p CURDIR
+-browse-push  -cursor=68 CURDIR/source.c  -p CURDIR
 <sync>
--browse-next  -olcursor=68 CURDIR/source.c  -p CURDIR -preload CURDIR/source.c CURDIR/source.preload
+-browse-next  -cursor=68 CURDIR/source.c  -p CURDIR -preload CURDIR/source.c CURDIR/source.preload
 <sync>
--olcxpop  -olcursor=68 CURDIR/source.c  -p CURDIR
+-browse-pop  -cursor=68 CURDIR/source.c  -p CURDIR
 <sync>
--browse-next  -olcursor=68 CURDIR/source.c  -p CURDIR
+-browse-next  -cursor=68 CURDIR/source.c  -p CURDIR
 <sync>
 <exit>

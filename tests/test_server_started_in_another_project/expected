@@ -10,7 +10,7 @@ end-of-options
 <sync>
 <error len=<n>>No "-set FROM_A <command>" option specified for active project
 </error>
--push -olcursor=73 CURDIR/projectB/b.c
+-browse-push -cursor=73 CURDIR/projectB/b.c
 end-of-options
 
 <sync>

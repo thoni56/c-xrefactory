@@ -1,6 +1,6 @@
 CXREF -server
 -getproject CURDIR/a.c
 <sync>
--search=always_there -olcursor=1 CURDIR/a.c
+-search=always_there -cursor=1 CURDIR/a.c
 <sync>
 <exit>

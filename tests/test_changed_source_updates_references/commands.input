@@ -1,24 +1,24 @@
 CXREF -server
 -getproject CURDIR/source.c
 <sync>
--push -olcursor=6 CURDIR/source.c
+-browse-push -cursor=6 CURDIR/source.c
 <sync>
--browse-next -olcursor=4 CURDIR/source.c
+-browse-next -cursor=4 CURDIR/source.c
 <sync>
--browse-next -olcursor=62 CURDIR/source.c
+-browse-next -cursor=62 CURDIR/source.c
 <sync>
 -getproject CURDIR/source.c
 <sync>
--push -preload CURDIR/source.c CURDIR/source.preload -olcursor=6 CURDIR/source.c
+-browse-push -preload CURDIR/source.c CURDIR/source.preload -cursor=6 CURDIR/source.c
 <sync>
--browse-next -preload CURDIR/source.c CURDIR/source.preload -olcursor=4 CURDIR/source.c
+-browse-next -preload CURDIR/source.c CURDIR/source.preload -cursor=4 CURDIR/source.c
 <sync>
--browse-next -preload CURDIR/source.c CURDIR/source.preload -olcursor=45 CURDIR/source.c
+-browse-next -preload CURDIR/source.c CURDIR/source.preload -cursor=45 CURDIR/source.c
 <sync>
--olcxpop -preload CURDIR/source.c CURDIR/source.preload -olcursor=6 CURDIR/source.c
+-browse-pop -preload CURDIR/source.c CURDIR/source.preload -cursor=6 CURDIR/source.c
 <sync>
--push -preload CURDIR/source.c CURDIR/source.preload -olcursor=6 CURDIR/source.c
+-browse-push -preload CURDIR/source.c CURDIR/source.preload -cursor=6 CURDIR/source.c
 <sync>
--browse-next -preload CURDIR/source.c CURDIR/source.preload -olcursor=4 CURDIR/source.c
+-browse-next -preload CURDIR/source.c CURDIR/source.preload -cursor=4 CURDIR/source.c
 <sync>
 <exit>

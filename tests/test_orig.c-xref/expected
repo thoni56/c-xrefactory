@@ -4,7 +4,7 @@ end-of-options
 
 <sync>
 <set-info len=<n>>CURDIR</set-info>
--push -olmark=67072 -olcursor=104883 CURDIR/src/main.c
+-browse-push -mark=67072 -cursor=104883 CURDIR/src/main.c
 end-of-options
 
 <sync>

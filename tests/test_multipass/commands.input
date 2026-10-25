@@ -1,10 +1,10 @@
 CXREF -server -errors
 -getproject CURDIR/multipass.c
 <sync>
--search=non_existant_to_force_parse_all -olcursor=1 CURDIR/multipass.c
+-search=non_existant_to_force_parse_all -cursor=1 CURDIR/multipass.c
 <sync>
 -continue
 <sync>
--push -olcursor=242 CURDIR/multipass.c
+-browse-push -cursor=242 CURDIR/multipass.c
 <sync>
 <exit>

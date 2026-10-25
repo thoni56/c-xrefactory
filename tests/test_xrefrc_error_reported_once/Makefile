@@ -6,7 +6,7 @@ include ../Makefile.server
 # When the client asks for the project and then pushes
 # Then the -getproject answer says -xrefrc is no longer supported
 # And nothing is written before the first request
-# And the -push answer does not say it again
+# And the -browse-push answer does not say it again
 
 $(TEST): .c-xrefrc
 	@$(SERVER_DRIVER) commands.input $(EXTRA) > output.tmp 2>&1

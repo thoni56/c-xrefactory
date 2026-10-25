@@ -90,7 +90,7 @@ bool isValidMoveTarget(EditorMarker *target) {
     parsedInfo.moveTargetAccepted = false;
 
     /* Bridge: Still calls old infrastructure via magic string */
-    parseBufferUsingServer(options.project, target, NULL, "-olcxmovetarget", NULL);
+    parseBufferUsingServer(options.project, target, NULL, "-internal-parse-to-set-move-target", NULL);
 
     /* Extract result from global state */
     result.valid = parsedInfo.moveTargetAccepted;
@@ -115,7 +115,7 @@ FunctionBoundariesResult getFunctionBoundaries(EditorMarker *marker) {
     parsedPositions[IPP_FUNCTION_END] = NO_POSITION;
 
     /* Bridge: Still calls old infrastructure via magic string */
-    parseBufferUsingServer(options.project, marker, NULL, "-olcxgetfunctionbounds", NULL);
+    parseBufferUsingServer(options.project, marker, NULL, "-internal-get-function-bounds", NULL);
 
     /* Extract results from global state */
     if (parsedPositions[IPP_FUNCTION_BEGIN].file != NO_FILE_NUMBER &&

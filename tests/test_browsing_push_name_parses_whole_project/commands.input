@@ -1,8 +1,8 @@
 CXREF -server
 -getproject CURDIR/main.c
 <sync>
--olcxpushname=helper -olcxlccursor=1:0 -olcursor=0 CURDIR/main.c
+-browse-push-name=helper -cursor-line-column=1:0 -cursor=0 CURDIR/main.c
 <sync>
--olcxfilter=0 -olcursor=0 nil
+-filter=0 -cursor=0 nil
 <sync>
 <exit>

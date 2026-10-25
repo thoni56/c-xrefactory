@@ -1,12 +1,12 @@
 CXREF -server
 -getproject CURDIR/source.y
 <sync>
--push -olcursor=301 CURDIR/source.y
+-browse-push -cursor=301 CURDIR/source.y
 <sync>
 -getproject CURDIR/source.y
 <sync>
--olcxgetrefactorings -olcursor=362 CURDIR/source.y
+-get-available-refactorings -cursor=362 CURDIR/source.y
 <sync>
--rfct-rename -renameto=e1 -olcursor=362 CURDIR/source.y
+-rfct-rename -renameto=e1 -cursor=362 CURDIR/source.y
 <sync>
 <exit>

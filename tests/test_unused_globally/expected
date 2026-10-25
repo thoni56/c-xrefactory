@@ -4,7 +4,7 @@ end-of-options
 
 <sync>
 <set-info len=<n>>CURDIR</set-info>
--olcxpushglobalunused CURDIR/main.c
+-unused-in-project CURDIR/main.c
 end-of-options
 
 <sync>

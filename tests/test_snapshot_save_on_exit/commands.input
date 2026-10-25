@@ -1,6 +1,6 @@
 CXREF -server
 -getproject CURDIR/ins.c
 <sync>
--push -olcursor=66 CURDIR/ins.c
+-browse-push -cursor=66 CURDIR/ins.c
 <sync>
 <exit>

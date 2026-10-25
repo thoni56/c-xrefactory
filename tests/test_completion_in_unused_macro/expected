@@ -4,7 +4,7 @@ end-of-options
 
 <sync>
 <set-info len=<n>>CURDIR</set-info>
--olcxcomplet -maxcompls=500 -olinelen=120 -olcursor=28 CURDIR/unused_macro.c
+-completion -maxcompls=500 -line-length=120 -cursor=28 CURDIR/unused_macro.c
 end-of-options
 
 <sync>

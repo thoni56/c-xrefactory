@@ -1,11 +1,11 @@
 CXREF -server
 -getproject CURDIR/user.c
 <sync>
--push -olcursor=4 CURDIR/header.h
+-browse-push -cursor=4 CURDIR/header.h
 <sync>
 !cp CURDIR/user.c.v2 CURDIR/user.c
--push -olcursor=4 CURDIR/header.h
+-browse-push -cursor=4 CURDIR/header.h
 <sync>
--olcxfilter=0 -olcursor=0 nil
+-filter=0 -cursor=0 nil
 <sync>
 <exit>

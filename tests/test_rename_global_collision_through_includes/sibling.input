@@ -1,6 +1,6 @@
 CXREF -server
 -getproject CURDIR/main.c
 <sync>
--rfct-rename -renameto=total -olmark=70 -olcursor=70 CURDIR/main.c
+-rfct-rename -renameto=total -mark=70 -cursor=70 CURDIR/main.c
 <sync>
 <exit>

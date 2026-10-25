@@ -4,7 +4,7 @@ end-of-options
 
 <sync>
 <set-info len=<n>>CURDIR</set-info>
--push -preload CURDIR/definer.c CURDIR/definer.preload -olcursor=41 CURDIR/user.c
+-browse-push -preload CURDIR/definer.c CURDIR/definer.preload -cursor=41 CURDIR/user.c
 end-of-options
 
 <sync>
@@ -13,14 +13,14 @@ end-of-options
 </goto>
 shell: cp CURDIR/header_v2.h CURDIR/header.h
 shell: sleep 0.1
--push -preload CURDIR/definer.c CURDIR/definer.preload -olcursor=41 CURDIR/user.c
+-browse-push -preload CURDIR/definer.c CURDIR/definer.preload -cursor=41 CURDIR/user.c
 end-of-options
 
 <sync>
 <goto>
  <position-lc line=2 col=4 len=<n>>CURDIR/definer.c</position-lc>
 </goto>
--olcxfilter=0 -olcursor=0 nil
+-filter=0 -cursor=0 nil
 end-of-options
 
 <sync>

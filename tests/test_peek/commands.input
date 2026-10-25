@@ -1,15 +1,15 @@
 CXREF -server
 -getproject source.c
 <sync>
--push -olcursor=4 source.c
+-browse-push -cursor=4 source.c
 <sync>
 -browse-next source.c
 <sync>
--olcxpushonly -olnodialog -olcursor=56 source.c
+-browse-push-only -resolve-dialog=never -cursor=56 source.c
 <sync>
 -browse-next source.c
 <sync>
--olcxpoponly -olnodialog source.c
+-browse-pop-only -resolve-dialog=never source.c
 <sync>
 -browse-next source.c
 <sync>

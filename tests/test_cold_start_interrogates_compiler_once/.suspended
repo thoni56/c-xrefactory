@@ -1,7 +1,7 @@
 Bug: A cold start interrogates the compiler twice
 
 -getproject runs discoverBuiltinIncludePaths and discoverStandardDefines and saves a
-checkpoint. The -push that follows runs them again, because initializeFileProcessing
+checkpoint. The -browse-push that follows runs them again, because initializeFileProcessing
 takes its full branch instead of restoring the checkpoint. The debug line in front of
 that branch says why: "pass 1 (previous -1)". server() starts every request in
 ANY_PASS (-1), so that is what initializeProjectContext records, and every parse

@@ -4,13 +4,13 @@ end-of-options
 
 <sync>
 <set-info len=<n>>CURDIR</set-info>
--olcxcomplet CURDIR/src/main.c -olcursor=243
+-completion CURDIR/src/main.c -cursor=243
 end-of-options
 
 <sync>
 <all-completions nofocus=0 len=<n>>my_global_first    :void my_global_first(int arg)
 my_global_second   :void my_global_second(void )</all-completions>
--olcxcgoto1
+-completion-goto=1
 end-of-options
 
 <sync>

@@ -1,6 +1,6 @@
 CXREF -server
 -getproject CURDIR/main.c
 <sync>
--rfct-rename-module -renameto=target -olcursor=10 CURDIR/main.c
+-rfct-rename-module -renameto=target -cursor=10 CURDIR/main.c
 <sync>
 <exit>

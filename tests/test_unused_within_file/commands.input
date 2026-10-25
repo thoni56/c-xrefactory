@@ -1,12 +1,12 @@
 CXREF -server
 -getproject CURDIR/source1.c
 <sync>
--olcxpushfileunused  CURDIR/source1.c
+-unused-in-file  CURDIR/source1.c
 <sync>
--olcxmenufilter=2
+-menu-filter=2
 <sync>
--olcxpushfileunused  CURDIR/source2.c
+-unused-in-file  CURDIR/source2.c
 <sync>
--olcxmenufilter=2
+-menu-filter=2
 <sync>
 <exit>

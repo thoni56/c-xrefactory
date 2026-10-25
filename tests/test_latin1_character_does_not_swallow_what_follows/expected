@@ -4,7 +4,7 @@ end-of-options
 
 <sync>
 <set-info len=<n>>CURDIR</set-info>
--push -olcursor=39 CURDIR/latin1.c
+-browse-push -cursor=39 CURDIR/latin1.c
 end-of-options
 
 <sync>

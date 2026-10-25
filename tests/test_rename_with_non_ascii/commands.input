@@ -1,6 +1,6 @@
 CXREF -server
 -getproject CURDIR/source.c
 <sync>
--rfct-rename -renameto=f22 -olcursor=131 CURDIR/source.c
+-rfct-rename -renameto=f22 -cursor=131 CURDIR/source.c
 <sync>
 <exit>
