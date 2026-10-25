@@ -106,7 +106,7 @@ typedef struct options {
     int filterValue;                            /* REQUEST */
     ResolveDialog manualResolve;                /* REQUEST */
     int lineNumberOfMenuSelection;              /* REQUEST */
-    int olineLen;                               /* REQUEST */
+    int lineLength;                               /* REQUEST */
     int maxCompletions;                         /* REQUEST */
     int index;                                  /* REQUEST */
 
@@ -117,11 +117,11 @@ typedef struct options {
     ExtractMode extractMode;                    /* REFACTORING */
     char *renameTo;                             /* REFACTORING */
     char *moveTargetFile;                       /* REFACTORING */
-    char *refactor_parameter_name;              /* REFACTORING */
-    char *refactor_parameter_value;             /* REFACTORING */
-    char *refactor_target_line;                 /* REFACTORING */
-    int parnum;                                 /* REFACTORING */
-    int parnum2;                                /* REFACTORING */
+    char *refactorParameterName;                /* REFACTORING */
+    char *refactorParameterValue;               /* REFACTORING */
+    char *refactorTargetLine;                   /* REFACTORING */
+    int parameterNumber;                        /* REFACTORING */
+    int toParameterNumber;                      /* REFACTORING */
     char *checkFileMovedFrom;                   /* REFACTORING */
     char *checkFileMovedTo;                     /* REFACTORING */
     int checkFirstMovedLine;                    /* REFACTORING */

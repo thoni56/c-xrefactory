@@ -1098,12 +1098,12 @@ static void checkThatParameterIsUnused(EditorMarker *marker, char *functionName,
 
 static void addParameter(EditorMarker *pos, char *fname, int argumentNumber, Usage usage) {
     if (isDefinitionOrDeclarationUsage(usage)) {
-        if (addStringAsParameter(pos, NULL, fname, argumentNumber, refactoringOptions.refactor_parameter_name) != -1)
+        if (addStringAsParameter(pos, NULL, fname, argumentNumber, refactoringOptions.refactorParameterName) != -1)
             // now check that there is no conflict
             if (isDefinitionUsage(usage))
                 checkThatParameterIsUnused(pos, fname, argumentNumber, CHECK_FOR_ADD_PARAM);
     } else {
-        addStringAsParameter(pos, NULL, fname, argumentNumber, refactoringOptions.refactor_parameter_value);
+        addStringAsParameter(pos, NULL, fname, argumentNumber, refactoringOptions.refactorParameterValue);
     }
 }
 
@@ -1319,8 +1319,8 @@ void serverPerformRefactoring(void) {
     case AVR_DEL_PARAMETER:
     case AVR_MOVE_PARAMETER:
         progressFactor = 3;
-        parameterManipulation(point, refactoringOptions.theRefactoring, refactoringOptions.parnum,
-                              refactoringOptions.parnum2);
+        parameterManipulation(point, refactoringOptions.theRefactoring, refactoringOptions.parameterNumber,
+                              refactoringOptions.toParameterNumber);
         break;
     case AVR_RENAME_MODULE:
     case AVR_RENAME_INCLUDED_FILE:

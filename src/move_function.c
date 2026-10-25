@@ -182,7 +182,7 @@ static EditorMarker *getTargetFromOptions(void) {
     if (targetBuffer == NULL)
         FATAL_ERROR(ERR_ST, "Could not find a buffer for target position", EXIT_FAILURE);
     target = newEditorMarker(targetBuffer, 0);
-    sscanf(refactoringOptions.refactor_target_line, "%d", &targetLine);
+    sscanf(refactoringOptions.refactorTargetLine, "%d", &targetLine);
     moveEditorMarkerToLineAndColumn(target, targetLine, 0);
     return target;
 }

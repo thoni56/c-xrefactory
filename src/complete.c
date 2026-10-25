@@ -83,12 +83,12 @@ static void formatFullCompletions(char *tt, int indent, int inipos) {
     int pos;
     char *nlpos, *p;
 
-    log_trace("formatting '%s' indent==%d, inipos==%d, linelen==%d" ,tt, indent, inipos, options.olineLen);
+    log_trace("formatting '%s' indent==%d, inipos==%d, linelen==%d" ,tt, indent, inipos, options.lineLength);
     pos = inipos;
     nlpos=NULL;
     p = tt;
     for (;;) {
-        while (pos<options.olineLen || nlpos==NULL) {
+        while (pos<options.lineLength || nlpos==NULL) {
             p++; pos++;
             if (*p == 0)
                 goto formatFullCompletionsEnd;
@@ -239,8 +239,8 @@ void printCompletions(Completions *completions) {
     }
 
     indent = completions->maxLen;
-    if (options.olineLen - indent < MIN_COMPLETION_INDENT_REST) {
-        indent = options.olineLen - MIN_COMPLETION_INDENT_REST;
+    if (options.lineLength - indent < MIN_COMPLETION_INDENT_REST) {
+        indent = options.lineLength - MIN_COMPLETION_INDENT_REST;
         if (indent < MIN_COMPLETION_INDENT) indent = MIN_COMPLETION_INDENT;
     }
     if (indent > MAX_COMPLETION_INDENT)

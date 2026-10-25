@@ -1751,13 +1751,13 @@ static void printSearchResults(void) {
         ls = createSearchLine_static(m->name, fileNumberOfReference(m->reference),
                                    &len1, &len2);
     }
-    if (options.olineLen >= 50000) {
+    if (options.lineLength >= 50000) {
         /* TODO: WTF? 50k??!?! */
         if (len1 > MAX_TAG_SEARCH_INDENT)
             len1 = MAX_TAG_SEARCH_INDENT;
     } else {
-        if (len1 > (options.olineLen*MAX_TAG_SEARCH_INDENT_RATIO)/100) {
-            len1 = (options.olineLen*MAX_TAG_SEARCH_INDENT_RATIO)/100;
+        if (len1 > (options.lineLength*MAX_TAG_SEARCH_INDENT_RATIO)/100) {
+            len1 = (options.lineLength*MAX_TAG_SEARCH_INDENT_RATIO)/100;
         }
     }
     len = len1;

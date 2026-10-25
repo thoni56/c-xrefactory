@@ -595,7 +595,7 @@ Ensure(Options, can_parse_parameter_name_option) {
     ArgumentsVector args = {2, arguments};
 
     processOptions(args, false);
-    assert_that(options.refactor_parameter_name, is_equal_to_string("int arg"));
+    assert_that(options.refactorParameterName, is_equal_to_string("int arg"));
 }
 
 Ensure(Options, can_parse_parameter_value_option) {
@@ -603,7 +603,7 @@ Ensure(Options, can_parse_parameter_value_option) {
     ArgumentsVector args = {2, arguments};
 
     processOptions(args, false);
-    assert_that(options.refactor_parameter_value, is_equal_to_string("42"));
+    assert_that(options.refactorParameterValue, is_equal_to_string("42"));
 }
 
 Ensure(Options, can_parse_target_line_option) {
@@ -611,7 +611,7 @@ Ensure(Options, can_parse_target_line_option) {
     ArgumentsVector args = {2, arguments};
 
     processOptions(args, false);
-    assert_that(options.refactor_target_line, is_equal_to_string("99"));
+    assert_that(options.refactorTargetLine, is_equal_to_string("99"));
 }
 
 /* When asked to collect file arguments, the parser must route bare path tokens

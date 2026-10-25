@@ -79,7 +79,7 @@ Options presetOptions = {
     .filterValue = 0,
     .manualResolve = RESOLVE_DIALOG_DEFAULT,
     .lineNumberOfMenuSelection = 0,
-    .olineLen = 79,
+    .lineLength = 79,
     .maxCompletions = MAX_COMPLETIONS,
     .index = 0,
 
@@ -90,11 +90,11 @@ Options presetOptions = {
     .extractMode = 0,
     .renameTo = NULL,
     .moveTargetFile = NULL,
-    .refactor_parameter_name = "",
-    .refactor_parameter_value = "",
-    .refactor_target_line = "",
-    .parnum = 0,
-    .parnum2 = 0,
+    .refactorParameterName = "",
+    .refactorParameterValue = "",
+    .refactorTargetLine = "",
+    .parameterNumber = 0,
+    .toParameterNumber = 0,
     .checkFileMovedFrom = NULL,
     .checkFileMovedTo = NULL,
     .checkFirstMovedLine = 0,
@@ -1147,10 +1147,10 @@ static bool processLOption(int *argi, ArgumentsVector args) {
         ;                       /* Already handled in initLogging() */
     }
     else if (strncmp(args.argv[i], "-line-length=",13)==0) {
-        sscanf(args.argv[i]+13, "%d",&options.olineLen);
-        if (options.olineLen == 0)
-            options.olineLen = 79;
-        else options.olineLen--;
+        sscanf(args.argv[i]+13, "%d",&options.lineLength);
+        if (options.lineLength == 0)
+            options.lineLength = 79;
+        else options.lineLength--;
     }
     else return false;
     *argi = i;
@@ -1244,8 +1244,8 @@ static bool processPOption(int *argi, ArgumentsVector args) {
         options.progressUnthrottled = true;
     }
     else if (strncmp(args.argv[i], "-parameter=",11)==0) {
-        options.parnum = 0;
-        sscanf(args.argv[i]+11, "%d", &options.parnum);
+        options.parameterNumber = 0;
+        sscanf(args.argv[i]+11, "%d", &options.parameterNumber);
     }
     else return false;
     *argi = i;
@@ -1335,13 +1335,13 @@ static bool processROption(int *argi, ArgumentsVector args) {
         options.serverOperation = OP_REFACTORY;
     }
     else if (strncmp(args.argv[i], "-rfct-parameter-name=", 21)==0)  {
-        options.refactor_parameter_name = allocateStringForOption(&options.refactor_parameter_name, args.argv[i]+21);
+        options.refactorParameterName = allocateStringForOption(&options.refactorParameterName, args.argv[i]+21);
     }
     else if (strncmp(args.argv[i], "-rfct-parameter-value=", 22)==0)  {
-        options.refactor_parameter_value = allocateStringForOption(&options.refactor_parameter_value, args.argv[i]+22);
+        options.refactorParameterValue = allocateStringForOption(&options.refactorParameterValue, args.argv[i]+22);
     }
     else if (strncmp(args.argv[i], "-rfct-target-line=", 18)==0)  {
-        options.refactor_target_line = allocateStringForOption(&options.refactor_target_line, args.argv[i]+18);
+        options.refactorTargetLine = allocateStringForOption(&options.refactorTargetLine, args.argv[i]+18);
     }
     else if (strcmp(args.argv[i], "-resolve-dialog=always")==0) {
         options.manualResolve = RESOLVE_DIALOG_ALWAYS;
@@ -1408,8 +1408,8 @@ static bool processTOption(int *argi, ArgumentsVector args) {
         /* -trace already handled in initLogging() */
     }
     else if (strncmp(args.argv[i], "-to-parameter=",14)==0) {
-        options.parnum2 = 0;
-        sscanf(args.argv[i]+14, "%d", &options.parnum2);
+        options.toParameterNumber = 0;
+        sscanf(args.argv[i]+14, "%d", &options.toParameterNumber);
     }
     else return false;
     *argi = i;

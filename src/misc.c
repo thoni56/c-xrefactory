@@ -656,7 +656,7 @@ void formatOutputLine(char *line, int startingColumn) {
     assert(options.tabulator>1);
     p = line;
     for (;;) {
-        while (pos<options.olineLen || nlp==NULL) {
+        while (pos<options.lineLength || nlp==NULL) {
             if (*p == 0)
                 return;
             if (*p == ' ')
