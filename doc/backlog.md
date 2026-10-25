@@ -175,6 +175,22 @@ every push, `After` dashed and `Goes with` not at all, linked at the end of this
     A step towards #3's pure `parseCommandLine()` (Mac, session `4839a129`, 2026-10-21).
     After: startup-command-line
     Goes with: partition-options
+- (#78) <a id="options-carry-scope"></a>**Each option carries its scope, and `processOptions` refuses one outside it** — *no repo home yet.*
+    Every source goes through the same `processOptions()` and every option is accepted
+    from all of them. The sources are three contexts: startup (`mainTaskEntryInitialisations()`),
+    project (the config read in `getAndProcessProjectConfig()`, `applyOptionSet()`, and an
+    `-optinclude`, which takes the context it appears in) and request (`initServer()`, and
+    the bridge in `refactory.c` until #9). These are #3's lifetimes, which `options.h`
+    already marks per field as SESSION, PROJECT and REQUEST.
+    `processOptions()` takes the context instead of the `ProcessFileArguments` flag that
+    #75 removes, and an option's entry states where it is allowed, e.g. a `-server` in
+    `.c-xrefrc` is reported, with its position, through the channel #77 gives config
+    messages. #7 decides the startup column. The replays in `loadProjectSettings()` and
+    `initializeFileProcessing()` are not a context, they go with #3.
+    Test first: an `options_tests.c` case where a request-only option in the project
+    context is refused (WSL, session `d25255b8`, 2026-10-25).
+    After: bare-words-returned
+    Goes with: partition-options, startup-command-line, config-syntax-messages
 - (#9) <a id="remove-bridge"></a>**Remove the `parseBufferUsingServer` bridge** — §17.3; 9 refactoring call sites
    re-entering `callServer`. Independent of the rest of this section, but it is the last
    divergent parse path. `-olexmacro` and `-olexvariable` only exist for it and go with it.
