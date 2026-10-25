@@ -5,7 +5,7 @@
 <meta http-equiv="X-UA-Compatible" content="IE=edge">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <meta name="generator" content="Asciidoctor 2.0.26">
-<meta name="author" content="v{VERSION} - Generated 2026-10-22">
+<meta name="author" content="v{VERSION} - Generated 2026-10-25">
 <title>C-xrefactory - a C/Yacc refactoring and code browsing tool - Design Documentation</title>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Open+Sans:300,300italic,400,400italic,600,600italic%7CNoto+Serif:400,400italic,700,700italic%7CDroid+Sans+Mono:400,700">
 <style>
@@ -441,7 +441,7 @@ body.book #toc,body.book #preamble,body.book h1.sect0,body.book .sect1>h2{page-b
 <div id="header">
 <h1>C-xrefactory - a C/Yacc refactoring and code browsing tool - Design Documentation</h1>
 <div class="details">
-<span id="author" class="author">v{VERSION} - Generated 2026-10-22</span><br>
+<span id="author" class="author">v{VERSION} - Generated 2026-10-25</span><br>
 </div>
 <div id="toc" class="toc2">
 <div id="toctitle">Table of Contents</div>
@@ -2302,7 +2302,7 @@ the <code>-preload</code> option to transmit modified buffers:</p>
 </div>
 <div class="listingblock">
 <div class="content">
-<pre>-olcxnext -olcursor=5 /project/foo.c -preload /project/foo.c /tmp/emacs-xxx.tmp</pre>
+<pre>-browse-next -cursor=5 /project/foo.c -preload /project/foo.c /tmp/emacs-xxx.tmp</pre>
 </div>
 </div>
 <div class="paragraph">
@@ -3790,7 +3790,7 @@ snapshot. Three runs, within 0.15s of each other:</p>
 <p><code>-getproject</code> 0.7s.</p>
 </li>
 <li>
-<p><code>-push</code> 10.0s: 1.0s until the first progress record (scan, include graph, collecting
+<p><code>-browse-push</code> 10.0s: 1.0s until the first progress record (scan, include graph, collecting
 what to build), then one round, "Analysing 128 of 1567 files", about 65ms per
 compilation unit. The answer is the definition, <code>af_afir.h:98</code>. Peak memory 25MB.</p>
 </li>
@@ -5405,7 +5405,7 @@ intent while the server&#8217;s entry refresh and parsing machinery runs with it
 <div class="olist arabic">
 <ol class="arabic">
 <li>
-<p>Editor sends <code>-rfct-rename -renameto=NEW_NAME -olcursor=POSITION FILE</code></p>
+<p>Editor sends <code>-rfct-rename -renameto=NEW_NAME -cursor=POSITION FILE</code></p>
 </li>
 <li>
 <p>Server parses the file to identify the symbol at the cursor</p>
@@ -6584,13 +6584,13 @@ ppmReallocc(buffer, ...);     // ❌ FAILS - buffer not at top</code></pre>
 <div class="olist arabic">
 <ol class="arabic">
 <li>
-<p><strong>Push</strong>: When user requests symbol references (e.g., <code>-olcxpush</code>), a new empty entry is created on the stack</p>
+<p><strong>Push</strong>: When user requests symbol references (e.g., <code>-browse-push</code>), a new empty entry is created on the stack</p>
 </li>
 <li>
 <p><strong>Population</strong>: After parsing, the entry is filled with <code>BrowsingMenu</code> structures containing references</p>
 </li>
 <li>
-<p><strong>Navigation</strong>: Commands like <code>-olcxnext</code> and <code>-olcxprevious</code> move through references in the current entry</p>
+<p><strong>Navigation</strong>: Commands like <code>-browse-next</code> and <code>-browse-previous</code> move through references in the current entry</p>
 </li>
 <li>
 <p><strong>Pop</strong>: User can pop back to previous entries to return to earlier symbol lookups</p>
@@ -6870,8 +6870,8 @@ name to rename to which is sent in the <code>renameto=</code> option, which is
 argparsed and stored in the option structure.</p>
 </div>
 <div class="paragraph">
-<p>Some of these extra arguments are fairly random, like <code>-olcxparnum=</code>
-and <code>-olcxparnum2=</code>. This should be cleaned up.</p>
+<p>Some of these extra arguments are fairly random, like <code>-parameter=</code>
+and <code>-to-parameter=</code>. This should be cleaned up.</p>
 </div>
 <div class="paragraph">
 <p>A move towards "events" with arguments would be helpful. This would
@@ -7661,12 +7661,12 @@ something like (from the read_xrefs test case):</p>
 </div>
 <div class="literalblock">
 <div class="content">
-<pre>-encoding=european -olcxpush -urldirect  "-preload" "&lt;file&gt;" "-olmark=0" "-olcursor=6" "&lt;file&gt;" -p "&lt;project&gt;"
+<pre>-encoding=european -browse-push -urldirect  "-preload" "&lt;file&gt;" "-mark=0" "-cursor=6" "&lt;file&gt;" -p "&lt;project&gt;"
 end-of-options</pre>
 </div>
 </div>
 <div class="paragraph">
-<p>In this case the "-olcxpush" is the operative command which results in
+<p>In this case the "-browse-push" is the operative command which results in
 the following output</p>
 </div>
 <div class="literalblock">
@@ -7700,7 +7700,7 @@ the option handling.</p>
 <p><strong><em>Rename Example</em></strong></p>
 </div>
 <div class="paragraph">
-<p><strong>Invocation:</strong> <code>-rfct-rename -renameto=NEW_NAME -olcursor=POSITION FILE</code></p>
+<p><strong>Invocation:</strong> <code>-rfct-rename -renameto=NEW_NAME -cursor=POSITION FILE</code></p>
 </div>
 <div class="paragraph">
 <p><strong>Result:</strong> A sequence of precheck/replacement pairs:</p>
@@ -8371,7 +8371,7 @@ exist. Emacs keeps one tmp file per buffer and rewrites it for each request, so 
 last content of a buffer is left to copy, and every request in the conversion gets that.
 With <code>--strip-preloads</code> it removes them instead, and then you need to take care
 that the positions inside the buffers are not changed between interactions lest the
-<code>-olcursor</code> and <code>-olmark</code> will be wrong. (You can just undo the change after a
+<code>-cursor</code> and <code>-mark</code> will be wrong. (You can just undo the change after a
 refactoring or rename). Of course this also applies if you want to mimic a sequence of
 refactorings.
 </td>
@@ -9344,7 +9344,7 @@ result.valid = parsedInfo.moveTargetAccepted;</code></pre>
 <p><strong>Request</strong> — per-operation: <code>serverOperation</code>, cursor/mark offsets, input/output filenames, filter strings.</p>
 </li>
 <li>
-<p><strong>Refactoring</strong> — spans multiple internal requests: <code>theRefactoring</code>, <code>renameTo</code>, <code>parnum</code>/<code>parnum2</code>, <code>moveTargetFile</code>, refactoring-level <code>cursorOffset</code>/<code>markOffset</code>.</p>
+<p><strong>Refactoring</strong> — spans multiple internal requests: <code>theRefactoring</code>, <code>renameTo</code>, <code>parameterNumber</code>/<code>toParameterNumber</code>, <code>moveTargetFile</code>, refactoring-level <code>cursorOffset</code>/<code>markOffset</code>.</p>
 </li>
 </ul>
 </div>
@@ -9405,6 +9405,10 @@ result.valid = parsedInfo.moveTargetAccepted;</code></pre>
 </div>
 <div class="paragraph">
 <p>No globals mutated, no output files opened, no pass flags flipped. The dispatcher decides what side effects to run based on the returned <code>Request</code>. Each operation gets a typed struct — a tagged union or base struct with per-operation extensions — so the dispatch switch reads typed fields instead of guessing which <code>Options</code> fields are meaningful for which operation.</p>
+</div>
+<div class="paragraph">
+<p><code>options.index</code> is one such field, the <code>=N</code> of seven options with three meanings: where to go in a list (<code>-browse-goto=</code>, <code>-completion-goto=</code>, <code>-search-goto=</code>), which item to select (<code>-completion-select=</code>, <code>-search-select=</code>), and a parameter number (<code>-internal-parse-to-goto-param-name=</code>, <code>-internal-parse-to-get-param-coordinates=</code>).
+With typed requests each of them gets its own field, and the parameter number is probably the same thing as <code>parameterNumber</code> (<code>-parameter=</code>).</p>
 </div>
 <div class="paragraph">
 <p>The refactoring coordinator holds its own long-lived <code>RefactoringRequest</code> (the current <code>refactoringOptions</code> content, but owned by the coordinator, not a shadow global). Sub-operations construct their own fresh <code>Request</code> structs via normal parsing; the coordinator&#8217;s state is safe because it lives elsewhere. <code>refactoringOptions</code> disappears. The save/restore sites disappear — each tier has one owner, and nothing trampled means nothing to restore.</p>
@@ -9905,7 +9909,7 @@ Before that it would move three passes into a module where they are about to bec
 <div class="sect3">
 <h4 id="_problem_statement_5">16.8.1. Problem Statement</h4>
 <div class="paragraph">
-<p>Server operations use the prefix <code>olcx</code> (likely "on-line cross-references"), a legacy abbreviation that conveys no meaning to anyone reading the code or protocol today. Option names like <code>-olcxpush</code>, <code>-olcxtagsearch</code>, <code>-getproject are opaque compared to what they could be: `-push</code>, <code>-search</code>, <code>-get-project-name</code>.</p>
+<p>Server operations use the prefix <code>olcx</code> (likely "on-line cross-references"), a legacy abbreviation that conveys no meaning to anyone reading the code or protocol today. Option names like <code>-olcxpush</code>, <code>-olcxtagsearch</code>, <code>-olcxpushname</code> are opaque compared to what they could be: <code>-browse-push</code>, <code>-browse-push-name</code>.</p>
 </div>
 <div class="paragraph">
 <p>The word "tag" in search-related names (<code>-olcxtagsearch</code>, <code>c-xref-search-in-tag-file</code>, <code>c-xref-tag-results-buffer</code>) is a leftover from <code>ctags</code> and friends. There is no ctags compatibility — the term is purely misleading. The two menu entries "Search Definition in Tags" and "Search Symbol" both trigger the same <code>OP_SEARCH</code> operation, differing only in a filter flag (<code>-searchdef</code>). The word "tag" suggests they are fundamentally different, when they are not.</p>
@@ -9917,7 +9921,8 @@ Before that it would move three passes into a module where they are about to bec
 <p>The rename touches three layers:</p>
 </div>
 <div class="paragraph">
-<p><strong>Protocol options</strong> (server C code + Emacs client): ~60 operations prefixed with <code>-olcx*</code> in <code>options.c</code>. These become plain descriptive names: <code>-push</code>, <code>-pop</code>, <code>-goto</code>, <code>-complete</code>, <code>-search</code>, <code>-rename</code>, <code>-extract</code>, <code>-filter</code>, <code>-get-project-name</code>, etc.</p>
+<p><strong>Protocol options</strong> (server C code + Emacs client): the <code>-ol*</code> options in <code>options.c</code>, and what sends them, i.e. <code>c-xref.el</code>, <code>refactory.c</code> and the <code>commands.input</code> of the system tests.
+The old copies of c-xrefactory&#8217;s sources under <code>tests/*/</code> are test data and are not touched.</p>
 </div>
 <div class="paragraph">
 <p><strong>Emacs function and variable names</strong>: Functions like <code>c-xref-search-in-tag-file</code>, <code>c-xref-get-tags</code>, <code>c-xref-interactive-tag-search-*</code> and variables like <code>c-xref-tag-results-buffer</code>, <code>c-xref-tag-search-mode-map</code>.</p>
@@ -9929,7 +9934,22 @@ Before that it would move three passes into a module where they are about to bec
 <div class="sect3">
 <h4 id="_design_decisions">16.8.3. Design Decisions</h4>
 <div class="paragraph">
-<p><strong>Shortest clear name</strong>: Prefer <code>-push</code> over <code>-browse-push</code>. Stack operations (push, pop) are domain concepts — without understanding them you can&#8217;t understand browsing anyway. No grouping prefix needed.</p>
+<p><strong>The option is named after its operation</strong>: the enum name without <code>OP_</code>, in lower case, with hyphens between the words.
+<code>OP_BROWSE_NEXT</code> is <code>-browse-next</code>, <code>OP_SEARCH_PREVIOUS</code> is <code>-search-previous</code>.
+So there is no "forward" and "back", only "next" and "previous", as in the enum.
+This replaces an earlier decision to prefer the shortest clear name (<code>-push</code> over <code>-browse-push</code>).</p>
+</div>
+<div class="paragraph">
+<p><strong>A value comes after <code>=</code></strong>: <code>-browse-goto=2</code>, not <code>-olcxgoto2</code>.
+The options that glued the number on were matched as prefixes, so their order in the parser mattered and grep could not find them.</p>
+</div>
+<div class="paragraph">
+<p><strong>An option that sets no operation is named after what it sets</strong>: <code>-cursor=</code> for <code>cursorOffset</code>.
+An option that selects one of an enum takes the value, <code>-resolve-dialog=never</code> for <code>RESOLVE_DIALOG_NEVER</code>.</p>
+</div>
+<div class="paragraph">
+<p><strong>Where the enum is the odd one, the enum changes</strong>: <code>OP_UNUSED_LOCAL</code> and <code>OP_UNUSED_GLOBAL</code> are "in File" and "in Project" in the menu, so they become <code>OP_UNUSED_IN_FILE</code> and <code>OP_UNUSED_IN_PROJECT</code>.
+<code>OP_FILTER_PLUS</code>, <code>OP_FILTER_MINUS</code>, <code>OP_MENU_FILTER_PLUS</code>, <code>OP_MENU_FILTER_MINUS</code> and <code>OP_ORGANIZE_INCLUDES</code> are never set and go, and then <code>OP_FILTER_SET</code> and <code>OP_MENU_FILTER_SET</code> are just <code>OP_FILTER</code> and <code>OP_MENU_FILTER</code>.</p>
 </div>
 <div class="paragraph">
 <p><strong>Two kinds of filter</strong>: The browsing UI has two filter concepts that should remain distinct:</p>
@@ -9945,22 +9965,299 @@ Before that it would move three passes into a module where they are about to bec
 </ul>
 </div>
 <div class="paragraph">
-<p>These could become <code>-reference-filter</code> and <code>-symbol-filter</code> for extra clarity, but <code>-filter</code> and <code>-menu-filter</code> are adequate.</p>
-</div>
-<div class="paragraph">
 <p><strong>No compatibility shim needed</strong>: Distribution is via git repo updates, and the Emacs <code>upgrade</code> menu entry kills the server, reloads elisp, and starts a new server on the next operation. Old and new never need to coexist.</p>
 </div>
 </div>
 <div class="sect3">
-<h4 id="_implementation">16.8.4. Implementation</h4>
+<h4 id="_the_names">16.8.4. The Names</h4>
 <div class="paragraph">
-<p>Support both old and new names in the option parser temporarily (two <code>strcmp</code> entries per option). Rename everywhere else (client, tests, docs). Remove the old names in a later commit. This eliminates any breakage window.</p>
+<p>Operations the client sends:</p>
+</div>
+<table class="tableblock frame-all grid-all stretch">
+<colgroup>
+<col style="width: 25%;">
+<col style="width: 37.5%;">
+<col style="width: 37.5%;">
+</colgroup>
+<thead>
+<tr>
+<th class="tableblock halign-left valign-top">Now</th>
+<th class="tableblock halign-left valign-top">Operation</th>
+<th class="tableblock halign-left valign-top">New</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>-push</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>OP_BROWSE_PUSH</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>-browse-push</code></p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>-olcxpushonly</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>OP_BROWSE_PUSH_ONLY</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>-browse-push-only</code></p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>-olcxpushname=</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>OP_BROWSE_PUSH_NAME</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>-browse-push-name=</code></p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>-olcxpushandcallmacro</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>OP_BROWSE_PUSH_AND_CALL_MACRO</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>-browse-push-and-call-macro</code></p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>-olcxrepush</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>OP_BROWSE_REPUSH</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>-browse-repush</code></p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>-olcxpop</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>OP_BROWSE_POP</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>-browse-pop</code></p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>-olcxpoponly</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>OP_BROWSE_POP_ONLY</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>-browse-pop-only</code></p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>-olcxgoto</code> <em>N</em></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>OP_BROWSE_GOTO_N</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>-browse-goto=</code> <em>N</em></p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>-olcxcomplet</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>OP_COMPLETION</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>-completion</code></p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>-olcomplforward</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>OP_COMPLETION_NEXT</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>-completion-next</code></p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>-olcomplback</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>OP_COMPLETION_PREVIOUS</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>-completion-previous</code></p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>-olcomplselect</code> <em>N</em></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>OP_COMPLETION_SELECT</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>-completion-select=</code> <em>N</em></p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>-olcxcgoto</code> <em>N</em></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>OP_COMPLETION_GOTO_N</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>-completion-goto=</code> <em>N</em></p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>-olcxsearchforward</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>OP_SEARCH_NEXT</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>-search-next</code></p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>-olcxsearchback</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>OP_SEARCH_PREVIOUS</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>-search-previous</code></p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>-olcxsearchgoto</code> <em>N</em></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>OP_SEARCH_GOTO_N</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>-search-goto=</code> <em>N</em></p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>-olcxsearchselect</code> <em>N</em></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>OP_SEARCH_SELECT</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>-search-select=</code> <em>N</em></p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>-olcxfilter=</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>OP_FILTER</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>-filter=</code></p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>-olcxmenufilter=</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>OP_MENU_FILTER</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>-menu-filter=</code></p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>-olcxmenuselect</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>OP_MENU_TOGGLE_SELECT</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>-menu-toggle-select</code></p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>-olcxmenusingleselect</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>OP_MENU_SELECT_ONLY</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>-menu-select-only</code></p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>-olcxmenuall</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>OP_MENU_SELECT_ALL</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>-menu-select-all</code></p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>-olcxmenunone</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>OP_MENU_SELECT_NONE</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>-menu-select-none</code></p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>-olcxpushglobalunused</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>OP_UNUSED_IN_PROJECT</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>-unused-in-project</code></p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>-olcxpushfileunused</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>OP_UNUSED_IN_FILE</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>-unused-in-file</code></p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>-olcxgetrefactorings</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>OP_GET_AVAILABLE_REFACTORINGS</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>-get-available-refactorings</code></p></td>
+</tr>
+</tbody>
+</table>
+<div class="paragraph">
+<p>Operations only <code>refactory.c</code> sends, to its own server:</p>
+</div>
+<table class="tableblock frame-all grid-all stretch">
+<colgroup>
+<col style="width: 25%;">
+<col style="width: 37.5%;">
+<col style="width: 37.5%;">
+</colgroup>
+<thead>
+<tr>
+<th class="tableblock halign-left valign-top">Now</th>
+<th class="tableblock halign-left valign-top">Operation</th>
+<th class="tableblock halign-left valign-top">New</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>-olcxrename</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>OP_INTERNAL_PUSH_FOR_RENAME</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>-internal-push-for-rename</code></p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>-olcxargmanip</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>OP_INTERNAL_PUSH_FOR_ARGUMENT_MANIPULATION</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>-internal-push-for-argument-manipulation</code></p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>-olcxpushforusagecheck</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>OP_INTERNAL_PUSH_FOR_USAGE_CHECK</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>-internal-push-for-usage-check</code></p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>-olcxsafetycheck</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>OP_INTERNAL_SAFETY_CHECK</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>-internal-safety-check</code></p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>-olcxextract</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>OP_INTERNAL_PARSE_TO_EXTRACT</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>-internal-parse-to-extract</code></p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>-olcxgotoparname</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>OP_INTERNAL_PARSE_TO_GOTO_PARAM_NAME</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>-internal-parse-to-goto-param-name</code></p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>-olcxgetparamcoord</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>OP_INTERNAL_PARSE_TO_GET_PARAM_COORDINATES</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>-internal-parse-to-get-param-coordinates</code></p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>-olcxmovetarget</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>OP_INTERNAL_PARSE_TO_SET_MOVE_TARGET</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>-internal-parse-to-set-move-target</code></p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>-olcxgetfunctionbounds</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>OP_INTERNAL_GET_FUNCTION_BOUNDS</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>-internal-get-function-bounds</code></p></td>
+</tr>
+</tbody>
+</table>
+<div class="paragraph">
+<p>Options that set no operation:</p>
+</div>
+<table class="tableblock frame-all grid-all stretch">
+<colgroup>
+<col style="width: 25%;">
+<col style="width: 37.5%;">
+<col style="width: 37.5%;">
+</colgroup>
+<thead>
+<tr>
+<th class="tableblock halign-left valign-top">Now</th>
+<th class="tableblock halign-left valign-top">Sets</th>
+<th class="tableblock halign-left valign-top">New</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>-olcursor=</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>cursorOffset</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>-cursor=</code></p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>-olmark=</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>markOffset</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>-mark=</code></p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>-olcxlccursor=</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>cursorLineColumn</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>-cursor-line-column=</code></p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>-olinelen=</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>lineLength</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>-line-length=</code></p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>-olcxparnum=</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>parameterNumber</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>-parameter=</code></p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>-olcxparnum2=</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>toParameterNumber</code>, where Move Parameter moves it to</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>-to-parameter=</code></p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>-olmanualresolve</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>manualResolve = RESOLVE_DIALOG_ALWAYS</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>-resolve-dialog=always</code></p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>-olnodialog</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>manualResolve = RESOLVE_DIALOG_NEVER</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>-resolve-dialog=never</code></p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>-olexmacro</code>, <code>-olexvariable</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>extractMode</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">none, they go with the bridge</p></td>
+</tr>
+</tbody>
+</table>
+<div class="paragraph">
+<p><code>-olexmacro</code> and <code>-olexvariable</code> are how <code>refactory.c</code> tells its own parse which extraction it is, through the <code>parseBufferUsingServer</code> bridge.
+Extract Function is the default, so it has none.
+They should go with the bridge (§17.3, backlog #9), when <code>refactory.c</code> can set <code>parsingConfig.extractMode</code> itself.</p>
 </div>
 </div>
 <div class="sect3">
-<h4 id="_priority">16.8.5. Priority</h4>
+<h4 id="_implementation">16.8.5. Implementation</h4>
 <div class="paragraph">
-<p>Low urgency, high value for readability. Can be done incrementally — start with the "tag" removal (search-related names only), then expand to the full <code>olcx</code> rename later.</p>
+<p>One group at a time, the parser and everything that sends the option in the same commit.
+A test checks that every option <code>c-xref.el</code> sends is one the server accepts, since the system tests only exercise the client through <code>commands.input</code>.</p>
 </div>
 </div>
 </div>
@@ -10089,7 +10386,7 @@ Each entry describes symptoms, analysis (when available), and suspected root cau
 <p><strong>Cause:</strong> <code>collectCUsIncluding()</code> (<code>src/server.c</code>) stops collecting at <code>MAX_CUS_TO_REPARSE</code> (128) and stops widening the reverse-include frontier at <code>MAX_INCLUDE_WALK_FILES</code> (256). A refactoring push is in <code>needsReferenceDatabase</code> but not in <code>needsWholeProjectParsed</code>, so it takes whatever entry refresh has parsed. Past the cap that is a subset.</p>
 </div>
 <div class="paragraph">
-<p><strong>Measured 2026-09-22</strong> on <code>tests/test_ffmpeg</code>, one cold <code>-push</code> on <code>avcodec_open2</code> where it is declared in <code>avcodec.h</code>, which 713 <code>.c</code> files include:</p>
+<p><strong>Measured 2026-09-22</strong> on <code>tests/test_ffmpeg</code>, one cold <code>-browse-push</code> on <code>avcodec_open2</code> where it is declared in <code>avcodec.h</code>, which 713 <code>.c</code> files include:</p>
 </div>
 <table class="tableblock frame-all grid-all stretch">
 <colgroup>
@@ -12459,7 +12756,7 @@ operation reads the in-memory table.</p>
 </div>
 <div id="footer">
 <div id="footer-text">
-Last updated 2026-10-22 21:57:58 UTC
+Last updated 2026-10-25 14:14:17 UTC
 </div>
 </div>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.18.3/highlight.min.js"></script>
