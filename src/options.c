@@ -1046,7 +1046,7 @@ static bool processFOption(int *argi, ArgumentsVector args) {
         options.fileNamesCaseSensitive = false;
     }
     else if (strncmp(args.argv[i], "-filter=",8)==0) {
-        options.serverOperation = OP_FILTER_SET;
+        options.serverOperation = OP_FILTER;
         sscanf(args.argv[i]+8, "%d",&options.filterValue);
     }
     else return false;
@@ -1186,7 +1186,7 @@ static bool processMOption(int *argi, ArgumentsVector args) {
         options.serverOperation = OP_MENU_SELECT_NONE;
     }
     else if (strncmp(args.argv[i], "-menu-filter=",13)==0) {
-        options.serverOperation = OP_MENU_FILTER_SET;
+        options.serverOperation = OP_MENU_FILTER;
         sscanf(args.argv[i]+13, "%d",&options.filterValue);
     }
     else return false;
@@ -1420,9 +1420,9 @@ static bool processUOption(int *argi, ArgumentsVector args) {
     int i = * argi;
     if (0) {}
     else if (strcmp(args.argv[i], "-unused-in-project")==0)
-        options.serverOperation = OP_UNUSED_GLOBAL;
+        options.serverOperation = OP_UNUSED_IN_PROJECT;
     else if (strcmp(args.argv[i], "-unused-in-file")==0)
-        options.serverOperation = OP_UNUSED_LOCAL;
+        options.serverOperation = OP_UNUSED_IN_FILE;
     else return false;
     *argi = i;
     return true;

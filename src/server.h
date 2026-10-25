@@ -30,7 +30,7 @@
     ENUM(OP_DUMP)                                       \
     ENUM(OP_FILTER_MINUS)                               \
     ENUM(OP_FILTER_PLUS)                                \
-    ENUM(OP_FILTER_SET)                                 \
+    ENUM(OP_FILTER)                                     \
     ENUM(OP_GET_AVAILABLE_REFACTORINGS)                 \
     ENUM(OP_GET_ENV_VALUE)                              \
     ENUM(OP_INTERNAL_GET_FUNCTION_BOUNDS)               \
@@ -45,7 +45,7 @@
     ENUM(OP_INTERNAL_SAFETY_CHECK)                      \
     ENUM(OP_MENU_FILTER_MINUS)                          \
     ENUM(OP_MENU_FILTER_PLUS)                           \
-    ENUM(OP_MENU_FILTER_SET)                            \
+    ENUM(OP_MENU_FILTER)                                \
     ENUM(OP_MENU_SELECT_ALL)                            \
     ENUM(OP_MENU_SELECT_NONE)                           \
     ENUM(OP_MENU_SELECT_ONLY)                           \
@@ -57,8 +57,8 @@
     ENUM(OP_SEARCH_NEXT)                                \
     ENUM(OP_SEARCH_PREVIOUS)                            \
     ENUM(OP_SEARCH_SELECT)                              \
-    ENUM(OP_UNUSED_GLOBAL)                              \
-    ENUM(OP_UNUSED_LOCAL)                               \
+    ENUM(OP_UNUSED_IN_PROJECT)                          \
+    ENUM(OP_UNUSED_IN_FILE)                             \
 
 
 #if OP_NONE != 0

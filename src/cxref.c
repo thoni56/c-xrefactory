@@ -234,7 +234,7 @@ static void printAvailableRefactorings(void) {
 
 
 static bool operationRequiresOnlyParsingNoPushing(int operation) {
-    return operation==OP_UNUSED_GLOBAL || operation==OP_UNUSED_LOCAL;
+    return operation==OP_UNUSED_IN_PROJECT || operation==OP_UNUSED_IN_FILE;
 }
 
 static bool operationShouldUpdateCallerPosition(int operation) {
@@ -1061,7 +1061,7 @@ static void menuSelectAll(bool selected) {
 
     if (!sessionHasReferencesValidForOperation(&sessionEntry, CHECK_NULL_YES))
         return;
-    if (sessionEntry->operation == OP_UNUSED_GLOBAL) {
+    if (sessionEntry->operation == OP_UNUSED_IN_PROJECT) {
         ppcGenRecord(PPC_WARNING, "The browser does not display project unused symbols anymore");
     }
     for (BrowsingMenu *menu=sessionEntry->menu; menu!=NULL; menu=menu->next) {
@@ -1100,7 +1100,7 @@ static bool isRenameMenuSelection(int command) {
 
 static void setSelectedVisibleItems(BrowsingMenu *menu, ServerOperation command, int filterLevel) {
     unsigned selected, visible;
-    if (command == OP_UNUSED_GLOBAL) {
+    if (command == OP_UNUSED_IN_PROJECT) {
         splitBrowsingMenuAndMap(menu, selectUnusedSymbols, &filterLevel);
         return;
     }
@@ -1538,8 +1538,8 @@ static void printPushingAction(ServerOperation operation) {
             deleteEntryFromSessionStack(browsingStack.top);
         }
         break;
-    case OP_UNUSED_GLOBAL:
-    case OP_UNUSED_LOCAL:
+    case OP_UNUSED_IN_PROJECT:
+    case OP_UNUSED_IN_FILE:
         // no output for dead code detection ???
         break;
     case OP_INTERNAL_LIST:
@@ -1907,7 +1907,7 @@ void answerEditorAction(void) {
     case OP_BROWSE_REPUSH:
         rePush();
         break;
-    case OP_FILTER_SET:
+    case OP_FILTER:
         setFilter(options.filterValue);
         break;
     case OP_BROWSE_POP:
@@ -1951,7 +1951,7 @@ void answerEditorAction(void) {
     case OP_MENU_SELECT_NONE:
         menuSelectAll(false);
         break;
-    case OP_MENU_FILTER_SET:
+    case OP_MENU_FILTER:
         menuSelectAndSetFilter(options.filterValue);
         break;
 
@@ -2038,10 +2038,10 @@ void answerEditorAction(void) {
     }
 
         /* UNUSED */
-    case OP_UNUSED_GLOBAL:
+    case OP_UNUSED_IN_PROJECT:
         answerPushGlobalUnusedSymbolsAction();
         break;
-    case OP_UNUSED_LOCAL:
+    case OP_UNUSED_IN_FILE:
         answerPushLocalUnusedSymbolsAction();
         break;
 

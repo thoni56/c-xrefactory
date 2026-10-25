@@ -687,8 +687,8 @@ static void scanCxFileUsing(CxFileScanDispatchEntry *scanDispatchTable) {
     }
 
     /* TODO: This should be done outside this function... */
-    if (options.serverOperation==OP_UNUSED_LOCAL
-        || options.serverOperation==OP_UNUSED_GLOBAL) {
+    if (options.serverOperation==OP_UNUSED_IN_FILE
+        || options.serverOperation==OP_UNUSED_IN_PROJECT) {
         // check if last symbol was dead
         cxfileCheckLastSymbolDeadness();
     }

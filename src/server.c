@@ -60,8 +60,8 @@ static bool opensBrowsingSession(ServerOperation operation) {
         ||  operation==OP_GET_AVAILABLE_REFACTORINGS
         ||  operation==OP_BROWSE_PUSH_NAME
         ||  operation==OP_INTERNAL_PUSH_FOR_USAGE_CHECK
-        ||  operation==OP_UNUSED_GLOBAL
-        ||  operation==OP_UNUSED_LOCAL
+        ||  operation==OP_UNUSED_IN_PROJECT
+        ||  operation==OP_UNUSED_IN_FILE
         ||  operation==OP_INTERNAL_LIST
         ||  operation==OP_INTERNAL_PUSH_FOR_RENAME
         ||  operation==OP_INTERNAL_PUSH_FOR_ARGUMENT_MANIPULATION
@@ -75,7 +75,7 @@ static bool opensBrowsingSession(ServerOperation operation) {
    name can live in any compilation unit and all of them must be parsed. */
 static bool needsWholeProjectParsed(ServerOperation operation) {
     return operation==OP_SEARCH
-        ||  operation==OP_UNUSED_GLOBAL
+        ||  operation==OP_UNUSED_IN_PROJECT
         ||  operation==OP_BROWSE_PUSH_NAME
         ;
 }
@@ -83,7 +83,7 @@ static bool needsWholeProjectParsed(ServerOperation operation) {
 static const char *parseAllPromptFor(ServerOperation operation) {
     switch (operation) {
     case OP_SEARCH:           return "searching";
-    case OP_UNUSED_GLOBAL:    return "checking for unused";
+    case OP_UNUSED_IN_PROJECT:    return "checking for unused";
     case OP_BROWSE_PUSH_NAME: return "browsing";
     default:                  assert(0); return "";
     }
