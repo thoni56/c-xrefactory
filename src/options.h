@@ -69,7 +69,7 @@ typedef struct options {
     /* --- SESSION: Command line only, fixed for the server's lifetime --- */
     Mode mode;                                  /* SESSION */
     bool exit;                                  /* SESSION */
-    bool cxrefProtocol;                                 /* SESSION */
+    bool cxrefProtocol;                         /* SESSION */
     char *commandlog;                           /* SESSION */
     char *outputFileName;                       /* SESSION */
     bool errors;                                /* SESSION */
@@ -106,7 +106,7 @@ typedef struct options {
     int filterValue;                            /* REQUEST */
     ResolveDialog manualResolve;                /* REQUEST */
     int lineNumberOfMenuSelection;              /* REQUEST */
-    int lineLength;                               /* REQUEST */
+    int lineLength;                             /* REQUEST */
     int maxCompletions;                         /* REQUEST */
     int index;                                  /* REQUEST */
 
@@ -131,9 +131,9 @@ typedef struct options {
     /* --- INTERNAL: Bookkeeping, not user-facing --- */
     char *detectedProjectRoot;                  /* INTERNAL */
     int variablesCount;                         /* INTERNAL */
-    Variable variables[MAX_SET_GET_OPTIONS];     /* INTERNAL */
-    LocationList *allUsedStringOptions;          /* INTERNAL */
-    LocationList *allUsedStringListOptions;      /* INTERNAL */
+    Variable variables[MAX_SET_GET_OPTIONS];    /* INTERNAL */
+    LocationList *allUsedStringOptions;         /* INTERNAL */
+    LocationList *allUsedStringListOptions;     /* INTERNAL */
     Memory memory;                              /* INTERNAL */
 } Options;
 

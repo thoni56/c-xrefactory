@@ -383,7 +383,7 @@ The `Options` struct is one global blob serving four distinct lifetimes:
 * **Session** — set once at server startup: xrefrc path, debug/log config, compiler discovery, default options.
 * **Project** — discovered on project load: project root, include paths, source dirs, compiler include closure.
 * **Request** — per-operation: `serverOperation`, cursor/mark offsets, input/output filenames, filter strings.
-* **Refactoring** — spans multiple internal requests: `theRefactoring`, `renameTo`, `parnum`/`parnum2`, `moveTargetFile`, refactoring-level `cursorOffset`/`markOffset`.
+* **Refactoring** — spans multiple internal requests: `theRefactoring`, `renameTo`, `parameterNumber`/`toParameterNumber`, `moveTargetFile`, refactoring-level `cursorOffset`/`markOffset`.
 
 Session and Project are tangled in time as well as in the struct. Process start no longer does project work, but the first request that names a file sets up the project, whatever that request is, so project setup is not yet bound to one step.
 
@@ -416,7 +416,7 @@ Request *parseCommandLine(ArgumentsVector args);
 No globals mutated, no output files opened, no pass flags flipped. The dispatcher decides what side effects to run based on the returned `Request`. Each operation gets a typed struct — a tagged union or base struct with per-operation extensions — so the dispatch switch reads typed fields instead of guessing which `Options` fields are meaningful for which operation.
 
 `options.index` is one such field, the `=N` of seven options with three meanings: where to go in a list (`-browse-goto=`, `-completion-goto=`, `-search-goto=`), which item to select (`-completion-select=`, `-search-select=`), and a parameter number (`-internal-parse-to-goto-param-name=`, `-internal-parse-to-get-param-coordinates=`).
-With typed requests each of them gets its own field, and the parameter number is probably the same thing as `parnum` (`-parameter=`).
+With typed requests each of them gets its own field, and the parameter number is probably the same thing as `parameterNumber` (`-parameter=`).
 
 The refactoring coordinator holds its own long-lived `RefactoringRequest` (the current `refactoringOptions` content, but owned by the coordinator, not a shadow global). Sub-operations construct their own fresh `Request` structs via normal parsing; the coordinator's state is safe because it lives elsewhere. `refactoringOptions` disappears. The save/restore sites disappear — each tier has one owner, and nothing trampled means nothing to restore.
 
@@ -776,9 +776,9 @@ Options that set no operation:
 |`-olcursor=` |`cursorOffset` |`-cursor=`
 |`-olmark=` |`markOffset` |`-mark=`
 |`-olcxlccursor=` |`cursorLineColumn` |`-cursor-line-column=`
-|`-olinelen=` |`olineLen` |`-line-length=`
-|`-olcxparnum=` |`parnum` |`-parameter=`
-|`-olcxparnum2=` |`parnum2`, where Move Parameter moves it to |`-to-parameter=`
+|`-olinelen=` |`lineLength` |`-line-length=`
+|`-olcxparnum=` |`parameterNumber` |`-parameter=`
+|`-olcxparnum2=` |`toParameterNumber`, where Move Parameter moves it to |`-to-parameter=`
 |`-olmanualresolve` |`manualResolve = RESOLVE_DIALOG_ALWAYS` |`-resolve-dialog=always`
 |`-olnodialog` |`manualResolve = RESOLVE_DIALOG_NEVER` |`-resolve-dialog=never`
 |`-olexmacro`, `-olexvariable` |`extractMode` |none, they go with the bridge
@@ -788,7 +788,6 @@ Options that set no operation:
 Extract Function is the default, so it has none.
 They should go with the bridge (§17.3, backlog #9), when `refactory.c` can set `parsingConfig.extractMode` itself.
 
-The fields follow, as a separate rename: `olineLen`, `parnum` and `parnum2`.
 
 ==== Implementation
 
