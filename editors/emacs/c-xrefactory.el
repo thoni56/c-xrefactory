@@ -241,8 +241,6 @@
 
 (defvar c-xref-browser-windows-auto-resizing t)
 
-(defvar c-xref-display-active-project-in-minibuffer t)
-
 (defvar c-xref-run-find-file-hooks t)
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
@@ -281,11 +279,6 @@ C-xrefactory functions.
       (defcustom c-xref-window-minimal-size 5
             "Minimal size of window displaying completions and references. If a positive value is given the window's size will be proportional to number of completions, but at least c-xref-window-minimal-size lines."
             :type '(integer)
-            :group 'c-xrefactory-general)
-
-      (defcustom c-xref-display-active-project-in-minibuffer t
-            "If on, C-xrefactory will display the active project in minibuffer after each invocation of its functions (except completions)."
-            :type '(boolean)
             :group 'c-xrefactory-general)
 
 

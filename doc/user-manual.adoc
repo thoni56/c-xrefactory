@@ -39,7 +39,7 @@ C-xrefactory auto-detects projects based on the file you're editing when you do 
 The path of the file is investigated upwards until a `.c-xrefrc` (C-xrefactory project config) file is found.
 
 If no config file could be found, you'll be prompted to create a project.
-The active project is shown in the echo area after each action.
+Project > Show Active shows the active project.
 
 === Project Configuration
 

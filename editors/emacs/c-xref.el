@@ -1596,9 +1596,6 @@ tries to delete C-xrefactory windows first.
   (c-xref-entry-point-make-initialisations-no-project-required)
   ;; hack in order to permit asking for version without src project
   (setq c-xref-active-project (c-xref-lock-project-for-file (buffer-file-name)))
-  (if c-xref-display-active-project-in-minibuffer
-      (message "Project: %s" c-xref-active-project)
-    )
   )
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
