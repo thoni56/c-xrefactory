@@ -19,8 +19,8 @@ which are passed in as extra arguments. E.g. a rename requires the
 name to rename to which is sent in the `renameto=` option, which is
 argparsed and stored in the option structure.
 
-Some of these extra arguments are fairly random, like `-olcxparnum=`
-and `-olcxparnum2=`. This should be cleaned up.
+Some of these extra arguments are fairly random, like `-parameter=`
+and `-to-parameter=`. This should be cleaned up.
 
 A move towards "events" with arguments would be helpful. This would
 mean that we need to:
@@ -526,10 +526,10 @@ and then it keeps the communication over stdin/stdout open.
 The editor part sends command line options to the server, which looks
 something like (from the read_xrefs test case):
 
-    -encoding=european -olcxpush -urldirect  "-preload" "<file>" "-olmark=0" "-olcursor=6" "<file>" -p "<project>"
+    -encoding=european -browse-push -urldirect  "-preload" "<file>" "-mark=0" "-cursor=6" "<file>" -p "<project>"
     end-of-options
 
-In this case the "-olcxpush" is the operative command which results in
+In this case the "-browse-push" is the operative command which results in
 the following output
 
     <goto>
@@ -552,7 +552,7 @@ The refactoring protocol messages exchanged between the refactory process and th
 
 *_Rename Example_*
 
-*Invocation:* `-rfct-rename -renameto=NEW_NAME -olcursor=POSITION FILE`
+*Invocation:* `-rfct-rename -renameto=NEW_NAME -cursor=POSITION FILE`
 
 *Result:* A sequence of precheck/replacement pairs:
 ```

@@ -58,8 +58,8 @@ ask for completion on line 5 (offset 49).
 
 ```
 vittek:~/tmp>~/c-xref/c-xref -server -xrefactory-II
--olcxcomplet
--olcursor=40
+-completion
+-cursor=40
 /home/vittek/tmp/t.c
 end-of-options
 
@@ -69,8 +69,8 @@ y  :int y</all-completions>
 <sync>
 
 
--olcxcomplet
--olcursor=49
+-completion
+-cursor=49
 /home/vittek/tmp/t.c
 end-of-options
 

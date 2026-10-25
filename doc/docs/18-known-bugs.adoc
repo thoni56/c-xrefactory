@@ -35,7 +35,7 @@ The yacc parser creates a different scope or symbol context when parsing C code 
 
 *Cause:* `collectCUsIncluding()` (`src/server.c`) stops collecting at `MAX_CUS_TO_REPARSE` (128) and stops widening the reverse-include frontier at `MAX_INCLUDE_WALK_FILES` (256). A refactoring push is in `needsReferenceDatabase` but not in `needsWholeProjectParsed`, so it takes whatever entry refresh has parsed. Past the cap that is a subset.
 
-*Measured 2026-09-22* on `tests/test_ffmpeg`, one cold `-push` on `avcodec_open2` where it is declared in `avcodec.h`, which 713 `.c` files include:
+*Measured 2026-09-22* on `tests/test_ffmpeg`, one cold `-browse-push` on `avcodec_open2` where it is declared in `avcodec.h`, which 713 `.c` files include:
 
 [cols="1,1,1",options="header"]
 |===

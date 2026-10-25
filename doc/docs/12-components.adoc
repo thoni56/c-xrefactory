@@ -251,7 +251,7 @@ intent while the server's entry refresh and parsing machinery runs with its own 
 
 A typical refactoring (e.g. rename):
 
-1. Editor sends `-rfct-rename -renameto=NEW_NAME -olcursor=POSITION FILE`
+1. Editor sends `-rfct-rename -renameto=NEW_NAME -cursor=POSITION FILE`
 2. Server parses the file to identify the symbol at the cursor
 3. Safety checks verify the rename is valid (no collisions, scope analysis)
 4. For each occurrence: sends `<goto>` + `<precheck>` to verify the editor's file matches

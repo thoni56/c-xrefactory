@@ -177,7 +177,7 @@ every push, `After` dashed and `Goes with` not at all, linked at the end of this
     Goes with: partition-options
 - (#9) <a id="remove-bridge"></a>**Remove the `parseBufferUsingServer` bridge** — §17.3; 9 refactoring call sites
    re-entering `callServer`. Independent of the rest of this section, but it is the last
-   divergent parse path.
+   divergent parse path. `-olexmacro` and `-olexvariable` only exist for it and go with it.
 - (#62) <a id="docs-audit"></a>**Audit the docs, chapter by chapter** — much of `doc/docs/` was
     written while the batch modes and the disk database were the truth. Each chapter is
     read against the code as it is, and what is stale is fixed or becomes a line here.
@@ -275,7 +275,7 @@ every push, `After` dashed and `Goes with` not at all, linked at the end of this
       After: lsp-position-encoding
 
 - (#58) <a id="search-result-line-zero"></a>**The client asks for search result number 0** — suspected, not
-    reproduced. Typing a search string gave `-olcxsearchgoto0` at once, twice, each time
+    reproduced. Typing a search string gave `-search-goto=0` at once, twice, each time
     after the question "N of M files need analysing" (WSL, 2026-10-13, the client on
     `ac3f52e2`). After a push had analysed the files, the same search asked nothing and
     listed one line. `c-xref-call-task-on-line` (`editors/emacs/c-xref.el`) sends the
@@ -304,7 +304,7 @@ every push, `After` dashed and `Goes with` not at all, linked at the end of this
     is not reported, it parses.
 - (#70) <a id="completion-select-out-of-range"></a>**Selecting a completion says "selection out of range"** — *no repo home yet.*
     In `yylex.c`, half-way through an Add Parameter, `pre` and F8 listed 8 completions
-    over 16 lines. Enter on the last one, `previousLexemP`, sent `-olcomplselect16`, which
+    over 16 lines. Enter on the last one, `previousLexemP`, sent `-completion-select=16`, which
     is the right line. The answer was `selection out of range.`
     `getMatchOnNthLine()` (`src/match.c`) counts wrapped lines and returns NULL only for an
     empty list, so the session entry `selectCompletion()` found probably had no matches.
@@ -704,7 +704,7 @@ was done.
 
   | | with `-p` | without `-p` |
   |---|---|---|
-  | `-push` | ok | FATAL |
+  | `-browse-push` | ok | FATAL |
   | `-browse-next` | FATAL | FATAL |
 
   The client sends `-p` on every request, so the third hatch should always hold; for

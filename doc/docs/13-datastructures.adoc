@@ -254,9 +254,9 @@ The browser stack is a linked list of `OlcxReferences` entries, where each entry
 
 ==== Lifecycle
 
-1. **Push**: When user requests symbol references (e.g., `-olcxpush`), a new empty entry is created on the stack
+1. **Push**: When user requests symbol references (e.g., `-browse-push`), a new empty entry is created on the stack
 2. **Population**: After parsing, the entry is filled with `BrowsingMenu` structures containing references
-3. **Navigation**: Commands like `-olcxnext` and `-olcxprevious` move through references in the current entry
+3. **Navigation**: Commands like `-browse-next` and `-browse-previous` move through references in the current entry
 4. **Pop**: User can pop back to previous entries to return to earlier symbol lookups
 
 ==== Relationship to Parsing

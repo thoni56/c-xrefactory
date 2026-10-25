@@ -212,7 +212,7 @@ The cold-start PUSH again, for `AudioFIRContext` from `af_afir.c`, on the WSL ma
 snapshot. Three runs, within 0.15s of each other:
 
 * `-getproject` 0.7s.
-* `-push` 10.0s: 1.0s until the first progress record (scan, include graph, collecting
+* `-browse-push` 10.0s: 1.0s until the first progress record (scan, include graph, collecting
   what to build), then one round, "Analysing 128 of 1567 files", about 65ms per
   compilation unit. The answer is the definition, `af_afir.h:98`. Peak memory 25MB.
 

@@ -327,7 +327,7 @@ exist. Emacs keeps one tmp file per buffer and rewrites it for each request, so 
 last content of a buffer is left to copy, and every request in the conversion gets that.
 With `--strip-preloads` it removes them instead, and then you need to take care
 that the positions inside the buffers are not changed between interactions lest the
-`-olcursor` and `-olmark` will be wrong. (You can just undo the change after a
+`-cursor` and `-mark` will be wrong. (You can just undo the change after a
 refactoring or rename). Of course this also applies if you want to mimic a sequence of
 refactorings.
 
