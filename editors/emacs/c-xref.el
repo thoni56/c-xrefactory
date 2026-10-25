@@ -1931,9 +1931,8 @@ be cleaned up when the buffer is saved or killed)."
 (defun c-xref-send-data-to-process-and-dispatch (commands dispatch-data tmp-files)
   (let ((proc) (opts))
     (setq proc (cdr (assoc 'process dispatch-data)))
-    (setq opts (format "%s %s -p \"%s\""
+    (setq opts (format "%s -p \"%s\""
                                commands
-                               (if c-xref-browser-lists-source-lines "" "-rlistwithoutsrc ")
                                c-xref-active-project
                                ))
 

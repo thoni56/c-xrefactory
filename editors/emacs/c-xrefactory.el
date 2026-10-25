@@ -217,8 +217,6 @@
 
 (defvar c-xref-detailed-refactoring-confirmations nil)
 
-(defvar c-xref-browser-lists-source-lines t)
-
 (defvar c-xref-close-windows-on-pop nil)
 
 (defvar c-xref-completion-case-sensitive nil)
@@ -346,11 +344,6 @@ C-xrefactory's source browsing functions.
 "
             :group 'c-xrefactory
         )
-
-      (defcustom c-xref-browser-lists-source-lines t
-            "If on, the C-xrefactory browser will display one line of source code for each reference in the browser window. This may slow down the display when there are large numbers of references."
-            :type '(boolean)
-            :group 'c-xrefactory-source-browser)
 
       (defcustom c-xref-browser-splits-window-horizontally nil
             "If on, C-xrefactory splits windows horizontally if needed. Otherwise it splits the window vertically."
