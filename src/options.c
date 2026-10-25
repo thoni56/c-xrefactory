@@ -81,7 +81,7 @@ Options presetOptions = {
     .lineNumberOfMenuSelection = 0,
     .olineLen = 79,
     .maxCompletions = MAX_COMPLETIONS,
-    .olcxGotoVal = 0,
+    .index = 0,
 
     /* --- REFACTORING --- */
     .theRefactoring = AVR_NO_REFACTORING,
@@ -925,8 +925,8 @@ static bool processBOption(int *argi, ArgumentsVector args) {
     }
     else if (strncmp(args.argv[i], "-browse-goto=",13)==0) {
         options.serverOperation = OP_BROWSE_GOTO_N;
-        options.olcxGotoVal = 0;
-        sscanf(args.argv[i]+13, "%d",&options.olcxGotoVal);
+        options.index = 0;
+        sscanf(args.argv[i]+13, "%d",&options.index);
     }
     else return false;
     *argi = i;
@@ -963,8 +963,8 @@ static bool processCOption(int *argi, ArgumentsVector args) {
     }
     else if (strncmp(args.argv[i], "-completion-select=",19)==0) {
         options.serverOperation=OP_COMPLETION_SELECT;
-        options.olcxGotoVal = 0;
-        sscanf(args.argv[i]+19, "%d",&options.olcxGotoVal);
+        options.index = 0;
+        sscanf(args.argv[i]+19, "%d",&options.index);
     }
     else if (strcmp(args.argv[i], "-completion-previous")==0) {
         options.serverOperation=OP_COMPLETION_PREVIOUS;
@@ -974,8 +974,8 @@ static bool processCOption(int *argi, ArgumentsVector args) {
     }
     else if (strncmp(args.argv[i], "-completion-goto=",17)==0) {
         options.serverOperation = OP_COMPLETION_GOTO_N;
-        options.olcxGotoVal = 0;
-        sscanf(args.argv[i]+17, "%d",&options.olcxGotoVal);
+        options.index = 0;
+        sscanf(args.argv[i]+17, "%d",&options.index);
     }
     else return false;
     *argi = i;
@@ -1116,13 +1116,13 @@ static bool processIOption(int *argi, ArgumentsVector args) {
         options.serverOperation = OP_INTERNAL_SAFETY_CHECK;
     else if (strncmp(args.argv[i], "-internal-parse-to-goto-param-name=",35)==0) {
         options.serverOperation = OP_INTERNAL_PARSE_TO_GOTO_PARAM_NAME;
-        options.olcxGotoVal = 0;
-        sscanf(args.argv[i]+35, "%d", &options.olcxGotoVal);
+        options.index = 0;
+        sscanf(args.argv[i]+35, "%d", &options.index);
     }
     else if (strncmp(args.argv[i], "-internal-parse-to-get-param-coordinates=",41)==0) {
         options.serverOperation = OP_INTERNAL_PARSE_TO_GET_PARAM_COORDINATES;
-        options.olcxGotoVal = 0;
-        sscanf(args.argv[i]+41, "%d", &options.olcxGotoVal);
+        options.index = 0;
+        sscanf(args.argv[i]+41, "%d", &options.index);
     }
     else if (strcmp(args.argv[i], "-internal-push-for-usage-check")==0) {
         options.serverOperation = OP_INTERNAL_PUSH_FOR_USAGE_CHECK;
@@ -1388,13 +1388,13 @@ static bool processSOption(int *argi, ArgumentsVector args) {
     }
     else if (strncmp(args.argv[i], "-search-goto=",13)==0) {
         options.serverOperation = OP_SEARCH_GOTO_N;
-        options.olcxGotoVal = 0;
-        sscanf(args.argv[i]+13, "%d",&options.olcxGotoVal);
+        options.index = 0;
+        sscanf(args.argv[i]+13, "%d",&options.index);
     }
     else if (strncmp(args.argv[i], "-search-select=",15)==0) {
         options.serverOperation = OP_SEARCH_SELECT;
-        options.olcxGotoVal = 0;
-        sscanf(args.argv[i]+15, "%d",&options.olcxGotoVal);
+        options.index = 0;
+        sscanf(args.argv[i]+15, "%d",&options.index);
     }
     else return false;
     *argi = i;

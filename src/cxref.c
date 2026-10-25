@@ -1332,7 +1332,7 @@ static void selectCompletion(void) {
     assert(options.cxrefProtocol);
     if (!sessionHasReferencesValidForOperation(&entry, CHECK_NULL_YES))
         return;
-    match = getMatchOnNthLine(entry->matches, options.olcxGotoVal);
+    match = getMatchOnNthLine(entry->matches, options.index);
     if (match==NULL) {
         errorMessage(ERR_ST, "selection out of range.");
         return;
@@ -1890,7 +1890,7 @@ void answerEditorAction(void) {
         completionBackward();
         break;
     case OP_COMPLETION_GOTO_N:
-        gotoMatch(options.olcxGotoVal);
+        gotoMatch(options.index);
         break;
 
         /* BROWSING */
@@ -1935,7 +1935,7 @@ void answerEditorAction(void) {
         break;
     }
     case OP_BROWSE_GOTO_N:
-        gotoReferenceWithIndex(options.olcxGotoVal);
+        gotoReferenceWithIndex(options.index);
         break;
 
         /* MENU */
@@ -1981,10 +1981,10 @@ void answerEditorAction(void) {
         break;
     }
     case OP_SEARCH_GOTO_N:
-        gotoSearchItem(options.olcxGotoVal);
+        gotoSearchItem(options.index);
         break;
     case OP_SEARCH_SELECT:
-        selectSearchItem(options.olcxGotoVal);
+        selectSearchItem(options.index);
         break;
 
         /* REFACTORINGS */
@@ -2020,7 +2020,7 @@ void answerEditorAction(void) {
             deleteEntryFromSessionStack(browsingStack.top);
         } else {
             char tmpBuff[TMP_BUFF_SIZE];
-            sprintf(tmpBuff, "Parameter %d not found.", options.olcxGotoVal);
+            sprintf(tmpBuff, "Parameter %d not found.", options.index);
             errorMessage(ERR_ST, tmpBuff);
         }
         break;

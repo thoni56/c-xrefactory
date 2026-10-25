@@ -50,7 +50,7 @@ void syncParsingConfigFromOptions(Options options) {
     parsingConfig.cursorOffset = options.cursorOffset;
     parsingConfig.markOffset = options.markOffset;
     parsingConfig.extractMode = options.extractMode;
-    parsingConfig.targetParameterIndex = options.olcxGotoVal;
+    parsingConfig.targetParameterIndex = options.index;
 
     parsingConfig.positionOfSelectedReference = NO_POSITION;
 }

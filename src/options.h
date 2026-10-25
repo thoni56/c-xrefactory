@@ -108,7 +108,7 @@ typedef struct options {
     int lineNumberOfMenuSelection;              /* REQUEST */
     int olineLen;                               /* REQUEST */
     int maxCompletions;                         /* REQUEST */
-    int olcxGotoVal;                            /* REQUEST */
+    int index;                                  /* REQUEST */
 
     /* --- REFACTORING: Set internally by refactoring engine --- */
     Refactoring theRefactoring;                 /* REFACTORING */
