@@ -605,8 +605,7 @@ body.book #toc,body.book #preamble,body.book h1.sect0,body.book .sect1>h2{page-b
 <li><a href="#remove-hashtab">16.5. Remove Hashtab by Migrating to Hashlist</a></li>
 <li><a href="#split-editor-module">16.6. Split the Editor Module</a></li>
 <li><a href="#rebuild-partition">16.7. Partition the Rebuild Like Make</a></li>
-<li><a href="#rename-operations">16.8. Rename Server Operations</a></li>
-<li><a href="#_elisp_compiled_and_deleted_on_every_build">16.9. Elisp Compiled and Deleted on Every Build</a></li>
+<li><a href="#_elisp_compiled_and_deleted_on_every_build">16.8. Elisp Compiled and Deleted on Every Build</a></li>
 </ul>
 </li>
 <li><a href="#_known_bugs">17. Known Bugs</a>
@@ -4327,7 +4326,8 @@ current file, and if found, offer to migrate that section to a project-local <co
 The buffer is in a mode derived from <code>compilation-mode</code>, so <code>RET</code> in it, and <code>M-g n</code> and <code>M-g p</code> from anywhere, go to the place.
 The messages are grouped by the compilation unit whose parse found them, under a line <code>Analysing &lt;file&gt;</code>, as compile output is.
 When a unit is parsed again its group is replaced and moved last, and a unit that parses clean has no group.
-An answer that added messages ends with a notice, e.g. <code>2 new messages in <strong>c-xref-diagnostics</strong>, M-g n to visit</code>, with the user&#8217;s own key for <code>next-error</code>.</p>
+The mode line shows how many messages there are, e.g. <code>C-xref:2</code>, and <code>mouse-1</code> on it shows the buffer.
+Notes are not counted, and with no messages nothing is shown.</p>
 </div>
 <div class="paragraph">
 <p>The server sends these messages as <code>&lt;log&gt;</code> records, after an <code>&lt;analysing&gt;</code> record for the unit.
@@ -6870,8 +6870,13 @@ name to rename to which is sent in the <code>renameto=</code> option, which is
 argparsed and stored in the option structure.</p>
 </div>
 <div class="paragraph">
-<p>Some of these extra arguments are fairly random, like <code>-parameter=</code>
-and <code>-to-parameter=</code>. This should be cleaned up.</p>
+<p>An option that requests an operation is named after its enum: the name without <code>OP_</code>,
+in lower case, with hyphens between the words, so <code>OP_BROWSE_PUSH_NAME</code> is
+<code>-browse-push-name=</code>. A value comes after <code>=</code>, as in <code>-browse-goto=2</code>. An option that
+sets no operation is named after what it sets, like <code>-cursor=</code> for <code>cursorOffset</code>, and
+one that selects from an enum takes the value, like <code>-resolve-dialog=never</code>.
+<code>tests/test_client_sends_only_known_options</code> checks that the client sends no option
+the server does not know.</p>
 </div>
 <div class="paragraph">
 <p>A move towards "events" with arguments would be helpful. This would
@@ -9905,366 +9910,9 @@ Before that it would move three passes into a module where they are about to bec
 </div>
 </div>
 <div class="sect2">
-<h3 id="rename-operations">16.8. Rename Server Operations</h3>
+<h3 id="_elisp_compiled_and_deleted_on_every_build">16.8. Elisp Compiled and Deleted on Every Build</h3>
 <div class="sect3">
 <h4 id="_problem_statement_5">16.8.1. Problem Statement</h4>
-<div class="paragraph">
-<p>Server operations use the prefix <code>olcx</code> (likely "on-line cross-references"), a legacy abbreviation that conveys no meaning to anyone reading the code or protocol today. Option names like <code>-olcxpush</code>, <code>-olcxtagsearch</code>, <code>-olcxpushname</code> are opaque compared to what they could be: <code>-browse-push</code>, <code>-browse-push-name</code>.</p>
-</div>
-<div class="paragraph">
-<p>The word "tag" in search-related names (<code>-olcxtagsearch</code>, <code>c-xref-search-in-tag-file</code>, <code>c-xref-tag-results-buffer</code>) is a leftover from <code>ctags</code> and friends. There is no ctags compatibility — the term is purely misleading. The two menu entries "Search Definition in Tags" and "Search Symbol" both trigger the same <code>OP_SEARCH</code> operation, differing only in a filter flag (<code>-searchdef</code>). The word "tag" suggests they are fundamentally different, when they are not.</p>
-</div>
-</div>
-<div class="sect3">
-<h4 id="_scope">16.8.2. Scope</h4>
-<div class="paragraph">
-<p>The rename touches three layers:</p>
-</div>
-<div class="paragraph">
-<p><strong>Protocol options</strong> (server C code + Emacs client): the <code>-ol*</code> options in <code>options.c</code>, and what sends them, i.e. <code>c-xref.el</code>, <code>refactory.c</code> and the <code>commands.input</code> of the system tests.
-The old copies of c-xrefactory&#8217;s sources under <code>tests/*/</code> are test data and are not touched.</p>
-</div>
-<div class="paragraph">
-<p><strong>Emacs function and variable names</strong>: Functions like <code>c-xref-search-in-tag-file</code>, <code>c-xref-get-tags</code>, <code>c-xref-interactive-tag-search-*</code> and variables like <code>c-xref-tag-results-buffer</code>, <code>c-xref-tag-search-mode-map</code>.</p>
-</div>
-<div class="paragraph">
-<p><strong>System tests</strong>: Every <code>commands.input</code> file uses these option names. Mechanical update.</p>
-</div>
-</div>
-<div class="sect3">
-<h4 id="_design_decisions">16.8.3. Design Decisions</h4>
-<div class="paragraph">
-<p><strong>The option is named after its operation</strong>: the enum name without <code>OP_</code>, in lower case, with hyphens between the words.
-<code>OP_BROWSE_NEXT</code> is <code>-browse-next</code>, <code>OP_SEARCH_PREVIOUS</code> is <code>-search-previous</code>.
-So there is no "forward" and "back", only "next" and "previous", as in the enum.
-This replaces an earlier decision to prefer the shortest clear name (<code>-push</code> over <code>-browse-push</code>).</p>
-</div>
-<div class="paragraph">
-<p><strong>A value comes after <code>=</code></strong>: <code>-browse-goto=2</code>, not <code>-olcxgoto2</code>.
-The options that glued the number on were matched as prefixes, so their order in the parser mattered and grep could not find them.</p>
-</div>
-<div class="paragraph">
-<p><strong>An option that sets no operation is named after what it sets</strong>: <code>-cursor=</code> for <code>cursorOffset</code>.
-An option that selects one of an enum takes the value, <code>-resolve-dialog=never</code> for <code>RESOLVE_DIALOG_NEVER</code>.</p>
-</div>
-<div class="paragraph">
-<p><strong>Where the enum is the odd one, the enum changes</strong>: <code>OP_UNUSED_LOCAL</code> and <code>OP_UNUSED_GLOBAL</code> are "in File" and "in Project" in the menu, so they become <code>OP_UNUSED_IN_FILE</code> and <code>OP_UNUSED_IN_PROJECT</code>.
-<code>OP_FILTER_PLUS</code>, <code>OP_FILTER_MINUS</code>, <code>OP_MENU_FILTER_PLUS</code>, <code>OP_MENU_FILTER_MINUS</code> and <code>OP_ORGANIZE_INCLUDES</code> are never set and go, and then <code>OP_FILTER_SET</code> and <code>OP_MENU_FILTER_SET</code> are just <code>OP_FILTER</code> and <code>OP_MENU_FILTER</code>.</p>
-</div>
-<div class="paragraph">
-<p><strong>Two kinds of filter</strong>: The browsing UI has two filter concepts that should remain distinct:</p>
-</div>
-<div class="ulist">
-<ul>
-<li>
-<p><strong>Reference filter</strong> (<code>-filter</code>): narrows the reference list for the selected symbol by usage kind (all → exclude reads → definitions only)</p>
-</li>
-<li>
-<p><strong>Menu filter</strong> (<code>-menu-filter</code>): narrows the symbol menu when a name is ambiguous (all with name → exact match → exact match same file)</p>
-</li>
-</ul>
-</div>
-<div class="paragraph">
-<p><strong>No compatibility shim needed</strong>: Distribution is via git repo updates, and the Emacs <code>upgrade</code> menu entry kills the server, reloads elisp, and starts a new server on the next operation. Old and new never need to coexist.</p>
-</div>
-</div>
-<div class="sect3">
-<h4 id="_the_names">16.8.4. The Names</h4>
-<div class="paragraph">
-<p>Operations the client sends:</p>
-</div>
-<table class="tableblock frame-all grid-all stretch">
-<colgroup>
-<col style="width: 25%;">
-<col style="width: 37.5%;">
-<col style="width: 37.5%;">
-</colgroup>
-<thead>
-<tr>
-<th class="tableblock halign-left valign-top">Now</th>
-<th class="tableblock halign-left valign-top">Operation</th>
-<th class="tableblock halign-left valign-top">New</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td class="tableblock halign-left valign-top"><p class="tableblock"><code>-push</code></p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock"><code>OP_BROWSE_PUSH</code></p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock"><code>-browse-push</code></p></td>
-</tr>
-<tr>
-<td class="tableblock halign-left valign-top"><p class="tableblock"><code>-olcxpushonly</code></p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock"><code>OP_BROWSE_PUSH_ONLY</code></p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock"><code>-browse-push-only</code></p></td>
-</tr>
-<tr>
-<td class="tableblock halign-left valign-top"><p class="tableblock"><code>-olcxpushname=</code></p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock"><code>OP_BROWSE_PUSH_NAME</code></p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock"><code>-browse-push-name=</code></p></td>
-</tr>
-<tr>
-<td class="tableblock halign-left valign-top"><p class="tableblock"><code>-olcxpushandcallmacro</code></p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock"><code>OP_BROWSE_PUSH_AND_CALL_MACRO</code></p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock"><code>-browse-push-and-call-macro</code></p></td>
-</tr>
-<tr>
-<td class="tableblock halign-left valign-top"><p class="tableblock"><code>-olcxrepush</code></p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock"><code>OP_BROWSE_REPUSH</code></p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock"><code>-browse-repush</code></p></td>
-</tr>
-<tr>
-<td class="tableblock halign-left valign-top"><p class="tableblock"><code>-olcxpop</code></p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock"><code>OP_BROWSE_POP</code></p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock"><code>-browse-pop</code></p></td>
-</tr>
-<tr>
-<td class="tableblock halign-left valign-top"><p class="tableblock"><code>-olcxpoponly</code></p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock"><code>OP_BROWSE_POP_ONLY</code></p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock"><code>-browse-pop-only</code></p></td>
-</tr>
-<tr>
-<td class="tableblock halign-left valign-top"><p class="tableblock"><code>-olcxgoto</code> <em>N</em></p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock"><code>OP_BROWSE_GOTO_N</code></p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock"><code>-browse-goto=</code> <em>N</em></p></td>
-</tr>
-<tr>
-<td class="tableblock halign-left valign-top"><p class="tableblock"><code>-olcxcomplet</code></p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock"><code>OP_COMPLETION</code></p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock"><code>-completion</code></p></td>
-</tr>
-<tr>
-<td class="tableblock halign-left valign-top"><p class="tableblock"><code>-olcomplforward</code></p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock"><code>OP_COMPLETION_NEXT</code></p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock"><code>-completion-next</code></p></td>
-</tr>
-<tr>
-<td class="tableblock halign-left valign-top"><p class="tableblock"><code>-olcomplback</code></p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock"><code>OP_COMPLETION_PREVIOUS</code></p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock"><code>-completion-previous</code></p></td>
-</tr>
-<tr>
-<td class="tableblock halign-left valign-top"><p class="tableblock"><code>-olcomplselect</code> <em>N</em></p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock"><code>OP_COMPLETION_SELECT</code></p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock"><code>-completion-select=</code> <em>N</em></p></td>
-</tr>
-<tr>
-<td class="tableblock halign-left valign-top"><p class="tableblock"><code>-olcxcgoto</code> <em>N</em></p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock"><code>OP_COMPLETION_GOTO_N</code></p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock"><code>-completion-goto=</code> <em>N</em></p></td>
-</tr>
-<tr>
-<td class="tableblock halign-left valign-top"><p class="tableblock"><code>-olcxsearchforward</code></p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock"><code>OP_SEARCH_NEXT</code></p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock"><code>-search-next</code></p></td>
-</tr>
-<tr>
-<td class="tableblock halign-left valign-top"><p class="tableblock"><code>-olcxsearchback</code></p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock"><code>OP_SEARCH_PREVIOUS</code></p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock"><code>-search-previous</code></p></td>
-</tr>
-<tr>
-<td class="tableblock halign-left valign-top"><p class="tableblock"><code>-olcxsearchgoto</code> <em>N</em></p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock"><code>OP_SEARCH_GOTO_N</code></p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock"><code>-search-goto=</code> <em>N</em></p></td>
-</tr>
-<tr>
-<td class="tableblock halign-left valign-top"><p class="tableblock"><code>-olcxsearchselect</code> <em>N</em></p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock"><code>OP_SEARCH_SELECT</code></p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock"><code>-search-select=</code> <em>N</em></p></td>
-</tr>
-<tr>
-<td class="tableblock halign-left valign-top"><p class="tableblock"><code>-olcxfilter=</code></p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock"><code>OP_FILTER</code></p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock"><code>-filter=</code></p></td>
-</tr>
-<tr>
-<td class="tableblock halign-left valign-top"><p class="tableblock"><code>-olcxmenufilter=</code></p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock"><code>OP_MENU_FILTER</code></p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock"><code>-menu-filter=</code></p></td>
-</tr>
-<tr>
-<td class="tableblock halign-left valign-top"><p class="tableblock"><code>-olcxmenuselect</code></p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock"><code>OP_MENU_TOGGLE_SELECT</code></p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock"><code>-menu-toggle-select</code></p></td>
-</tr>
-<tr>
-<td class="tableblock halign-left valign-top"><p class="tableblock"><code>-olcxmenusingleselect</code></p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock"><code>OP_MENU_SELECT_ONLY</code></p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock"><code>-menu-select-only</code></p></td>
-</tr>
-<tr>
-<td class="tableblock halign-left valign-top"><p class="tableblock"><code>-olcxmenuall</code></p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock"><code>OP_MENU_SELECT_ALL</code></p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock"><code>-menu-select-all</code></p></td>
-</tr>
-<tr>
-<td class="tableblock halign-left valign-top"><p class="tableblock"><code>-olcxmenunone</code></p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock"><code>OP_MENU_SELECT_NONE</code></p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock"><code>-menu-select-none</code></p></td>
-</tr>
-<tr>
-<td class="tableblock halign-left valign-top"><p class="tableblock"><code>-olcxpushglobalunused</code></p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock"><code>OP_UNUSED_IN_PROJECT</code></p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock"><code>-unused-in-project</code></p></td>
-</tr>
-<tr>
-<td class="tableblock halign-left valign-top"><p class="tableblock"><code>-olcxpushfileunused</code></p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock"><code>OP_UNUSED_IN_FILE</code></p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock"><code>-unused-in-file</code></p></td>
-</tr>
-<tr>
-<td class="tableblock halign-left valign-top"><p class="tableblock"><code>-olcxgetrefactorings</code></p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock"><code>OP_GET_AVAILABLE_REFACTORINGS</code></p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock"><code>-get-available-refactorings</code></p></td>
-</tr>
-</tbody>
-</table>
-<div class="paragraph">
-<p>Operations only <code>refactory.c</code> sends, to its own server:</p>
-</div>
-<table class="tableblock frame-all grid-all stretch">
-<colgroup>
-<col style="width: 25%;">
-<col style="width: 37.5%;">
-<col style="width: 37.5%;">
-</colgroup>
-<thead>
-<tr>
-<th class="tableblock halign-left valign-top">Now</th>
-<th class="tableblock halign-left valign-top">Operation</th>
-<th class="tableblock halign-left valign-top">New</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td class="tableblock halign-left valign-top"><p class="tableblock"><code>-olcxrename</code></p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock"><code>OP_INTERNAL_PUSH_FOR_RENAME</code></p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock"><code>-internal-push-for-rename</code></p></td>
-</tr>
-<tr>
-<td class="tableblock halign-left valign-top"><p class="tableblock"><code>-olcxargmanip</code></p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock"><code>OP_INTERNAL_PUSH_FOR_ARGUMENT_MANIPULATION</code></p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock"><code>-internal-push-for-argument-manipulation</code></p></td>
-</tr>
-<tr>
-<td class="tableblock halign-left valign-top"><p class="tableblock"><code>-olcxpushforusagecheck</code></p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock"><code>OP_INTERNAL_PUSH_FOR_USAGE_CHECK</code></p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock"><code>-internal-push-for-usage-check</code></p></td>
-</tr>
-<tr>
-<td class="tableblock halign-left valign-top"><p class="tableblock"><code>-olcxsafetycheck</code></p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock"><code>OP_INTERNAL_SAFETY_CHECK</code></p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock"><code>-internal-safety-check</code></p></td>
-</tr>
-<tr>
-<td class="tableblock halign-left valign-top"><p class="tableblock"><code>-olcxextract</code></p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock"><code>OP_INTERNAL_PARSE_TO_EXTRACT</code></p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock"><code>-internal-parse-to-extract</code></p></td>
-</tr>
-<tr>
-<td class="tableblock halign-left valign-top"><p class="tableblock"><code>-olcxgotoparname</code></p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock"><code>OP_INTERNAL_PARSE_TO_GOTO_PARAM_NAME</code></p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock"><code>-internal-parse-to-goto-param-name</code></p></td>
-</tr>
-<tr>
-<td class="tableblock halign-left valign-top"><p class="tableblock"><code>-olcxgetparamcoord</code></p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock"><code>OP_INTERNAL_PARSE_TO_GET_PARAM_COORDINATES</code></p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock"><code>-internal-parse-to-get-param-coordinates</code></p></td>
-</tr>
-<tr>
-<td class="tableblock halign-left valign-top"><p class="tableblock"><code>-olcxmovetarget</code></p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock"><code>OP_INTERNAL_PARSE_TO_SET_MOVE_TARGET</code></p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock"><code>-internal-parse-to-set-move-target</code></p></td>
-</tr>
-<tr>
-<td class="tableblock halign-left valign-top"><p class="tableblock"><code>-olcxgetfunctionbounds</code></p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock"><code>OP_INTERNAL_GET_FUNCTION_BOUNDS</code></p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock"><code>-internal-get-function-bounds</code></p></td>
-</tr>
-</tbody>
-</table>
-<div class="paragraph">
-<p>Options that set no operation:</p>
-</div>
-<table class="tableblock frame-all grid-all stretch">
-<colgroup>
-<col style="width: 25%;">
-<col style="width: 37.5%;">
-<col style="width: 37.5%;">
-</colgroup>
-<thead>
-<tr>
-<th class="tableblock halign-left valign-top">Now</th>
-<th class="tableblock halign-left valign-top">Sets</th>
-<th class="tableblock halign-left valign-top">New</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td class="tableblock halign-left valign-top"><p class="tableblock"><code>-olcursor=</code></p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock"><code>cursorOffset</code></p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock"><code>-cursor=</code></p></td>
-</tr>
-<tr>
-<td class="tableblock halign-left valign-top"><p class="tableblock"><code>-olmark=</code></p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock"><code>markOffset</code></p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock"><code>-mark=</code></p></td>
-</tr>
-<tr>
-<td class="tableblock halign-left valign-top"><p class="tableblock"><code>-olcxlccursor=</code></p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock"><code>cursorLineColumn</code></p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock"><code>-cursor-line-column=</code></p></td>
-</tr>
-<tr>
-<td class="tableblock halign-left valign-top"><p class="tableblock"><code>-olinelen=</code></p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock"><code>lineLength</code></p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock"><code>-line-length=</code></p></td>
-</tr>
-<tr>
-<td class="tableblock halign-left valign-top"><p class="tableblock"><code>-olcxparnum=</code></p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock"><code>parameterNumber</code></p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock"><code>-parameter=</code></p></td>
-</tr>
-<tr>
-<td class="tableblock halign-left valign-top"><p class="tableblock"><code>-olcxparnum2=</code></p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock"><code>toParameterNumber</code>, where Move Parameter moves it to</p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock"><code>-to-parameter=</code></p></td>
-</tr>
-<tr>
-<td class="tableblock halign-left valign-top"><p class="tableblock"><code>-olmanualresolve</code></p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock"><code>manualResolve = RESOLVE_DIALOG_ALWAYS</code></p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock"><code>-resolve-dialog=always</code></p></td>
-</tr>
-<tr>
-<td class="tableblock halign-left valign-top"><p class="tableblock"><code>-olnodialog</code></p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock"><code>manualResolve = RESOLVE_DIALOG_NEVER</code></p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock"><code>-resolve-dialog=never</code></p></td>
-</tr>
-<tr>
-<td class="tableblock halign-left valign-top"><p class="tableblock"><code>-olexmacro</code>, <code>-olexvariable</code></p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock"><code>extractMode</code></p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">none, they go with the bridge</p></td>
-</tr>
-</tbody>
-</table>
-<div class="paragraph">
-<p><code>-olexmacro</code> and <code>-olexvariable</code> are how <code>refactory.c</code> tells its own parse which extraction it is, through the <code>parseBufferUsingServer</code> bridge.
-Extract Function is the default, so it has none.
-They should go with the bridge (§17.3, backlog #9), when <code>refactory.c</code> can set <code>parsingConfig.extractMode</code> itself.</p>
-</div>
-</div>
-<div class="sect3">
-<h4 id="_implementation">16.8.5. Implementation</h4>
-<div class="paragraph">
-<p>One group at a time, the parser and everything that sends the option in the same commit.
-A test checks that every option <code>c-xref.el</code> sends is one the server accepts, since the system tests only exercise the client through <code>commands.input</code>.</p>
-</div>
-</div>
-</div>
-<div class="sect2">
-<h3 id="_elisp_compiled_and_deleted_on_every_build">16.9. Elisp Compiled and Deleted on Every Build</h3>
-<div class="sect3">
-<h4 id="_problem_statement_6">16.9.1. Problem Statement</h4>
 <div class="paragraph">
 <p>Building <code>c-xref</code> runs <code>$(MAKE) -C ../editors/emacs</code> from the <code>c-xref</code> recipe, and
 that Makefile&#8217;s <code>all</code> target does this:</p>
@@ -10294,7 +9942,7 @@ real product.</p>
 </div>
 </div>
 <div class="sect3">
-<h4 id="_scope_2">16.9.2. Scope</h4>
+<h4 id="_scope">16.8.2. Scope</h4>
 <div class="paragraph">
 <p>Decide what the step is for and make it say so:</p>
 </div>
@@ -12756,7 +12404,7 @@ operation reads the in-memory table.</p>
 </div>
 <div id="footer">
 <div id="footer-text">
-Last updated 2026-10-25 14:14:17 UTC
+Last updated 2026-10-25 22:05:34 UTC
 </div>
 </div>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.18.3/highlight.min.js"></script>
