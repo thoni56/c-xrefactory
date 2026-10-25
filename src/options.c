@@ -116,8 +116,6 @@ static char autoDetectedProjectRoot[MAX_FILE_NAME_SIZE] = "";
 /* memory where on-line given options are stored */
 static Memory optMemory;
 
-static char base[MAX_FILE_NAME_SIZE];
-
 #define ENV_DEFAULT_VAR_FILE            "${__file}"
 #define ENV_DEFAULT_VAR_PATH            "${__path}"
 #define ENV_DEFAULT_VAR_NAME            "${__name}"
@@ -672,57 +670,6 @@ int getOptionFromFile(FILE *file, Position *position, char *foundText, int *char
     return lastCharacter;
 }
 
-static void processSingleProjectMarker(char *path, char *fileName,
-                                       bool *projectUpdated, char *foundProjectName) {
-#if defined (__WIN32__)
-    bool caseSensitivity = false;
-#else
-    bool caseSensitivity = true;
-#endif
-
-    int length = strlen(path);
-    if (pathncmp(path, fileName, length, caseSensitivity)==0
-        && (fileName[length]=='/' || fileName[length]=='\\' || fileName[length]==0))
-    {
-        strcpy(foundProjectName,path);
-        assert(strlen(foundProjectName)+1 < MAX_FILE_NAME_SIZE);
-        *projectUpdated = true;
-    } else {
-        *projectUpdated = false;
-    }
-}
-
-static void processProjectMarker(char *markerText, char *currentProject, char *fileName,
-                                 bool *projectUpdated, char *foundProjectName) {
-    /* First remove surrounding brackets */
-    char *projectMarker = &markerText[1];
-    markerText[strlen(markerText) - 1] = 0;
-
-    log_debug("processing %s for file %s project==%s", projectMarker, fileName, currentProject);
-
-    *projectUpdated = false;
-    if (currentProject != NULL && strcmp(projectMarker, currentProject) == 0) {
-        /* TODO This is kind a silly, if we found the project
-         * marker for the current project, copy it and say it was
-         * updated? So what will the caller do when "updated"? */
-        strcpy(foundProjectName, projectMarker);
-        assert(strlen(foundProjectName) + 1 < MAX_FILE_NAME_SIZE);
-        *projectUpdated = true;
-    } else {
-        processSingleProjectMarker(projectMarker, fileName, projectUpdated, foundProjectName);
-    }
-    if (*projectUpdated) {
-        strcpy(base, foundProjectName); /* Keep for debugging... */
-        assert(strlen(foundProjectName) < MAX_FILE_NAME_SIZE - 1);
-        setOptionVariable("__BASE", foundProjectName);
-        strcpy(foundProjectName, projectMarker);
-        // completely wrong, what about file names from command line ?
-        //&strncpy(cwd, foundProjectName, MAX_FILE_NAME_SIZE-1);
-        //&cwd[MAX_FILE_NAME_SIZE-1] = 0;
-    }
-}
-
-
 static int addOptionToArgsInMemory(Memory *memory, char optionText[], int argCount, char *arguments[]) {
     char *space = memoryAllocc(memory, strlen(optionText) + 1, sizeof(char));
     assert(space);
@@ -775,7 +722,8 @@ bool readOptionsIntoArgs(FILE *file, Position *position, ArgumentsVector *outArg
                          char *project, char *foundProjectName) {
     char optionText[MAX_OPTION_LEN];
     int len, ch, passNumber=0;
-    bool projectUpdated, isActivePass;
+    bool inProjectSection, isActivePass;
+    bool sectionHeaderSeen = false;
     PassMarker passMarker;
 
     ENTER();
@@ -783,8 +731,7 @@ bool readOptionsIntoArgs(FILE *file, Position *position, ArgumentsVector *outArg
     int argc = 1;
     char *argv[MAX_STD_ARGS];
 
-    projectUpdated = isActivePass = true;
-    foundProjectName[0]=0;
+    inProjectSection = isActivePass = true;
 
     if (memory == &optMemory)
         memoryInit(&optMemory, "argument options", OptionsMemorySize);
@@ -802,18 +749,19 @@ bool readOptionsIntoArgs(FILE *file, Position *position, ArgumentsVector *outArg
             log_debug("got option from file: '%s'", optionText);
         }
         if (len>=2 && optionText[0]=='[' && optionText[len-1]==']') {
-            log_debug("checking '%s'", optionText);
-            expandEnvironmentVariables(optionText+1, MAX_OPTION_LEN, &len, true);
-            log_debug("expanded '%s'", optionText);
-            processProjectMarker(optionText, project, fileName, &projectUpdated, foundProjectName);
-        } else if (projectUpdated && (passMarker = readPassMarker(optionText, &passNumber)) != NotAPassMarker) {
+            /* A first section header is ignored, a second ends the project (ADR-0031).
+             * The rest is still read, the pipe uses this too. */
+            if (sectionHeaderSeen)
+                inProjectSection = false;
+            sectionHeaderSeen = true;
+        } else if (inProjectSection && (passMarker = readPassMarker(optionText, &passNumber)) != NotAPassMarker) {
             /* An unusable marker leaves the section it introduces unread, rather
              * than silently attributing it to the pass before it. */
             isActivePass = passMarker == WellFormedPassMarker
                 && (passNumber == currentPass || currentPass == ANY_PASS);
             if (passMarker == WellFormedPassMarker && passNumber > maxPasses)
                 maxPasses = passNumber;
-        } else if (strcmp(optionText,"-set")==0 && (projectUpdated && isActivePass) && memory != NULL) {
+        } else if (strcmp(optionText,"-set")==0 && (inProjectSection && isActivePass) && memory != NULL) {
             // pre-evaluation of -set
             found = true;
             if (memory != NULL) {
@@ -834,7 +782,7 @@ bool readOptionsIntoArgs(FILE *file, Position *position, ArgumentsVector *outArg
                 ArgumentsVector args = {.argc = argc, .argv = argv};
                 handleSetOption(argc - 3, args);
             }
-        } else if (ch != EOF && (projectUpdated && isActivePass)) {
+        } else if (ch != EOF && (inProjectSection && isActivePass)) {
             found = true;
             expandEnvironmentVariables(optionText, MAX_OPTION_LEN, &len, false);
             if (memory != NULL) {

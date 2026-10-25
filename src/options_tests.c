@@ -289,6 +289,18 @@ Ensure(Options, does_not_raise_maxPasses_above_the_maximum) {
     assert_that(maxPasses, is_equal_to(1));
 }
 
+Ensure(Options, does_not_collect_the_options_after_a_second_section_header) {
+    char unused[1000];
+    ArgumentsVector nargs;
+
+    expect_characters("[/a/b]\n-DFIRST\n[/a]\n-DSECOND\n", true);
+
+    readOptionsIntoArgs(NULL, NULL, &nargs, &ppmMemory, "/a/b", "/a/b", unused);
+
+    assert_that(argsContain(nargs, "-DFIRST"), is_true);
+    assert_that(argsContain(nargs, "-DSECOND"), is_false);
+}
+
 static bool errorMessageCalled;
 static void errorMessageCallback(void *ignored) {
     errorMessageCalled = true;

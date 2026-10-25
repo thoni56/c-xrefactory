@@ -58,8 +58,7 @@ looked up first among the variables defined with
 .B \-set name value
 and then in the environment of the c-xref process. A leading '~/'
 expands to the home directory. A name that is not defined is left as
-written, without a warning. The predefined variable __BASE holds the
-section name.
+written, without a warning.
 
 The editor also reads variables with '-set': the Emacs extension asks
 for "compilefile", "compiledir", "compileproject", "run1" ... "run5",
