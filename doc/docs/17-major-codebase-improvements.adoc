@@ -415,6 +415,9 @@ Request *parseCommandLine(ArgumentsVector args);
 
 No globals mutated, no output files opened, no pass flags flipped. The dispatcher decides what side effects to run based on the returned `Request`. Each operation gets a typed struct — a tagged union or base struct with per-operation extensions — so the dispatch switch reads typed fields instead of guessing which `Options` fields are meaningful for which operation.
 
+`options.index` is one such field, the `=N` of seven options with three meanings: where to go in a list (`-browse-goto=`, `-completion-goto=`, `-search-goto=`), which item to select (`-completion-select=`, `-search-select=`), and a parameter number (`-internal-parse-to-goto-param-name=`, `-internal-parse-to-get-param-coordinates=`).
+With typed requests each of them gets its own field, and the parameter number is probably the same thing as `parnum` (`-parameter=`).
+
 The refactoring coordinator holds its own long-lived `RefactoringRequest` (the current `refactoringOptions` content, but owned by the coordinator, not a shadow global). Sub-operations construct their own fresh `Request` structs via normal parsing; the coordinator's state is safe because it lives elsewhere. `refactoringOptions` disappears. The save/restore sites disappear — each tier has one owner, and nothing trampled means nothing to restore.
 
 ==== Why One-Project-Per-Server Makes This Clean
@@ -785,7 +788,7 @@ Options that set no operation:
 Extract Function is the default, so it has none.
 They should go with the bridge (§17.3, backlog #9), when `refactory.c` can set `parsingConfig.extractMode` itself.
 
-The fields follow, as a separate rename: `olineLen`, `olcxGotoVal`, `parnum` and `parnum2`.
+The fields follow, as a separate rename: `olineLen`, `parnum` and `parnum2`.
 
 ==== Implementation
 
