@@ -21,6 +21,7 @@
 static bool parseFileWithFullInit(char *fileName, ArgumentsVector baseArgs) {
     bool parsed = false;
     int savedCursorOffset = options.cursorOffset;
+    int savedIndex = options.index;
     ServerOperation savedServerOperation = options.serverOperation;
     /* A string option lives in the options' own memory, which the reset frees, so it is
      * copied out and allocated again. A stopgap until the options partition: every other
@@ -44,6 +45,7 @@ static bool parseFileWithFullInit(char *fileName, ArgumentsVector baseArgs) {
     resumeMessages();
 
     options.cursorOffset = savedCursorOffset;
+    options.index = savedIndex;
     options.serverOperation = savedServerOperation;
     if (savedDumpSelection != NULL) {
         allocateStringForOption(&options.dumpSelection, savedDumpSelection);

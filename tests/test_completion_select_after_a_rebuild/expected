@@ -1,0 +1,23 @@
+CXREF -server -o server-buffer
+-getproject CURDIR/a.c
+end-of-options
+
+<sync>
+<set-info len=<n>>CURDIR</set-info>
+-completion -maxcompls=500 -line-length=80 -preload CURDIR/a.c CURDIR/a.preload -cursor=65 CURDIR/a.c
+end-of-options
+
+<sync>
+<all-completions nofocus=0 len=<n>>strcat_like   :int strcat_like
+strcopy_like  :int strcopy_like</all-completions>
+-completion-select=2
+end-of-options
+
+<sync>
+<goto>
+<position-lc line=5 col=11 len=<n>>CURDIR/a.c</position-lc>
+</goto>
+<single-completion len=<n>>strcopy_like</single-completion>
+-exit
+end-of-options
+

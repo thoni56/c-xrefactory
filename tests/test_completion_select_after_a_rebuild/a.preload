@@ -1,0 +1,6 @@
+int strcat_like;
+int strcopy_like;
+
+int f(void) {
+    return strc
+}

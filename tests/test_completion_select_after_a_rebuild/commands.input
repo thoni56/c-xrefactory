@@ -1,0 +1,8 @@
+CXREF -server
+-getproject CURDIR/a.c
+<sync>
+-completion -maxcompls=500 -line-length=80 -preload CURDIR/a.c CURDIR/a.preload -cursor=65 CURDIR/a.c
+<sync>
+-completion-select=2
+<sync>
+<exit>

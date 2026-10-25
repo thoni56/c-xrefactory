@@ -45,7 +45,8 @@ every push, `After` dashed and `Goes with` not at all, linked at the end of this
    Today a CU built during entry refresh resets the request's options: the fast path of
    `initializeFileProcessing()` copies `savedOptions`, taken at server start, over
    `options`. `parseFileWithFullInit()` keeps only `cursorOffset`,
-   `serverOperation` and, as a stopgap, `dumpSelection` (`test_dump_after_a_rebuild`).
+   `serverOperation` and, as stopgaps, `dumpSelection` (`test_dump_after_a_rebuild`) and
+   `index` (`test_completion_select_after_a_rebuild`).
    Every other REQUEST option is lost when a rebuild comes before the dispatch.
    The other way round, the lock that `-getproject` takes copies all of `options` into
    `savedOptions` (`src/cxref.c:1829`), so the next request starts as `OP_GET_PROJECT`
