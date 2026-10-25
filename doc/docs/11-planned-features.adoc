@@ -223,7 +223,8 @@ What did not parse is collected in the buffer `*c-xref-diagnostics*`, with its p
 The buffer is in a mode derived from `compilation-mode`, so `RET` in it, and `M-g n` and `M-g p` from anywhere, go to the place.
 The messages are grouped by the compilation unit whose parse found them, under a line `Analysing <file>`, as compile output is.
 When a unit is parsed again its group is replaced and moved last, and a unit that parses clean has no group.
-An answer that added messages ends with a notice, e.g. `2 new messages in *c-xref-diagnostics*, M-g n to visit`, with the user's own key for `next-error`.
+The mode line shows how many messages there are, e.g. `C-xref:2`, and `mouse-1` on it shows the buffer.
+Notes are not counted, and with no messages nothing is shown.
 
 The server sends these messages as `<log>` records, after an `<analysing>` record for the unit.
 Every other message record is modal, or a line in the minibuffer, and `<error>` also abandons the operation.

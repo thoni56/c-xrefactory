@@ -2327,6 +2327,41 @@ Returned with the index after the end tag, as (TEXT . INDEX)."
           (insert c-xref-diagnostics-header))))
     buffer))
 
+(defvar c-xref-diagnostics-count 0
+  "How many messages *c-xref-diagnostics* holds, notes not counted.")
+
+(defun c-xref-diagnostics-count-messages ()
+  (let ((buffer (get-buffer c-xref-diagnostics-buffer)))
+    (if (null buffer)
+        0
+      (with-current-buffer buffer
+        (save-excursion
+          (goto-char (point-min))
+          (forward-line 1)              ; the header
+          (let ((count 0))
+            (while (not (eobp))
+              (unless (or (looking-at (regexp-quote c-xref-diagnostics-heading-prefix))
+                          (looking-at "[^\n]*: note: "))
+                (setq count (1+ count)))
+              (forward-line 1))
+            count))))))
+
+(defun c-xref-diagnostics-show ()
+  "Show the buffer *c-xref-diagnostics*."
+  (interactive)
+  (display-buffer (c-xref-diagnostics-get-buffer)))
+
+(defun c-xref-diagnostics-mode-line ()
+  (when (> c-xref-diagnostics-count 0)
+    (propertize (format " C-xref:%d" c-xref-diagnostics-count)
+                'help-echo "mouse-1: show the diagnostics"
+                'mouse-face 'mode-line-highlight
+                'local-map (make-mode-line-mouse-map 'mouse-1 #'c-xref-diagnostics-show))))
+
+;; As display-time does it
+(or global-mode-string (setq global-mode-string '("")))
+(add-to-list 'global-mode-string '(:eval (c-xref-diagnostics-mode-line)) t)
+
 (defun c-xref-diagnostics-append (text)
   (let ((buffer (c-xref-diagnostics-get-buffer)))
     (with-current-buffer buffer
@@ -3229,7 +3264,7 @@ Special hotkeys available:
 
 
 (defun c-xref-server-dispatch (ss i len dispatch-data)
-  (let ((_x) (j) (logs 0))
+  (let ((_x) (j))
     (setq j 0)
     (if c-xref-debug-mode (message "[%s] dispatching: %s" (format-time-string "%T.%3N") ss))
     (setq i (c-xref-server-dispatch-skip-blank ss i len))
@@ -3320,7 +3355,6 @@ Special hotkeys available:
             (setq i (c-xref-server-dispatch-information ss i len dispatch-data c-xref-server-ctag)))
        (
             (equal c-xref-server-ctag c-xref_PPC_LOG)
-            (setq logs (1+ logs))
             (setq i (c-xref-server-dispatch-log ss i len c-xref-server-ctag)))
        (
             (equal c-xref-server-ctag c-xref_PPC_ANALYSING)
@@ -3344,9 +3378,8 @@ Special hotkeys available:
        )
       (setq i (c-xref-server-dispatch-skip-blank ss i len))
       )
-    (if (> logs 0)
-        (message "%d new messages in %s, %s to visit" logs c-xref-diagnostics-buffer
-                 (substitute-command-keys "\\[next-error]")))
+    (setq c-xref-diagnostics-count (c-xref-diagnostics-count-messages))
+    (force-mode-line-update t)
     (+ i j)
     ))
 

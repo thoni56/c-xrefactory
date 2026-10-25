@@ -55,17 +55,19 @@
       (skip-chars-backward "\n")
       (buffer-substring (line-beginning-position) (point)))))
 
-(ert-deftest c-xref-an-answer-with-diagnostics-ends-with-a-notice ()
+(ert-deftest c-xref-the-mode-line-shows-the-total-of-the-diagnostics ()
   (let ((answer (c-xref-test-log-records "source.c:2: Syntax error on: c\n"
+                                         "macro.h:1:15: note: expanded from macro 'M'\n"
                                          "source.c:3: unterminated comment\n")))
     (when (get-buffer c-xref-diagnostics-buffer)
       (kill-buffer c-xref-diagnostics-buffer))
     (message "before")
     (c-xref-server-dispatch answer 0 (length answer)
                             (list (cons 'caller-window (selected-window))))
-    (should (equal (c-xref-test-last-message)
-                   (format "2 new messages in *c-xref-diagnostics*, %s to visit"
-                           (substitute-command-keys "\\[next-error]"))))))
+    ;; format-mode-line gives "" in batch, there is no mode line to format
+    (should (member '(:eval (c-xref-diagnostics-mode-line)) global-mode-string))
+    (should (equal (substring-no-properties (c-xref-diagnostics-mode-line)) " C-xref:2"))
+    (should (equal (c-xref-test-last-message) "before"))))
 
 (defun c-xref-test-analysing-record (file)
   "The server's announcement that FILE is being analysed."
@@ -111,3 +113,13 @@
                             (list (cons 'caller-window (selected-window))))
     (should (equal (with-current-buffer c-xref-diagnostics-buffer (buffer-string))
                    c-xref-diagnostics-header))))
+
+(ert-deftest c-xref-the-mode-line-shows-nothing-without-diagnostics ()
+  (let ((answer (concat (c-xref-test-analysing-record "/project/a.c")
+                        (c-xref-test-log-records "/project/a.c:2:9: Syntax error on: c\n")
+                        (c-xref-test-analysing-record "/project/a.c"))))
+    (when (get-buffer c-xref-diagnostics-buffer)
+      (kill-buffer c-xref-diagnostics-buffer))
+    (c-xref-server-dispatch answer 0 (length answer)
+                            (list (cons 'caller-window (selected-window))))
+    (should-not (c-xref-diagnostics-mode-line))))
