@@ -19,8 +19,13 @@ which are passed in as extra arguments. E.g. a rename requires the
 name to rename to which is sent in the `renameto=` option, which is
 argparsed and stored in the option structure.
 
-Some of these extra arguments are fairly random, like `-parameter=`
-and `-to-parameter=`. This should be cleaned up.
+An option that requests an operation is named after its enum: the name without `OP_`,
+in lower case, with hyphens between the words, so `OP_BROWSE_PUSH_NAME` is
+`-browse-push-name=`. A value comes after `=`, as in `-browse-goto=2`. An option that
+sets no operation is named after what it sets, like `-cursor=` for `cursorOffset`, and
+one that selects from an enum takes the value, like `-resolve-dialog=never`.
+`tests/test_client_sends_only_known_options` checks that the client sends no option
+the server does not know.
 
 A move towards "events" with arguments would be helpful. This would
 mean that we need to:

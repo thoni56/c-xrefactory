@@ -421,8 +421,10 @@ Roadmap → Optimization has the baseline: a cold-start PUSH on ffmpeg, measured
     environment, and ignore the personal options in a config, with a warning.
     After: project-extent
 - (#28) <a id="chapter-17-hygiene"></a>**Chapter 17 hygiene, opportunistically** — incremental `cxfile.c` cleanup,
-    hashtab → hashlist, split the editor module, rename server
-    operations, elisp recompiled and deleted on every build.
+    hashtab → hashlist, split the editor module, elisp recompiled and deleted on every
+    build. Also "tags" in the elisp, the last of the old wording: the two
+    `c-xref-save-files-and-update-tags-*-refactoring` settings only save buffers, and two
+    docstrings in `c-xref.el` say the search "inspects the tags".
 - (#76) <a id="macro-expansion-module"></a>**Extract the macro expansion module from `src/yylex.c`** — §17.2.
     `yylex.c` is 2794 lines. The macro stack, the macro arguments memory and the
     expansions of the last lexem (`lastLexemExpansions`, `noteMacroExpansionsOfLastLexem()`)
