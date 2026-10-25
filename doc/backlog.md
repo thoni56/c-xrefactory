@@ -93,6 +93,17 @@ every push, `After` dashed and `Goes with` not at all, linked at the end of this
       `scanProjectStructure()` compares unnormalized strings; and the client's mismatch
       switch kills the server without `-exit`, losing everything since the last snapshot.
       Waits for: adr-0031
+- (#79) <a id="no-section-headers"></a>**A `.c-xrefrc` has no section header** — *no repo home yet.*
+    A config is directories and options, nothing else. Once the root path is the id, the
+    header's last job, the project's name, is gone. A `[` is then reported with its
+    position, as an unterminated quote is, and the rest of the file is still read.
+    Project > New (`c-xref-project-new`, `editors/emacs/c-xref.el`) stops asking for a name
+    and writing `[name]`. The test configs lose their header, the common template too (55
+    of 60). `getProjectNameFromConfigFile()` goes, and with it a fourth read of the config,
+    and so does `sectionHeaderSeen` in `readOptionsIntoArgs()`. Supersedes ADR-0031's "a
+    second header ends what is read": no config with several sections exists outside the
+    author's own, so nothing merges (WSL, session `d25255b8`, 2026-10-25).
+    After: root-path-id
 
 ## 2. After XrefMode
 
