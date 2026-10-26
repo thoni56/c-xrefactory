@@ -184,14 +184,10 @@
 ;; when displaying browser, default filter level will be 2
 (defvar c-xref-default-symbols-filter 2)
 
-(defvar c-xref-default-references-filter 0)
-
 ;; when updating browser, keep lastly set filter level
 (defvar c-xref-keep-last-symbols-filter t)
 
 (defvar c-xref-comments-moving-level 0)
-
-(defvar c-xref-prefer-import-on-demand t)
 
 (defvar c-xref-save-files-and-update-tags-after-refactoring nil)
 
@@ -358,11 +354,6 @@ C-xrefactory's source browsing functions.
             :type '(integer)
             :group 'c-xrefactory-source-browser)
 
-      (defcustom c-xref-default-references-filter 0
-            "Controls which references are shown. References to a variable work differently from references to other symbols. For variables: '3': only definition and declarations; '2': also l-value usages; '1': also usages where the address of the variable is taken; '0': all references. For other symbols: '3': only definitions and declarations; '2': not used; '1': also usages in the top level scope (global variable and function definitions; this can be used to see all the functions of a particular type); '0': all references."
-            :type '(integer)
-            :group 'c-xrefactory-source-browser)
-
       (defcustom c-xref-keep-last-symbols-filter t
             "If on, then C-xrefactory remembers the last filter level when pushing and popping in symbols window. Otherwise the default filter level is used."
             :type '(boolean)
@@ -406,11 +397,6 @@ C-xrefactory refactoring functions.
 
   (defcustom c-xref-save-files-and-update-tags-after-refactoring nil
         "If on, C-xrefactory saves all modified files and updates tags after each refactoring."
-        :type '(boolean)
-        :group 'c-xrefactory-refactoring)
-
-  (defcustom c-xref-prefer-import-on-demand t
-        "If on, C-xrefactory will prefer to generate import on demand statements (import com.pack.*;) instead of single type imports (import com.pack.Type;). This applies whenever C-xrefactory needs to add an import statement, which may be during moving refactorings or when reducing long type names."
         :type '(boolean)
         :group 'c-xrefactory-refactoring)
 
