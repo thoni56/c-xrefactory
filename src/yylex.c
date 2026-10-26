@@ -284,9 +284,10 @@ void initInput(FILE *file, EditorBuffer *editorBuffer, char *prefixString, char 
 }
 
 static void getAndSetOutPositionIfRequested(char **readPointerP, Position *outPosition) {
-    if (outPosition != NULL)
+    if (outPosition != NULL) {
         *outPosition = getLexemPositionAndAdvance(readPointerP);
-    else
+        log_debug("Lexem position: (%d)@%d:%d", outPosition->file, outPosition->line, outPosition->col);
+    } else
         getLexemPositionAndAdvance(readPointerP);
 }
 
@@ -358,8 +359,6 @@ static void getExtraLexemInformationFor(LexemCode lexem, char **readPointerP, in
     } else {
         getAndSetOutPositionIfRequested(readPointerP, outPosition);
     }
-    if (outPosition != NULL)
-        log_debug("Lexem position: (%d)@%d:%d", outPosition->file, outPosition->line, outPosition->col);
 }
 
 static void skipExtraLexemInformationWithCountLines(LexemCode lexem, char **readPointerP, bool countLines) {
