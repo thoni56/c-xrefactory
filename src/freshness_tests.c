@@ -45,11 +45,32 @@ Ensure(Freshness, compilation_unit_without_knowledge_is_out_of_date) {
     assert_that(knowledgeIsOutOfDate(NULL, A_C));
 }
 
+Ensure(Freshness, compilation_unit_without_knowledge_is_out_of_date_since_it_has_none) {
+    FileItem fileItem = {.name = "a.c", .knowledgeTime = NULL_TIMESTAMP};
+    expect(getFileItemWithFileNumber, when(fileNumber, is_equal_to(A_C)),
+           will_return(&fileItem));
+
+    OutOfDate outOfDate = whyKnowledgeIsOutOfDate(NULL, A_C);
+
+    assert_that(outOfDate.reason, is_equal_to(KNOWLEDGE_MISSING));
+    assert_that(outOfDate.fileNumber, is_equal_to(A_C));
+}
+
 Ensure(Freshness, compilation_unit_changed_after_its_knowledge_is_out_of_date) {
     FileTimestamp changeTime = makeFileTimestamp(2000, 0);
     expectACUWithKnowledgeAt(makeFileTimestamp(1000, 0), &changeTime);
 
     assert_that(knowledgeIsOutOfDate(NULL, A_C));
+}
+
+Ensure(Freshness, compilation_unit_changed_after_its_knowledge_is_out_of_date_since_it_changed) {
+    FileTimestamp changeTime = makeFileTimestamp(2000, 0);
+    expectACUWithKnowledgeAt(makeFileTimestamp(1000, 0), &changeTime);
+
+    OutOfDate outOfDate = whyKnowledgeIsOutOfDate(NULL, A_C);
+
+    assert_that(outOfDate.reason, is_equal_to(CU_CHANGED));
+    assert_that(outOfDate.fileNumber, is_equal_to(A_C));
 }
 
 Ensure(Freshness, compilation_unit_not_changed_since_its_knowledge_is_not_out_of_date) {
@@ -105,6 +126,27 @@ Ensure(Freshness, compilation_unit_with_a_header_changed_after_its_knowledge_is_
     assert_that(knowledgeIsOutOfDate(inputsWithGraph(NULL), A_C));
 }
 
+Ensure(Freshness, compilation_unit_with_a_header_changed_after_its_knowledge_is_out_of_date_since_the_header_changed) {
+    FileTimestamp cuChangeTime = makeFileTimestamp(1000, 0);
+    expectACUWithKnowledgeAt(makeFileTimestamp(2000, 0), &cuChangeTime);
+
+    int closure[] = {A_H};
+    expect(collectIncludeClosure, when(fileNumber, is_equal_to(A_C)),
+           will_set_contents_of_parameter(fileNumbers, closure, sizeof(closure)),
+           will_return(1));
+    FileItem headerItem = {.name = "a.h"};
+    FileTimestamp headerChangeTime = makeFileTimestamp(3000, 0);
+    always_expect(getFileItemWithFileNumber, when(fileNumber, is_equal_to(A_H)),
+                  will_return(&headerItem));
+    expect(editorFileModificationTime, when(path, is_equal_to_string("a.h")),
+           will_return(&headerChangeTime));
+
+    OutOfDate outOfDate = whyKnowledgeIsOutOfDate(inputsWithGraph(NULL), A_C);
+
+    assert_that(outOfDate.reason, is_equal_to(INPUT_CHANGED));
+    assert_that(outOfDate.fileNumber, is_equal_to(A_H));
+}
+
 Ensure(Freshness, compilation_unit_with_a_header_not_changed_since_its_knowledge_is_not_out_of_date) {
     FileTimestamp cuChangeTime = makeFileTimestamp(1000, 0);
     expectACUWithKnowledgeAt(makeFileTimestamp(2000, 0), &cuChangeTime);
@@ -142,6 +184,27 @@ Ensure(Freshness, compilation_unit_with_a_header_that_owes_a_strip_is_out_of_dat
     assert_that(knowledgeIsOutOfDate(inputsWithGraph(NULL), A_C));
 }
 
+Ensure(Freshness, compilation_unit_with_a_header_that_owes_a_strip_is_out_of_date_since_the_header_was_left_behind) {
+    FileTimestamp cuChangeTime = makeFileTimestamp(1000, 0);
+    expectACUWithKnowledgeAt(makeFileTimestamp(2000, 0), &cuChangeTime);
+
+    int closure[] = {A_H};
+    expect(collectIncludeClosure, when(fileNumber, is_equal_to(A_C)),
+           will_set_contents_of_parameter(fileNumbers, closure, sizeof(closure)),
+           will_return(1));
+    FileItem headerItem = {.name = "a.h", .isLeftBehind = true};
+    FileTimestamp headerChangeTime = makeFileTimestamp(1000, 0);
+    always_expect(getFileItemWithFileNumber, when(fileNumber, is_equal_to(A_H)),
+                  will_return(&headerItem));
+    always_expect(editorFileModificationTime, when(path, is_equal_to_string("a.h")),
+                  will_return(&headerChangeTime));
+
+    OutOfDate outOfDate = whyKnowledgeIsOutOfDate(inputsWithGraph(NULL), A_C);
+
+    assert_that(outOfDate.reason, is_equal_to(INPUT_LEFT_BEHIND));
+    assert_that(outOfDate.fileNumber, is_equal_to(A_H));
+}
+
 /* The closure counts what it found, also beyond what fits; what did not fit
  * could have changed */
 Ensure(Freshness, compilation_unit_whose_include_closure_did_not_fit_is_out_of_date) {
@@ -152,6 +215,19 @@ Ensure(Freshness, compilation_unit_whose_include_closure_did_not_fit_is_out_of_d
            will_return(1000000));
 
     assert_that(knowledgeIsOutOfDate(inputsWithGraph(NULL), A_C));
+}
+
+Ensure(Freshness, compilation_unit_whose_include_closure_did_not_fit_is_out_of_date_since_it_is_too_large) {
+    FileTimestamp cuChangeTime = makeFileTimestamp(1000, 0);
+    expectACUWithKnowledgeAt(makeFileTimestamp(2000, 0), &cuChangeTime);
+
+    expect(collectIncludeClosure, when(fileNumber, is_equal_to(A_C)),
+           will_return(1000000));
+
+    OutOfDate outOfDate = whyKnowledgeIsOutOfDate(inputsWithGraph(NULL), A_C);
+
+    assert_that(outOfDate.reason, is_equal_to(CLOSURE_TOO_LARGE));
+    assert_that(outOfDate.fileNumber, is_equal_to(A_C));
 }
 
 /* A file that no longer exists has no modification time */

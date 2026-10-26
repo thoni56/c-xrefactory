@@ -6,6 +6,7 @@
 #include "editor.h"
 #include "filetable.h"
 #include "includegraph.h"
+#include "log.h"
 #include "timestamp.h"
 
 
@@ -71,22 +72,56 @@ int collectIncludeClosureOf(Inputs *inputs, int fileNumber, int fileNumbers[],
     return collectIncludeClosure(inputs->includeGraph, fileNumber, fileNumbers, maxFileNumbers);
 }
 
-bool knowledgeIsOutOfDate(Inputs *inputs, int fileNumber) {
-    FileItem *fileItem = getFileItemWithFileNumber(fileNumber);
+static OutOfDate whyOutOfDate(Inputs *inputs, int fileNumber, FileItem *fileItem) {
     if (fileTimestampIsZero(fileItem->knowledgeTime))
-        return true;
+        return (OutOfDate){KNOWLEDGE_MISSING, fileNumber};
     if (inputChangedAfter(editorFileModificationTime(fileItem->name), fileItem->knowledgeTime))
-        return true;
+        return (OutOfDate){CU_CHANGED, fileNumber};
 
     int closure[MAX_INCLUDE_CLOSURE];
     int count = collectIncludeClosure(inputs->includeGraph, fileNumber, closure, MAX_INCLUDE_CLOSURE);
     if (count > MAX_INCLUDE_CLOSURE)
-        return true;
+        return (OutOfDate){CLOSURE_TOO_LARGE, fileNumber};
     for (int i = 0; i < count; i++) {
         if (getFileItemWithFileNumber(closure[i])->isLeftBehind)
-            return true;
+            return (OutOfDate){INPUT_LEFT_BEHIND, closure[i]};
         if (inputChangedAfter(changeTimeOf(inputs, closure[i]), fileItem->knowledgeTime))
-            return true;
+            return (OutOfDate){INPUT_CHANGED, closure[i]};
     }
-    return false;
+    return (OutOfDate){KNOWLEDGE_CURRENT, fileNumber};
+}
+
+OutOfDate whyKnowledgeIsOutOfDate(Inputs *inputs, int fileNumber) {
+    return whyOutOfDate(inputs, fileNumber, getFileItemWithFileNumber(fileNumber));
+}
+
+static void logOutOfDate(char *name, OutOfDate outOfDate) {
+    switch (outOfDate.reason) {
+    case KNOWLEDGE_CURRENT:
+        break;
+    case KNOWLEDGE_MISSING:
+        log_info("'%s' is out of date: there is no knowledge of it", name);
+        break;
+    case CU_CHANGED:
+        log_info("'%s' is out of date: it changed", name);
+        break;
+    case INPUT_CHANGED:
+        log_info("'%s' is out of date: '%s' changed", name,
+                 getFileItemWithFileNumber(outOfDate.fileNumber)->name);
+        break;
+    case INPUT_LEFT_BEHIND:
+        log_info("'%s' is out of date: '%s' is left behind", name,
+                 getFileItemWithFileNumber(outOfDate.fileNumber)->name);
+        break;
+    case CLOSURE_TOO_LARGE:
+        log_info("'%s' is out of date: its include closure is too large to check", name);
+        break;
+    }
+}
+
+bool knowledgeIsOutOfDate(Inputs *inputs, int fileNumber) {
+    FileItem *fileItem = getFileItemWithFileNumber(fileNumber);
+    OutOfDate outOfDate = whyOutOfDate(inputs, fileNumber, fileItem);
+    logOutOfDate(fileItem->name, outOfDate);
+    return outOfDate.reason != KNOWLEDGE_CURRENT;
 }

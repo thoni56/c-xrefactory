@@ -307,8 +307,12 @@ static void stripChangedHeldHeaders(BuildList *list) {
                 } else {
                     int count = collectCUsIncluding(fileNumber, list->fileNumbers, list->count,
                                                     MAX_CUS_TO_REPARSE);
-                    for (; list->count < count; list->count++)
-                        list->built[list->fileNumbers[list->count]] = true;
+                    for (; list->count < count; list->count++) {
+                        int includer = list->fileNumbers[list->count];
+                        log_info("'%s' is out of date: '%s' changed in the editor",
+                                 getFileItemWithFileNumber(includer)->name, fileItem->name);
+                        list->built[includer] = true;
+                    }
                     /* The stale header's own references go now; building the CUs
                      * above re-emits them. */
                     stripHeader(fileNumber);

@@ -1,0 +1,4 @@
+'CURDIR/a.c' is out of date: there is no knowledge of it
+'CURDIR/b.c' is out of date: there is no knowledge of it
+'CURDIR/a.c' is out of date: 'CURDIR/h.h' changed
+'CURDIR/b.c' is out of date: 'CURDIR/h.h' changed

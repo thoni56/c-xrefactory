@@ -1,0 +1,10 @@
+CXREF -server -info -log=log
+-getproject CURDIR/a.c
+<sync>
+-browse-push -cursor=21 CURDIR/a.c
+<sync>
+!cp CURDIR/h.h.edited CURDIR/h.h
+!sleep 0.1
+-browse-push -cursor=21 CURDIR/a.c
+<sync>
+<exit>
