@@ -1626,7 +1626,7 @@ tries to delete C-xrefactory windows first.
 ;;    (when c-xref-debug-mode
 ;;      (setq opts (append opts (list "-debug" "-log=log"))))
 
-    (setq opts (append opts initopts))
+    (setq opts (append opts initopts c-xref-server-startup-options))
 
     (if c-xref-debug-mode (message "[%s] calling: %S" (format-time-string "%T.%3N") opts))
     (set proc (cons

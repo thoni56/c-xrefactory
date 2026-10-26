@@ -45,3 +45,19 @@
 (ert-deftest c-xref-restarting-a-stopped-server-says-so ()
   (should (string-match-p "server had stopped (exit status 3), starting a new one"
                           (c-xref-test-restart-message (c-xref-test-exited-process 3)))))
+
+;; The user can give the server options of their own, e.g. a log
+(ert-deftest c-xref-server-is-started-with-the-startup-options ()
+  (let ((c-xref-server-startup-options '("-info" "-log=c-xref.log"))
+        (c-xref-test-server nil)
+        (arguments nil)
+        (start-a-process (symbol-function 'start-process))
+        (kill-emacs-hook nil))
+    (cl-letf (((symbol-function 'start-process)
+               (lambda (&rest args)
+                 (setq arguments args)
+                 (funcall start-a-process "c-xref-test-cat" nil "cat"))))
+      (unwind-protect
+          (c-xref-start-server-process '("-server") "ofile" 'c-xref-test-server #'ignore)
+        (delete-process (car c-xref-test-server))))
+    (should (equal (last arguments 3) '("-server" "-info" "-log=c-xref.log")))))

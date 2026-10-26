@@ -271,6 +271,11 @@ C-xrefactory functions.
             :group 'c-xrefactory
         )
 
+      (defcustom c-xref-server-startup-options nil
+            "Extra options the c-xref server is started with, e.g. (\"-info\" \"-log=/tmp/c-xref.log\") to log why files are analysed. They take effect when the server starts, so kill it, or restart Emacs, after a change."
+            :type '(repeat string)
+            :group 'c-xrefactory-general)
+
       (defcustom c-xref-bind-left-mouse-button t
             "If on, C-xrefactory will bind the left mouse button in its dialog windows. The button will be bound to the same function as the middle button. If you change this value, you will need to restart Emacs in order for that new value take effect."
             :type '(boolean)
