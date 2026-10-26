@@ -209,6 +209,7 @@ Use relative effort only: "smaller", "larger", "foundational"
 - A `.suspended` file is a handover note. Its first line is the only one shown in test runs, so make it a headline starting with `Bug:` (wrong behaviour in something that exists) or `Missing:` (not implemented). After a blank line, explain the defect, its cause, the likely fix and anything to decide first, so someone without the conversation can pick it up. Remove it in the same commit as the fix.
 - In a small test, a result missing references that should be there is a bug until proven otherwise. Before calling it one, check ADR-0013: references reachable only through an `extern` written in a `.c` file, without a shared header, are deliberately not followed.
 - Use `sed -i.bak` in test Makefiles, not `sed -i`, which BSD/macOS sed reads differently.
+- A preload or replacement file in a test directory must not end in `.c`, `.h` or `.y`, e.g. `source.c.edited`, not `source_v2.c`. The scan picks it up as part of the project, and it changes what the test sees.
 
 ## Build & Test Commands
 
