@@ -200,8 +200,9 @@ newer content.
 It is also the case when a header the CU includes changed on disk.
 
 **Detection:** `collectOutOfDateHeldCUs()` takes each held CU for which
-`knowledgeIsOutOfDate()` is true, i.e. it has no knowledge, an input is gone, or an
-input changed after its knowledge was built (ADR-0032).
+`knowledgeIsOutOfDate()` is true, i.e. it has no knowledge, an input is gone, an
+input changed after its knowledge was built, or a header it includes is left behind
+(ADR-0032, ADR-0033).
 A held CU that is gone from disk is marked as deleted instead.
 
 **Action:** none yet.

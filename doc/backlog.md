@@ -230,10 +230,10 @@ every push, `After` dashed and `Goes with` not at all, linked at the end of this
     Goes with: behind-the-back
     After: sweep
 - (#11) <a id="behind-the-back"></a>**A header changed on disk, which the editor does not hold, keeps its old references when it has more includers than the cap** —
-    a header that some includers are built into, but not all, is marked, and its other
-    includers are then out of date until all are built in one request and it is
+    a header that some includers are built into, but not all, is left behind, and its
+    other includers are then out of date until all are built in one request and it is
     stripped (`tests/test_ghosts_stay_when_one_includer_is_parsed_alone`). Above the cap
-    that never happens. Ghosts from before the mark existed have no mark, and stay.
+    that never happens. Ghosts from before that are not seen as left behind, and stay.
     Waits for: request-target
     Goes with: sweep
 - (#13) <a id="token-pasting-trio"></a>**Token pasting trio**, in this order — the later two assume the first

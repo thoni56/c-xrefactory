@@ -9,8 +9,8 @@ Accepted (2026-10-04)
 Amended (2026-10-06): what the refusal of ghosts covers, a missing include edge as a
 risk, and ghosts surviving a restart. The decision unchanged.
 
-Amended (2026-10-26): a file still waiting for a removal at exit makes its reaching CUs
-out of date in the snapshot, see below.
+Amended (2026-10-26): a file left behind makes its reaching CUs out of date, also in
+the snapshot, see below.
 
 Supersedes the include-structure reparse and fingerprint gate of
 [ADR-0025](0025-clean-stale-header-emissions-by-reparse-not-provenance.md), keeping its
@@ -30,6 +30,10 @@ Used in this decision, beside those of ADR-0032, and also in Terminology in
 - **Knowledge generation**: the generation of a CU's latest parse.
 - **Refresh**: a parse emits a reference that is already in the table, and the reference
   gets that parse's generation.
+- **Left behind** (of a file): some of its reaching CUs, but not all, have been parsed
+  after one of its references was last emitted. It holds old references beside the new
+  ones. Today, with all or nothing for a header, it is a header that some of its
+  includers have been built into since it changed.
 - **Reaching CU** (of a file): a CU whose include closure contains the file, or that is
   the file.
 
@@ -77,10 +81,9 @@ _we propose to_
 - not persist generations in the snapshot. On load every reference and every CU gets the
   same generation, so nothing is removed until everything reaching a file has been parsed
   again,
-- save a CU that reaches a file still waiting for a removal without knowledge. A file
-  waits when some of its reaching CUs, but not all, have been parsed after one of its
-  references was last emitted. Its other reaching CUs may be current, and ADR-0032 would
-  then never parse them again, so after a restart nothing would be removed there at all,
+- let a file **left behind** make its reaching CUs out of date, and save them without
+  knowledge. Its other reaching CUs may be current, and ADR-0032 would then never parse
+  them again, so nothing would be removed there at all, also not after a restart,
 
 _disregarding the fact that_
 - between a change and the removal, references at old positions are still there and show
@@ -131,7 +134,7 @@ until the removal, out-of-date references show as ghosts.
   Which writer wins is backlog item `cu-inputs`.
 - *Ghosts survive a restart.* Generations are not in the snapshot, so ghosts are
   written at exit and loaded again, and stay until every CU reaching their file has
-  been parsed in one session. The CUs reaching a file that waits are saved without
+  been parsed in one session. The CUs reaching a file left behind are saved without
   knowledge, so they are out of date after the restart and get parsed when a request
   reaches them. For a header with hundreds of includers and a "no" to the completeness
   question, that can still be many sessions, and each restart parses those CUs again.

@@ -337,6 +337,11 @@ Knowledge generation::
 Knowledge time::
   When the knowledge of a CU was recorded (ADR-0032).
 
+Left behind::
+  A header that some of its includers have been built into since it changed, but not all.
+  It holds old references beside the new ones. Its other includers are out of date until
+  all of them are built and it is stripped (ADR-0033).
+
 Lightweight scan::
   Discovery of project structure by globbing for compilation units and text-scanning
   `#include` lines, without full parsing. Populates the file table and include structure.
@@ -347,8 +352,8 @@ Operation on a position / on a name::
   `needsWholeProjectParsed()` (`src/server.c`) lists the operations on a name (ADR-0032).
 
 Out of date::
-  A CU's knowledge, when there is none, or when an input changed after the knowledge time
-  (ADR-0032). It replaces _Staleness_.
+  A CU's knowledge, when there is none, when an input changed after the knowledge time,
+  or when a header it includes is left behind (ADR-0032). It replaces _Staleness_.
 
 Persisted snapshot::
   The `.cx` files on disk. A point-in-time copy of the reference table from a previous

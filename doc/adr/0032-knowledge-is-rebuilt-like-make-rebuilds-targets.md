@@ -10,6 +10,9 @@ Amended (2026-10-05): terms sharpened, the decision unchanged.
 
 Amended (2026-10-11): the request file is no exception, see below.
 
+Amended (2026-10-26): a header left behind makes its includers out of date, see
+ADR-0033.
+
 Builds on [ADR-0014](0014-adopt-on-demand-parsing-architecture.md) and
 [ADR-0020](0020-separate-buffer-sync-from-operation-dispatch.md)
 Goes with [ADR-0033](0033-references-are-removed-when-every-cu-reaching-their-file-is-parsed-again.md)
@@ -35,8 +38,8 @@ Nothing in the table is kept per file or per CU.
 - **Change time**: an input's modification time, from the held buffer if the client
   holds one, otherwise from disk.
 - **Knowledge time**: when the knowledge of a CU was recorded.
-- **Out of date**: a CU's knowledge, when there is none, or when an input changed after
-  the knowledge time.
+- **Out of date**: a CU's knowledge, when there is none, when an input changed after
+  the knowledge time, or when a header it includes is left behind (ADR-0033).
 - **Reach** (of a symbol): the CUs whose knowledge can reference it. For a `static` that is
   its own CU, for a global the CUs that include its declaring header, directly or through
   other headers. Reach walks through headers but ends in CUs, since only a CU is parsed.
@@ -148,9 +151,9 @@ _because_
 
 ## Decision Outcome
 
-A CU's knowledge is out of date when it has none, or when the CU, a file it includes or
-the project config changed after the knowledge was recorded. That is the only freshness
-test. What is brought up to date is the request's goal, the symbol's reach or for a
+A CU's knowledge is out of date when it has none, when the CU, a file it includes or
+the project config changed after the knowledge was recorded, or when a header it
+includes is left behind. That is the only freshness test. What is brought up to date is the request's goal, the symbol's reach or for a
 name the whole project, within a time budget. Above the budget browsing asks and
 remembers a "no" for the session, while an operation that edits code or works on a name
 asks every time and is cancelled by a "no".
