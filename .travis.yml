@@ -4,6 +4,10 @@ os:
 
 dist: jammy
 
+# The whole history, so git describe finds the version tag
+git:
+  depth: false
+
 if: NOT tag = stable
 
 addons:
