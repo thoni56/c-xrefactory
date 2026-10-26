@@ -289,11 +289,9 @@ build: build-proper
 
 .PHONY:build-proper
 build-proper: c-xref
-	$(MAKE) -C ../editors/emacs
 
 c-xref: check-tokens $(OBJS) editor-defs
 	$(CC) $(LDFLAGS) -o c-xref $(OBJS) $(LIBS)
-	$(MAKE) -C ../editors/emacs
 	@touch .build.done
 
 editor-defs: refactorings.def

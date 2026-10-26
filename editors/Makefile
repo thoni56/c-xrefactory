@@ -1,2 +1,2 @@
 all:
-	$(MAKE) -C emacs compile
+	$(MAKE) -C emacs
