@@ -17,6 +17,9 @@ before_install:
 
 script:
     - cd src
+    # The release build, since -O3 finds warnings that -O1 does not
+    - make prod
+    - make clean
     # Separate coverage for unittest to Codecov
     - make COVERAGE=--coverage unit
     - if [ "$TRAVIS_OS_NAME" = "linux" ]; then
