@@ -64,6 +64,12 @@ static void setupProgress(BuildList *list) {
     initProgress(progressFormat);
 }
 
+/* A stripped header owes nothing any more (#80) */
+static void stripHeader(int fileNumber) {
+    removeReferenceableItemsForFile(fileNumber);
+    getFileItemWithFileNumber(fileNumber)->stripOwed = false;
+}
+
 static bool everyIncluderIsBuilt(int includers[], int includerCount, bool rebuilt[]) {
     for (int i = 0; i < includerCount; i++) {
         if (!rebuilt[includers[i]])
@@ -141,7 +147,7 @@ void collectSiblingCUs(BuildList *list, Inputs *inputs, int requestFileNumber) {
          * only when every CU that includes it is built again, before any is */
         if (everyIncluderIsBuilt(siblingCUs, siblingCount, list->built)) {
             log_debug("Every includer of '%s' is built again, stripping it", headerFileItem->name);
-            removeReferenceableItemsForFile(headerIndex);
+            stripHeader(headerIndex);
         }
     }
 
@@ -171,9 +177,38 @@ void stripHeadersWhoseIncludersAreAllBuilt(BuildList *list) {
             continue;
         int includerCount = collectCUsIncluding(i, includers, 0, MAX_FILES);
         if (everyIncluderIsBuilt(includers, includerCount, list->built))
-            removeReferenceableItemsForFile(i);
+            stripHeader(i);
     }
     free(includers);
+}
+
+/* A header that some of its includers are built into, while others that it
+ * changed after are not, keeps its old references beside the new ones. Mark it,
+ * so that every includer is out of date until it is stripped (#80) */
+void markHeadersLeftBehind(BuildList *list, Inputs *inputs) {
+    int *closure = malloc(MAX_FILES * sizeof(int));
+    int *includers = malloc(MAX_FILES * sizeof(int));
+    for (int i = 0; i < list->count; i++) {
+        int closureCount = collectIncludeClosureOf(inputs, list->fileNumbers[i], closure, MAX_FILES);
+        for (int h = 0; h < closureCount && h < MAX_FILES; h++) {
+            FileItem *header = getFileItemWithFileNumber(closure[h]);
+            if (isCompilationUnit(header->name) || header->stripOwed)
+                continue;
+            int includerCount = collectCUsIncluding(closure[h], includers, 0, MAX_FILES);
+            for (int j = 0; j < includerCount; j++) {
+                if (!list->built[includers[j]]
+                    && !getFileItemWithFileNumber(includers[j])->isDeleted
+                    && changedAfterKnowledgeOf(inputs, closure[h], includers[j])) {
+                    log_debug("'%s' is left behind by '%s', marking it", header->name,
+                              getFileItemWithFileNumber(includers[j])->name);
+                    header->stripOwed = true;
+                    break;
+                }
+            }
+        }
+    }
+    free(includers);
+    free(closure);
 }
 
 int buildListCount(BuildList *list) {
@@ -262,7 +297,7 @@ static void stripChangedHeldHeaders(BuildList *list) {
                         list->built[list->fileNumbers[list->count]] = true;
                     /* The stale header's own references go now; building the CUs
                      * above re-emits them. */
-                    removeReferenceableItemsForFile(fileNumber);
+                    stripHeader(fileNumber);
                     EditorBuffer *buffer = getOpenedAndLoadedEditorBuffer(fileItem->name);
                     if (buffer != NULL)
                         fileItem->lastParsedMtime = buffer->modificationTime;

@@ -97,8 +97,8 @@ Ensure(Freshness, compilation_unit_with_a_header_changed_after_its_knowledge_is_
            will_return(1));
     FileItem headerItem = {.name = "a.h"};
     FileTimestamp headerChangeTime = makeFileTimestamp(3000, 0);
-    expect(getFileItemWithFileNumber, when(fileNumber, is_equal_to(A_H)),
-           will_return(&headerItem));
+    always_expect(getFileItemWithFileNumber, when(fileNumber, is_equal_to(A_H)),
+                  will_return(&headerItem));
     expect(editorFileModificationTime, when(path, is_equal_to_string("a.h")),
            will_return(&headerChangeTime));
 
@@ -115,12 +115,31 @@ Ensure(Freshness, compilation_unit_with_a_header_not_changed_since_its_knowledge
            will_return(1));
     FileItem headerItem = {.name = "a.h"};
     FileTimestamp headerChangeTime = makeFileTimestamp(1000, 0);
-    expect(getFileItemWithFileNumber, when(fileNumber, is_equal_to(A_H)),
-           will_return(&headerItem));
+    always_expect(getFileItemWithFileNumber, when(fileNumber, is_equal_to(A_H)),
+                  will_return(&headerItem));
     expect(editorFileModificationTime, when(path, is_equal_to_string("a.h")),
            will_return(&headerChangeTime));
 
     assert_that(knowledgeIsOutOfDate(inputsWithGraph(NULL), A_C), is_false);
+}
+
+/* Its old references are still there, beside those of the includers built since */
+Ensure(Freshness, compilation_unit_with_a_header_that_owes_a_strip_is_out_of_date) {
+    FileTimestamp cuChangeTime = makeFileTimestamp(1000, 0);
+    expectACUWithKnowledgeAt(makeFileTimestamp(2000, 0), &cuChangeTime);
+
+    int closure[] = {A_H};
+    expect(collectIncludeClosure, when(fileNumber, is_equal_to(A_C)),
+           will_set_contents_of_parameter(fileNumbers, closure, sizeof(closure)),
+           will_return(1));
+    FileItem headerItem = {.name = "a.h", .stripOwed = true};
+    FileTimestamp headerChangeTime = makeFileTimestamp(1000, 0);
+    always_expect(getFileItemWithFileNumber, when(fileNumber, is_equal_to(A_H)),
+                  will_return(&headerItem));
+    always_expect(editorFileModificationTime, when(path, is_equal_to_string("a.h")),
+                  will_return(&headerChangeTime));
+
+    assert_that(knowledgeIsOutOfDate(inputsWithGraph(NULL), A_C));
 }
 
 /* The closure counts what it found, also beyond what fits; what did not fit
@@ -155,7 +174,7 @@ Ensure(Freshness, a_header_two_compilation_units_include_is_asked_for_its_change
     FileItem headerItem = {.name = "a.h"};
     FileTimestamp headerChangeTime = makeFileTimestamp(1000, 0);
     expect(getFileItemWithFileNumber, when(fileNumber, is_equal_to(A_H)),
-           will_return(&headerItem));
+           will_return(&headerItem), times(2));
     expect(editorFileModificationTime, when(path, is_equal_to_string("a.h")),
            will_return(&headerChangeTime));
 
@@ -167,6 +186,8 @@ Ensure(Freshness, a_header_two_compilation_units_include_is_asked_for_its_change
     expect(collectIncludeClosure, when(fileNumber, is_equal_to(B_C)),
            will_set_contents_of_parameter(fileNumbers, closure, sizeof(closure)),
            will_return(1));
+    expect(getFileItemWithFileNumber, when(fileNumber, is_equal_to(A_H)),
+           will_return(&headerItem));
 
     Inputs *inputs = inputsWithGraph(NULL);
     assert_that(knowledgeIsOutOfDate(inputs, A_C), is_false);

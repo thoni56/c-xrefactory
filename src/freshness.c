@@ -61,6 +61,11 @@ static bool inputChangedAfter(FileTimestamp changeTime, FileTimestamp knowledgeT
     return fileTimestampIsZero(changeTime) || changedAfter(changeTime, knowledgeTime);
 }
 
+bool changedAfterKnowledgeOf(Inputs *inputs, int fileNumber, int cuFileNumber) {
+    return inputChangedAfter(changeTimeOf(inputs, fileNumber),
+                             getFileItemWithFileNumber(cuFileNumber)->knowledgeTime);
+}
+
 int collectIncludeClosureOf(Inputs *inputs, int fileNumber, int fileNumbers[],
                             int maxFileNumbers) {
     return collectIncludeClosure(inputs->includeGraph, fileNumber, fileNumbers, maxFileNumbers);
@@ -77,8 +82,11 @@ bool knowledgeIsOutOfDate(Inputs *inputs, int fileNumber) {
     int count = collectIncludeClosure(inputs->includeGraph, fileNumber, closure, MAX_INCLUDE_CLOSURE);
     if (count > MAX_INCLUDE_CLOSURE)
         return true;
-    for (int i = 0; i < count; i++)
+    for (int i = 0; i < count; i++) {
+        if (getFileItemWithFileNumber(closure[i])->stripOwed)
+            return true;
         if (inputChangedAfter(changeTimeOf(inputs, closure[i]), fileItem->knowledgeTime))
             return true;
+    }
     return false;
 }

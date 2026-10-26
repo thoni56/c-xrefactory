@@ -8,6 +8,10 @@ bool knowledgeIsOutOfDate(Inputs *inputs, int fileNumber) {
     return (bool)mock(inputs, fileNumber);
 }
 
+bool changedAfterKnowledgeOf(Inputs *inputs, int fileNumber, int cuFileNumber) {
+    return (bool)mock(inputs, fileNumber, cuFileNumber);
+}
+
 Inputs *collectInputs(void) {
     return (Inputs *)mock();
 }

@@ -13,6 +13,7 @@ extern Inputs *collectInputs(void);
 extern void freeInputs(Inputs *inputs);
 
 extern bool knowledgeIsOutOfDate(Inputs *inputs, int fileNumber);
+extern bool changedAfterKnowledgeOf(Inputs *inputs, int fileNumber, int cuFileNumber);
 extern int collectIncludeClosureOf(Inputs *inputs, int fileNumber, int fileNumbers[],
                                    int maxFileNumbers);
 

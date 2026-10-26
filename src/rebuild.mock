@@ -23,6 +23,10 @@ void collectSiblingCUs(BuildList *list, Inputs *inputs, int requestFileNumber) {
     mock(list, inputs, requestFileNumber);
 }
 
+void markHeadersLeftBehind(BuildList *list, Inputs *inputs) {
+    mock(list, inputs);
+}
+
 void buildKnowledgeOfAll(BuildList *list, ArgumentsVector baseArgs_) {
     ArgumentsVector *baseArgs = &baseArgs_;
     mock(list, baseArgs);

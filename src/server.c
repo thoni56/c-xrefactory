@@ -405,6 +405,7 @@ void callServer(ArgumentsVector baseArgs, ArgumentsVector requestArgs) {
 
     stripRequestCU(buildList, requestFileNumber);
 
+    markHeadersLeftBehind(buildList, inputs);
     buildKnowledgeOfAll(buildList, baseArgs);
     freeBuildList(buildList);
 
