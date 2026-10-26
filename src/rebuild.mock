@@ -27,6 +27,10 @@ void markHeadersLeftBehind(BuildList *list, Inputs *inputs) {
     mock(list, inputs);
 }
 
+void forgetKnowledgeOfHeadersLeftBehind(void) {
+    mock();
+}
+
 void buildKnowledgeOfAll(BuildList *list, ArgumentsVector baseArgs_) {
     ArgumentsVector *baseArgs = &baseArgs_;
     mock(list, baseArgs);

@@ -211,6 +211,20 @@ void markHeadersLeftBehind(BuildList *list, Inputs *inputs) {
     free(closure);
 }
 
+/* The mark is not in the snapshot, so the includers of a marked header are
+ * saved without knowledge, and are out of date in the next session (#80) */
+void forgetKnowledgeOfHeadersLeftBehind(void) {
+    int *includers = malloc(MAX_FILES * sizeof(int));
+    for (int i = getNextExistingFileNumber(0); i != -1; i = getNextExistingFileNumber(i + 1)) {
+        if (!getFileItemWithFileNumber(i)->stripOwed)
+            continue;
+        int includerCount = collectCUsIncluding(i, includers, 0, MAX_FILES);
+        for (int j = 0; j < includerCount; j++)
+            getFileItemWithFileNumber(includers[j])->knowledgeTime = NULL_TIMESTAMP;
+    }
+    free(includers);
+}
+
 int buildListCount(BuildList *list) {
     return list->count;
 }

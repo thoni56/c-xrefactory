@@ -23,6 +23,7 @@
 #include "optionsets.h"
 #include "parsers.mock"
 #include "ppc.mock"
+#include "rebuild.mock"
 #include "proto.h"
 #include "yylex.mock"
 

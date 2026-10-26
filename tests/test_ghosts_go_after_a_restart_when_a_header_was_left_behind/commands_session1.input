@@ -1,0 +1,12 @@
+CXREF -server
+-getproject CURDIR/a.c
+<sync>
+-browse-push -preload CURDIR/a.c CURDIR/a.c.preload -cursor=21 CURDIR/a.c
+<sync>
+!cp CURDIR/h.h.edited CURDIR/h.h
+!sleep 0.1
+-getproject -preload CURDIR/a.c CURDIR/a.c.preload CURDIR/a.c
+<sync>
+-getproject CURDIR/a.c
+<sync>
+<exit>

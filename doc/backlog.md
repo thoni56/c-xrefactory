@@ -229,23 +229,12 @@ every push, `After` dashed and `Goes with` not at all, linked at the end of this
     reading the code (Mac, session `05984816`, 2026-10-06), not tested.
     Goes with: behind-the-back
     After: sweep
-- (#80) <a id="strip-owed"></a>**A header whose strip was skipped makes its includers out of date** — *no repo home yet.*
-    When some includers of a changed header are built and the header is not stripped,
-    mark it. Every includer of a marked header is then out of date, also in the snapshot,
-    where it is saved without knowledge, until the header is stripped. ADR-0033 asks the
-    same of the sweep (amended 2026-10-26). Needs no cap to happen: a `-getproject` builds a held
-    CU alone (`tests/test_ghosts_stay_when_one_includer_is_parsed_alone`).
-    Goes with: sweep
-- (#11) <a id="behind-the-back"></a>**A header changed on disk, which the editor does not hold, keeps its old references** —
-    it is stripped only when the request file is it or includes it directly, and all its
-    includers are built. An includer built later adds the new references beside the old
-    ones (ghosts). From reading the code (WSL, session `d25255b8`, 2026-10-11 and
-    2026-10-12), not tested.
-    Once every includer has been built, one request at a time, none is out of date, so
-    the header is never stripped, and the snapshot keeps the ghosts over a restart. Seen
-    in `src/options.h` after a line was added at the top: every declaration below it at
-    both its old and its new line (WSL, session `d25255b8`, 2026-10-26).
-    Waits for: request-target, strip-owed
+- (#11) <a id="behind-the-back"></a>**A header changed on disk, which the editor does not hold, keeps its old references when it has more includers than the cap** —
+    a header that some includers are built into, but not all, is marked, and its other
+    includers are then out of date until all are built in one request and it is
+    stripped (`tests/test_ghosts_stay_when_one_includer_is_parsed_alone`). Above the cap
+    that never happens. Ghosts from before the mark existed have no mark, and stay.
+    Waits for: request-target
     Goes with: sweep
 - (#13) <a id="token-pasting-trio"></a>**Token pasting trio**, in this order — the later two assume the first
     (`doc/docs/18-known-bugs.adoc`): `tests/test_token_pasting_numbers` (changes the

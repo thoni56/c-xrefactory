@@ -1,0 +1,2 @@
+/* A line added outside the editor */
+void f(void);

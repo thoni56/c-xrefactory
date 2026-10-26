@@ -23,6 +23,7 @@
 #include "parsers.h"            /* For yydebug #ifdef YYDEBUG */
 #include "ppc.h"
 #include "protocol.h"
+#include "rebuild.h"
 #include "refactorings.h"
 #include "yylex.h"
 
@@ -983,6 +984,7 @@ static bool processEOption(int *argi, ArgumentsVector args) {
         options.errors = true;
     } else if (strcmp(args.argv[i], "-exit")==0) {
         forgetKnowledgeForHeldContent();
+        forgetKnowledgeOfHeadersLeftBehind();
         saveReferences();
         log_debug("Exiting");
         exit(EXIT_SUCCESS);
