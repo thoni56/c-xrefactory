@@ -63,7 +63,9 @@ every push, `After` dashed and `Goes with` not at all, linked at the end of this
       its project is only what `-getproject` answers. Where the client shows the project,
       Project > Show Active (`c-xref-project-active`) and the mismatch dialog
       (`c-xref-server-dispatch-project-mismatch`), it shows the path through
-      `abbreviate-file-name`. Project > New (`c-xref-project-new`) asks only for the root;
+      `abbreviate-file-name`. Project > New (`c-xref-project-new`) asks only for the root.
+      Then `foundProjectName` in `searchForProjectConfigFileAndProjectForFile()` goes, with
+      the section buffers of its callers in `src/startup.c` and `src/cxref.c`.
       Waits for: adr-0029
    b. <a id="client-stops-p"></a>**the client stops sending `-p` on every request** — ADR-0029: this is not tidying,
       it is what re-enables `PPC_PROJECT_MISMATCH`, since `handleProject()`
