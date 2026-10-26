@@ -1,0 +1,11 @@
+CXREF -server
+-getproject CURDIR/source.c
+<sync>
+-rfct-rename -renameto=total -mark=56 -cursor=56 CURDIR/source.c
+<sync>
+!cp CURDIR/common.h.renamed CURDIR/common.h
+!cp CURDIR/source.c.renamed CURDIR/source.c
+!cp CURDIR/other.c.edited CURDIR/other.c
+-browse-push -cursor=58 CURDIR/other.c
+<sync>
+<exit>
