@@ -83,7 +83,7 @@ bool knowledgeIsOutOfDate(Inputs *inputs, int fileNumber) {
     if (count > MAX_INCLUDE_CLOSURE)
         return true;
     for (int i = 0; i < count; i++) {
-        if (getFileItemWithFileNumber(closure[i])->stripOwed)
+        if (getFileItemWithFileNumber(closure[i])->isLeftBehind)
             return true;
         if (inputChangedAfter(changeTimeOf(inputs, closure[i]), fileItem->knowledgeTime))
             return true;

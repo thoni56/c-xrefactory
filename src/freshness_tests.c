@@ -132,7 +132,7 @@ Ensure(Freshness, compilation_unit_with_a_header_that_owes_a_strip_is_out_of_dat
     expect(collectIncludeClosure, when(fileNumber, is_equal_to(A_C)),
            will_set_contents_of_parameter(fileNumbers, closure, sizeof(closure)),
            will_return(1));
-    FileItem headerItem = {.name = "a.h", .stripOwed = true};
+    FileItem headerItem = {.name = "a.h", .isLeftBehind = true};
     FileTimestamp headerChangeTime = makeFileTimestamp(1000, 0);
     always_expect(getFileItemWithFileNumber, when(fileNumber, is_equal_to(A_H)),
                   will_return(&headerItem));

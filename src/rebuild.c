@@ -67,7 +67,7 @@ static void setupProgress(BuildList *list) {
 /* A stripped header owes nothing any more (#80) */
 static void stripHeader(int fileNumber) {
     removeReferenceableItemsForFile(fileNumber);
-    getFileItemWithFileNumber(fileNumber)->stripOwed = false;
+    getFileItemWithFileNumber(fileNumber)->isLeftBehind = false;
 }
 
 static bool everyIncluderIsBuilt(int includers[], int includerCount, bool rebuilt[]) {
@@ -192,7 +192,7 @@ void markHeadersLeftBehind(BuildList *list, Inputs *inputs) {
         int closureCount = collectIncludeClosureOf(inputs, list->fileNumbers[i], closure, MAX_FILES);
         for (int h = 0; h < closureCount && h < MAX_FILES; h++) {
             FileItem *header = getFileItemWithFileNumber(closure[h]);
-            if (isCompilationUnit(header->name) || header->stripOwed)
+            if (isCompilationUnit(header->name) || header->isLeftBehind)
                 continue;
             int includerCount = collectCUsIncluding(closure[h], includers, 0, MAX_FILES);
             for (int j = 0; j < includerCount; j++) {
@@ -201,7 +201,7 @@ void markHeadersLeftBehind(BuildList *list, Inputs *inputs) {
                     && changedAfterKnowledgeOf(inputs, closure[h], includers[j])) {
                     log_debug("'%s' is left behind by '%s', marking it", header->name,
                               getFileItemWithFileNumber(includers[j])->name);
-                    header->stripOwed = true;
+                    header->isLeftBehind = true;
                     break;
                 }
             }
@@ -216,7 +216,7 @@ void markHeadersLeftBehind(BuildList *list, Inputs *inputs) {
 void forgetKnowledgeOfHeadersLeftBehind(void) {
     int *includers = malloc(MAX_FILES * sizeof(int));
     for (int i = getNextExistingFileNumber(0); i != -1; i = getNextExistingFileNumber(i + 1)) {
-        if (!getFileItemWithFileNumber(i)->stripOwed)
+        if (!getFileItemWithFileNumber(i)->isLeftBehind)
             continue;
         int includerCount = collectCUsIncluding(i, includers, 0, MAX_FILES);
         for (int j = 0; j < includerCount; j++)
