@@ -1514,6 +1514,12 @@ of its own (ADR-0032).</p>
 <dd>
 <p>When the knowledge of a CU was recorded (ADR-0032).</p>
 </dd>
+<dt class="hdlist1">Left behind</dt>
+<dd>
+<p>A header that some of its includers have been built into since it changed, but not all.
+It holds old references beside the new ones. Its other includers are out of date until
+all of them are built and it is stripped (ADR-0033).</p>
+</dd>
 <dt class="hdlist1">Lightweight scan</dt>
 <dd>
 <p>Discovery of project structure by globbing for compilation units and text-scanning
@@ -1527,8 +1533,8 @@ Replaced <code>-create</code> and the <code>callXref()</code> pre-refactoring pa
 </dd>
 <dt class="hdlist1">Out of date</dt>
 <dd>
-<p>A CU&#8217;s knowledge, when there is none, or when an input changed after the knowledge time
-(ADR-0032). It replaces <em>Staleness</em>.</p>
+<p>A CU&#8217;s knowledge, when there is none, when an input changed after the knowledge time,
+or when a header it includes is left behind (ADR-0032). It replaces <em>Staleness</em>.</p>
 </dd>
 <dt class="hdlist1">Persisted snapshot</dt>
 <dd>
@@ -2065,8 +2071,9 @@ It is also the case when a header the CU includes changed on disk.</p>
 </div>
 <div class="paragraph">
 <p><strong>Detection:</strong> <code>collectOutOfDateHeldCUs()</code> takes each held CU for which
-<code>knowledgeIsOutOfDate()</code> is true, i.e. it has no knowledge, an input is gone, or an
-input changed after its knowledge was built (ADR-0032).
+<code>knowledgeIsOutOfDate()</code> is true, i.e. it has no knowledge, an input is gone, an
+input changed after its knowledge was built, or a header it includes is left behind
+(ADR-0032, ADR-0033).
 A held CU that is gone from disk is marked as deleted instead.</p>
 </div>
 <div class="paragraph">
@@ -12404,7 +12411,7 @@ operation reads the in-memory table.</p>
 </div>
 <div id="footer">
 <div id="footer-text">
-Last updated 2026-10-26 11:07:50 UTC
+Last updated 2026-10-26 15:55:52 UTC
 </div>
 </div>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.18.3/highlight.min.js"></script>
