@@ -361,7 +361,7 @@ static void discoverStandardDefines(void) {
     LEAVE();
  }
 
-static void getAndProcessProjectConfig(char *configFileName, char *project) {
+static void getAndProcessProjectConfig(char *configFileName) {
     if (*configFileName == 0)
         return;
 
@@ -449,7 +449,7 @@ static void loadProjectSettings(ArgumentsVector baseArgs, ArgumentsVector reques
 
     int savedPass = currentPass;
     currentPass = NO_PASS;
-    getAndProcessProjectConfig(projectConfigFileName, projectSectionName);
+    getAndProcessProjectConfig(projectConfigFileName);
 
     /* === PHASE 3: Compiler Interrogation === */
     /* Run compiler to discover system includes and predefined macros (expensive!) */
@@ -466,7 +466,7 @@ static void loadProjectSettings(ArgumentsVector baseArgs, ArgumentsVector reques
     options.inputFiles = NULL;
     /* The first read has reported what is wrong with the config. Reading it once is #3's. */
     silenceMessages();
-    getAndProcessProjectConfig(projectConfigFileName, projectSectionName);
+    getAndProcessProjectConfig(projectConfigFileName);
     resumeMessages();
     currentPass = savedPass;
 
