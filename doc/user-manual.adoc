@@ -154,6 +154,16 @@ Useful when you know a symbol's name but aren't looking at an occurrence of it.
 Click a reference to jump to it.
 Multi-select symbols to combine their references into a navigable list of references.
 
+In the References Pane, the keys `0` to `3` filter which references are listed:
+
+* `0` — all references
+* `1` — not where a variable is only read
+* `2` — not where its address is taken either, so only where it is written, declared or defined
+* `3` — only declarations and definitions
+
+The filter starts at `0` for every symbol, and goes back to `0` when you change the filter in the Symbol Pane.
+For a type, `1` also shows where it is used at the top level, i.e. in the type of a global variable or the return type of a function.
+
 == Searching
 
 Searching finds symbols by pattern matching across your entire project.
