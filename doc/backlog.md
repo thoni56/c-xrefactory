@@ -66,6 +66,9 @@ every push, `After` dashed and `Goes with` not at all, linked at the end of this
       `abbreviate-file-name`. Project > New (`c-xref-project-new`) asks only for the root.
       Then `foundProjectName` in `searchForProjectConfigFileAndProjectForFile()` goes, with
       the section buffers of its callers in `src/startup.c` and `src/cxref.c`.
+      In `src/startup.c` the section name also decides a full reload in
+      `initializeFileProcessing()`, and `reInitCwd()` takes it as the directory when it is
+      an absolute path. Both go.
       Waits for: adr-0029
    b. <a id="client-stops-p"></a>**the client stops sending `-p` on every request** — ADR-0029: this is not tidying,
       it is what re-enables `PPC_PROJECT_MISMATCH`, since `handleProject()`
@@ -84,6 +87,9 @@ every push, `After` dashed and `Goes with` not at all, linked at the end of this
       Goes with: startup-command-line, adr-0030
    c. <a id="setup-into-openproject"></a>**project setup moves into the future `-openproject`** — discovery, config read, compiler
       interrogation, snapshot load;
+      Then `initializeFileProcessing()` discovers nothing. Today it must skip the config
+      search once locked, since the search sets `autoDetectedProjectRoot` (`src/options.c`)
+      and so `cxFileLocation`. `initializeProjectContext()` has a copy of that discovery.
       Waits for: partition-options, adr-0030
    d. <a id="openproject-tripwire"></a>**the assert that nothing before the future `-openproject` reads a project-scoped option** — the
       tripwire, as the disk-read assert was for Memory as Truth;
