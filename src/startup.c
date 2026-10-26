@@ -568,14 +568,11 @@ static void applyCurrentPassOptions(void) {
     applyOptionSet(getProjectConfig()->optionSets.set[currentPass]);
 }
 
-/* Heavy orchestration-level initialization for legacy Server/Xref modes.
- * Handles multi-project server architecture where project settings can change per file.
- *
- * This contrasts with LSP mode's lightweight initialization (parseToCreateReferences + initInput)
- * which assumes one-time project setup.
+/* This still contains remnants of the heavy orchestration-level initialization for
+ * legacy Server/Xref modes.
  *
  * Major phases:
- * 1. Project discovery - find .c-xrefrc file and determine project section
+ * 1. Project discovery - find .c-xrefrc file
  * 2. Options processing - load project settings, handle changes
  * 3. Compiler interrogation - discover system includes and compiler defines
  * 4. Memory checkpointing - cache expensive discoveries for same-project files
