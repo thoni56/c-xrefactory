@@ -719,8 +719,7 @@ static int handleSetOption(int i, ArgumentsVector args) {
     return i;
 }
 
-bool readOptionsIntoArgs(FILE *file, Position *position, ArgumentsVector *outArgs, Memory *memory, char *fileName,
-                         char *project, char *foundProjectName) {
+bool readOptionsIntoArgs(FILE *file, Position *position, ArgumentsVector *outArgs, Memory *memory) {
     char optionText[MAX_OPTION_LEN];
     int len, ch, passNumber=0;
     bool inProjectSection, isActivePass;
@@ -810,9 +809,8 @@ bool readOptionsIntoArgs(FILE *file, Position *position, ArgumentsVector *outArg
     return found;
 }
 
-ArgumentsVector readOptionsFromFile(char *fileName, char *section, char *project) {
+ArgumentsVector readOptionsFromFile(char *fileName) {
     FILE *file;
-    char unused[MAX_FILE_NAME_SIZE];
     ArgumentsVector args;
 
     file = openFile(fileName, "r");
@@ -821,7 +819,7 @@ ArgumentsVector readOptionsFromFile(char *fileName, char *section, char *project
     int fileNumber = addFileNameToFileTable(fileName);
     announceAnalysing(getFileItemWithFileNumber(fileNumber)->name);
     Position position = makePosition(fileNumber, 1, 0);
-    readOptionsIntoArgs(file, &position, &args, &ppmMemory, section, project, unused);
+    readOptionsIntoArgs(file, &position, &args, &ppmMemory);
     closeFile(file);
     return args;
 }
@@ -829,8 +827,7 @@ ArgumentsVector readOptionsFromFile(char *fileName, char *section, char *project
 ArgumentsVector readOptionsFromPipe(void) {
     ArgumentsVector args = {.argc = 0};
 
-    char unused[MAX_FILE_NAME_SIZE];
-    readOptionsIntoArgs(stdin, NULL, &args, &optMemory, "", NULL, unused);
+    readOptionsIntoArgs(stdin, NULL, &args, &optMemory);
     logCommands(args);
     /* those options can't contain include or define options, sections neither */
     int c = getc(stdin);
@@ -849,7 +846,7 @@ static int handleIncludeOption(int i, ArgumentsVector args) {
 
     ensureNextArgumentIsAFileName(&i, args);
 
-    includedArgs = readOptionsFromFile(args.argv[i], "", NULL);
+    includedArgs = readOptionsFromFile(args.argv[i]);
     processOptions(includedArgs, COLLECT_ARGUMENTS_NO);
 
     return i;

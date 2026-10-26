@@ -218,13 +218,11 @@ Ensure(Options, notes_xrefrc_option_with_filename_separate_without_reporting_it_
 
 Ensure(Options, can_readOptionsFromFileIntoArgs) {
     FILE *file = NULL;
-    char project[1000];
-    char unused[1000];
 
     expect(readChar, will_return(EOF));
 
     ArgumentsVector nargs;
-    readOptionsIntoArgs(file, NULL, &nargs, &ppmMemory, "", project, unused);
+    readOptionsIntoArgs(file, NULL, &nargs, &ppmMemory);
 
     assert_that(nargs.argc, is_equal_to(1)); /* Which is actually no arguments... */
 }
@@ -248,21 +246,19 @@ static bool argsContain(ArgumentsVector args, char *wantedOption) {
 }
 
 Ensure(Options, collects_the_options_of_a_well_formed_pass_marker) {
-    char project[1000], unused[1000];
     ArgumentsVector nargs;
 
     currentPass = 2;
     maxPasses = 1;
     expect_characters("-pass2\n-DSECONDPASS\n", true);
 
-    readOptionsIntoArgs(NULL, NULL, &nargs, &ppmMemory, "", project, unused);
+    readOptionsIntoArgs(NULL, NULL, &nargs, &ppmMemory);
 
     assert_that(argsContain(nargs, "-DSECONDPASS"), is_true);
     assert_that(maxPasses, is_equal_to(2));
 }
 
 Ensure(Options, drops_the_section_of_a_pass_marker_without_a_number) {
-    char project[1000], unused[1000];
     ArgumentsVector nargs;
 
     currentPass = 1;
@@ -270,14 +266,13 @@ Ensure(Options, drops_the_section_of_a_pass_marker_without_a_number) {
     expect_characters("-pass1\n-DWANTED\n-passfoo\n-DUNWANTED\n", true);
     expect(errorMessage);
 
-    readOptionsIntoArgs(NULL, NULL, &nargs, &ppmMemory, "", project, unused);
+    readOptionsIntoArgs(NULL, NULL, &nargs, &ppmMemory);
 
     assert_that(argsContain(nargs, "-DWANTED"), is_true);
     assert_that(argsContain(nargs, "-DUNWANTED"), is_false);
 }
 
 Ensure(Options, does_not_raise_maxPasses_above_the_maximum) {
-    char project[1000], unused[1000];
     ArgumentsVector nargs;
 
     currentPass = 1;
@@ -285,18 +280,17 @@ Ensure(Options, does_not_raise_maxPasses_above_the_maximum) {
     expect_characters("-pass12\n", true);
     expect(errorMessage);
 
-    readOptionsIntoArgs(NULL, NULL, &nargs, &ppmMemory, "", project, unused);
+    readOptionsIntoArgs(NULL, NULL, &nargs, &ppmMemory);
 
     assert_that(maxPasses, is_equal_to(1));
 }
 
 Ensure(Options, does_not_collect_the_options_after_a_second_section_header) {
-    char unused[1000];
     ArgumentsVector nargs;
 
     expect_characters("[/a/b]\n-DFIRST\n[/a]\n-DSECOND\n", true);
 
-    readOptionsIntoArgs(NULL, NULL, &nargs, &ppmMemory, "/a/b", "/a/b", unused);
+    readOptionsIntoArgs(NULL, NULL, &nargs, &ppmMemory);
 
     assert_that(argsContain(nargs, "-DFIRST"), is_true);
     assert_that(argsContain(nargs, "-DSECOND"), is_false);

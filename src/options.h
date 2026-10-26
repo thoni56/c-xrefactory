@@ -167,10 +167,9 @@ extern void deepCopyOptionsFromTo(Options *src, Options *dest);
 
 extern char *expandPredefinedSpecialVariables_static(char *output, char *inputFilename);
 
-extern bool readOptionsIntoArgs(FILE *file, Position *position, ArgumentsVector *outArgs, Memory *memory,
-                                        char *sectionFile, char *project, char *section);
+extern bool readOptionsIntoArgs(FILE *file, Position *position, ArgumentsVector *outArgs, Memory *memory);
 extern int getOptionFromFile(FILE *file, Position *position, char *foundText, int *chars_read);
-extern ArgumentsVector readOptionsFromFile(char *fileName, char *project, char *foundProjectName);
+extern ArgumentsVector readOptionsFromFile(char *fileName);
 extern ArgumentsVector readOptionsFromPipe(void);
 
 extern void searchForProjectConfigFileAndProjectForFile(char *filename, char *optionsFilename,

@@ -367,7 +367,7 @@ static void getAndProcessProjectConfig(char *configFileName, char *project) {
 
     ArgumentsVector args;
 
-    args = readOptionsFromFile(configFileName, project, project);
+    args = readOptionsFromFile(configFileName);
     /* YES so bare (non-option) config arguments are collected into
      * options.inputFiles with correct option/value classification. Both callers
      * want this; the caller clears inputFiles between passes to collect once. */

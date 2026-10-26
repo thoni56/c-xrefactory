@@ -70,13 +70,12 @@ int getOptionFromFile(FILE *file, Position *position, char *foundText, int *char
     return (int)mock(file, foundText, chars_read);
 }
 
-bool readOptionsIntoArgs(FILE *file, Position *position, ArgumentsVector *outArgs, Memory *memory, char *fileName,
-                         char *project, char *section) {
-    return (bool) mock(file, outArgs->argc, outArgs->argv, fileName, project, section);
+bool readOptionsIntoArgs(FILE *file, Position *position, ArgumentsVector *outArgs, Memory *memory) {
+    return (bool) mock(file, outArgs->argc, outArgs->argv);
 }
 
-ArgumentsVector readOptionsFromFile(char *fileName, char *section, char *project) {
-    return *(ArgumentsVector *)mock(fileName, section, project);
+ArgumentsVector readOptionsFromFile(char *fileName) {
+    return *(ArgumentsVector *)mock(fileName);
 }
 
 ArgumentsVector readOptionsFromPipe(void) {
