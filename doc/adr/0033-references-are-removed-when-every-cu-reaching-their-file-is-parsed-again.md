@@ -9,6 +9,9 @@ Accepted (2026-10-04)
 Amended (2026-10-06): what the refusal of ghosts covers, a missing include edge as a
 risk, and ghosts surviving a restart. The decision unchanged.
 
+Amended (2026-10-26): a file still waiting for a removal at exit makes its reaching CUs
+out of date in the snapshot, see below.
+
 Supersedes the include-structure reparse and fingerprint gate of
 [ADR-0025](0025-clean-stale-header-emissions-by-reparse-not-provenance.md), keeping its
 rejection of provenance
@@ -74,6 +77,10 @@ _we propose to_
 - not persist generations in the snapshot. On load every reference and every CU gets the
   same generation, so nothing is removed until everything reaching a file has been parsed
   again,
+- save a CU that reaches a file still waiting for a removal without knowledge. A file
+  waits when some of its reaching CUs, but not all, have been parsed after one of its
+  references was last emitted. Its other reaching CUs may be current, and ADR-0032 would
+  then never parse them again, so after a restart nothing would be removed there at all,
 
 _disregarding the fact that_
 - between a change and the removal, references at old positions are still there and show
@@ -124,8 +131,10 @@ until the removal, out-of-date references show as ghosts.
   Which writer wins is backlog item `cu-inputs`.
 - *Ghosts survive a restart.* Generations are not in the snapshot, so ghosts are
   written at exit and loaded again, and stay until every CU reaching their file has
-  been parsed in one session. For a header with hundreds of includers and a "no" to the
-  completeness question, that can be many sessions.
+  been parsed in one session. The CUs reaching a file that waits are saved without
+  knowledge, so they are out of date after the restart and get parsed when a request
+  reaches them. For a header with hundreds of includers and a "no" to the completeness
+  question, that can still be many sessions, and each restart parses those CUs again.
 - *The reverse walk is capped today* (`MAX_INCLUDE_WALK_FILES`, 256). An uncapped walk
   may cost on a large project; until it is measured, a capped walk means no removal in
   that file.
@@ -152,3 +161,9 @@ The all-or-nothing rule for headers meant a "no" to the completeness question wo
 never narrow, where Thomas expected continued browsing to narrow it gradually. A mark on
 each reference, refreshed when it is emitted again, lets a header's references be
 removed only when nobody can still claim them.
+
+The amendment of 2026-10-26 comes from WSL, session `d25255b8`. The snapshot of `src/`
+had every declaration in `src/options.h` below an added line at both its old and its
+new line. Includers had been parsed since, one request at a time, so the header was
+never stripped. Once all of them are current, nothing parses them again, and without
+generations in the snapshot this decision would leave such ghosts there too.
