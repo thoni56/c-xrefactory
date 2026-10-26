@@ -19,7 +19,7 @@ $(TEST):
 	fi
 	@rm -rf ffmpeg/.c-xref*
 	@../run-with-progress $(SERVER_DRIVER) commands.input || exit 1
-	@grep "$(PWD)" .c-xref/db | grep "\\.c" | wc -l | tr -d ' ' > output
+	@grep "$(PWD)" .c-xref/db | grep -E "\\.c($$|[^-])" | wc -l | tr -d ' ' > output
 	$(VERIFY)
 
 init: ffmpeg
@@ -32,7 +32,7 @@ ffmpeg:
 # 2026-09-23, see the roadmap's Optimization section. Useful for
 # iterating on the grep when the snapshot is already populated.
 verify-only:
-	@grep "$(PWD)" .c-xref/db | grep "\\.c" | wc -l | tr -d ' ' > output
+	@grep "$(PWD)" .c-xref/db | grep -E "\\.c($$|[^-])" | wc -l | tr -d ' ' > output
 	$(VERIFY)
 
 trace: EXTRA = --extra '-debug -log=trace'
