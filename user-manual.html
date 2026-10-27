@@ -5,7 +5,7 @@
 <meta http-equiv="X-UA-Compatible" content="IE=edge">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <meta name="generator" content="Asciidoctor 2.0.26">
-<meta name="author" content="v{VERSION} - Generated 2026-10-26">
+<meta name="author" content="v{VERSION} - Generated 2026-10-27">
 <title>C-xrefactory User Manual</title>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Open+Sans:300,300italic,400,400italic,600,600italic%7CNoto+Serif:400,400italic,700,700italic%7CDroid+Sans+Mono:400,700">
 <style>
@@ -441,7 +441,7 @@ body.book #toc,body.book #preamble,body.book h1.sect0,body.book .sect1>h2{page-b
 <div id="header">
 <h1>C-xrefactory User Manual</h1>
 <div class="details">
-<span id="author" class="author">v{VERSION} - Generated 2026-10-26</span><br>
+<span id="author" class="author">v{VERSION} - Generated 2026-10-27</span><br>
 </div>
 <div id="toc" class="toc2">
 <div id="toctitle">Table of Contents</div>
@@ -738,6 +738,45 @@ Useful when you know a symbol&#8217;s name but aren&#8217;t looking at an occurr
 <div class="paragraph">
 <p>Click a reference to jump to it.
 Multi-select symbols to combine their references into a navigable list of references.</p>
+</div>
+<div class="paragraph">
+<p>In the Symbol Pane, the keys <code>0</code> to <code>2</code> filter which symbols are listed:</p>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p><code>2</code> — only the browsed symbol</p>
+</li>
+<li>
+<p><code>1</code> — also the other included files, when an <code>#include</code> is browsed</p>
+</li>
+<li>
+<p><code>0</code> — all symbols with the same name, e.g. a static variable in another file</p>
+</li>
+</ul>
+</div>
+<div class="paragraph">
+<p>In the References Pane, the keys <code>0</code> to <code>3</code> filter which references are listed:</p>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p><code>0</code> — all references</p>
+</li>
+<li>
+<p><code>1</code> — not where a variable is only read</p>
+</li>
+<li>
+<p><code>2</code> — not where its address is taken either, so only where it is written, declared or defined</p>
+</li>
+<li>
+<p><code>3</code> — only declarations and definitions</p>
+</li>
+</ul>
+</div>
+<div class="paragraph">
+<p>The filter starts at <code>0</code> for every symbol, and goes back to <code>0</code> when you change the filter in the Symbol Pane.
+For a type, <code>1</code> also shows where it is used at the top level, i.e. in the type of a global variable or the return type of a function.</p>
 </div>
 </div>
 </div>
@@ -1061,7 +1100,7 @@ Search Symbol → enter <code>config*</code> → browse results</p>
 </div>
 <div id="footer">
 <div id="footer-text">
-Last updated 2026-10-26 21:29:17 UTC
+Last updated 2026-10-27 13:48:52 UTC
 </div>
 </div>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.18.3/highlight.min.js"></script>

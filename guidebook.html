@@ -5,7 +5,7 @@
 <meta http-equiv="X-UA-Compatible" content="IE=edge">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <meta name="generator" content="Asciidoctor 2.0.26">
-<meta name="author" content="v{VERSION} - Generated 2026-10-26">
+<meta name="author" content="v{VERSION} - Generated 2026-10-27">
 <title>C-xrefactory - a C/Yacc refactoring and code browsing tool - Design Documentation</title>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Open+Sans:300,300italic,400,400italic,600,600italic%7CNoto+Serif:400,400italic,700,700italic%7CDroid+Sans+Mono:400,700">
 <style>
@@ -441,7 +441,7 @@ body.book #toc,body.book #preamble,body.book h1.sect0,body.book .sect1>h2{page-b
 <div id="header">
 <h1>C-xrefactory - a C/Yacc refactoring and code browsing tool - Design Documentation</h1>
 <div class="details">
-<span id="author" class="author">v{VERSION} - Generated 2026-10-26</span><br>
+<span id="author" class="author">v{VERSION} - Generated 2026-10-27</span><br>
 </div>
 <div id="toc" class="toc2">
 <div id="toctitle">Table of Contents</div>
@@ -585,14 +585,13 @@ body.book #toc,body.book #preamble,body.book h1.sect0,body.book .sect1>h2{page-b
 </li>
 <li><a href="#development-environment">14. Development Environment</a>
 <ul class="sectlevel2">
-<li><a href="#_developing_here_be_dragons">14.1. Developing, here be dragons&#8230;&#8203;</a></li>
-<li><a href="#_setup">14.2. Setup</a></li>
-<li><a href="#_building">14.3. Building</a></li>
-<li><a href="#_versions">14.4. Versions</a></li>
-<li><a href="#_coding">14.5. Coding</a></li>
-<li><a href="#_debugging">14.6. Debugging</a></li>
-<li><a href="#_testing">14.7. Testing</a></li>
-<li><a href="#_utilities">14.8. Utilities</a></li>
+<li><a href="#_getting_started">14.1. Getting started</a></li>
+<li><a href="#_building">14.2. Building</a></li>
+<li><a href="#_versions">14.3. Versions</a></li>
+<li><a href="#_coding">14.4. Coding</a></li>
+<li><a href="#_debugging">14.5. Debugging</a></li>
+<li><a href="#_testing">14.6. Testing</a></li>
+<li><a href="#_utilities">14.7. Utilities</a></li>
 </ul>
 </li>
 <li><a href="#_deployment">15. Deployment</a></li>
@@ -644,13 +643,14 @@ body.book #toc,body.book #preamble,body.book h1.sect0,body.book .sect1>h2{page-b
 <li><a href="#_huge_memory">20.6. HUGE Memory</a></li>
 <li><a href="#_bootstrapping">20.7. Bootstrapping</a></li>
 <li><a href="#_fill_macros">20.8. FILL macros</a></li>
-<li><a href="#_users">20.9. Users</a></li>
-<li><a href="#_architectural_invariants_historical">20.10. Architectural Invariants (Historical)</a></li>
-<li><a href="#_refactorymode_internally_calls_xrefmode">20.11. RefactoryMode Internally Calls XrefMode</a></li>
-<li><a href="#_the_lastparsedmtime_optimization_and_refactoring_conflict_historical">20.12. The lastParsedMtime Optimization and Refactoring Conflict (Historical)</a></li>
-<li><a href="#_stale_file_refresh_and_cross_file_references_historical">20.13. Stale File Refresh and Cross-File References (Historical)</a></li>
-<li><a href="#cu-reparse-header-staleness">20.14. Investigation: Does CU Reparse Leave Header-Position References Stale?</a></li>
-<li><a href="#_memory_as_truth_convergence_implementation_path_historical">20.15. Memory-as-Truth Convergence: Implementation Path (Historical)</a></li>
+<li><a href="#_refactoring_macros_to_functions">20.9. Refactoring macros to functions</a></li>
+<li><a href="#_users">20.10. Users</a></li>
+<li><a href="#_architectural_invariants_historical">20.11. Architectural Invariants (Historical)</a></li>
+<li><a href="#_refactorymode_internally_calls_xrefmode">20.12. RefactoryMode Internally Calls XrefMode</a></li>
+<li><a href="#_the_lastparsedmtime_optimization_and_refactoring_conflict_historical">20.13. The lastParsedMtime Optimization and Refactoring Conflict (Historical)</a></li>
+<li><a href="#_stale_file_refresh_and_cross_file_references_historical">20.14. Stale File Refresh and Cross-File References (Historical)</a></li>
+<li><a href="#cu-reparse-header-staleness">20.15. Investigation: Does CU Reparse Leave Header-Position References Stale?</a></li>
+<li><a href="#_memory_as_truth_convergence_implementation_path_historical">20.16. Memory-as-Truth Convergence: Implementation Path (Historical)</a></li>
 </ul>
 </li>
 </ul>
@@ -4016,6 +4016,15 @@ is a standing source of value. Several candidates are specified in
 <p>Moves function decorations</p>
 </li>
 <li>
+<p>Takes along the <code>static</code> functions and variables in the source file that only it uses,
+also those that only they use, and they stay <code>static</code>; they go before it in the target,
+in their order in the source</p>
+</li>
+<li>
+<p>Refuses, and names them, if the function uses a <code>static</code> that is also used by what
+stays, or a variable declared together with other names, since it would be left behind</p>
+</li>
+<li>
 <p>Works for both C and Yacc files</p>
 </li>
 </ul>
@@ -4042,12 +4051,16 @@ is a standing source of value. Several candidates are specified in
   and the includes, and add the module to the build (and a mock for the unit tests).</p>
 </div>
 <div class="paragraph">
-<p><strong>Move several functions at once</strong>: Functions that move together, e.g. a function and its
-  helpers, can stay <code>static</code>.</p>
+<p><strong>A <code>static</code> shared with what stays</strong>: Today it makes the move refuse. Ask whether to make it extern where it is (its
+  declaration goes in the source&#8217;s header, which the target then includes) or to move it
+  and make it extern from the target.
+  Either way it is a dependency between the modules, so the user decides.
+  The references in the function&#8217;s range are known when the move is made, since finding
+  its boundaries parses the source.</p>
 </div>
 <div class="paragraph">
-<p><strong>Helper function detection</strong>: Identify and optionally move static helper functions that
-  the moved function depends on. Prevents broken builds.</p>
+<p>Macros and types defined in the source <code>.c</code> have the same problem, and belong with
+  include management.</p>
 </div>
 <div class="paragraph">
 <p><strong>Smarter header placement</strong>: Automatically find the right location in header files
@@ -4080,8 +4093,14 @@ declaration from the header. The check is unused detection, but only counting re
 from other files.</p>
 </div>
 <div class="paragraph">
-<p>A report of all such functions in the project would give the candidates. After a Move
-Function the helpers that moved along are typical ones.</p>
+<p>A report of all such functions in the project would give the candidates.</p>
+</div>
+<div class="paragraph">
+<p>It is safe only if every compilation unit that could refer to the function is known and
+parsed. A refactoring can miss references today (the collection caps, an <code>extern</code> written
+in a <code>.c</code> file as in ADR-0013, a <code>.mock</code> file), so Make Static needs a full parse first, and
+should not run by itself after a move. Helpers that move along with Move Function stay
+<code>static</code>, so they are not candidates.</p>
 </div>
 </div>
 <div class="sect2">
@@ -7889,63 +7908,39 @@ a server restart.</p>
 <h2 id="development-environment">14. Development Environment</h2>
 <div class="sectionbody">
 <div class="sect2">
-<h3 id="_developing_here_be_dragons">14.1. Developing, here be dragons&#8230;&#8203;</h3>
+<h3 id="_getting_started">14.1. Getting started</h3>
 <div class="paragraph">
-<p>First the code is <strong>terrible</strong>, lots of single and double character
-variables (<code>cc</code>, <code>ccc</code>, ..) and lost of administration on local
-variables rather than the structures that are actually there. And
-there are also a lot of macros. Unfortunately macros are hard to
-refactor to functions. (But I&#8217;m making progress&#8230;&#8203;)</p>
+<p>When I recovered the code it was <strong>terrible</strong>: single and double character variables, lots
+of macros, and administration of local variables instead of the structures that are
+actually there. (But I&#8217;m making progress&#8230;&#8203;)</p>
 </div>
 <div class="paragraph">
-<p>As there is no general way to refactor a macro to a function, various
-techniques must be applied. I wrote <a href="https://www.responsive.se/thomas/2020/05/14/refactoring-macros-to-functions/">a blog post</a>
-about one that have been fairly successful.</p>
-</div>
-<div class="paragraph">
-<p>But actually it&#8217;s rather fun to be able to make small changes and
-see the structure emerge, hone your refactoring and design skills,
-and working on a project that started 20 years ago which still is
-valuable, to me, and I hope, to others.</p>
-</div>
-<div class="paragraph">
-<p>There should probably be a whole section on how to contribute and
-develop <code>c-xrefactory</code> but until then here&#8217;s a short list of what
-you need:</p>
+<p>What you need:</p>
 </div>
 <div class="ulist">
 <ul>
 <li>
-<p>C development environment (GNU/Clang/Make/&#8230;&#8203;)</p>
+<p>A C development environment (GCC or Clang, Make)</p>
 </li>
 <li>
-<p>Unittests are written using <a href="https://github.com/cgreen-devs/cgreen"><code>Cgreen</code></a></p>
+<p><a href="https://github.com/cgreen-devs/cgreen">Cgreen</a>, which the unittests are written in</p>
 </li>
 <li>
-<p>Clean code and refactoring knowledge (to drive the code to a better and cleaner state)</p>
+<p>Clean code and refactoring knowledge, to drive the code to a better and cleaner state</p>
+</li>
+<li>
+<p>Compiler building knowledge helps (Yacc, but ASTs and symbol tables are heavily used)</p>
 </li>
 </ul>
 </div>
 <div class="paragraph">
-<p>Helpful would be:</p>
-</div>
-<div class="ulist">
-<ul>
-<li>
-<p>Compiler building knowledge (in the general sense, Yacc, but AST:s
-and symbol table stuff are heavily used)</p>
-</li>
-</ul>
+<p>Your machine needs Cgreen, <code>lcov</code>, <code>libcjson</code> and Python 3 with <code>utils/requirements.txt</code>
+installed, and <code>watchexec</code> for the watchers. <code>.travis_install_linux.sh</code> shows how CI
+does it on Linux.</p>
 </div>
 </div>
 <div class="sect2">
-<h3 id="_setup">14.2. Setup</h3>
-<div class="paragraph">
-<p>TBD.</p>
-</div>
-</div>
-<div class="sect2">
-<h3 id="_building">14.3. Building</h3>
+<h3 id="_building">14.2. Building</h3>
 <div class="paragraph">
 <p>You should be able build <code>c-xref</code> using something like (may have changed over time&#8230;&#8203;)</p>
 </div>
@@ -7957,42 +7952,48 @@ make unit
 make test</pre>
 </div>
 </div>
+<div class="sect3">
+<h4 id="_the_watchers">14.2.1. The Watchers</h4>
 <div class="paragraph">
-<p>But since the details of the building process are somewhat contrieved
-and not so easy to see through, here&#8217;s the place where that should be
-described.</p>
+<p>The "watchers" are <code>make</code> targets that continuously watch, using a file watcher program,
+for changes in appropriate ("source") files and trigger rebuilds. The most used ones are
+<code>watch-for-unittests</code> which builds and runs all unittests, and <code>watch-for-systemtests</code>,
+which builds the <code>c-xref</code> program and then runs all systemtests except the very slow
+ones. <code>watch-for-systemtests</code> doesn&#8217;t actually watch sources but a special flag file,
+<code>.unittests.done</code>, which is touched by <code>watch-for-unittests</code> when successful.
+Each also writes its output to a log, <code>src/unittests.log</code> and <code>src/systemtests.log</code>.</p>
 </div>
 <div class="paragraph">
-<p>One step in the build process was generating initialization information
-for all the things in standard include files, which of course became
-very dependent on the system you are running this on. This has now moved
-into functions inside <code>c-xref</code> itself, like finding DEFINEs and include
-paths.</p>
+<p>The result is that if you have both running, you will get very quick feedback if a
+unittest fails, and slightly slower feedback on the systemtests. But always
+automatically on all saves. (HINT: use <code>save-some-buffers</code> in Emacs to save all your
+edits at the same time.)</p>
+</div>
+<div class="sect4">
+<h5 id="_watchers_on_macos">Watchers on macOS</h5>
+<div class="paragraph">
+<p>Two things have made the watchers go quiet on macOS. Both are diagnosed.</p>
 </div>
 <div class="paragraph">
-<p>The initial recovered <code>c-xrefactory</code> relied on having a working <em>c-xref</em>
-for the current system. I don&#8217;t really know how they managed to do
-that for all the various systems they were supporting.</p>
+<p>An <code>fs watcher error</code> on every scan, for as long as a buffer is unsaved. Emacs writes a
+lock symlink, <code>.<mark>&lt;name&gt;</code>, whose target is not a path, and watchexec follows symlinks by
+default. So <code>src/Makefile</code> passes <code>--no-follow-symlinks</code> on Darwin. An ignore rule like
+<code>-i '.</mark>*'</code> does not help, since it filters events, not the walk.</p>
 </div>
 <div class="paragraph">
-<p>Modern thinking is that you should always be able to build from
-source, so this is something that needed change. We also want to
-distribute <em>c-xref</em> as an el-get library which requires building from
-source and should generate a version specific for the current system.</p>
+<p>Changes missed without any error. <code>fseventsd</code> had leaked to 3.8 GB at 96% CPU, which
+degrades notifications for everything on the machine. <code>sudo killall fseventsd</code> fixes it
+(launchd starts a new one). Spotlight indexing the build output is the likely driver, so
+the repo root has a <code>.metadata_never_index</code>, but whether Spotlight honours it is not
+verified. If it happens again, sample it before killing it, since the restart destroys
+the evidence: <code>sample fseventsd 10</code>, and <code>sudo fs_usage -w -f pathname -t 5</code> for the
+paths that cause the events.</p>
 </div>
-<div class="paragraph">
-<p><span class="line-through">The strategy selected, until some better idea comes along, is to try
-to build a <em>c-xref.bs</em>, if there isn&#8217;t one already, from the sources in
-the repository and then use that to re-generate the definitions and
-rebuild a proper <em>c-xref</em>. See Bootstrapping.</span></p>
 </div>
-<div class="paragraph">
-<p>We have managed to remove the complete bootstrapping step, so <code>c-xrefactory</code>
-now builds like any other project.</p>
 </div>
 </div>
 <div class="sect2">
-<h3 id="_versions">14.4. Versions</h3>
+<h3 id="_versions">14.3. Versions</h3>
 <div class="paragraph">
 <p>The current sources are in 1.6.X range. This is the same as the orginal
 xrefactory and probably also the proprietary C++ supporting version.</p>
@@ -8006,9 +8007,9 @@ selects the protocol, and <code>-xrefactory-II</code> is reported as an error.</
 </div>
 </div>
 <div class="sect2">
-<h3 id="_coding">14.5. Coding</h3>
+<h3 id="_coding">14.4. Coding</h3>
 <div class="sect3">
-<h4 id="_naming">14.5.1. Naming</h4>
+<h4 id="_naming">14.4.1. Naming</h4>
 <div class="paragraph">
 <p><em>C-xref</em> started (probably) as a cross-referencer for the languages
 supported (C, Java, C++), orginally had the name "xref" which became
@@ -8019,7 +8020,7 @@ history and a naming legacy to remember.</p>
 </div>
 </div>
 <div class="sect3">
-<h4 id="_modules_and_include_files">14.5.2. Modules and Include Files</h4>
+<h4 id="_modules_and_include_files">14.4.2. Modules and Include Files</h4>
 <div class="paragraph">
 <p>The source code for <code>c-xrefactory</code> was using a very old C style with a
 separate <code>proto.h</code> where all prototypes for all externally visible
@@ -8040,7 +8041,7 @@ still a work in progress.</p>
 </div>
 </div>
 <div class="sect2">
-<h3 id="_debugging">14.6. Debugging</h3>
+<h3 id="_debugging">14.5. Debugging</h3>
 <div class="paragraph">
 <p>TBD. Attachning <code>gdb</code>, <code>server-driver</code>&#8230;&#8203;</p>
 </div>
@@ -8054,7 +8055,24 @@ to a file. This makes it possible to capture command sequences and
 "replay" them. Useful both for debugging and creating tests.</p>
 </div>
 <div class="sect3">
-<h4 id="_arena_allocator_lifetime_violations">14.6.1. Arena Allocator Lifetime Violations</h4>
+<h4 id="_why_files_are_analysed">14.5.1. Why files are analysed</h4>
+<div class="paragraph">
+<p>With <code>-info</code> the server logs why it analyses a file, e.g. <code>'cxref.c' is out of date:
+'cxref.h' changed</code>. The other reasons are that there is no knowledge of it, that it
+changed, that a header is left behind, and that its include closure is too large to check.</p>
+</div>
+<div class="paragraph">
+<p>To get this from the server in your own Emacs, set <code>c-xref-server-startup-options</code> to
+<code>("-info" "-log=/tmp/c-xref.log")</code> and restart the server. Then count the reasons with</p>
+</div>
+<div class="literalblock">
+<div class="content">
+<pre>grep -o "is out of date: .*" /tmp/c-xref.log | sort | uniq -c</pre>
+</div>
+</div>
+</div>
+<div class="sect3">
+<h4 id="_arena_allocator_lifetime_violations">14.5.2. Arena Allocator Lifetime Violations</h4>
 <div class="paragraph">
 <p>The preprocessor macro expansion code uses arena allocators (<code>ppmMemory</code>, <code>macroBodyMemory</code>)
 with stack-like discipline. Arena allocators are fast (pointer bumping) but require
@@ -8158,9 +8176,9 @@ allowing the buffer to become top-of-stack again.</p>
 </div>
 </div>
 <div class="sect2">
-<h3 id="_testing">14.7. Testing</h3>
+<h3 id="_testing">14.6. Testing</h3>
 <div class="sect3">
-<h4 id="_unittests">14.7.1. Unittests</h4>
+<h4 id="_unittests">14.6.1. Unittests</h4>
 <div class="paragraph">
 <p>There are not very many unittests at this point, only covering a quarter of the
 code. The "units" in this project are unclear and entangled so creating unittests is
@@ -8178,7 +8196,7 @@ unittest directory. Often only containing an empty test.</p>
 </div>
 </div>
 <div class="sect3">
-<h4 id="_acceptance_tests">14.7.2. Acceptance Tests</h4>
+<h4 id="_acceptance_tests">14.6.2. Acceptance Tests</h4>
 <div class="paragraph">
 <p>In the <code>tests</code> directory you will find tests that exercise the external behaviour of
 <code>c-xref</code>, "acceptance tests" or "system tests". Some tests actually do only that, they
@@ -8213,7 +8231,7 @@ grows.</p>
 </div>
 </div>
 <div class="sect3">
-<h4 id="_test_structure">14.7.3. Test Structure</h4>
+<h4 id="_test_structure">14.6.3. Test Structure</h4>
 <div class="paragraph">
 <p>Tests live in the <code>tests</code> directory and are auto-discovered by name: any directory
 starting with <code>test_</code> will be recognized as a test case.</p>
@@ -8281,7 +8299,7 @@ file. The <code>utils/failing</code> script lists these.</p>
 </div>
 </div>
 <div class="sect3">
-<h4 id="_general_setup">14.7.4. General Setup</h4>
+<h4 id="_general_setup">14.6.4. General Setup</h4>
 <div class="paragraph">
 <p>Since all(?) <code>c-xref</code> operation rely on an options file which must
 contain absolute file paths (because the server runs as a separate
@@ -8300,7 +8318,7 @@ references. This way it is easy to ensure that all tests have updated
 </div>
 </div>
 <div class="sect3">
-<h4 id="_edit_server_driver_tests">14.7.5. Edit Server Driver Tests</h4>
+<h4 id="_edit_server_driver_tests">14.6.5. Edit Server Driver Tests</h4>
 <div class="paragraph">
 <p>Since many operations are performed from the editor, and the editor
 starts an "edit server" process, many tests need to emulate this
@@ -8345,7 +8363,7 @@ driver stops with an error.
 </div>
 </div>
 <div class="sect3">
-<h4 id="_creating_more_edit_server_tests">14.7.6. Creating More Edit Server Tests</h4>
+<h4 id="_creating_more_edit_server_tests">14.6.6. Creating More Edit Server Tests</h4>
 <div class="paragraph">
 <p>You can relatively easy re-create a sequence of interactions by using Emacs with all the
 latest source using <code>utils/emacs-devel</code>.</p>
@@ -8408,7 +8426,7 @@ a rename of.
 </div>
 </div>
 <div class="sect3">
-<h4 id="_parallel_runs">14.7.7. Parallel runs</h4>
+<h4 id="_parallel_runs">14.6.7. Parallel runs</h4>
 <div class="paragraph">
 <p>The system tests run in parallel. The watchers use <code>-j$(JOBS)</code>. Until 2026-09-25 <code>make ci</code>,
 and so Travis, used an unbounded <code>-j</code>. Since <code>137421da</code> it uses <code>-j$(JOBS)</code> too, as an
@@ -8480,7 +8498,7 @@ tests whose server answered nothing after startup in a <code>-j8</code> run on 2
 </div>
 </div>
 <div class="sect3">
-<h4 id="_client_tests">14.7.8. Client tests</h4>
+<h4 id="_client_tests">14.6.8. Client tests</h4>
 <div class="paragraph">
 <p>The Emacs client has ERT tests in <code>editors/emacs/tests/*-tests.el</code>, run by
 <code>make -C editors/emacs test</code> and from <code>src&#8217;s `test</code> target. <code>make -C editors/emacs check</code>
@@ -8531,9 +8549,9 @@ Travis' Emacs is not the one on any of our machines.</p>
 </div>
 </div>
 <div class="sect2">
-<h3 id="_utilities">14.8. Utilities</h3>
+<h3 id="_utilities">14.7. Utilities</h3>
 <div class="sect3">
-<h4 id="_covers">14.8.1. Covers</h4>
+<h4 id="_covers">14.7.1. Covers</h4>
 <div class="paragraph">
 <p><code>utils/covers.py</code> is a Python script that, in some enviroments, can list which test cases execute a particular line.</p>
 </div>
@@ -8551,7 +8569,7 @@ Find a test that covers that particular line and run it using the debugger (usua
 </div>
 </div>
 <div class="sect3">
-<h4 id="_emacs_devel">14.8.2. emacs-devel</h4>
+<h4 id="_emacs_devel">14.7.2. emacs-devel</h4>
 <div class="paragraph">
 <p><code>utils/emacs-devel</code> starts an Emacs that uses the current elisp code and the <code>c-xref</code>
 from src.  This allows you to run a test changes without having to polute your own
@@ -11530,7 +11548,38 @@ something radical before attempting cross referencing and refactoring.</p>
 <div class="sect2">
 <h3 id="_bootstrapping">20.7. Bootstrapping</h3>
 <div class="sect3">
-<h4 id="_bootstrap_removed">20.7.1. BOOTSTRAP REMOVED!</h4>
+<h4 id="_how_the_build_used_to_work">20.7.1. How the build used to work</h4>
+<div class="paragraph">
+<p>One step in the build process was generating initialization information
+for all the things in standard include files, which of course became
+very dependent on the system you are running this on. This has now moved
+into functions inside <code>c-xref</code> itself, like finding DEFINEs and include
+paths.</p>
+</div>
+<div class="paragraph">
+<p>The initial recovered <code>c-xrefactory</code> relied on having a working <em>c-xref</em>
+for the current system. I don&#8217;t really know how they managed to do
+that for all the various systems they were supporting.</p>
+</div>
+<div class="paragraph">
+<p>Modern thinking is that you should always be able to build from
+source, so this is something that needed change. We also want to
+distribute <em>c-xref</em> as an el-get library which requires building from
+source and should generate a version specific for the current system.</p>
+</div>
+<div class="paragraph">
+<p><span class="line-through">The strategy selected, until some better idea comes along, is to try
+to build a <em>c-xref.bs</em>, if there isn&#8217;t one already, from the sources in
+the repository and then use that to re-generate the definitions and
+rebuild a proper <em>c-xref</em>. See Bootstrapping.</span></p>
+</div>
+<div class="paragraph">
+<p>We have managed to remove the complete bootstrapping step, so <code>c-xrefactory</code>
+now builds like any other project.</p>
+</div>
+</div>
+<div class="sect3">
+<h4 id="_bootstrap_removed">20.7.2. BOOTSTRAP REMOVED!</h4>
 <div class="paragraph">
 <p>Once the FILL-macros was removed, we could move the enum-generation to
 use the actual <code>c-xref</code>. So from now on we build <code>c-xref</code> directly
@@ -11542,7 +11591,7 @@ update. This is a big improvement over the previous situation!</p>
 </div>
 </div>
 <div class="sect3">
-<h4 id="_fills_removed">20.7.2. FILLs REMOVED!</h4>
+<h4 id="_fills_removed">20.7.3. FILLs REMOVED!</h4>
 <div class="paragraph">
 <p>As indicated in <a href="#_fill_macros">FILL macros</a> the bootstrapping of FILL-macros has
 finally and fully been removed.</p>
@@ -11558,7 +11607,7 @@ text below is kept for historical reasons.</p>
 </div>
 </div>
 <div class="sect3">
-<h4 id="_rationale">20.7.3. Rationale</h4>
+<h4 id="_rationale">20.7.4. Rationale</h4>
 <div class="paragraph">
 <p><em>c-xref</em> uses a load of structures, and lists of them, that need to be
 created and initialized in a lot of places (such as the parsers). To
@@ -11581,7 +11630,7 @@ building and maintaining and to the structure of <em>c-xref</em>.</p>
 </div>
 </div>
 <div class="sect3">
-<h4 id="_mechanism">20.7.4. Mechanism</h4>
+<h4 id="_mechanism">20.7.5. Mechanism</h4>
 <div class="paragraph">
 <p>The bootstrapping uses <em>c-xref</em>'s own capability to parse C-code and
 parse those structures and spit out filling macros, and some other
@@ -11632,7 +11681,7 @@ functions for each "class" instead of macros.</p>
 </div>
 </div>
 <div class="sect3">
-<h4 id="_compiler_defines">20.7.5. Compiler defines</h4>
+<h4 id="_compiler_defines">20.7.6. Compiler defines</h4>
 <div class="paragraph">
 <p>In <em>options.h</em> there are a number of definitions which somehow are
 sent to the compiler/preprocessor or used so that standard settings
@@ -11657,7 +11706,7 @@ completely replace the "programmed" ones in <code>options.c</code>?</p>
 </div>
 </div>
 <div class="sect3">
-<h4 id="_enumtxt_generation_removed">20.7.6. EnumTxt generation REMOVED!</h4>
+<h4 id="_enumtxt_generation_removed">20.7.7. EnumTxt generation REMOVED!</h4>
 <div class="paragraph">
 <p>To be able to print the string values of enums the module generate.c
 (called when regime was RegimeGenerate) could also generate string
@@ -11670,7 +11719,7 @@ could do away with that whole "generate" functionality too.</p>
 </div>
 </div>
 <div class="sect3">
-<h4 id="_enumtxt">20.7.7. enumTxt</h4>
+<h4 id="_enumtxt">20.7.8. enumTxt</h4>
 <div class="paragraph">
 <p>For some cases the string representing the value of an Enum is needed.
 <code>c-xref</code> handles this using the "usual" 'parse code and generate' method.
@@ -11678,7 +11727,7 @@ The module <code>generate.c</code> does this generation too.</p>
 </div>
 </div>
 <div class="sect3">
-<h4 id="_include_paths">20.7.8. Include paths</h4>
+<h4 id="_include_paths">20.7.9. Include paths</h4>
 <div class="paragraph">
 <p>Also in <em>options.h</em> some standard-like include paths are added, but
 there is a better attempt in <em>getAndProcessGccOptions()</em> which uses
@@ -11689,7 +11738,7 @@ the compiler/preprocessor itself to figure out those paths.</p>
 </div>
 </div>
 <div class="sect3">
-<h4 id="_problems">20.7.9. Problems</h4>
+<h4 id="_problems">20.7.10. Problems</h4>
 <div class="paragraph">
 <p>Since at bootstrap there must exist FILL-macros with the correct field
 names this strategy is an obstacle to cleaning up the code since every
@@ -11705,7 +11754,7 @@ pass with BOOTSTRAP set, which it does.</p>
 </div>
 </div>
 <div class="sect3">
-<h4 id="_removing">20.7.10. Removing</h4>
+<h4 id="_removing">20.7.11. Removing</h4>
 <div class="paragraph">
 <p>I&#8217;ve started removing this step. In TODO.org I keep a hierarchical list
 of the actions to take (in a Mikado kind of style).</p>
@@ -11734,7 +11783,7 @@ CSV-file from that, and compare all rows.</p>
 </div>
 </div>
 <div class="sect3">
-<h4 id="_strtdef_h">20.7.11. strTdef.h</h4>
+<h4 id="_strtdef_h">20.7.12. strTdef.h</h4>
 <div class="paragraph">
 <p>The <code>strTdef.h</code> was generated using the option <code>-typedefs</code> as a part
 of the old <code>-task_regime_generate</code> strategy and generated typedef
@@ -11831,7 +11880,16 @@ which fields are actually necessary to set.</p>
 </div>
 </div>
 <div class="sect2">
-<h3 id="_users">20.9. Users</h3>
+<h3 id="_refactoring_macros_to_functions">20.9. Refactoring macros to functions</h3>
+<div class="paragraph">
+<p>There were also a lot of other macros. Unfortunately macros are hard to refactor to
+functions, and there is no general way to do it, so various techniques must be applied.
+I wrote <a href="https://www.responsive.se/thomas/2020/05/14/refactoring-macros-to-functions/">a blog post</a>
+about one that has been fairly successful.</p>
+</div>
+</div>
+<div class="sect2">
+<h3 id="_users">20.10. Users</h3>
 <div class="paragraph">
 <p><strong>The <code>-user</code> option has now been removed, both in the tool and the
   editor adaptors, and with it one instance of a hashlist, the
@@ -11872,7 +11930,7 @@ removed.</p>
 </div>
 </div>
 <div class="sect2">
-<h3 id="_architectural_invariants_historical">20.10. Architectural Invariants (Historical)</h3>
+<h3 id="_architectural_invariants_historical">20.11. Architectural Invariants (Historical)</h3>
 <div class="paragraph">
 <p><em>Moved from Insights chapter, 2026-03. These invariants described the model where the
 disk database was the source of truth. With "memory as truth" (2026-03), the in-memory
@@ -11896,7 +11954,7 @@ reference table is authoritative and the disk snapshot is just a startup cache.<
 </div>
 </div>
 <div class="sect2">
-<h3 id="_refactorymode_internally_calls_xrefmode">20.11. RefactoryMode Internally Calls XrefMode</h3>
+<h3 id="_refactorymode_internally_calls_xrefmode">20.12. RefactoryMode Internally Calls XrefMode</h3>
 <div class="paragraph">
 <p><em>Moved from Insights chapter, 2026-03. As of 2026-03, all refactorings run as server
 operations (<code>OP_REFACTORY</code>). This section describes the original architecture.</em></p>
@@ -11905,7 +11963,7 @@ operations (<code>OP_REFACTORY</code>). This section describes the original arch
 <p>Date: 2025-01-10</p>
 </div>
 <div class="sect3">
-<h4 id="_the_key_architectural_insight_original_architecture">20.11.1. The Key Architectural Insight (Original Architecture)</h4>
+<h4 id="_the_key_architectural_insight_original_architecture">20.12.1. The Key Architectural Insight (Original Architecture)</h4>
 <div class="paragraph">
 <p><strong>RefactoryMode ran XrefMode as an internal sub-task to update the reference database before performing refactorings.</strong></p>
 </div>
@@ -11927,7 +11985,7 @@ operations (<code>OP_REFACTORY</code>). This section describes the original arch
 </div>
 </div>
 <div class="sect3">
-<h4 id="_how_it_worked">20.11.2. How It Worked</h4>
+<h4 id="_how_it_worked">20.12.2. How It Worked</h4>
 <div class="paragraph">
 <p>When a refactoring was invoked:</p>
 </div>
@@ -11955,7 +12013,7 @@ operations (<code>OP_REFACTORY</code>). This section describes the original arch
 </div>
 </div>
 <div class="sect3">
-<h4 id="_why_refactorings_were_separate_processes">20.11.3. Why Refactorings Were Separate Processes</h4>
+<h4 id="_why_refactorings_were_separate_processes">20.12.3. Why Refactorings Were Separate Processes</h4>
 <div class="paragraph">
 <p>The Emacs client spawned a <strong>separate RefactoryMode process</strong> rather than using the interactive server because:</p>
 </div>
@@ -11974,7 +12032,7 @@ operations (<code>OP_REFACTORY</code>). This section describes the original arch
 </div>
 </div>
 <div class="sect3">
-<h4 id="_the_three_modes_relationship">20.11.4. The Three Modes Relationship</h4>
+<h4 id="_the_three_modes_relationship">20.12.4. The Three Modes Relationship</h4>
 <div class="listingblock">
 <div class="content">
 <pre class="highlightjs highlight"><code class="language-none hljs">ServerMode (c-xref -server)
@@ -11997,7 +12055,7 @@ RefactoryMode (c-xref -refactory ...)
 </div>
 </div>
 <div class="sect3">
-<h4 id="_code_evidence">20.11.5. Code Evidence</h4>
+<h4 id="_code_evidence">20.12.5. Code Evidence</h4>
 <div class="listingblock">
 <div class="content">
 <pre class="highlightjs highlight"><code class="language-c hljs" data-lang="c">// From refactory.c:143-145
@@ -12024,7 +12082,7 @@ void ensureReferencesAreUpdated(char *project) {
 </div>
 </div>
 <div class="sect3">
-<h4 id="_implications_historical">20.11.6. Implications (Historical)</h4>
+<h4 id="_implications_historical">20.12.6. Implications (Historical)</h4>
 <div class="paragraph">
 <p>These constraints applied under the original architecture:</p>
 </div>
@@ -12049,7 +12107,7 @@ server process without a separate <code>callXref()</code> step.</p>
 </div>
 </div>
 <div class="sect2">
-<h3 id="_the_lastparsedmtime_optimization_and_refactoring_conflict_historical">20.12. The lastParsedMtime Optimization and Refactoring Conflict (Historical)</h3>
+<h3 id="_the_lastparsedmtime_optimization_and_refactoring_conflict_historical">20.13. The lastParsedMtime Optimization and Refactoring Conflict (Historical)</h3>
 <div class="paragraph">
 <p>This section captures a conflict diagnosed in 2025-01 between navigation&#8217;s
 <code>lastParsedMtime</code> optimization and refactoring&#8217;s <code>callXref()</code> reindexing path. The
@@ -12065,7 +12123,7 @@ shared-state optimizations can leak across operation boundaries.</p>
 <p>Date: 2025-01-21</p>
 </div>
 <div class="sect3">
-<h4 id="_problem_discovery">20.12.1. Problem Discovery</h4>
+<h4 id="_problem_discovery">20.13.1. Problem Discovery</h4>
 <div class="paragraph">
 <p>When implementing staleness detection for navigation (refreshing references when files are modified), an optimization was added to <code>server.c</code>:</p>
 </div>
@@ -12083,7 +12141,7 @@ if (buffer != NULL &amp;&amp; buffer-&gt;preLoadedFromFile != NULL) {
 </div>
 </div>
 <div class="sect3">
-<h4 id="_the_conflict">20.12.2. The Conflict</h4>
+<h4 id="_the_conflict">20.13.2. The Conflict</h4>
 <div class="paragraph">
 <p>This broke refactoring operations (<code>test_delete_parameter_with_preload</code>). The problem:</p>
 </div>
@@ -12111,7 +12169,7 @@ if (buffer != NULL &amp;&amp; buffer-&gt;preLoadedFromFile != NULL) {
 </div>
 </div>
 <div class="sect3">
-<h4 id="_root_cause_two_sources_of_truth">20.12.3. Root Cause: Two Sources of Truth</h4>
+<h4 id="_root_cause_two_sources_of_truth">20.13.3. Root Cause: Two Sources of Truth</h4>
 <div class="paragraph">
 <p>The architecture had two sources of references:</p>
 </div>
@@ -12140,7 +12198,7 @@ if (buffer != NULL &amp;&amp; buffer-&gt;preLoadedFromFile != NULL) {
 </div>
 </div>
 <div class="sect3">
-<h4 id="_the_workaround">20.12.4. The Workaround</h4>
+<h4 id="_the_workaround">20.13.4. The Workaround</h4>
 <div class="paragraph">
 <p>Refactoring operations were excluded from the optimization:</p>
 </div>
@@ -12169,14 +12227,14 @@ if (buffer != NULL &amp;&amp; buffer-&gt;preLoadedFromFile != NULL) {
 </div>
 </div>
 <div class="sect3">
-<h4 id="_architectural_lesson">20.12.5. Architectural Lesson</h4>
+<h4 id="_architectural_lesson">20.13.5. Architectural Lesson</h4>
 <div class="paragraph">
 <p>The workaround highlighted the underlying tension: <strong>navigation and refactoring used different sources of truth</strong>. The proper fix — eliminating <code>callXref()</code> from the refactoring path entirely — landed with server-side refactoring (<a href="10-roadmap.adoc">Chapter 10: Roadmap</a>).</p>
 </div>
 </div>
 </div>
 <div class="sect2">
-<h3 id="_stale_file_refresh_and_cross_file_references_historical">20.13. Stale File Refresh and Cross-File References (Historical)</h3>
+<h3 id="_stale_file_refresh_and_cross_file_references_historical">20.14. Stale File Refresh and Cross-File References (Historical)</h3>
 <div class="paragraph">
 <p>This section describes a refresh algorithm built around a function named
 <code>refreshStaleReferencesInSession()</code> that no longer exists in the source. The current
@@ -12192,7 +12250,7 @@ examined in <a href="#cu-reparse-header-staleness">Investigation: Does CU Repars
 <p>Date: 2025-01-29</p>
 </div>
 <div class="sect3">
-<h4 id="_stale_detection">20.13.1. Stale Detection</h4>
+<h4 id="_stale_detection">20.14.1. Stale Detection</h4>
 <div class="paragraph">
 <p>When navigating (PUSH/NEXT), the server detected if the current file was "stale" by comparing:</p>
 </div>
@@ -12211,7 +12269,7 @@ examined in <a href="#cu-reparse-header-staleness">Investigation: Does CU Repars
 </div>
 </div>
 <div class="sect3">
-<h4 id="_the_refresh_algorithm">20.13.2. The Refresh Algorithm</h4>
+<h4 id="_the_refresh_algorithm">20.14.2. The Refresh Algorithm</h4>
 <div class="paragraph">
 <p><code>refreshStaleReferencesInSession()</code> in <code>cxref.c</code> had to preserve cross-file references while updating references from the modified file:</p>
 </div>
@@ -12262,7 +12320,7 @@ when <code>includeFileNumber</code> differs, and these new items have <code>sele
 </div>
 </div>
 <div class="sect3">
-<h4 id="_why_scanning_from_disk_failed">20.13.3. Why Scanning From Disk Failed</h4>
+<h4 id="_why_scanning_from_disk_failed">20.14.3. Why Scanning From Disk Failed</h4>
 <div class="paragraph">
 <p>During PUSH, <code>createSelectionMenu</code> created menu items and added them to <code>sessionEntry&#8594;menu</code>.
 These items were marked as selected. On NEXT, the menu&#8217;s reference list was what got
@@ -12294,7 +12352,7 @@ navigation lost most of its references.</p>
 </div>
 </div>
 <div class="sect3">
-<h4 id="_architectural_note_historical">20.13.4. Architectural Note (Historical)</h4>
+<h4 id="_architectural_note_historical">20.14.4. Architectural Note (Historical)</h4>
 <div class="paragraph">
 <p>This was a manifestation of the "two sources of truth" architecture. The long-term fix
 landed with memory-as-truth: all project files have references in the in-memory table,
@@ -12306,7 +12364,7 @@ gap.</p>
 </div>
 </div>
 <div class="sect2">
-<h3 id="cu-reparse-header-staleness">20.14. Investigation: Does CU Reparse Leave Header-Position References Stale?</h3>
+<h3 id="cu-reparse-header-staleness">20.15. Investigation: Does CU Reparse Leave Header-Position References Stale?</h3>
 <div class="paragraph">
 <p>Date: 2026-05-12</p>
 </div>
@@ -12315,7 +12373,7 @@ gap.</p>
 fixed — recorded so the question isn&#8217;t re-opened from scratch.</p>
 </div>
 <div class="sect3">
-<h4 id="_the_structural_fact">20.14.1. The structural fact</h4>
+<h4 id="_the_structural_fact">20.15.1. The structural fact</h4>
 <div class="paragraph">
 <p><code>removeReferenceableItemsForFile(fileNumber)</code> strips only references whose
 <code>position.file == fileNumber</code>. A declaration that a compilation unit emits <em>into a
@@ -12326,7 +12384,7 @@ and there are two distinct triggers.</p>
 </div>
 </div>
 <div class="sect3">
-<h4 id="_variant_a_header_edited_probed_did_not_reproduce">20.14.2. Variant A — header edited (probed, did not reproduce)</h4>
+<h4 id="_variant_a_header_edited_probed_did_not_reproduce">20.15.2. Variant A — header edited (probed, did not reproduce)</h4>
 <div class="paragraph">
 <p>The header&#8217;s own text changes (a declaration shifts line). Under the editor-buffer
 content model an edit reaches the server as a <code>-preload</code> of the header, which strips the
@@ -12339,7 +12397,7 @@ not <code>(line, col)</code> — <em>would</em> have masked parallel entries had
 </div>
 </div>
 <div class="sect3">
-<h4 id="_variant_b_includer_preprocessor_state_changes_never_probed">20.14.3. Variant B — includer preprocessor state changes (never probed)</h4>
+<h4 id="_variant_b_includer_preprocessor_state_changes_never_probed">20.15.3. Variant B — includer preprocessor state changes (never probed)</h4>
 <div class="paragraph">
 <p>The header text is unchanged, but the includer toggles a macro that gates a header
 declaration (<code>#define FOO</code> guarding <code>#ifdef FOO … int bar; #endif</code>). The CU is edited,
@@ -12352,7 +12410,7 @@ is re-walked at all when only the includer&#8217;s macros changed.</p>
 </div>
 </div>
 <div class="sect3">
-<h4 id="_status_updated_2026_06_19">20.14.4. Status (updated 2026-06-19)</h4>
+<h4 id="_status_updated_2026_06_19">20.15.4. Status (updated 2026-06-19)</h4>
 <div class="paragraph">
 <p>Variant A cleared. <strong>Variant B is confirmed</strong> — reproduced 2026-06-17 in
 <code>test_preprocess_edit_removes_ifdef_define</code>: a CU that drops a <code>#define</code> orphans the
@@ -12371,7 +12429,7 @@ investigation trail and superseded by those.</p>
 </div>
 </div>
 <div class="sect2">
-<h3 id="_memory_as_truth_convergence_implementation_path_historical">20.15. Memory-as-Truth Convergence: Implementation Path (Historical)</h3>
+<h3 id="_memory_as_truth_convergence_implementation_path_historical">20.16. Memory-as-Truth Convergence: Implementation Path (Historical)</h3>
 <div class="paragraph">
 <p>The path by which <code>c-xrefactory</code> reached "memory is truth" — now complete; see the
 <a href="10-roadmap.html">Roadmap</a> Convergence section for the current state. Preserved for the
@@ -12411,7 +12469,7 @@ operation reads the in-memory table.</p>
 </div>
 <div id="footer">
 <div id="footer-text">
-Last updated 2026-10-26 21:29:57 UTC
+Last updated 2026-10-27 13:49:37 UTC
 </div>
 </div>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.18.3/highlight.min.js"></script>

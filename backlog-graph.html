@@ -42,37 +42,41 @@ flowchart BT
   unused_yacc_statics["§3 · 15g · GlobalUnused gives a false positive for statics in `.y` files"]
   push_by_name["§3 · 15h · Push by name when a name has several bindings"]
   truncated_reference_set["§3 · 15i · A refactoring can see a truncated reference set"]
-  lsp_position_encoding["§3 · 15j · The LSP server announces `positionEncoding: #quot;utf-8#quot;` but counts code points"]
-  lsp_input_ends["§3 · 15k · The LSP server exits as a JSON parse error when its input ends"]
-  search_result_line_zero["§3 · 58 · The client asks for search result number 0"]
+  lsp_position_encoding["§3 · 15j · Unconfirmed: the LSP server announces `positionEncoding: #quot;utf-8#quot;` but counts code points"]
+  lsp_input_ends["§3 · 15k · Unconfirmed: the LSP server exits as a JSON parse error when its input ends"]
+  search_result_line_zero["§3 · 58 · Investigate: the client asks for search result number 0"]
   include_bracket_from_macro["§3 · 60 · `#include MACRO` where the macro is `#lt;...#gt;`"]
-  latin_1_lookalikes["§3 · 69 · Latin-1 that looks like UTF-8 is read as one character"]
-  completion_select_out_of_range["§3 · 70 · Selecting a completion says #quot;selection out of range#quot;"]
+  latin_1_lookalikes["§3 · 69 · Unconfirmed: Latin-1 that looks like UTF-8 is read as one character"]
+  completion_select_out_of_range["§3 · 70 · Investigate: selecting a completion says #quot;selection out of range#quot;"]
   newline_position["§3 · 71 · A `'\n'` lexem has the next line's number"]
   if_syntax_error_twice["§3 · 72 · A malformed `#if` is reported twice"]
   header_filtered_siblings["§4 · 16 · Header-filtered sibling parsing"]
   scan_angle_includes["§4 · 17 · Extend the lightweight scan to `#lt;...#gt;` includes"]
   lexing_cache["§4 · 18 · Lexing cache re-introduction"]
   parallel_parsing["§4 · 19 · Parallel parsing"]
+  move_shared_static["§5 · 85 · Move Function asks about a `static` shared with what stays"]
+  move_to_new_module["§5 · 87 · Move Function to New Module"]
+  extract_array_used_after["§5 · 86 · Extract Function passes an array declared in the region and used after it"]
   remove_references_stopgap["§5 · 20 · Take the client's #quot;Remove References and Restart Server#quot; back out"]
   move_function_comment_prompt["§5 · 21 · Move Function comment y/n prompt"]
   index_based_sessions["§5 · 22 · Index-based sessions"]
   retry_creating_request["§5 · 24 · Retry the request that created the project"]
   lsp_tiers["§5 · 25 · LSP tiers 1–2"]
   move_function_next["§5 · 26 · Move Function next steps"]
+  parse_all["§5 · 88 · `-parse-all`, a request that parses every compilation unit the scan found and has not parsed"]
+  browser_for_c["§5 · 82 · The browser's Symbol Pane says which symbol each line is"]
   local_config_fragments["§5 · 27 · Local config fragments: the config names, the fragment binds"]
   chapter_17_hygiene["§5 · 28 · Chapter 17 hygiene, opportunistically"]
   macro_expansion_module["§5 · 76 · Extract the macro expansion module from `src/yylex.c`"]
   dump_reference_database["§5 · 29 · Dump Reference Database"]
   compile_commands["§5 · 30 · Read `-I` and `-D` from `compile_commands.json`"]
-  macos_watchers["§6 · 31 · Two causes of watchers not firing on macOS, both found"]
   yydebug_to_log["§6 · 61 · The `-yydebug` parse trace goes to the log"]
   cu_inputs["§7 · 35 · A CU's inputs"]
   out_of_date["§7 · 36 · The config as an input of `knowledgeIsOutOfDate()`"]
   request_target["§7 · 37 · What a request needs"]
   request_through_includers["§7 · 54 · A request in a header is parsed through its includers"]
   cursor_parse_reuse["§7 · 1 · The request CU is parsed for the cursor, also when its knowledge is current"]
-  header_not_half["§7 · 39 · A changed header the editor holds is stripped also when not all its includers fit"]
+  header_not_half["§7 · 39 · Unconfirmed: a changed header the editor holds is stripped also when not all its includers fit"]
   closed_buffer_strip["§7 · 56 · A header whose buffer the client stops sending is stripped, and none of its includers built"]
   time_budget["§7 · 40 · A time budget instead of the cap"]
   freshness_docs["§7 · 41 · The docs follow"]
@@ -86,6 +90,7 @@ flowchart BT
   releases["§8 · 49 · Tagged releases"]
   melpa["§8 · 50 · The elisp on MELPA"]
   readme_first_screen["§8 · 51 · The README sells on its first screen"]
+  customize_names["§8 · 81 · The customizable options get names of today"]
   announce["§8 · 52 · Announce"]
   windows_build["§8 · 53 · A Windows build"]
   refactoring_catalogue["§8 · 73 · Every known refactoring, with its status"]
@@ -177,18 +182,22 @@ flowchart BT
   class scan_angle_includes blocked
   class lexing_cache blocked
   class parallel_parsing blocked
+  class move_shared_static ready
+  class move_to_new_module ready
+  class extract_array_used_after ready
   class remove_references_stopgap blocked
   class move_function_comment_prompt ready
   class index_based_sessions ready
   class retry_creating_request ready
   class lsp_tiers ready
   class move_function_next ready
+  class parse_all ready
+  class browser_for_c ready
   class local_config_fragments ready
   class chapter_17_hygiene ready
   class macro_expansion_module ready
   class dump_reference_database ready
   class compile_commands ready
-  class macos_watchers ready
   class yydebug_to_log ready
   class cu_inputs ready
   class out_of_date ready
@@ -209,6 +218,7 @@ flowchart BT
   class releases blocked
   class melpa blocked
   class readme_first_screen ready
+  class customize_names ready
   class announce blocked
   class windows_build ready
   class refactoring_catalogue ready
