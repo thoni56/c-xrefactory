@@ -550,6 +550,10 @@ static void addCandidatesAsHelpers(UsesOfMovedFunction *uses) {
     }
 }
 
+static int decidedCount(UsesOfMovedFunction *uses) {
+    return uses->helperCount + uses->cannotMoveCount;
+}
+
 /* Helpers can have helpers, so look again until nothing new is found */
 static UsesOfMovedFunction findUsesOfMovedFunction(FunctionBoundariesResult bounds) {
     UsesOfMovedFunction uses = {.moved = bounds};
@@ -558,11 +562,11 @@ static UsesOfMovedFunction findUsesOfMovedFunction(FunctionBoundariesResult boun
         uses.leftBehindCount = 0;
         uses.candidateCount = 0;
         mapOverReferenceableItemTableWithPointer(findStaticsUsed, &uses);
-        decided = uses.helperCount + uses.cannotMoveCount;
+        decided = decidedCount(&uses);
         addCandidatesAsHelpers(&uses);
-    } while (uses.candidateCount > 0 && uses.helperCount + uses.cannotMoveCount > decided);
+    } while (uses.candidateCount > 0 && decidedCount(&uses) > decided);
     /* Out of room, so the candidates left stay behind */
-    for (int i = 0; i < uses.candidateCount && uses.helperCount + uses.cannotMoveCount == decided; i++)
+    for (int i = 0; i < uses.candidateCount && decidedCount(&uses) == decided; i++)
         addStaticUsed(uses.candidates[i], uses.leftBehind, &uses.leftBehindCount);
     qsort(uses.helpers, uses.helperCount, sizeof(StaticUsed), compareDefinitions);
     return uses;
@@ -593,7 +597,7 @@ static EditorMarker *newDefinitionScopeEnd(FunctionBoundariesResult bounds) {
 }
 
 /* The helpers keep 'static' and go before the moved function, in their order */
-static bool moveHelpersAlong(FunctionBoundariesResult bounds, EditorMarker *target) {
+static bool moveHelpersAlongOrRefuse(FunctionBoundariesResult bounds, EditorMarker *target) {
     UsesOfMovedFunction uses = findUsesOfMovedFunction(bounds);
     if (refuseToLeaveStaticBehind(&uses))
         return false;
@@ -632,7 +636,7 @@ void moveFunction(EditorMarker *point) {
 
     int lines = countLinesBetweenEditorMarkers(functionStart, functionEnd);
 
-    if (target->buffer != point->buffer && !moveHelpersAlong(bounds, target))
+    if (target->buffer != point->buffer && !moveHelpersAlongOrRefuse(bounds, target))
         return;
 
     moveStaticFunctionAndMakeItExtern(functionStart, point, functionEnd, target);
