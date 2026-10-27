@@ -41,6 +41,9 @@ The path of the file is investigated upwards until a `.c-xrefrc` (C-xrefactory p
 If no config file could be found, you'll be prompted to create a project.
 Project > Show Active shows the active project.
 
+If the references seem off, use Project > Remove References and Restart Server.
+It removes the project's saved references, and the next operation analyses the project again.
+
 === Project Configuration
 
 The `.c-xrefrc` file marks the root of a source tree.
@@ -265,6 +268,13 @@ The new variable is always declared as `int`, and the declaration might not end 
 
 *Move Function* — moves the function at cursor to another place, possibly in another file.
 Mark the place first with *Set Target for Next Moving Refactoring*.
+
+When it moves to another file, the `static` functions and variables that are only used by that function move along with it, and stay `static`.
+If it uses a `static` that something else in the file also uses, it will refuse the move and name those.
+
+If there is a comment above what is moved, Move Function asks whether to move the comments too.
+A comment is taken up to a blank line.
+A comment on the same line after the function always moves with it.
 
 === Includes
 
