@@ -31,18 +31,6 @@ typedef struct variable {
 } Variable;
 
 
-/* *******************      comment moving levels for refactoring      *************** */
-
-typedef enum commentMovingMode {
-    CM_NO_COMMENT,
-    CM_SINGLE_SLASHED,
-    CM_SINGLE_STARRED,
-    CM_SINGLE_SLASHED_AND_STARRED,
-    CM_ALL_SLASHED,
-    CM_ALL_STARRED,
-    CM_ALL_SLASHED_AND_STARRED,
-} CommentMovingMode;
-
 #define NO_CURSOR_OFFSET -1
 
 
@@ -114,7 +102,7 @@ typedef struct options {
     /* --- REFACTORING: Set internally by refactoring engine --- */
     Refactoring theRefactoring;                 /* REFACTORING */
     ContinueRefactoringKind continueRefactoring; /* REFACTORING */
-    CommentMovingMode commentMovingMode;        /* REFACTORING */
+    bool moveComments;                          /* REFACTORING */
     ExtractMode extractMode;                    /* REFACTORING */
     char *renameTo;                             /* REFACTORING */
     char *moveTargetFile;                       /* REFACTORING */

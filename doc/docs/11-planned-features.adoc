@@ -67,9 +67,8 @@ Macros and types defined in the source `.c` have the same problem, and belong wi
   if callers exist. Reuses the function boundary detection from Move Function and the
   unused detection logic to verify no references remain.
 
-**Ask whether to move the comment**: The server supports `-commentmovinglevel=N` controlling
-  how comments adjacent to a moved function are handled (none, single slashed/starred,
-  all). The client sends `c-xref-comments-moving-level`, 0 by default, so no comment is
+**Ask whether to move the comment**: With `-commentmovinglevel=1` the server moves the
+  comments directly above a moved function, up to a blank line. The client sends `c-xref-comments-moving-level`, 0 by default, so no comment is
   moved. A y/n question when there is a comment should replace the customization.
 
 [[make-static]]

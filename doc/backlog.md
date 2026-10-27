@@ -415,9 +415,7 @@ Roadmap → Optimization has the baseline: a cold-start PUSH on ffmpeg, measured
     Goes with: index-based-sessions
 
 - (#21) <a id="move-function-comment-prompt"></a>**Move Function comment y/n prompt** — replaces the `c-xref-comments-moving-level`
-    customization; collapse `CommentMovingMode` to a bool (`src/options.h`,
-    `src/move_function.c`) and sweep `-commentmovinglevel=6` → `=1` in the three "with…"
-    `commands.input` files.
+    customization.
     The helpers and variables that move along have comments too, and only the server knows
     which ones move. So the server asks, once the blocks are known, and one answer covers
     them all.

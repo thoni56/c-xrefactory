@@ -38,12 +38,12 @@ static void moveMarkerToTheEndOfDefinitionScope(EditorMarker *marker) {
         return;
     }
     if (CHAR_ON_MARKER(marker) == '/' && CHAR_AFTER_MARKER(marker) == '/') {
-        if (options.commentMovingMode == CM_NO_COMMENT)
+        if (!options.moveComments)
             return;
         moveEditorMarkerToNewline(marker, 1);
         marker->offset++;
     } else if (CHAR_ON_MARKER(marker) == '/' && CHAR_AFTER_MARKER(marker) == '*') {
-        if (options.commentMovingMode == CM_NO_COMMENT)
+        if (!options.moveComments)
             return;
         marker->offset++;
         marker->offset++;
@@ -64,7 +64,7 @@ static void moveMarkerToTheEndOfDefinitionScope(EditorMarker *marker) {
     } else if (CHAR_ON_MARKER(marker) == '\n') {
         marker->offset++;
     } else {
-        if (options.commentMovingMode == CM_NO_COMMENT)
+        if (!options.moveComments)
             return;
         marker->offset = offset;
     }
@@ -122,8 +122,6 @@ static MarkerLocationKind markerWRTComment(EditorMarker *marker, int *commentBeg
 static void moveMarkerToTheBeginOfDefinitionScope(EditorMarker *marker) {
     int offsetToBeginning;
 
-    int slashedCommentsProcessed = 0;
-    int staredCommentsProcessed = 0;
     for (;;) {
         offsetToBeginning = marker->offset;
         marker->offset--;
@@ -132,7 +130,7 @@ static void moveMarkerToTheBeginOfDefinitionScope(EditorMarker *marker) {
             offsetToBeginning = marker->offset + 1;
             marker->offset--;
         }
-        if (options.commentMovingMode == CM_NO_COMMENT)
+        if (!options.moveComments)
             break;
         moveEditorMarkerToNonBlankOrNewline(marker, -1);
         if (CHAR_ON_MARKER(marker) == '\n')   /* A blank line ends what belongs to the definition */
@@ -142,31 +140,8 @@ static void moveMarkerToTheBeginOfDefinitionScope(EditorMarker *marker) {
         MarkerLocationKind markerLocationKind = markerWRTComment(marker, &comBeginOffset);
         if (markerLocationKind == MARKER_IS_IN_CODE)
             break;
-        else if (markerLocationKind == MARKER_IS_IN_STAR_COMMENT) {
-            if (options.commentMovingMode == CM_SINGLE_SLASHED)
-                break;
-            if (options.commentMovingMode == CM_ALL_SLASHED)
-                break;
-            if (staredCommentsProcessed > 0 && options.commentMovingMode == CM_SINGLE_STARRED)
-                break;
-            if (staredCommentsProcessed > 0 &&
-                options.commentMovingMode == CM_SINGLE_SLASHED_AND_STARRED)
-                break;
-            staredCommentsProcessed++;
-            marker->offset = comBeginOffset;
-        }
-        // slash comment, skip them all
-        else if (markerLocationKind == MARKER_IS_IN_SLASH_COMMENT) {
-            if (options.commentMovingMode == CM_SINGLE_STARRED)
-                break;
-            if (options.commentMovingMode == CM_ALL_STARRED)
-                break;
-            if (slashedCommentsProcessed > 0 && options.commentMovingMode == CM_SINGLE_SLASHED)
-                break;
-            if (slashedCommentsProcessed > 0 &&
-                options.commentMovingMode == CM_SINGLE_SLASHED_AND_STARRED)
-                break;
-            slashedCommentsProcessed++;
+        else if (markerLocationKind == MARKER_IS_IN_STAR_COMMENT
+                 || markerLocationKind == MARKER_IS_IN_SLASH_COMMENT) {
             marker->offset = comBeginOffset;
         } else {
             warningMessage(ERR_INTERNAL, "A new comment?");

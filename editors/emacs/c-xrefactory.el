@@ -401,7 +401,7 @@ C-xrefactory refactoring functions.
         :group 'c-xrefactory-refactoring)
 
   (defcustom c-xref-comments-moving-level 0
-        "The value of this variable determines how much commenting preceding a function, variable or field is moved together with it when a moving refactoring is applied. '0' moves no comments at all. '1' moves one doubleslashed comments (// ...). '2' moves one standard comment (/* ... */). '3' moves one doubleslashed and one standard comment. '4' moves all doubleslashed comments. '5' moves all standard comments. Finally, '6' moves all doubleslashed and all standard comments."
+        "If not 0, the comments directly above a function, variable or field are moved together with it when a moving refactoring is applied, up to a blank line."
         :type '(integer)
         :group 'c-xrefactory-refactoring)
 
