@@ -37,13 +37,11 @@ static void moveMarkerToTheEndOfDefinitionScope(EditorMarker *marker) {
     if (marker->offset >= marker->buffer->allocation.bufferSize) {
         return;
     }
+    /* A comment on the same line belongs to the definition */
     if (CHAR_ON_MARKER(marker) == '/' && CHAR_AFTER_MARKER(marker) == '/') {
-        /* A comment on the same line belongs to the definition */
         moveEditorMarkerToNewline(marker, 1);
         marker->offset++;
     } else if (CHAR_ON_MARKER(marker) == '/' && CHAR_AFTER_MARKER(marker) == '*') {
-        if (!options.moveComments)
-            return;
         marker->offset++;
         marker->offset++;
         while (marker->offset < marker->buffer->allocation.bufferSize &&
@@ -62,10 +60,6 @@ static void moveMarkerToTheEndOfDefinitionScope(EditorMarker *marker) {
             marker->offset = offset;
     } else if (CHAR_ON_MARKER(marker) == '\n') {
         marker->offset++;
-    } else {
-        if (!options.moveComments)
-            return;
-        marker->offset = offset;
     }
 }
 

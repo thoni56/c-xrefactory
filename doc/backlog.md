@@ -419,8 +419,6 @@ Roadmap → Optimization has the baseline: a cold-start PUSH on ffmpeg, measured
     The helpers and variables that move along have comments too, and only the server knows
     which ones move. So the server asks, once the blocks are known, and one answer covers
     them all.
-    A comment after the definition on the same line (`static int count; // how many`)
-    always moves with it. Today, with comments off, it is left behind on its own line.
 - (#22) <a id="index-based-sessions"></a>**Index-based sessions** — dissolves stale-POP *and* lets an answer grow while you
     work. Roadmap → Memory as Truth → Remaining. Depends only on entry refresh, which is
     done.
