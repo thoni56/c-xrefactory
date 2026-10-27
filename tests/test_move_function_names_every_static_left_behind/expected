@@ -1,0 +1,15 @@
+CXREF -server -o server-buffer
+-getproject CURDIR/source.c
+end-of-options
+
+<sync>
+<set-info len=<n>>CURDIR</set-info>
+-rfct-move-function -commentmovinglevel=0 -movetargetfile=target.c -rfct-target-line=3 -cursor=66 CURDIR/source.c
+end-of-options
+
+<sync>
+<error len=<n>>'moved' uses 'count' and 'helper', which are static in this file. Move them first.
+</error>
+-exit
+end-of-options
+

@@ -381,12 +381,9 @@ Roadmap → Optimization has the baseline: a cold-start PUSH on ffmpeg, measured
 
 ## 5. Features, by readiness
 
-- (#83) <a id="move-refuses-static"></a>**Move Function refuses to leave a `static` behind** — if
-    the moved function uses a `static` function or variable defined in the source file, refuse
-    and name them. 11-planned-features → Move Function → What the moved function uses.
 - (#84) <a id="move-helpers-along"></a>**Move Function moves the private helpers along** — a
     `static` used only by what moves goes too, stays `static`, and comes before its first use.
-    After: move-refuses-static
+    11-planned-features → Move Function → What the moved function uses.
 - (#85) <a id="move-shared-static"></a>**Move Function asks about a `static` shared with what stays** —
     make it extern where it is, or move it and make it extern from the target.
     After: move-helpers-along

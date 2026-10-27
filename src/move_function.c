@@ -430,11 +430,19 @@ static void moveStaticFunctionAndMakeItExtern(EditorMarker *startMarker, EditorM
     }
 }
 
+#define MAX_STATICS_NAMED 10
+
+typedef struct {
+    ReferenceableItem *item;
+    Position           definition;
+} StaticLeftBehind;
+
 typedef struct {
     Position           begin;
     Position           end;
     ReferenceableItem *moved;
-    ReferenceableItem *staticLeftBehind;
+    StaticLeftBehind   leftBehind[MAX_STATICS_NAMED];
+    int                leftBehindCount;
 } UsesOfMovedFunction;
 
 static void findStaticLeftBehind(ReferenceableItem *item, void *pointer) {
@@ -442,36 +450,57 @@ static void findStaticLeftBehind(ReferenceableItem *item, void *pointer) {
     bool usedInFunction = false;
     bool definedInFunction = false;
     bool definedInSourceFile = false;
+    Position definition = NO_POSITION;
 
     for (Reference *r = item->references; r != NULL; r = r->next) {
         bool inFunction = positionIsBetween(r->position, uses->begin, uses->end);
         if (isDefinitionUsage(r->usage)) {
             definedInFunction |= inFunction;
-            definedInSourceFile |= r->position.file == uses->begin.file;
+            if (r->position.file == uses->begin.file) {
+                definedInSourceFile = true;
+                definition = r->position;
+            }
         } else if (inFunction) {
             usedInFunction = true;
         }
     }
     if (definedInFunction && item->visibility == VisibilityGlobal)
         uses->moved = item;
-    else if (usedInFunction && definedInSourceFile && item->storage == StorageStatic)
-        uses->staticLeftBehind = item;
+    else if (usedInFunction && definedInSourceFile && item->storage == StorageStatic
+             && uses->leftBehindCount < MAX_STATICS_NAMED)
+        uses->leftBehind[uses->leftBehindCount++] = (StaticLeftBehind){item, definition};
+}
+
+static int compareDefinitions(const void *a, const void *b) {
+    Position first = ((const StaticLeftBehind *)a)->definition;
+    Position second = ((const StaticLeftBehind *)b)->definition;
+    if (positionIsLessThan(first, second))
+        return -1;
+    return positionIsLessThan(second, first);
 }
 
 /* A static in the source file that the function uses would be left behind */
 static bool refuseToLeaveStaticBehind(FunctionBoundariesResult bounds) {
+    /* Find statics left behind */
     UsesOfMovedFunction uses = {.begin = bounds.functionBegin, .end = bounds.functionEnd};
     mapOverReferenceableItemTableWithPointer(findStaticLeftBehind, &uses);
-    if (uses.moved == NULL || uses.staticLeftBehind == NULL)
+    if (uses.moved == NULL || uses.leftBehindCount == 0)
         return false;
+    qsort(uses.leftBehind, uses.leftBehindCount, sizeof(StaticLeftBehind), compareDefinitions);
 
-    char moved[TMP_STRING_SIZE];
-    char leftBehind[TMP_STRING_SIZE];
-    char message[4*TMP_STRING_SIZE];
-    prettyPrintLinkName(moved, uses.moved->linkName, TMP_STRING_SIZE);
-    prettyPrintLinkName(leftBehind, uses.staticLeftBehind->linkName, TMP_STRING_SIZE);
-    sprintf(message, "'%s' uses '%s', which is static in this file. Move '%s' first.",
-            moved, leftBehind, leftBehind);
+    char name[TMP_STRING_SIZE];
+    char message[(MAX_STATICS_NAMED+2)*TMP_STRING_SIZE];
+    prettyPrintLinkName(name, uses.moved->linkName, TMP_STRING_SIZE);
+    int length = sprintf(message, "'%s' uses ", name);
+    for (int i = 0; i < uses.leftBehindCount; i++) {
+        char *separator = i == 0 ? "" : i == uses.leftBehindCount-1 ? " and " : ", ";
+        prettyPrintLinkName(name, uses.leftBehind[i].item->linkName, TMP_STRING_SIZE);
+        length += sprintf(message+length, "%s'%s'", separator, name);
+    }
+    if (uses.leftBehindCount == 1)
+        sprintf(message+length, ", which is static in this file. Move '%s' first.", name);
+    else
+        sprintf(message+length, ", which are static in this file. Move them first.");
     errorMessage(ERR_ST, message);
     return true;
 }
