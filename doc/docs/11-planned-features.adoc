@@ -32,7 +32,7 @@ Reorganize code by moving function definitions between source files while mainta
 * Works for both C and Yacc files
 
 A comment on the same line after a moved function always moves with it.
-The comments above it are moved only if `c-xref-comments-moving-level` is set, and it is 0 by default.
+If there is a comment above it, or above something that moves along, Move Function asks whether to move the comments too, up to a blank line.
 
 ==== Next steps
 
@@ -67,10 +67,6 @@ Macros and types defined in the source `.c` have the same problem, and belong wi
 **Delete Function**: Remove a function definition and its declaration. Safety check warns
   if callers exist. Reuses the function boundary detection from Move Function and the
   unused detection logic to verify no references remain.
-
-**Ask whether to move the comment**: With `-commentmovinglevel=1` the server moves the
-  comments directly above a moved function, up to a blank line. The client sends `c-xref-comments-moving-level`, 0 by default, so no comment is
-  moved. A y/n question when there is a comment should replace the customization.
 
 [[make-static]]
 === Make Static

@@ -187,8 +187,6 @@
 ;; when updating browser, keep lastly set filter level
 (defvar c-xref-keep-last-symbols-filter t)
 
-(defvar c-xref-comments-moving-level 0)
-
 (defvar c-xref-save-files-after-refactoring nil)
 
 (defvar c-xref-save-files-before-refactoring nil)
@@ -398,11 +396,6 @@ C-xrefactory refactoring functions.
   (defcustom c-xref-save-files-after-refactoring nil
         "If on, C-xrefactory saves all modified files after each refactoring."
         :type '(boolean)
-        :group 'c-xrefactory-refactoring)
-
-  (defcustom c-xref-comments-moving-level 0
-        "If not 0, the comments directly above a function, variable or field are moved together with it when a moving refactoring is applied, up to a blank line."
-        :type '(integer)
         :group 'c-xrefactory-refactoring)
 
   (defcustom c-xref-move-point-back-after-refactoring nil

@@ -5971,7 +5971,6 @@ refactoring.
     ;; move
     (c-xref-do-refactoring
      (append moveopt (list
-                              (format "-commentmovinglevel=%d" c-xref-comments-moving-level)
                               (format "-movetargetfile=%s" tf)
                               (format "-rfct-target-line=%s" c-xref-moving-refactoring-line))))
 

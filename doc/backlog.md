@@ -414,11 +414,6 @@ Roadmap → Optimization has the baseline: a cold-start PUSH on ffmpeg, measured
     Goes with: sweep, time-budget
     Goes with: index-based-sessions
 
-- (#21) <a id="move-function-comment-prompt"></a>**Move Function comment y/n prompt** — replaces the `c-xref-comments-moving-level`
-    customization.
-    The helpers and variables that move along have comments too, and only the server knows
-    which ones move. So the server asks, once the blocks are known, and one answer covers
-    them all.
 - (#22) <a id="index-based-sessions"></a>**Index-based sessions** — dissolves stale-POP *and* lets an answer grow while you
     work. Roadmap → Memory as Truth → Remaining. Depends only on entry refresh, which is
     done.
@@ -437,7 +432,6 @@ Roadmap → Optimization has the baseline: a cold-start PUSH on ffmpeg, measured
 - (#26) <a id="move-function-next"></a>**Move Function next steps** — the extern and forward declarations,
     include management, header placement, preview, and what is shown afterwards.
     11-planned-features → Move Function → Next steps.
-    After: move-function-comment-prompt
 - (#88) <a id="parse-all"></a>**`-parse-all`, a request that parses every compilation unit the scan found and has not parsed** —
     what ADR-0024's CreateMode reduces to once the priming is a request rather than a mode.
     `test_ffmpeg` and `test_systemd` ask for it today by searching a name nobody defines and
