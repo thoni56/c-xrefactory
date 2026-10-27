@@ -5,6 +5,7 @@
 
 #include "commons.h"
 #include "cxref.h"
+#include "filetable.h"
 #include "globals.h"
 #include "list.h"
 #include "log.h"
@@ -113,6 +114,15 @@ BrowsingMenu *createNewMenuItem(ReferenceableItem *referenceable, int includedFi
     return menu;
 }
 
+/* By name, since a file number depends on where the project is */
+static int compareIncludedFiles(int fileNumber1, int fileNumber2) {
+    if (fileNumber1 == fileNumber2)
+        return 0;
+    if (fileNumber1 == NO_FILE_NUMBER || fileNumber2 == NO_FILE_NUMBER)
+        return fileNumber1 < fileNumber2 ? -1 : 1;
+    return strcmp(getFileItemWithFileNumber(fileNumber1)->name, getFileItemWithFileNumber(fileNumber2)->name);
+}
+
 static bool referenceableItemIsLess(ReferenceableItem *item1, ReferenceableItem *item2) {
     int cmp;
 
@@ -121,9 +131,10 @@ static bool referenceableItemIsLess(ReferenceableItem *item1, ReferenceableItem 
         return true;
     else if (cmp > 0)
         return false;
-    if (item1->includeFileNumber < item2->includeFileNumber)
+    cmp = compareIncludedFiles(item1->includeFileNumber, item2->includeFileNumber);
+    if (cmp < 0)
         return true;
-    else if (item1->includeFileNumber > item2->includeFileNumber)
+    else if (cmp > 0)
         return false;
     if (item1->type < item2->type)
         return true;

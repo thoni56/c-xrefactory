@@ -13,9 +13,9 @@
 </resolution>
 <resolution>
  <symbol line=2 type=#include selected=1 base=0 drefn=1 refn=1 len=<n>>a.h</symbol>
- <symbol line=3 type=#include selected=0 base=0 drefn=1 refn=1 len=<n>>b.h</symbol>
+ <symbol line=3 type=#include selected=0 base=0 drefn=1 refn=1 len=<n>>e.h</symbol>
 </resolution>
 <resolution>
  <symbol line=2 type=#include selected=1 base=0 drefn=1 refn=1 len=<n>>a.h</symbol>
- <symbol line=3 type=#include selected=0 base=0 drefn=1 refn=1 len=<n>>b.h</symbol>
+ <symbol line=3 type=#include selected=0 base=0 drefn=1 refn=1 len=<n>>e.h</symbol>
 </resolution>
