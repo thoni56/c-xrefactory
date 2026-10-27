@@ -1,0 +1,24 @@
+CXREF -server
+-getproject CURDIR/a.c
+<sync>
+-browse-push-only -cursor=20 CURDIR/b.c
+<sync>
+-browse-push-only -cursor=40 CURDIR/c.c
+<sync>
+-browse-push-only -cursor=37 CURDIR/a.c
+<sync>
+-menu-filter=2
+<sync>
+-menu-filter=1
+<sync>
+-menu-filter=0
+<sync>
+-browse-push-only -cursor=3 CURDIR/a.c
+<sync>
+-menu-filter=2
+<sync>
+-menu-filter=1
+<sync>
+-menu-filter=0
+<sync>
+<exit>

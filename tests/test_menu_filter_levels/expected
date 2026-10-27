@@ -1,0 +1,21 @@
+<resolution>
+ <symbol line=2 type=macro selected=1 base=0 drefn=1 refn=1 len=<n>>LIMIT</symbol>
+</resolution>
+<resolution>
+ <symbol line=2 type=macro selected=1 base=0 drefn=1 refn=1 len=<n>>LIMIT</symbol>
+</resolution>
+<resolution>
+ <symbol line=2 type=macro selected=1 base=0 drefn=1 refn=1 len=<n>>LIMIT</symbol>
+ <symbol line=3 selected=0 base=0 drefn=1 refn=1 len=<n>>LIMIT</symbol>
+</resolution>
+<resolution>
+ <symbol line=2 type=#include selected=1 base=0 drefn=1 refn=1 len=<n>>a.h</symbol>
+</resolution>
+<resolution>
+ <symbol line=2 type=#include selected=1 base=0 drefn=1 refn=1 len=<n>>a.h</symbol>
+ <symbol line=3 type=#include selected=0 base=0 drefn=1 refn=1 len=<n>>b.h</symbol>
+</resolution>
+<resolution>
+ <symbol line=2 type=#include selected=1 base=0 drefn=1 refn=1 len=<n>>a.h</symbol>
+ <symbol line=3 type=#include selected=0 base=0 drefn=1 refn=1 len=<n>>b.h</symbol>
+</resolution>
