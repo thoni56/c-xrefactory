@@ -21,7 +21,7 @@ Reorganize code by moving function definitions between source files while mainta
 
 * Move a function from one source file to another
 * Automatically removes possible `static` keyword (makes function externally accessible)
-* Adds extern declaration to target file's header
+* Adds extern declaration to target file's header, if it has one
 * Adds an `#include` of the target's header to the source, unless it is already there
 * Moves function decorations
 * Takes along the `static` functions and variables in the source file that only it uses,
@@ -41,6 +41,10 @@ If there is a comment above it, or above something that moves along, Move Functi
 
 **Remove the forward declaration**: Remove a declaration of the moved function from the
   source file. A `static` one left behind breaks the build.
+
+**Create the target's header**: When the target has no header, nothing declares the moved
+  function where it is still used. `tests/test_move_function_creates_the_targets_header`
+  (suspended) asks for one to be created and included.
 
 **Include management**: Add the `#include` directives the moved function needs to the target.
 

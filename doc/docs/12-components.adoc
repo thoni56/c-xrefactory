@@ -44,7 +44,7 @@ The parser's behavior is configured through `ParserOperation`, decoupling parsin
 |Track blocks, variables, and control flow for extract refactoring
 
 |`PARSE_TO_GET_FUNCTION_BOUNDS`
-|Record function start/end positions
+|Record the start and end of the function, or of a single variable's declaration, at the cursor
 
 |`PARSE_TO_VALIDATE_MOVE_TARGET`
 |Check if a position is a valid move-function target

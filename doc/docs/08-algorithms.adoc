@@ -697,7 +697,7 @@ Advisory confirmation (`ppcAskConfirmation`, `<ask-confirmation>`)::
   to apply it. Used by refactorings (`src/refactory.c`), e.g. "The refactoring may change
   program behaviour, really continue?".
 
-Blocking confirmation (`waitForUserConfirmation`, `<wait-confirmation>`)::
+Blocking confirmation (`ppcWaitConfirmation`, `<wait-confirmation>`)::
   The server writes `<wait-confirmation>` followed by `<sync>` and blocks until the
   client answers. The client shows a yes/no dialog and sends a bare `-continue` or
   `-cancel` line back through the pipe. The server reads it directly from stdin
@@ -707,7 +707,8 @@ Blocking confirmation (`waitForUserConfirmation`, `<wait-confirmation>`)::
   Use it when the answer changes what the server computes. Used by the parse-all check
   for <<project-wide-operations,project-wide operations>>: when more CUs are out of date
   than the cap, a complete answer will take a while, so the server asks whether to wait
-  for it before searching, checking for unused globals or pushing by name.
+  for it before searching, checking for unused globals or pushing by name. Also used by
+  Move Function, to ask whether to move the comments of what it moves.
 
 Extraction dialog::
   The server computes the extraction and sends `<extraction-dialog>` with the replacement
