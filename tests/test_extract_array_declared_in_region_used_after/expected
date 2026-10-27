@@ -1,0 +1,15 @@
+CXREF -server -o server-buffer
+-getproject CURDIR/source.c
+end-of-options
+
+<sync>
+<set-info len=<n>>CURDIR</set-info>
+-rfct-extract-function -mark=58 -cursor=112 CURDIR/source.c
+end-of-options
+
+<sync>
+<error len=<n>>'message' is an array, so it can't be returned. Declare it before the region.
+</error>
+-exit
+end-of-options
+

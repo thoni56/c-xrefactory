@@ -387,6 +387,11 @@ Roadmap → Optimization has the baseline: a cold-start PUSH on ffmpeg, measured
 - (#85) <a id="move-shared-static"></a>**Move Function asks about a `static` shared with what stays** —
     make it extern where it is, or move it and make it extern from the target.
     After: move-helpers-along
+- (#86) <a id="extract-array-used-after"></a>**Extract Function passes an array declared in the region and used after it** —
+    today it refuses (`refuseToReturnAnArray()`, `src/extract.c`), since a function can't return
+    an array. Move the declaration out of the region, before the call, and pass the array, as
+    when it is declared before the region (`char message[]` as a parameter). The refusal goes.
+    Test: `tests/test_extract_array_declared_in_region_used_after`.
 - (#20) <a id="remove-references-stopgap"></a>**Take the client's "Remove References and Restart Server" back out** — it landed
     2026-09-24 as a deliberate stopgap (`c-xref-project-remove-references-and-restart`,
     `editors/emacs/c-xref.el`), because discarding the database is the standing remedy for

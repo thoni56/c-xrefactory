@@ -991,6 +991,35 @@ static unsigned extractionInsertionPosition(void) {
     return parsedInfo.functionBeginPosition;
 }
 
+/* The link name of a local is " storage!type!declarator!name!declarator suffix" */
+static bool isArray(char *linkName) {
+    char *suffix = linkName;
+    for (int i = 0; i < 4; i++) {
+        suffix = strchr(suffix, LINK_NAME_SEPARATOR);
+        if (suffix == NULL)
+            return false;
+        suffix++;
+    }
+    return *suffix == '[';
+}
+
+/* A C function can't return an array, and the array would be local to it */
+static bool refuseToReturnAnArray(ProgramGraphNode *program) {
+    for (ProgramGraphNode *p=program; p!=NULL; p=p->next) {
+        if (p->classification == CLASSIFIED_AS_LOCAL_RESULT_VALUE
+            && isArray(p->referenceableItem->linkName)) {
+            char name[TMP_STRING_SIZE];
+            char message[TMP_STRING_SIZE+100];
+            getLocalVariableNameFromLinkName(p->referenceableItem->linkName, name);
+            sprintf(message, "'%s' is an array, so it can't be returned. Declare it before the region.",
+                    name);
+            errorMessage(ERR_ST, message);
+            return true;
+        }
+    }
+    return false;
+}
+
 static void makeExtraction(void) {
     ProgramGraphNode *program;
 
@@ -1019,6 +1048,8 @@ static void makeExtraction(void) {
     }
     classifyLocalVariables(program);
     reclassifyInOutVariables(program);
+    if (parsingConfig.extractMode == EXTRACT_FUNCTION && refuseToReturnAnArray(program))
+        return;
 
     char *extractionName;
     if (parsingConfig.extractMode == EXTRACT_VARIABLE)
