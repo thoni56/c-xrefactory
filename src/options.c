@@ -87,6 +87,7 @@ Options presetOptions = {
     .theRefactoring = AVR_NO_REFACTORING,
     .continueRefactoring = RC_NONE,
     .moveComments = false,
+    .askAboutComments = true,
     .extractMode = 0,
     .renameTo = NULL,
     .moveTargetFile = NULL,
@@ -910,6 +911,7 @@ static bool processCOption(int *argi, ArgumentsVector args) {
         int level = 0;
         sscanf(args.argv[i]+20, "%d", &level);
         options.moveComments = level != 0;
+        options.askAboutComments = false;
     }
     else if (strcmp(args.argv[i], "-continuerefactoring")==0) {
         options.continueRefactoring = RC_CONTINUE;

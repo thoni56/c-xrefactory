@@ -103,6 +103,7 @@ typedef struct options {
     Refactoring theRefactoring;                 /* REFACTORING */
     ContinueRefactoringKind continueRefactoring; /* REFACTORING */
     bool moveComments;                          /* REFACTORING */
+    bool askAboutComments;
     ExtractMode extractMode;                    /* REFACTORING */
     char *renameTo;                             /* REFACTORING */
     char *moveTargetFile;                       /* REFACTORING */

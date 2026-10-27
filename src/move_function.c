@@ -614,6 +614,17 @@ static bool moveHelpersAlongOrRefuse(DefinitionBoundariesResult bounds, EditorMa
     return true;
 }
 
+static bool hasCommentAbove(DefinitionBoundariesResult bounds) {
+    EditorMarker *withComments = newEditorMarkerForPosition(bounds.begin);
+    EditorMarker *withoutComments = newEditorMarkerForPosition(bounds.begin);
+    moveMarkerToTheBeginOfDefinitionScope(withComments, true);
+    moveMarkerToTheBeginOfDefinitionScope(withoutComments, false);
+    bool hasComment = withComments->offset != withoutComments->offset;
+    freeEditorMarker(withComments);
+    freeEditorMarker(withoutComments);
+    return hasComment;
+}
+
 void moveFunction(EditorMarker *point) {
     EditorMarker *target = getTargetFromOptions();
 
@@ -627,6 +638,9 @@ void moveFunction(EditorMarker *point) {
     if (!bounds.found) {
         FATAL_ERROR(ERR_INTERNAL, "Can't find declaration coordinates", EXIT_FAILURE);
     }
+
+    if (options.askAboutComments && hasCommentAbove(bounds))
+        options.moveComments = ppcWaitConfirmation("Move the comments too?");
 
     /* Markers before any change, since the positions are from the parse */
     EditorMarker *functionStart = newDefinitionScopeStart(bounds);
