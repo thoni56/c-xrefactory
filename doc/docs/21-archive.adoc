@@ -233,6 +233,31 @@ something radical before attempting cross referencing and refactoring.
 
 === Bootstrapping
 
+==== How the build used to work
+
+One step in the build process was generating initialization information
+for all the things in standard include files, which of course became
+very dependent on the system you are running this on. This has now moved
+into functions inside `c-xref` itself, like finding DEFINEs and include
+paths.
+
+The initial recovered `c-xrefactory` relied on having a working _c-xref_
+for the current system. I don't really know how they managed to do
+that for all the various systems they were supporting.
+
+Modern thinking is that you should always be able to build from
+source, so this is something that needed change. We also want to
+distribute _c-xref_ as an el-get library which requires building from
+source and should generate a version specific for the current system.
+
+[.line-through]#The strategy selected, until some better idea comes along, is to try
+to build a _c-xref.bs_, if there isn't one already, from the sources in
+the repository and then use that to re-generate the definitions and
+rebuild a proper _c-xref_. See Bootstrapping.#
+
+We have managed to remove the complete bootstrapping step, so `c-xrefactory`
+now builds like any other project.
+
 ==== BOOTSTRAP REMOVED!
 
 Once the FILL-macros was removed, we could move the enum-generation to
