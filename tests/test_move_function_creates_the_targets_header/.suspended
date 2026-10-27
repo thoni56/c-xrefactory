@@ -1,0 +1,16 @@
+Missing: Move Function creates the target's header when there is none
+
+When target.c has no header, nothing declares the moved function where it is still
+used. Here main() in source.c calls func(), so source.c no longer compiles cleanly
+(an implicit declaration). With a target.h, Move Function adds the extern there and
+includes it in source.c (test_move_function_to_other_file_with_header_file). This test
+asks for the same when target.h does not exist: create it with an include guard and
+the extern, and include it in source.c.
+
+Decide first how a new file is made. The protocol has no record for it, so expected
+assumes a goto to offset 0 in target.h, which the client opens as a new buffer, and a
+replacement that inserts all of it. Move Function to New Module (backlog #87) needs
+the same, for the .c too.
+
+When this works, test_move_function_to_other_file changes as well: its expected pins
+that no declaration is made.
