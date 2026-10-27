@@ -112,7 +112,7 @@ static MarkerLocationKind markerWRTComment(EditorMarker *marker, int *commentBeg
     return MARKER_IS_IN_CODE;
 }
 
-static void moveMarkerToTheBeginOfDefinitionScope(EditorMarker *marker) {
+static void moveMarkerToTheBeginOfDefinitionScope(EditorMarker *marker, bool moveComments) {
     int offsetToBeginning;
 
     for (;;) {
@@ -123,7 +123,7 @@ static void moveMarkerToTheBeginOfDefinitionScope(EditorMarker *marker) {
             offsetToBeginning = marker->offset + 1;
             marker->offset--;
         }
-        if (!options.moveComments)
+        if (!moveComments)
             break;
         moveEditorMarkerToNonBlankOrNewline(marker, -1);
         if (CHAR_ON_MARKER(marker) == '\n')   /* A blank line ends what belongs to the definition */
@@ -584,7 +584,7 @@ static bool refuseToLeaveStaticBehind(UsesOfMovedFunction *uses) {
 
 static EditorMarker *newDefinitionScopeStart(DefinitionBoundariesResult bounds) {
     EditorMarker *marker = newEditorMarkerForPosition(bounds.begin);
-    moveMarkerToTheBeginOfDefinitionScope(marker);
+    moveMarkerToTheBeginOfDefinitionScope(marker, options.moveComments);
     return marker;
 }
 
