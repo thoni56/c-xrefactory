@@ -582,9 +582,9 @@ static bool refuseToLeaveStaticBehind(UsesOfMovedFunction *uses) {
     return true;
 }
 
-static EditorMarker *newDefinitionScopeStart(DefinitionBoundariesResult bounds) {
+static EditorMarker *newDefinitionScopeStart(DefinitionBoundariesResult bounds, bool moveComments) {
     EditorMarker *marker = newEditorMarkerForPosition(bounds.begin);
-    moveMarkerToTheBeginOfDefinitionScope(marker, options.moveComments);
+    moveMarkerToTheBeginOfDefinitionScope(marker, moveComments);
     return marker;
 }
 
@@ -595,23 +595,18 @@ static EditorMarker *newDefinitionScopeEnd(DefinitionBoundariesResult bounds) {
 }
 
 /* The helpers keep 'static' and go before the moved function, in their order */
-static bool moveHelpersAlongOrRefuse(DefinitionBoundariesResult bounds, EditorMarker *target) {
-    UsesOfMovedFunction uses = findUsesOfMovedFunction(bounds);
-    if (refuseToLeaveStaticBehind(&uses))
-        return false;
-
+static void moveHelpersAlong(UsesOfMovedFunction *uses, EditorMarker *target, bool moveComments) {
     EditorMarker *starts[MAX_STATICS];
     EditorMarker *ends[MAX_STATICS];
-    for (int i = 0; i < uses.helperCount; i++) {
-        starts[i] = newDefinitionScopeStart(uses.helpers[i].bounds);
-        ends[i] = newDefinitionScopeEnd(uses.helpers[i].bounds);
+    for (int i = 0; i < uses->helperCount; i++) {
+        starts[i] = newDefinitionScopeStart(uses->helpers[i].bounds, moveComments);
+        ends[i] = newDefinitionScopeEnd(uses->helpers[i].bounds);
     }
-    for (int i = 0; i < uses.helperCount; i++) {
+    for (int i = 0; i < uses->helperCount; i++) {
         moveBlockInEditorBuffer(starts[i], target, ends[i]->offset - starts[i]->offset, &editorUndo);
         freeEditorMarker(starts[i]);
         freeEditorMarker(ends[i]);
     }
-    return true;
 }
 
 static bool hasCommentAbove(DefinitionBoundariesResult bounds) {
@@ -639,17 +634,24 @@ void moveFunction(EditorMarker *point) {
         FATAL_ERROR(ERR_INTERNAL, "Can't find declaration coordinates", EXIT_FAILURE);
     }
 
+    UsesOfMovedFunction uses = {.helperCount = 0};
+    if (target->buffer != point->buffer) {
+        uses = findUsesOfMovedFunction(bounds);
+        if (refuseToLeaveStaticBehind(&uses))
+            return;
+    }
+
+    bool moveComments = options.moveComments;
     if (options.askAboutComments && hasCommentAbove(bounds))
-        options.moveComments = ppcWaitConfirmation("Move the comments too?");
+        moveComments = ppcWaitConfirmation("Move the comments too?");
 
     /* Markers before any change, since the positions are from the parse */
-    EditorMarker *functionStart = newDefinitionScopeStart(bounds);
+    EditorMarker *functionStart = newDefinitionScopeStart(bounds, moveComments);
     EditorMarker *functionEnd = newDefinitionScopeEnd(bounds);
 
     int lines = countLinesBetweenEditorMarkers(functionStart, functionEnd);
 
-    if (target->buffer != point->buffer && !moveHelpersAlongOrRefuse(bounds, target))
-        return;
+    moveHelpersAlong(&uses, target, moveComments);
 
     moveStaticFunctionAndMakeItExtern(functionStart, point, functionEnd, target);
 
