@@ -1,3 +1,67 @@
+# Version 1.10.0
+
+- Move Function takes along the static functions and variables that only the moved function uses
+- Move Function refuses to leave a static behind, and names every one it would
+- Move Function asks once whether to move the comments of everything that moves, up to a blank line, and a comment on the same line always moves (replaces `c-xref-comments-moving-level`)
+- Rename Module renames the header and its `.c`, the include guard and every `#include`
+- Extract Function handles a variable declared in the region and used after it, passes back a static the region writes, and refuses to return an array
+- A refactoring that would go wrong is refused before any edit
+- Parse problems are shown in a `*c-xref-diagnostics*` buffer, with positions for `next-error`, grouped per file and counted in the mode line
+- A name in a macro body shows all its meanings in a menu
+- Browsing from a header also analyses the files that include it
+- Searching, Unused Symbols and Push by name ask before analysing the files that are out of date, but only when there are many
+- Headers changed on disk, e.g. after a `git switch`, are noticed and analysed again
+- Included files are listed by name in the browser
+- The project is always found from the closest `.c-xrefrc`, so `-xrefrc`, the `.c-xrefrc` in your home directory and the Project menu's "Set Active" and "Delete" are gone
+- A snapshot of references is kept in `.c-xref/db` in the project root, and `-refs` and `-refnum` are ignored
+- New customization `c-xref-server-startup-options`, e.g. to get a log of why files are analysed
+- New Project menu entry "Remove References and Restart Server", for when the references seem off
+- Remove the options `-create`, `-update` and its variants, `-mf`, `-crlfconversion`, `-crconversion`, `-no-errors` and `-commentmovinglevel`
+- Rename `c-xref-save-files-and-update-tags-before/after-refactoring` to `c-xref-save-files-before/after-refactoring`
+- Many fixes in keeping the references up to date, e.g. for statics in files with the same name, Yacc files, `#pragma once` and Latin-1 characters
+- The batch cross-referencer (XrefMode) is removed, the server is the only engine
+- The references in memory are the truth, the disk is only a snapshot, and what is out of date is decided like make does it
+- Many refactorings and tidyings
+
+# Version 1.9.4
+
+- All refactorings are done by the server, the separate refactoring process is removed
+- Searching asks whether to analyse the files that are not yet analysed
+- The references are saved every 100 analysed files
+- Remove the menu entries for rebuilding and updating the references, and the "Emacs IDE" menu
+- Works with Emacs 27
+- Unused Symbols uses the references in memory, the last use of the disk database
+
+# Version 1.9.3
+
+- Searching and refactorings use the references in memory, and the disk database is a snapshot saved on exit
+- Startup scans the project's includes instead of parsing everything
+- Files a refactoring changed are analysed again, and so is the project when its config changes
+- Progress messages while analysing
+- Fix Extract Function placing the new function inside a Cgreen `Ensure()`
+
+# Version 1.9.2
+
+- The server finds and analyses all files in the project itself, no `-create` needed
+- "Local Motion" is renamed "Peek"
+- Fix Move Function to an empty file
+- Updating the references is separated from the operation
+
+# Version 1.9.1
+
+- Fixes for Next and Previous, e.g. after a reference has moved
+- Record references to macros inside macro definitions
+
+# Version 1.9.0
+
+- Find the project from the closest `.c-xrefrc`, and lock the server to it
+- New refactoring: Organize Includes
+- Move Function to another file adds an extern declaration in the header and includes it
+- Extract Function passes structs and unions by value
+- Remove the options `-strict` and `-completeparenthesis`, and what was left of Java
+- Fix renaming a Yacc symbol
+- A common parsing API, and a first, experimental, LSP server
+
 # Version 1.8.4
 
 - Add basic extern declaration and include of header file for Move Function
