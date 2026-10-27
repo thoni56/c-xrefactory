@@ -1,0 +1,8 @@
+CXREF -server
+-getproject CURDIR/source.c
+<sync>
+-rfct-move-function -movetargetfile=target.c -rfct-target-line=3 -cursor=57 CURDIR/source.c
+<sync>
+-continue
+<sync>
+<exit>

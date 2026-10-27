@@ -620,6 +620,16 @@ static bool hasCommentAbove(DefinitionBoundariesResult bounds) {
     return hasComment;
 }
 
+/* One question for everything that moves */
+static bool anyCommentAbove(DefinitionBoundariesResult bounds, UsesOfMovedFunction *uses) {
+    if (hasCommentAbove(bounds))
+        return true;
+    for (int i = 0; i < uses->helperCount; i++)
+        if (hasCommentAbove(uses->helpers[i].bounds))
+            return true;
+    return false;
+}
+
 void moveFunction(EditorMarker *point) {
     EditorMarker *target = getTargetFromOptions();
 
@@ -642,7 +652,7 @@ void moveFunction(EditorMarker *point) {
     }
 
     bool moveComments = options.moveComments;
-    if (options.askAboutComments && hasCommentAbove(bounds))
+    if (options.askAboutComments && anyCommentAbove(bounds, &uses))
         moveComments = ppcWaitConfirmation("Move the comments too?");
 
     /* Markers before any change, since the positions are from the parse */
