@@ -11,6 +11,10 @@ A few items have no repo home yet — they came out of a session and were never 
 down. Those lines say where to start instead of pointing, and should shrink to a pointer
 once the work gets a chapter, a test or a `.suspended` note.
 
+A planned feature gets an item only once it has a place in the order. Until then
+`11-planned-features.adoc` is the list. A suspected bug is an investigation, and its title
+says so. A red test makes it a bug, and a disproved one is deleted.
+
 Ordering principle: first the one item that gates the most rows, then the chains that unblock, then bugs and
 features. Relative effort only — no dates (#noestimates).
 
@@ -437,34 +441,22 @@ Roadmap → Optimization has the baseline: a cold-start PUSH on ffmpeg, measured
     `refactory.c`, `extract.c` and `cxref.c`). The `assert(options.cxrefProtocol)` lines
     roughly map where an operation depends on the native protocol, so keep them until then.
     After: lsp-mode
-- (#26) <a id="move-function-next"></a>**Move Function next steps**, then **Delete Function**. Also **`-parse-all`, a request that parses every compilation
-    unit the scan found and has not parsed** — what ADR-0024's CreateMode reduces to
-    once the priming is a request rather than a mode; `test_ffmpeg` and
-    `test_systemd` ask for it today by searching a name nobody defines and answering
-    `-continue`. The concrete cost of not having it: a Delete Parameter on
-    `saveReferencesToStore` rewrote `cxfile.c`, `cxfile.h` and `cxref.c` but left
-    `src/cxfile.mock`, which declares the same function for the unit tests, so the
-    unit build would not compile. Observed on the Mac, session `3af59d00`, 2026-09-25.
-    Browsing now reaches a test CU through its mock
-    (`tests/test_push_reaches_a_test_that_includes_only_the_mock`). Whether a refactoring
-    does is not tested: a Delete Parameter on `knowledgeIsOutOfDate` said the parameter
-    was used in `freshness.mock` after that use had been removed and saved, so it read
-    older knowledge of the mock (WSL, session `d25255b8`, 2026-10-09). No test pins
-    mock-reaching refactorings today. If it becomes something a user asks for, it needs to say how long
-    it will take: `src/progress.c` already keeps `timeZero` and a monotonic clock,
-    and the parse loops already count down, so the missing part is the division and
-    a format that says "4 min left" rather than a remaining count. Decide the unit
-    first — CUs are uneven enough (`avcodec.h`'s consumers against a 40-line `.c`)
-    that a mean over them swings early and settles late, where lines or bytes are
-    steadier and both are known before parsing starts.
-    Also **unused-detection exclude patterns**, **browsing includes**,
-    **semantic read-only files**, **rename handles `expect`**, **project-local
-    config**, **Inline Function and Inline Macro**, **Make Static**, **Extract an Expression as a
-    Function**, **Unify Parameter Names**, **Introduce Parameter Object**, **Inline Output
-    Parameter**, **Finish Extract Variable**, **Inline Variable**, **Name and Define
-    Constant**, **C11 `_Generic`** (`tests/test_parsing_generics`). All in
-    `11-planned-features.adoc`.
+- (#26) <a id="move-function-next"></a>**Move Function next steps** — the extern and forward declarations,
+    include management, header placement, preview, and what is shown afterwards.
+    11-planned-features → Move Function → Next steps.
     After: move-function-comment-prompt
+- (#88) <a id="parse-all"></a>**`-parse-all`, a request that parses every compilation unit the scan found and has not parsed** —
+    what ADR-0024's CreateMode reduces to once the priming is a request rather than a mode.
+    `test_ffmpeg` and `test_systemd` ask for it today by searching a name nobody defines and
+    answering `-continue`. A refactoring only changes what has been parsed: a Delete
+    Parameter on `saveReferencesToStore` left `src/cxfile.mock` behind, and the unit build
+    did not compile (Mac, session `3af59d00`, 2026-09-25). No test pins that a refactoring
+    reaches a mock.
+    If a user asks for it, it should say how long it will take. `src/progress.c` already
+    keeps `timeZero` and a monotonic clock, and the parse loops count down, so what is
+    missing is the division and a format like "4 min left". Decide the unit first: CUs are
+    uneven (`avcodec.h`'s consumers against a 40-line `.c`), lines or bytes are steadier,
+    and both are known before parsing starts.
 - (#82) <a id="browser-for-c"></a>**The browser's Symbol Pane says which symbol each line is** — a line is
     `+  1/1  LIMIT`, so a macro `LIMIT` and a `static int LIMIT` in another file look the
     same (`tests/test_menu_filter_levels`). In the Java version the pane was a class tree
