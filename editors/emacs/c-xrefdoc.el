@@ -277,20 +277,39 @@ Mechanics: Move the region into an initialization of a new
 
 
 ----------------------------------------------------------
+* Move Function:
+----------------------------------------------------------
+
+Description: Move a function to the target position, possibly in
+      another file.
+
+Refactoring Context: Cursor has to be on the name of the function.
+      Set the target position first, with 'Set Target for Next
+      Moving Refactoring'.
+
+Input Parameters: Whether to move the comments too, asked only if
+      there is a comment above something that is moved.
+
+Mechanics: Move the function to the target position. When it is
+      moved to another file, the 'static' functions and variables
+      that only it uses go along, its own 'static' is removed, and
+      an 'extern' declaration is added to the target's header.
+      Refuse if it would leave a 'static' behind.
+
+
+----------------------------------------------------------
 * Set Target for Next Moving Refactoring:
 ----------------------------------------------------------
 
 Description: Set target position for moving refactorings.
 
 Refactoring Context: Cursor has to be on the position where the
-      variable, function or macro will be moved.
+      function will be moved.
 
 Input Parameters: None.
 
 Mechanics: This action does  not modify source code. It sets
       some internal values for future refactoring.
-
-NOTE: Moving is not implemented yet.
 
 
 ----------------------------------------------------------

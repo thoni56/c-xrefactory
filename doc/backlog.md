@@ -1,6 +1,6 @@
 # Backlog
 
-What to work on next, and in what order. As of 2026-10-09.
+What to work on next, and in what order. As of 2026-10-27.
 
 The *descriptions* live in the guidebook (`doc/docs/`), in the `.suspended` notes and in
 the ADRs. This file carries only the **order** and the **dependencies**, which are
@@ -410,6 +410,7 @@ Roadmap → Optimization has the baseline: a cold-start PUSH on ffmpeg, measured
     and generations are not in the snapshot (ADR-0033). After a "no" to the completeness
     question, ghosts in a header like ffmpeg's `avcodec.h` (614 CUs) are written at exit
     and come back with the snapshot, session after session.
+    1.10.0 announces the entry in `CHANGES.md`, so its removal needs a line there too.
     Waits for: behind-the-back
     Goes with: sweep, time-budget
     Goes with: index-based-sessions
@@ -431,7 +432,9 @@ Roadmap → Optimization has the baseline: a cold-start PUSH on ffmpeg, measured
     After: lsp-mode
 - (#26) <a id="move-function-next"></a>**Move Function next steps** — the extern and forward declarations,
     include management, header placement, preview, and what is shown afterwards.
-    11-planned-features → Move Function → Next steps.
+    11-planned-features → Move Function → Next steps. Two cases: a target without a header
+    (`tests/test_move_function_creates_the_targets_header`, suspended), and moving
+    `waitForUserConfirmation()` into `src/ppc.c` needed `log.h` added by hand (2026-10-27).
 - (#88) <a id="parse-all"></a>**`-parse-all`, a request that parses every compilation unit the scan found and has not parsed** —
     what ADR-0024's CreateMode reduces to once the priming is a request rather than a mode.
     `test_ffmpeg` and `test_systemd` ask for it today by searching a name nobody defines and
@@ -444,6 +447,11 @@ Roadmap → Optimization has the baseline: a cold-start PUSH on ffmpeg, measured
     missing is the division and a format like "4 min left". Decide the unit first: CUs are
     uneven (`avcodec.h`'s consumers against a 40-line `.c`), lines or bytes are steadier,
     and both are known before parsing starts.
+- (#92) <a id="refactoring-help"></a>**The refactoring dialog's help describes what the dialog offers** — *no repo home yet.*
+    `c-xref-refactoring-documentation` (`editors/emacs/c-xrefdoc.el`) has no Rename Module or
+    Organize Includes, describes a Make Static Function Extern the dialog does not offer, and
+    Extract Function's example is Java. A test that every dialog entry (`c-xref.el`, the
+    `PPC_AVR_` list) has a help entry, and every help entry a dialog entry, finds the next one.
 - (#82) <a id="browser-for-c"></a>**The browser's Symbol Pane says which symbol each line is** — a line is
     `+  1/1  LIMIT`, so a macro `LIMIT` and a `static int LIMIT` in another file look the
     same (`tests/test_menu_filter_levels`). In the Java version the pane was a class tree
