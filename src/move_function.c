@@ -435,11 +435,11 @@ static void moveStaticFunctionAndMakeItExtern(EditorMarker *startMarker, EditorM
 typedef struct {
     ReferenceableItem       *item;
     Position                 definition;
-    FunctionBoundariesResult bounds; /* Of a helper */
+    DefinitionBoundariesResult bounds; /* Of a helper */
 } StaticUsed;
 
 typedef struct {
-    FunctionBoundariesResult moved;
+    DefinitionBoundariesResult moved;
     ReferenceableItem       *movedItem;
     StaticUsed               leftBehind[MAX_STATICS];
     int                      leftBehindCount;
@@ -458,8 +458,8 @@ static void addStaticUsed(StaticUsed used, StaticUsed list[], int *count) {
         list[(*count)++] = used;
 }
 
-static bool isInside(Position position, FunctionBoundariesResult bounds) {
-    return positionIsBetween(position, bounds.functionBegin, bounds.functionEnd);
+static bool isInside(Position position, DefinitionBoundariesResult bounds) {
+    return positionIsBetween(position, bounds.begin, bounds.end);
 }
 
 static bool isMoving(UsesOfMovedFunction *uses, Position position) {
@@ -492,7 +492,7 @@ static void findStaticsUsed(ReferenceableItem *item, void *pointer) {
         if (isDefinitionUsage(r->usage)) {
             definedInMoved |= isInside(r->position, uses->moved);
             definedInMoving |= moving;
-            if (r->position.file == uses->moved.functionBegin.file) {
+            if (r->position.file == uses->moved.begin.file) {
                 definedInSourceFile = true;
                 definition = r->position;
             }
@@ -562,8 +562,8 @@ static void composeLeftBehindMessage(UsesOfMovedFunction *uses, char message[]) 
 }
 
 /* A variable's definition is its line up to the ';', if it declares nothing else */
-static FunctionBoundariesResult getVariableBoundaries(EditorMarker *definition) {
-    FunctionBoundariesResult bounds = {.found = false};
+static DefinitionBoundariesResult getVariableBoundaries(EditorMarker *definition) {
+    DefinitionBoundariesResult bounds = {.found = false};
     char *text = definition->buffer->allocation.text;
     int lineStart = definition->offset;
     while (lineStart > 0 && text[lineStart-1] != '\n')
@@ -584,9 +584,9 @@ static FunctionBoundariesResult getVariableBoundaries(EditorMarker *definition) 
     if (end->offset < end->buffer->allocation.bufferSize && CHAR_ON_MARKER(end) == ';') {
         end->offset++;
         bounds.found = true;
-        bounds.functionBegin = makePositionFromEditorMarker(definition);
-        bounds.functionBegin.col = 0;
-        bounds.functionEnd = makePositionFromEditorMarker(end);
+        bounds.begin = makePositionFromEditorMarker(definition);
+        bounds.begin.col = 0;
+        bounds.end = makePositionFromEditorMarker(end);
     }
     freeEditorMarker(end);
     return bounds;
@@ -613,7 +613,7 @@ static int decidedCount(UsesOfMovedFunction *uses) {
 }
 
 /* Helpers can have helpers, so look again until nothing new is found */
-static UsesOfMovedFunction findUsesOfMovedFunction(FunctionBoundariesResult bounds) {
+static UsesOfMovedFunction findUsesOfMovedFunction(DefinitionBoundariesResult bounds) {
     UsesOfMovedFunction uses = {.moved = bounds};
     int decided;
     do {
@@ -644,20 +644,20 @@ static bool refuseToLeaveStaticBehind(UsesOfMovedFunction *uses) {
     return true;
 }
 
-static EditorMarker *newDefinitionScopeStart(FunctionBoundariesResult bounds) {
-    EditorMarker *marker = newEditorMarkerForPosition(bounds.functionBegin);
+static EditorMarker *newDefinitionScopeStart(DefinitionBoundariesResult bounds) {
+    EditorMarker *marker = newEditorMarkerForPosition(bounds.begin);
     moveMarkerToTheBeginOfDefinitionScope(marker);
     return marker;
 }
 
-static EditorMarker *newDefinitionScopeEnd(FunctionBoundariesResult bounds) {
-    EditorMarker *marker = newEditorMarkerForPosition(bounds.functionEnd);
+static EditorMarker *newDefinitionScopeEnd(DefinitionBoundariesResult bounds) {
+    EditorMarker *marker = newEditorMarkerForPosition(bounds.end);
     moveMarkerToTheEndOfDefinitionScope(marker);
     return marker;
 }
 
 /* The helpers keep 'static' and go before the moved function, in their order */
-static bool moveHelpersAlongOrRefuse(FunctionBoundariesResult bounds, EditorMarker *target) {
+static bool moveHelpersAlongOrRefuse(DefinitionBoundariesResult bounds, EditorMarker *target) {
     UsesOfMovedFunction uses = findUsesOfMovedFunction(bounds);
     if (refuseToLeaveStaticBehind(&uses))
         return false;
@@ -684,7 +684,7 @@ void moveFunction(EditorMarker *point) {
         return;
     }
 
-    FunctionBoundariesResult bounds = getFunctionBoundaries(point);
+    DefinitionBoundariesResult bounds = getFunctionBoundaries(point);
 
     if (!bounds.found) {
         FATAL_ERROR(ERR_INTERNAL, "Can't find declaration coordinates", EXIT_FAILURE);

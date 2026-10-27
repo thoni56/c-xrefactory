@@ -98,13 +98,13 @@ typedef struct {
 extern ParsingConfig parsingConfig;
 
 /**
- * Result of parsing to find function boundaries.
+ * Result of parsing to find definition boundaries.
  */
 typedef struct {
-    bool     found;              /* True if function containing cursor was found */
-    Position functionBegin;      /* Start of function (including comments/attributes) */
-    Position functionEnd;        /* End of function (past closing brace and newline) */
-} FunctionBoundariesResult;
+    bool     found;            /* True if definition containing cursor was found */
+    Position begin;            /* Start of definition (including comments/attributes) */
+    Position end;              /* End of definition (past closing brace and newline) */
+} DefinitionBoundariesResult;
 
 /**
  * Result of parsing to validate a move target position.
@@ -164,7 +164,7 @@ extern bool isValidMoveTarget(EditorMarker *target);
  * @param marker        Editor marker at cursor position
  * @return              Result with function boundaries, or found=false if no function at cursor
  */
-extern FunctionBoundariesResult getFunctionBoundaries(EditorMarker *marker);
+extern DefinitionBoundariesResult getFunctionBoundaries(EditorMarker *marker);
 
 /**
  * Initialize the parsing subsystem.

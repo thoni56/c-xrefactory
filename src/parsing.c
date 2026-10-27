@@ -98,11 +98,11 @@ bool isValidMoveTarget(EditorMarker *target) {
     return result.valid;
 }
 
-FunctionBoundariesResult getFunctionBoundaries(EditorMarker *marker) {
-    FunctionBoundariesResult result = {
+DefinitionBoundariesResult getFunctionBoundaries(EditorMarker *marker) {
+    DefinitionBoundariesResult result = {
         .found = false,
-        .functionBegin = NO_POSITION,
-        .functionEnd = NO_POSITION
+        .begin = NO_POSITION,
+        .end = NO_POSITION
     };
 
     /* Set up parsing configuration */
@@ -121,8 +121,8 @@ FunctionBoundariesResult getFunctionBoundaries(EditorMarker *marker) {
     if (parsedPositions[IPP_FUNCTION_BEGIN].file != NO_FILE_NUMBER &&
         parsedPositions[IPP_FUNCTION_END].file != NO_FILE_NUMBER) {
         result.found = true;
-        result.functionBegin = parsedPositions[IPP_FUNCTION_BEGIN];
-        result.functionEnd = parsedPositions[IPP_FUNCTION_END];
+        result.begin = parsedPositions[IPP_FUNCTION_BEGIN];
+        result.end = parsedPositions[IPP_FUNCTION_END];
     }
 
     return result;

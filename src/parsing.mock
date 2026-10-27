@@ -37,8 +37,8 @@ bool isValidMoveTarget(EditorMarker *target) {
     return (bool)mock(target);
 }
 
-FunctionBoundariesResult getFunctionBoundaries(EditorMarker *marker) {
-    FunctionBoundariesResult *result = (FunctionBoundariesResult *)mock(marker);
+DefinitionBoundariesResult getFunctionBoundaries(EditorMarker *marker) {
+    DefinitionBoundariesResult *result = (DefinitionBoundariesResult *)mock(marker);
     return *result;
 }
 
