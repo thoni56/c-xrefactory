@@ -291,7 +291,7 @@ every push, `After` dashed and `Goes with` not at all, linked at the end of this
       is why it sits here.
       Goes with: refactoring-refusals
       After: time-budget
-   j. <a id="lsp-position-encoding"></a>**The LSP server announces `positionEncoding: "utf-8"` but counts code points** —
+   j. <a id="lsp-position-encoding"></a>**Unconfirmed: the LSP server announces `positionEncoding: "utf-8"` but counts code points** —
       *no repo home yet* (`src/lsp_handler.c`). In LSP 3.17 "utf-8" means columns in
       bytes, while the encoding collapse makes every server column a character column, so
       on a line with non-ASCII the two disagree. The honest value is "utf-32"; the
@@ -303,7 +303,7 @@ every push, `After` dashed and `Goes with` not at all, linked at the end of this
       "utf-16". `test_lsp_simple_lifecycle` pins it there (WSL, session `d25255b8`,
       2026-10-10).
       After: lsp-mode
-   k. <a id="lsp-input-ends"></a>**The LSP server exits as a JSON parse error when its input ends** —
+   k. <a id="lsp-input-ends"></a>**Unconfirmed: the LSP server exits as a JSON parse error when its input ends** —
       *no repo home yet* (`src/lsp.c`). At end of file the header reader returns a length
       of 0, the empty content does not parse, and the exit code is
       `LSP_RETURN_ERROR_JSON_PARSE_ERROR`. The protocol does not say what an ending input
@@ -311,8 +311,8 @@ every push, `After` dashed and `Goes with` not at all, linked at the end of this
       From reading the code (WSL, session `d25255b8`, 2026-10-10), not tested.
       After: lsp-position-encoding
 
-- (#58) <a id="search-result-line-zero"></a>**The client asks for search result number 0** — suspected, not
-    reproduced. Typing a search string gave `-search-goto=0` at once, twice, each time
+- (#58) <a id="search-result-line-zero"></a>**Investigate: the client asks for search result number 0** —
+    typing a search string gave `-search-goto=0` at once, twice, each time
     after the question "N of M files need analysing" (WSL, 2026-10-13, the client on
     `ac3f52e2`). After a push had analysed the files, the same search asked nothing and
     listed one line. `c-xref-call-task-on-line` (`editors/emacs/c-xref.el`) sends the
@@ -333,13 +333,13 @@ every push, `After` dashed and `Goes with` not at all, linked at the end of this
     as the `"..."` branch does, so they reach the parser as syntax errors
     (`processIncludeDirective()`, `src/yylex.c`). `test_parsing_include_using_macro` pins
     both; its two syntax errors go when this is fixed.
-- (#69) <a id="latin-1-lookalikes"></a>**Latin-1 that looks like UTF-8 is read as one character** — *no repo home yet.*
+- (#69) <a id="latin-1-lookalikes"></a>**Unconfirmed: Latin-1 that looks like UTF-8 is read as one character** — *no repo home yet.*
     `convertUtf8()` (`src/encoding.c`) takes a lead byte with its continuation bytes as
     one character, so `å°` and one more byte in 0x80–0xBF, in Latin-1, become one space
     and every position after it on the line is two characters early. Read a sequence that
     would be an overlong or invalid code point as single bytes. A file that is not UTF-8
     is not reported, it parses.
-- (#70) <a id="completion-select-out-of-range"></a>**Selecting a completion says "selection out of range"** — *no repo home yet.*
+- (#70) <a id="completion-select-out-of-range"></a>**Investigate: selecting a completion says "selection out of range"** — *no repo home yet.*
     In `yylex.c`, half-way through an Add Parameter, `pre` and F8 listed 8 completions
     over 16 lines. Enter on the last one, `previousLexemP`, sent `-completion-select=16`, which
     is the right line. The answer was `selection out of range.`
@@ -612,7 +612,7 @@ are noted in `cu-inputs`, `out-of-date`, `time-budget` and `sweep-cost`.
     which needs a lookup of the reference at a position in the table. Completion, extract
     and the macro body need the parse.
     After: request-through-includers
-- (#39) <a id="header-not-half"></a>**A changed header the editor holds is stripped also when not all its includers fit** —
+- (#39) <a id="header-not-half"></a>**Unconfirmed: a changed header the editor holds is stripped also when not all its includers fit** —
     `stripChangedHeldHeaders()` (`src/rebuild.c`) strips it and adds its includers to the
     build list only up to the cap. A reference in the header that only the others emit,
     e.g. under an `#ifdef` they set, is missing until they are built. Strip only when
