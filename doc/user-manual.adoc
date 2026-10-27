@@ -154,6 +154,12 @@ Useful when you know a symbol's name but aren't looking at an occurrence of it.
 Click a reference to jump to it.
 Multi-select symbols to combine their references into a navigable list of references.
 
+In the Symbol Pane, the keys `0` to `2` filter which symbols are listed:
+
+* `2` — only the browsed symbol
+* `1` — also the other included files, when an `#include` is browsed
+* `0` — all symbols with the same name, e.g. a static variable in another file
+
 In the References Pane, the keys `0` to `3` filter which references are listed:
 
 * `0` — all references
