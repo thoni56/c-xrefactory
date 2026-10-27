@@ -447,8 +447,10 @@ typedef struct {
     int                      helperCount;
     StaticUsed               candidates[MAX_STATICS];
     int                      candidateCount;
-    ReferenceableItem       *cannotMove[MAX_STATICS]; /* Helpers that are not functions */
+    ReferenceableItem       *cannotMove[MAX_STATICS]; /* Variables declared with others */
     int                      cannotMoveCount;
+    StaticUsed               declaredWithOthers[MAX_STATICS];
+    int                      declaredWithOthersCount;
 } UsesOfMovedFunction;
 
 static void addStaticUsed(StaticUsed used, StaticUsed list[], int *count) {
@@ -506,8 +508,10 @@ static void findStaticsUsed(ReferenceableItem *item, void *pointer) {
         return;                 /* Already a helper */
     else if (usedInMoving && definedInSourceFile && item->storage == StorageStatic) {
         StaticUsed used = {.item = item, .definition = definition};
-        if (usedOutsideMoving || cannotMove(uses, item))
+        if (usedOutsideMoving)
             addStaticUsed(used, uses->leftBehind, &uses->leftBehindCount);
+        else if (cannotMove(uses, item))
+            addStaticUsed(used, uses->declaredWithOthers, &uses->declaredWithOthersCount);
         else
             addStaticUsed(used, uses->candidates, &uses->candidateCount);
     }
@@ -521,27 +525,81 @@ static int compareDefinitions(const void *a, const void *b) {
     return positionIsLessThan(second, first);
 }
 
-static void composeLeftBehindMessage(UsesOfMovedFunction *uses, char message[]) {
+static int composeUses(char *moved, StaticUsed statics[], int count, char message[]) {
     char name[TMP_STRING_SIZE];
-    prettyPrintLinkName(name, uses->movedItem->linkName, TMP_STRING_SIZE);
-    int length = sprintf(message, "'%s' uses ", name);
-    for (int i = 0; i < uses->leftBehindCount; i++) {
-        char *separator = i == 0 ? "" : i == uses->leftBehindCount - 1 ? " and " : ", ";
-        prettyPrintLinkName(name, uses->leftBehind[i].item->linkName, TMP_STRING_SIZE);
+    int length = sprintf(message, "'%s' uses ", moved);
+    for (int i = 0; i < count; i++) {
+        char *separator = i == 0 ? "" : i == count - 1 ? " and " : ", ";
+        prettyPrintLinkName(name, statics[i].item->linkName, TMP_STRING_SIZE);
         length += sprintf(message + length, "%s'%s'", separator, name);
     }
-    if (uses->leftBehindCount == 1)
-        sprintf(message + length, ", which is static in this file. Move '%s' first.", name);
-    else
-        sprintf(message + length, ", which are static in this file. Move them first.");
+    return length;
 }
 
-/* A candidate that is not a function, e.g. a variable, has no boundaries, so it stays */
+static void composeLeftBehindMessage(UsesOfMovedFunction *uses, char message[]) {
+    char moved[TMP_STRING_SIZE];
+    char name[TMP_STRING_SIZE];
+    prettyPrintLinkName(moved, uses->movedItem->linkName, TMP_STRING_SIZE);
+    int length = 0;
+    if (uses->leftBehindCount > 0) {
+        length += composeUses(moved, uses->leftBehind, uses->leftBehindCount, message + length);
+        prettyPrintLinkName(name, uses->leftBehind[0].item->linkName, TMP_STRING_SIZE);
+        if (uses->leftBehindCount == 1)
+            length += sprintf(message + length, ", which is static in this file. Move '%s' first.", name);
+        else
+            length += sprintf(message + length, ", which are static in this file. Move them first.");
+    }
+    if (uses->declaredWithOthersCount > 0) {
+        if (length > 0)
+            length += sprintf(message + length, " ");
+        length += composeUses(moved, uses->declaredWithOthers, uses->declaredWithOthersCount, message + length);
+        prettyPrintLinkName(name, uses->declaredWithOthers[0].item->linkName, TMP_STRING_SIZE);
+        if (uses->declaredWithOthersCount == 1)
+            sprintf(message + length, ", which is declared together with other names. Declare '%s' on its own first.", name);
+        else
+            sprintf(message + length, ", which are declared together with other names. Declare them on their own first.");
+    }
+}
+
+/* A variable's definition is its line up to the ';', if it declares nothing else */
+static FunctionBoundariesResult getVariableBoundaries(EditorMarker *definition) {
+    FunctionBoundariesResult bounds = {.found = false};
+    char *text = definition->buffer->allocation.text;
+    int lineStart = definition->offset;
+    while (lineStart > 0 && text[lineStart-1] != '\n')
+        lineStart--;
+    EditorMarker *end = newEditorMarker(definition->buffer, lineStart);
+    int depth = 0;
+    while (end->offset < end->buffer->allocation.bufferSize
+           && (CHAR_ON_MARKER(end) != ';' || depth > 0)) {
+        char c = CHAR_ON_MARKER(end);
+        if (c == '(' || c == '[' || c == '{')
+            depth++;
+        else if (c == ')' || c == ']' || c == '}')
+            depth--;
+        else if (c == ',' && depth == 0)
+            break;
+        end->offset++;
+    }
+    if (end->offset < end->buffer->allocation.bufferSize && CHAR_ON_MARKER(end) == ';') {
+        end->offset++;
+        bounds.found = true;
+        bounds.functionBegin = makePositionFromEditorMarker(definition);
+        bounds.functionBegin.col = 0;
+        bounds.functionEnd = makePositionFromEditorMarker(end);
+    }
+    freeEditorMarker(end);
+    return bounds;
+}
+
+/* A candidate that is neither a function nor a variable has no boundaries, so it stays */
 static void addCandidatesAsHelpers(UsesOfMovedFunction *uses) {
     for (int i = 0; i < uses->candidateCount; i++) {
         StaticUsed candidate = uses->candidates[i];
         EditorMarker *definition = newEditorMarkerForPosition(candidate.definition);
         candidate.bounds = getFunctionBoundaries(definition);
+        if (!candidate.bounds.found)
+            candidate.bounds = getVariableBoundaries(definition);
         freeEditorMarker(definition);
         if (candidate.bounds.found && uses->helperCount < MAX_STATICS)
             addStaticUsed(candidate, uses->helpers, &uses->helperCount);
@@ -560,6 +618,7 @@ static UsesOfMovedFunction findUsesOfMovedFunction(FunctionBoundariesResult boun
     int decided;
     do {
         uses.leftBehindCount = 0;
+        uses.declaredWithOthersCount = 0;
         uses.candidateCount = 0;
         mapOverReferenceableItemTableWithPointer(findStaticsUsed, &uses);
         decided = decidedCount(&uses);
@@ -574,11 +633,12 @@ static UsesOfMovedFunction findUsesOfMovedFunction(FunctionBoundariesResult boun
 
 /* A static in the source file that the function uses would be left behind */
 static bool refuseToLeaveStaticBehind(UsesOfMovedFunction *uses) {
-    if (uses->movedItem == NULL || uses->leftBehindCount == 0)
+    if (uses->movedItem == NULL || uses->leftBehindCount + uses->declaredWithOthersCount == 0)
         return false;
     qsort(uses->leftBehind, uses->leftBehindCount, sizeof(StaticUsed), compareDefinitions);
+    qsort(uses->declaredWithOthers, uses->declaredWithOthersCount, sizeof(StaticUsed), compareDefinitions);
 
-    char message[(MAX_STATICS+2)*TMP_STRING_SIZE];
+    char message[(2*MAX_STATICS+4)*TMP_STRING_SIZE];
     composeLeftBehindMessage(uses, message);
     errorMessage(ERR_ST, message);
     return true;

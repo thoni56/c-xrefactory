@@ -24,8 +24,11 @@ Reorganize code by moving function definitions between source files while mainta
 * Adds extern declaration to target file's header
 * Adds an `#include` of the target's header to the source, unless it is already there
 * Moves function decorations
-* Refuses, and names them, if the function uses a `static` function or variable in the
-  source file, since that would be left behind
+* Takes along the `static` functions and variables in the source file that only it uses,
+  also those that only they use, and they stay `static`; they go before it in the target,
+  in their order in the source
+* Refuses, and names them, if the function uses a `static` that is also used by what
+  stays, or a variable declared together with other names, since it would be left behind
 * Works for both C and Yacc files
 
 Comments are moved only if `c-xref-comments-moving-level` is set, and it is 0 by default.
@@ -43,19 +46,12 @@ Comments are moved only if `c-xref-comments-moving-level` is set, and it is 0 by
 **Move Function to New Module**: Create the target `.c` and `.h`, with an include guard
   and the includes, and add the module to the build (and a mock for the unit tests).
 
-**What the moved function uses**: A `static` function or variable in the source file
-  that the moved function uses makes the move refuse. The references in the function's
-  range are known when the move is made, since finding its boundaries parses the source.
-  Two steps, in order:
-
-. **Move the private helpers along**: A `static` that only the moved function uses, or only
-  other helpers that move, moves too and stays `static`.
-  Each helper is placed before its first use in the target.
-  This is moving several functions at once, where the set is computed rather than chosen.
-. **A `static` shared with what stays**: Ask whether to make it extern where it is (its
+**A `static` shared with what stays**: Today it makes the move refuse. Ask whether to make it extern where it is (its
   declaration goes in the source's header, which the target then includes) or to move it
   and make it extern from the target.
   Either way it is a dependency between the modules, so the user decides.
+  The references in the function's range are known when the move is made, since finding
+  its boundaries parses the source.
 
 Macros and types defined in the source `.c` have the same problem, and belong with
   include management.

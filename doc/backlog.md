@@ -381,17 +381,13 @@ Roadmap → Optimization has the baseline: a cold-start PUSH on ffmpeg, measured
 
 ## 5. Features, by readiness
 
-- (#84) <a id="move-helpers-along"></a>**Move Function moves the private helpers along** — a
-    `static` used only by what moves goes too, stays `static`, and comes before its first use.
-    11-planned-features → Move Function → What the moved function uses.
 - (#85) <a id="move-shared-static"></a>**Move Function asks about a `static` shared with what stays** —
     make it extern where it is, or move it and make it extern from the target.
-    After: move-helpers-along
+    11-planned-features → Move Function → A `static` shared with what stays.
 - (#87) <a id="move-to-new-module"></a>**Move Function to New Module** — create the target `.c` and `.h`,
     with an include guard and the includes, then make the ordinary move, so the refusal and the
     helpers come with it. Adding the module to the build, and a mock, may be the user's.
     11-planned-features → Move Function → Next steps.
-    After: move-helpers-along
 - (#86) <a id="extract-array-used-after"></a>**Extract Function passes an array declared in the region and used after it** —
     today it refuses (`refuseToReturnAnArray()`, `src/extract.c`), since a function can't return
     an array. Move the declaration out of the region, before the call, and pass the array, as

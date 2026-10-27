@@ -1,0 +1,15 @@
+CXREF -server -o server-buffer
+-getproject CURDIR/source.c
+end-of-options
+
+<sync>
+<set-info len=<n>>CURDIR</set-info>
+-rfct-move-function -commentmovinglevel=0 -movetargetfile=target.c -rfct-target-line=3 -cursor=30 CURDIR/source.c
+end-of-options
+
+<sync>
+<error len=<n>>'moved' uses 'count', which is declared together with other names. Declare 'count' on its own first.
+</error>
+-exit
+end-of-options
+
