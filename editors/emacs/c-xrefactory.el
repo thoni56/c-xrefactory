@@ -350,7 +350,7 @@ C-xrefactory's source browsing functions.
             :group 'c-xrefactory-source-browser)
 
       (defcustom c-xref-default-symbols-filter 2
-            "Controls which symbols are shown when displaying a new browser window. '2': only symbols with the same name and profile as the browsed symbol, in a class related (via inheritance) to that of the browsed symbol; '1': all symbols with the same profile; '0': all symbols of the same name."
+            "Controls which symbols are shown when displaying a new browser window. '2': only the browsed symbol; '1': also the other included files, when an #include is browsed; '0': all symbols with the same name."
             :type '(integer)
             :group 'c-xrefactory-source-browser)
 
@@ -391,12 +391,12 @@ C-xrefactory refactoring functions.
 
 
   (defcustom c-xref-save-files-and-update-tags-before-refactoring nil
-        "If on, C-xrefactory saves all modified files and updates tags before each refactoring. This can speed up refactorings."
+        "If on, C-xrefactory offers to save each modified file before each refactoring."
         :type '(boolean)
         :group 'c-xrefactory-refactoring)
 
   (defcustom c-xref-save-files-and-update-tags-after-refactoring nil
-        "If on, C-xrefactory saves all modified files and updates tags after each refactoring."
+        "If on, C-xrefactory saves all modified files after each refactoring."
         :type '(boolean)
         :group 'c-xrefactory-refactoring)
 
