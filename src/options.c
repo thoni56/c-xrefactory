@@ -9,7 +9,6 @@
 #include "commons.h"
 #include "constants.h"
 #include "cxref.h"
-#include "editor.h"
 #include "fileio.h"
 #include "filetable.h"
 #include "globals.h"
