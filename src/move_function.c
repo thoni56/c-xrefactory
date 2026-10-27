@@ -561,45 +561,12 @@ static void composeLeftBehindMessage(UsesOfMovedFunction *uses, char message[]) 
     }
 }
 
-/* A variable's definition is its line up to the ';', if it declares nothing else */
-static DefinitionBoundariesResult getVariableBoundaries(EditorMarker *definition) {
-    DefinitionBoundariesResult bounds = {.found = false};
-    char *text = definition->buffer->allocation.text;
-    int lineStart = definition->offset;
-    while (lineStart > 0 && text[lineStart-1] != '\n')
-        lineStart--;
-    EditorMarker *end = newEditorMarker(definition->buffer, lineStart);
-    int depth = 0;
-    while (end->offset < end->buffer->allocation.bufferSize
-           && (CHAR_ON_MARKER(end) != ';' || depth > 0)) {
-        char c = CHAR_ON_MARKER(end);
-        if (c == '(' || c == '[' || c == '{')
-            depth++;
-        else if (c == ')' || c == ']' || c == '}')
-            depth--;
-        else if (c == ',' && depth == 0)
-            break;
-        end->offset++;
-    }
-    if (end->offset < end->buffer->allocation.bufferSize && CHAR_ON_MARKER(end) == ';') {
-        end->offset++;
-        bounds.found = true;
-        bounds.begin = makePositionFromEditorMarker(definition);
-        bounds.begin.col = 0;
-        bounds.end = makePositionFromEditorMarker(end);
-    }
-    freeEditorMarker(end);
-    return bounds;
-}
-
 /* A candidate that is neither a function nor a variable has no boundaries, so it stays */
 static void addCandidatesAsHelpers(UsesOfMovedFunction *uses) {
     for (int i = 0; i < uses->candidateCount; i++) {
         StaticUsed candidate = uses->candidates[i];
         EditorMarker *definition = newEditorMarkerForPosition(candidate.definition);
-        candidate.bounds = getFunctionBoundaries(definition);
-        if (!candidate.bounds.found)
-            candidate.bounds = getVariableBoundaries(definition);
+        candidate.bounds = getDefinitionBoundaries(definition);
         freeEditorMarker(definition);
         if (candidate.bounds.found && uses->helperCount < MAX_STATICS)
             addStaticUsed(candidate, uses->helpers, &uses->helperCount);

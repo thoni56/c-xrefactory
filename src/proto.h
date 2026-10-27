@@ -140,6 +140,7 @@ typedef struct parsedInfo {
     struct codeBlock *blockAtBegin;
     struct codeBlock *blockAtEnd;
     struct symbol    *function;
+    int               declaratorCount;  /* In the top level declaration being parsed */
     unsigned          functionBeginPosition;
     unsigned          previousFunctionBeginPosition;
     int               blockBeginLine;

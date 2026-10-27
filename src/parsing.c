@@ -98,33 +98,47 @@ bool isValidMoveTarget(EditorMarker *target) {
     return result.valid;
 }
 
-DefinitionBoundariesResult getFunctionBoundaries(EditorMarker *marker) {
-    DefinitionBoundariesResult result = {
-        .found = false,
-        .begin = NO_POSITION,
-        .end = NO_POSITION
-    };
-
+static void parseToGetDefinitionBoundaries(EditorMarker *marker) {
     /* Set up parsing configuration */
     syncParsingConfigFromOptions(options);
     parsingConfig.operation = PARSE_TO_GET_FUNCTION_BOUNDS;
     parsingConfig.positionOfSelectedReference = makePositionFromEditorMarker(marker);
 
     /* Clear previous results */
-    parsedPositions[IPP_FUNCTION_BEGIN] = NO_POSITION;
-    parsedPositions[IPP_FUNCTION_END] = NO_POSITION;
+    for (int i = 0; i < IPP_MAX; i++)
+        parsedPositions[i] = NO_POSITION;
 
     /* Bridge: Still calls old infrastructure via magic string */
     parseBufferUsingServer(options.project, marker, NULL, "-internal-get-function-bounds", NULL);
+}
 
-    /* Extract results from global state */
-    if (parsedPositions[IPP_FUNCTION_BEGIN].file != NO_FILE_NUMBER &&
-        parsedPositions[IPP_FUNCTION_END].file != NO_FILE_NUMBER) {
+/* Extract results from global state */
+static DefinitionBoundariesResult parsedBoundaries(ImportantParsedPositionKind begin,
+                                                   ImportantParsedPositionKind end) {
+    DefinitionBoundariesResult result = {
+        .found = false,
+        .begin = NO_POSITION,
+        .end = NO_POSITION
+    };
+    if (parsedPositions[begin].file != NO_FILE_NUMBER &&
+        parsedPositions[end].file != NO_FILE_NUMBER) {
         result.found = true;
-        result.begin = parsedPositions[IPP_FUNCTION_BEGIN];
-        result.end = parsedPositions[IPP_FUNCTION_END];
+        result.begin = parsedPositions[begin];
+        result.end = parsedPositions[end];
     }
+    return result;
+}
 
+DefinitionBoundariesResult getFunctionBoundaries(EditorMarker *marker) {
+    parseToGetDefinitionBoundaries(marker);
+    return parsedBoundaries(IPP_FUNCTION_BEGIN, IPP_FUNCTION_END);
+}
+
+DefinitionBoundariesResult getDefinitionBoundaries(EditorMarker *marker) {
+    parseToGetDefinitionBoundaries(marker);
+    DefinitionBoundariesResult result = parsedBoundaries(IPP_FUNCTION_BEGIN, IPP_FUNCTION_END);
+    if (!result.found)
+        result = parsedBoundaries(IPP_VARIABLE_BEGIN, IPP_VARIABLE_END);
     return result;
 }
 

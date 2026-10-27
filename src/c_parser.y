@@ -179,7 +179,7 @@
 %type <ast_expressionType> inclusive_or_expr logical_and_expr logical_or_expr
 %type <ast_expressionType> conditional_expr assignment_expr expr maybe_expr
 
-%type <ast_position> STRING_LITERAL '(' ',' ')' '{' '}' compound_statement
+%type <ast_position> STRING_LITERAL '(' ',' ')' '{' '}' ';' compound_statement
 
 %start file
 %%
@@ -1534,7 +1534,16 @@ cached_external_definition_list
 
 external_definition
     : declaration_specifiers ';'
-    | top_init_declarations ';'
+    | top_init_declarations ';' {
+        /* Capture variable boundaries for move-function refactoring */
+        if (parsingConfig.operation == PARSE_TO_GET_FUNCTION_BOUNDS
+            && parsedInfo.declaratorCount == 1
+            && positionIsBetween(parsingConfig.positionOfSelectedReference, $1.begin, $2.end)) {
+            parsedPositions[IPP_VARIABLE_BEGIN] = $1.begin;
+            parsedPositions[IPP_VARIABLE_END] = $2.end;
+            parsedPositions[IPP_VARIABLE_END].col++;  /* Move past the ';' */
+        }
+    }
     | function_definition_head {
         assert($1.data);
         // I think that due to the following line sometimes
@@ -1590,18 +1599,22 @@ top_init_declarations
     : declaration_specifiers init_declarator eq_initializer_opt {
         $$.data = $1.data;
         addNewDeclaration(symbolTable, $1.data, $2.data, $3.data, StorageExtern);
+        parsedInfo.declaratorCount = 1;
     }
     | init_declarator eq_initializer_opt                        {
         $$.data = & defaultIntDefinition;
         addNewDeclaration(symbolTable, $$.data, $1.data, $2.data, StorageExtern);
+        parsedInfo.declaratorCount = 1;
     }
     | top_init_declarations ',' init_declarator eq_initializer_opt          {
         $$.data = $1.data;
         addNewDeclaration(symbolTable, $1.data, $3.data, $4.data, StorageExtern);
+        parsedInfo.declaratorCount++;
     }
     | error                                                     {
         /* $$.d = &s_errorSymbol; */
         $$.data = typeSpecifier2(&errorModifier);
+        parsedInfo.declaratorCount = 0;
     }
     ;
 

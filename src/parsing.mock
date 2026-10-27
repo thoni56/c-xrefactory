@@ -42,6 +42,11 @@ DefinitionBoundariesResult getFunctionBoundaries(EditorMarker *marker) {
     return *result;
 }
 
+DefinitionBoundariesResult getDefinitionBoundaries(EditorMarker *marker) {
+    DefinitionBoundariesResult *result = (DefinitionBoundariesResult *)mock(marker);
+    return *result;
+}
+
 void initializeParsingSubsystem(void) {
     mock();
 }

@@ -167,6 +167,15 @@ extern bool isValidMoveTarget(EditorMarker *target);
 extern DefinitionBoundariesResult getFunctionBoundaries(EditorMarker *marker);
 
 /**
+ * Get the boundaries of the function definition, or the top level declaration of a single
+ * variable, containing the marker position.
+ *
+ * @param marker        Editor marker at cursor position
+ * @return              Result with the boundaries, or found=false if there is no such definition
+ */
+extern DefinitionBoundariesResult getDefinitionBoundaries(EditorMarker *marker);
+
+/**
  * Initialize the parsing subsystem.
  * Must be called once before any parsing operations.
  * Sets up minimal state needed for parsing to work.

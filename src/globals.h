@@ -14,6 +14,8 @@
 typedef enum {
     IPP_FUNCTION_BEGIN,
     IPP_FUNCTION_END,
+    IPP_VARIABLE_BEGIN,
+    IPP_VARIABLE_END,
     IPP_MAX
 } ImportantParsedPositionKind;
 
