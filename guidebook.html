@@ -4030,7 +4030,8 @@ stays, or a variable declared together with other names, since it would be left 
 </ul>
 </div>
 <div class="paragraph">
-<p>Comments are moved only if <code>c-xref-comments-moving-level</code> is set, and it is 0 by default.</p>
+<p>A comment on the same line after a moved function always moves with it.
+If there is a comment above it, or above something that moves along, Move Function asks whether to move the comments too, up to a blank line.</p>
 </div>
 </div>
 <div class="sect3">
@@ -4076,12 +4077,6 @@ stays, or a variable declared together with other names, since it would be left 
 <p><strong>Delete Function</strong>: Remove a function definition and its declaration. Safety check warns
   if callers exist. Reuses the function boundary detection from Move Function and the
   unused detection logic to verify no references remain.</p>
-</div>
-<div class="paragraph">
-<p><strong>Ask whether to move the comment</strong>: The server supports <code>-commentmovinglevel=N</code> controlling
-  how comments adjacent to a moved function are handled (none, single slashed/starred,
-  all). The client sends <code>c-xref-comments-moving-level</code>, 0 by default, so no comment is
-  moved. A y/n question when there is a comment should replace the customization.</p>
 </div>
 </div>
 </div>
@@ -12469,7 +12464,7 @@ operation reads the in-memory table.</p>
 </div>
 <div id="footer">
 <div id="footer-text">
-Last updated 2026-10-27 15:33:38 UTC
+Last updated 2026-10-27 19:56:51 UTC
 </div>
 </div>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.18.3/highlight.min.js"></script>
