@@ -41,11 +41,25 @@ Comments are moved only if `c-xref-comments-moving-level` is set, and it is 0 by
 **Move Function to New Module**: Create the target `.c` and `.h`, with an include guard
   and the includes, and add the module to the build (and a mock for the unit tests).
 
-**Move several functions at once**: Functions that move together, e.g. a function and its
-  helpers, can stay `static`.
+**What the moved function uses**: Today the move is textual, so a `static` function or
+  variable in the source file that the moved function uses is left behind, and the build
+  breaks. The references in the function's range are known when the move is made, since
+  finding its boundaries parses the source. Three steps, in order:
 
-**Helper function detection**: Identify and optionally move static helper functions that
-  the moved function depends on. Prevents broken builds.
+. **Refuse**: If the moved function uses a `static` function or variable defined in the
+  source file, refuse and name them.
+  Nothing is changed.
+. **Move the private helpers along**: A `static` that only the moved function uses, or only
+  other helpers that move, moves too and stays `static`.
+  Each helper is placed before its first use in the target.
+  This is moving several functions at once, where the set is computed rather than chosen.
+. **A `static` shared with what stays**: Ask whether to make it extern where it is (its
+  declaration goes in the source's header, which the target then includes) or to move it
+  and make it extern from the target.
+  Either way it is a dependency between the modules, so the user decides.
+
+Macros and types defined in the source `.c` have the same problem, and belong with
+  include management.
 
 **Smarter header placement**: Automatically find the right location in header files
   based on existing declarations and dependencies.
@@ -70,8 +84,13 @@ Make a function `static` if nothing outside its file refers to it, and remove it
 declaration from the header. The check is unused detection, but only counting references
 from other files.
 
-A report of all such functions in the project would give the candidates. After a Move
-Function the helpers that moved along are typical ones.
+A report of all such functions in the project would give the candidates.
+
+It is safe only if every compilation unit that could refer to the function is known and
+parsed. A refactoring can miss references today (the collection caps, an `extern` written
+in a `.c` file as in ADR-0013, a `.mock` file), so Make Static needs a full parse first, and
+should not run by itself after a move. Helpers that move along with Move Function stay
+`static`, so they are not candidates.
 
 === LSP Integration
 
