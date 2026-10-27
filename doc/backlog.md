@@ -510,55 +510,6 @@ Roadmap → Optimization has the baseline: a cold-start PUSH on ffmpeg, measured
 
 ## 6. Developer tooling
 
-- (#31) <a id="macos-watchers"></a>**Two causes of watchers not firing on macOS, both found** — *no repo home yet.*
-    Kept because the symptoms are absence and noise, which is what gets
-    re-investigated from scratch. Diagnosed on the Mac, session `4e8903dc`,
-    2026-09-30.
-
-    a. **`fs watcher error`, once per scan, forever.** Emacs writes a `.#<name>`
-       lock symlink beside an unsaved buffer, and its target is
-       `user@host.pid:boot`, not a path. watchexec follows symlinks by default, so
-       the walk fails with `ENOENT` and reports the error every scan for as long as
-       the buffer is dirty. Deterministic: 8 errors in 8s, 0 with
-       `--no-follow-symlinks`, which is now passed (`src/Makefile`). `-i '.#*'` does
-       **not** help — ignore rules filter events, not the directory walk. This is
-       almost certainly also behind the cov-mode non-trigger reported years ago.
-
-    b. **Changes silently missed, no error.** `fseventsd` had been pinned at 96% CPU
-       and had leaked to 3.8 GB over 18 days, degrading notification machine-wide —
-       which is why it hit watchexec and Emacs alike, erratically, for years.
-       `sudo killall fseventsd` restores it (launchd respawns; no reboot). Before:
-       native fired 0 of 2. After: 5 of 5, and `--poll` 5 of 5, so the polling
-       workaround was dropped again. **If watchers go quiet, check `fseventsd`'s CPU
-       and RSS before anything else.** Spotlight is the likely driver — `mds_stores`
-       was at 202% while indexing a tree that rewrites hundreds of files per build.
-
-       **Sample it before killing it.** Why it wedged is unknown, because this session
-       restarted it first and the restart destroys the evidence. Capture together, while
-       it is high, and before `killall`:
-       `top -l 2 -pid $(pgrep -x fseventsd) -stats pid,cpu,time` (is it sustained?),
-       `sample fseventsd 10` (user-space stacks), and
-       `sudo fs_usage -w -f pathname -t 5` system-wide (which paths generate the events,
-       i.e. the driver — the sample cannot show that).
-
-       **Seen again, not wedged** (Mac, session `36694da1`, 2026-10-02). The user saw
-       100% in Activity Monitor a few times over some minutes. A sample at 10:26 found
-       it nearly idle: about 3% of one CPU, ordinary dispatch work, 5.6 MB footprint (8.2
-       MB peak) against 3.8 GB last time — the process respawned on 2026-09-30 had not
-       leaked. Watchers fired normally the same morning. So: spikes, likely during builds
-       and test runs (7% with mds at 16% during one), not the sustained wedge. Two
-       limits of that sample: it only sees user space, so time spent in the kernel shows
-       as the `dev.fsevents` thread sitting in `read`; and the watchers did not appear
-       among fseventsd's client threads although they work, so client threads are no
-       measure of who is watching. `mdutil -s` cannot report a single directory, so
-       whether `.metadata_never_index` (repo root, `2d1fefad`) is honoured is unverified.
-
-    Item (b) recurs unless the indexer stops seeing the build. `OBJDIR = .objects`
-    (`src/sources.mk:17`) and the 132 regenerated `*.gcov` sit in `src/`: 748 of its
-    1074 files are build output. Since `2d1fefad` a `.metadata_never_index` in the repo
-    root asks Spotlight to skip the whole tree, build output included, so the `*.gcov`
-    can stay beside the sources where Emacs cov-mode reads them. Whether it works is
-    the open question above; if it does not, moving the build output is what is left.
 - (#61) <a id="yydebug-to-log"></a>**The `-yydebug` parse trace goes to the log** — byacc's skeleton
     writes it with `printf` (`byacc-1.9/skeleton.c`), and in a server stdout is the sync
     stream, so a client stops with `SYNCHRO PROBLEM`. It works only with the server driver

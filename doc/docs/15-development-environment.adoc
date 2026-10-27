@@ -124,6 +124,17 @@ you to capture all command arguments sent to the server/xref process
 to a file. This makes it possible to capture command sequences and
 "replay" them. Useful both for debugging and creating tests.
 
+==== Why files are analysed
+
+With `-info` the server logs why it analyses a file, e.g. `'cxref.c' is out of date:
+'cxref.h' changed`. The other reasons are that there is no knowledge of it, that it
+changed, that a header is left behind, and that its include closure is too large to check.
+
+To get this from the server in your own Emacs, set `c-xref-server-startup-options` to
+`("-info" "-log=/tmp/c-xref.log")` and restart the server. Then count the reasons with
+
+    grep -o "is out of date: .*" /tmp/c-xref.log | sort | uniq -c
+
 ==== Arena Allocator Lifetime Violations
 
 The preprocessor macro expansion code uses arena allocators (`ppmMemory`, `macroBodyMemory`)
@@ -374,6 +385,38 @@ have been that: `test_searching_cexercise` with the same warning on 2026-09-15, 
 tests whose server answered nothing after startup in a `-j8` run on 2026-09-16.
 
 If you see one of these, add it here with the date, the test and where it ran.
+
+==== The Watchers
+
+The "watchers" are `make` targets that continuously watch, using a file watcher program,
+for changes in appropriate ("source") files and trigger rebuilds. The most used ones are
+`watch-for-unittests` which builds and runs all unittests, and `watch-for-systemtests`,
+which builds the `c-xref` program and then runs all systemtests except the very slow
+ones. `watch-for-systemtests` doesn't actually watch sources but a special flag file,
+`.unittests.done`, which is touched by `watch-for-unittests` when successful.
+Each also writes its output to a log, `src/unittests.log` and `src/systemtests.log`.
+
+The result is that if you have both running, you will get very quick feedback if a
+unittest fails, and slightly slower feedback on the systemtests. But always
+automatically on all saves. (HINT: use `save-some-buffers` in Emacs to save all your
+edits at the same time.)
+
+===== Watchers on macOS
+
+Two things have made the watchers go quiet on macOS. Both are diagnosed.
+
+An `fs watcher error` on every scan, for as long as a buffer is unsaved. Emacs writes a
+lock symlink, `.#<name>`, whose target is not a path, and watchexec follows symlinks by
+default. So `src/Makefile` passes `--no-follow-symlinks` on Darwin. An ignore rule like
+`-i '.#*'` does not help, since it filters events, not the walk.
+
+Changes missed without any error. `fseventsd` had leaked to 3.8 GB at 96% CPU, which
+degrades notifications for everything on the machine. `sudo killall fseventsd` fixes it
+(launchd starts a new one). Spotlight indexing the build output is the likely driver, so
+the repo root has a `.metadata_never_index`, but whether Spotlight honours it is not
+verified. If it happens again, sample it before killing it, since the restart destroys
+the evidence: `sample fseventsd 10`, and `sudo fs_usage -w -f pathname -t 5` for the
+paths that cause the events.
 
 ==== Client tests
 
