@@ -3,10 +3,11 @@
 #include <string.h>
 
 #include "commons.h"
-#include "globals.h"
-#include "protocol.h"
 #include "filetable.h"
+#include "globals.h"
+#include "log.h"
 #include "options.h"
+#include "protocol.h"
 
 
 static int ppcIndentOffset = 0;
@@ -188,6 +189,36 @@ void ppcAskConfirmation(char *message) {
     ppcGenRecord(PPC_ASK_CONFIRMATION, message);
 }
 
-void ppcWaitConfirmation(char *message) {
+bool ppcWaitConfirmation(char *message) {
     ppcGenRecord(PPC_WAIT_CONFIRMATION, message);
+    closeOutputFile();
+    ppcSynchronize();
+
+    /* Read the response directly from stdin without using readOptionsFromPipe,
+     * which would overwrite the static optMemory buffer and clobber requestArgs. */
+    char line[MAX_OPTION_LEN];
+    bool confirmed = false;
+
+    while (fgets(line, sizeof(line), stdin) != NULL) {
+        int len = strlen(line);
+        if (len > 0 && line[len - 1] == '\n')
+            line[len - 1] = '\0';
+
+        if (strcmp(line, END_OF_OPTIONS_STRING) == 0)
+            break;
+        if (strcmp(line, "-continue") == 0)
+            confirmed = true;
+        if (strcmp(line, "-cancel") == 0)
+            confirmed = false;
+    }
+
+    /* Consume the trailing empty line (protocol separator) */
+    int c = getc(stdin);
+    if (c == EOF) {
+        log_error("Broken pipe in ppcWaitConfirmation");
+        exit(EXIT_FAILURE);
+    }
+
+    openOutputFile(options.outputFileName);
+    return confirmed;
 }

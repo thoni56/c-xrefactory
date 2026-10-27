@@ -8,6 +8,6 @@ include ../Makefile.boilerplate
 TOP = ../..
 
 $(TEST):
-	@$(TOP)/utils/client_options_known.py $(TOP)/src/options.c $(TOP)/src/server.c \
+	@$(TOP)/utils/client_options_known.py $(TOP)/src/options.c $(TOP)/src/ppc.c \
 	    $(TOP)/editors/emacs/c-xref.el $(TOP)/editors/emacs/c-xrefactory.el > output
 	$(VERIFY)

@@ -30,7 +30,7 @@ extern void ppcBottomWarning(char *message);
 extern void ppcIndicateNoReference(void);
 
 extern void ppcAskConfirmation(char *message);
-extern void ppcWaitConfirmation(char *message);
+extern bool ppcWaitConfirmation(char *message);
 
 extern void ppcGenRecord(char *kind, char *message);
 

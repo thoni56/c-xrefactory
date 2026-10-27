@@ -96,10 +96,10 @@ void ppcAskConfirmation(char *message) {
     mock(message);
 }
 
-void ppcWaitConfirmation(char *message) {
-    mock(message);
-}
-
 void ppcIndicateNoReference(void) {
     mock();
+}
+
+bool ppcWaitConfirmation(char *message) {
+    return (bool)mock(message);
 }
