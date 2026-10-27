@@ -567,6 +567,16 @@ are noted in `cu-inputs`, `out-of-date`, `time-budget` and `sweep-cost`.
 - (#56) <a id="closed-buffer-strip"></a>**A header whose buffer the client stops sending is stripped, and none of its includers built** —
     `tests/test_reverted_held_header_keeps_its_references/.suspended`.
     After: header-not-half
+- (#91) <a id="left-behind-sticks"></a>**A header marked left behind stays marked through requests from one of its includers** —
+    so each of them rebuilds all its includers. After an edit of `options.h` on disk, three
+    requests in a row from `move_function.c` rebuilt the same 63 CUs, "'options.h' is left
+    behind", 5 to 9 s each. A request in `options.h` itself cleared it: the sibling walk had
+    every includer on the list and stripped it (`collectSiblingCUs()`, `src/rebuild.c`). From
+    `move_function.c` it did not, although the counts say all were built (WSL, session
+    `d25255b8`, 2026-10-27, `-info` log). Why it was marked in the first place is not known
+    either. Test: a header with includers, one changed so that it is marked, then two
+    requests from one includer.
+    After: closed-buffer-strip
 - (#40) <a id="time-budget"></a>**A time budget instead of the cap** — the cap (`MAX_CUS_TO_REPARSE`,
     128 today) becomes a time budget, and above it the question
     with an estimate. Browsing remembers a "no" for the session, an operation that edits
