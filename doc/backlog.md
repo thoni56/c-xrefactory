@@ -510,11 +510,6 @@ Roadmap → Optimization has the baseline: a cold-start PUSH on ffmpeg, measured
 
 ## 6. Developer tooling
 
-- (#90) <a id="watchers-without-execnotify"></a>**The watchers run without `execnotify`** — every watch target in
-    `src/Makefile` runs its command through `execnotify -t ...`, which is not in the repo,
-    so on a new machine the watchers fail. A notification is a preference: use it when it
-    is on the `PATH`, otherwise run the command as it is. 15-development-environment →
-    Getting started already says only `watchexec` is needed.
 - (#61) <a id="yydebug-to-log"></a>**The `-yydebug` parse trace goes to the log** — byacc's skeleton
     writes it with `printf` (`byacc-1.9/skeleton.c`), and in a server stdout is the sync
     stream, so a client stops with `SYNCHRO PROBLEM`. It works only with the server driver

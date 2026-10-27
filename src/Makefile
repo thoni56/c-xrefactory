@@ -581,13 +581,17 @@ ifeq ($(shell uname -s),Darwin)
 WATCHEXEC_FLAGS := --no-follow-symlinks
 endif
 
+# execnotify, if you have it, notifies you of each watcher run's result
+EXECNOTIFY := $(shell command -v execnotify 2>/dev/null)
+notify = $(if $(EXECNOTIFY),execnotify -t $(1))
+
 .PHONY:watch
 watch:
-	watchexec $(WATCHEXEC_FLAGS) -i \*.tab.\[ch\] -i lexem.\[ch\] -i options_config.h -e c,h,y,mock,tc,th -- execnotify -t Development make -j$(JOBS) devel
+	watchexec $(WATCHEXEC_FLAGS) -i \*.tab.\[ch\] -i lexem.\[ch\] -i options_config.h -e c,h,y,mock,tc,th -- $(call notify,Development) make -j$(JOBS) devel
 
 .PHONY: watch-for-unittests
 watch-for-unittests:
-	watchexec $(WATCHEXEC_FLAGS) -i yacc_parser.y -i \*.tab.\[ch\] -i lexem.\[ch\] -i options_config.h -e c,h,y,mock,tc,th -- execnotify -t Unittests make unit-logged
+	watchexec $(WATCHEXEC_FLAGS) -i yacc_parser.y -i \*.tab.\[ch\] -i lexem.\[ch\] -i options_config.h -e c,h,y,mock,tc,th -- $(call notify,Unittests) make unit-logged
 
 
 # Same as unit, and keeps the output in unittests.log so the result of the last
@@ -606,15 +610,15 @@ watch-for-unittests-silent:
 
 .PHONY: watch-for-build-only
 watch-for-build-only:
-	watchexec $(WATCHEXEC_FLAGS) --no-vcs-ignore -f '*/.unittests.done' -- execnotify -t Build make -j$(JOBS) c-xref
+	watchexec $(WATCHEXEC_FLAGS) --no-vcs-ignore -f '*/.unittests.done' -- $(call notify,Build) make -j$(JOBS) c-xref
 
 .PHONY: watch-for-systemtests-only
 watch-for-systemtests-only:
-	watchexec $(WATCHEXEC_FLAGS) --no-vcs-ignore -f '*/.build.done' -- execnotify -t Systemtests make -j$(JOBS) system-tests-proper
+	watchexec $(WATCHEXEC_FLAGS) --no-vcs-ignore -f '*/.build.done' -- $(call notify,Systemtests) make -j$(JOBS) system-tests-proper
 
 .PHONY: watch-for-systemtests
 watch-for-systemtests:
-	watchexec $(WATCHEXEC_FLAGS) -d 500 --no-vcs-ignore -f '*/.unittests.done' -- execnotify -t Systemtests make system-tests-logged
+	watchexec $(WATCHEXEC_FLAGS) -d 500 --no-vcs-ignore -f '*/.unittests.done' -- $(call notify,Systemtests) make system-tests-logged
 
 # Same as system-tests, and keeps the output in systemtests.log so the result of
 # the last watcher run can be read by someone who was not watching the terminal.
