@@ -189,9 +189,9 @@
 
 (defvar c-xref-comments-moving-level 0)
 
-(defvar c-xref-save-files-and-update-tags-after-refactoring nil)
+(defvar c-xref-save-files-after-refactoring nil)
 
-(defvar c-xref-save-files-and-update-tags-before-refactoring nil)
+(defvar c-xref-save-files-before-refactoring nil)
 
 ;; ----------------------------------------------------------------
 
@@ -390,12 +390,12 @@ C-xrefactory refactoring functions.
     )
 
 
-  (defcustom c-xref-save-files-and-update-tags-before-refactoring nil
+  (defcustom c-xref-save-files-before-refactoring nil
         "If on, C-xrefactory offers to save each modified file before each refactoring."
         :type '(boolean)
         :group 'c-xrefactory-refactoring)
 
-  (defcustom c-xref-save-files-and-update-tags-after-refactoring nil
+  (defcustom c-xref-save-files-after-refactoring nil
         "If on, C-xrefactory saves all modified files after each refactoring."
         :type '(boolean)
         :group 'c-xrefactory-refactoring)

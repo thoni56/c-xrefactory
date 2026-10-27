@@ -5766,12 +5766,12 @@ refactoring.
   (set-marker c-xref-refactoring-beginning-marker (point))
   (setq c-xref-refactoring-beginning-offset (point))
   (c-xref-multifile-undo-set-buffer-switch-point description)
-  (if c-xref-save-files-and-update-tags-before-refactoring
+  (if c-xref-save-files-before-refactoring
       (c-xref-save-some-buffers nil))
   )
 
 (defun c-xref-refactoring-finish-actions ()
-  (if c-xref-save-files-and-update-tags-after-refactoring
+  (if c-xref-save-files-after-refactoring
       (c-xref-save-some-buffers t))
   (if c-xref-move-point-back-after-refactoring
       (progn

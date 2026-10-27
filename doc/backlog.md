@@ -455,9 +455,8 @@ Roadmap → Optimization has the baseline: a cold-start PUSH on ffmpeg, measured
     After: project-extent
 - (#28) <a id="chapter-17-hygiene"></a>**Chapter 17 hygiene, opportunistically** — incremental `cxfile.c` cleanup,
     hashtab → hashlist, split the editor module, elisp recompiled and deleted on every
-    build. Also "tags" in the elisp, the last of the old wording: the two
-    `c-xref-save-files-and-update-tags-*-refactoring` settings only save buffers, and two
-    docstrings in `c-xref.el` say the search "inspects the tags".
+    build. Also "tags" in the elisp, the last of the old wording: two docstrings in
+    `c-xref.el` say the search "inspects the tags".
 - (#76) <a id="macro-expansion-module"></a>**Extract the macro expansion module from `src/yylex.c`** — §17.2.
     `yylex.c` is 2794 lines. The macro stack, the macro arguments memory and the
     expansions of the last lexem (`lastLexemExpansions`, `noteMacroExpansionsOfLastLexem()`)
@@ -687,6 +686,13 @@ Mac (session `05984816`), 2026-10-07.
     Waits for: install-server, releases, protocol-handshake
 - (#51) <a id="readme-first-screen"></a>**The README sells on its first screen** — a GIF or
     asciinema of a parameter move across files; the Java section goes.
+- (#81) <a id="customize-names"></a>**The customizable options get names of today** — Customize shows
+    "C Xref ..." and "C Xrefactory ...", since it makes its labels from the symbol names
+    (`c-xref-...` in `editors/emacs/c-xrefactory.el`). A group can get a `:tag`, but an
+    option is relabelled only by a rename, with `define-obsolete-variable-alias` so that
+    old settings still work. MELPA's `package-lint` probably wants one prefix, the
+    package's name, so the two go together.
+    Goes with: melpa
 - (#52) <a id="announce"></a>**Announce** — positioned beside clangd, not against it: the
     refactorings clangd does not have (parameters, move function, macros, Yacc). LSP
     tier 2 is the shape of that, with clangd as the main server; lsp-mode takes add-on
