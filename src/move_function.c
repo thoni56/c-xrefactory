@@ -18,6 +18,7 @@
 #include "misc.h"
 #include "options.h"
 #include "parsing.h"
+#include "position.h"
 #include "ppc.h"
 #include "proto.h"
 #include "protocol.h"
@@ -26,6 +27,7 @@
 #include "referenceableitemtable.h"
 #include "stackmemory.h"
 #include "undo.h"
+#include "usage.h"
 
 
 static void moveMarkerToTheEndOfDefinitionScope(EditorMarker *marker) {
@@ -428,6 +430,52 @@ static void moveStaticFunctionAndMakeItExtern(EditorMarker *startMarker, EditorM
     }
 }
 
+typedef struct {
+    Position           begin;
+    Position           end;
+    ReferenceableItem *moved;
+    ReferenceableItem *staticLeftBehind;
+} UsesOfMovedFunction;
+
+static void findStaticLeftBehind(ReferenceableItem *item, void *pointer) {
+    UsesOfMovedFunction *uses = pointer;
+    bool usedInFunction = false;
+    bool definedInFunction = false;
+    bool definedInSourceFile = false;
+
+    for (Reference *r = item->references; r != NULL; r = r->next) {
+        bool inFunction = positionIsBetween(r->position, uses->begin, uses->end);
+        if (isDefinitionUsage(r->usage)) {
+            definedInFunction |= inFunction;
+            definedInSourceFile |= r->position.file == uses->begin.file;
+        } else if (inFunction) {
+            usedInFunction = true;
+        }
+    }
+    if (definedInFunction && item->visibility == VisibilityGlobal)
+        uses->moved = item;
+    else if (usedInFunction && definedInSourceFile && item->storage == StorageStatic)
+        uses->staticLeftBehind = item;
+}
+
+/* A static in the source file that the function uses would be left behind */
+static bool refuseToLeaveStaticBehind(FunctionBoundariesResult bounds) {
+    UsesOfMovedFunction uses = {.begin = bounds.functionBegin, .end = bounds.functionEnd};
+    mapOverReferenceableItemTableWithPointer(findStaticLeftBehind, &uses);
+    if (uses.moved == NULL || uses.staticLeftBehind == NULL)
+        return false;
+
+    char moved[TMP_STRING_SIZE];
+    char leftBehind[TMP_STRING_SIZE];
+    char message[4*TMP_STRING_SIZE];
+    prettyPrintLinkName(moved, uses.moved->linkName, TMP_STRING_SIZE);
+    prettyPrintLinkName(leftBehind, uses.staticLeftBehind->linkName, TMP_STRING_SIZE);
+    sprintf(message, "'%s' uses '%s', which is static in this file. Move '%s' first.",
+            moved, leftBehind, leftBehind);
+    errorMessage(ERR_ST, message);
+    return true;
+}
+
 void moveFunction(EditorMarker *point) {
     EditorMarker *target = getTargetFromOptions();
 
@@ -441,6 +489,9 @@ void moveFunction(EditorMarker *point) {
     if (!bounds.found) {
         FATAL_ERROR(ERR_INTERNAL, "Can't find declaration coordinates", EXIT_FAILURE);
     }
+
+    if (target->buffer != point->buffer && refuseToLeaveStaticBehind(bounds))
+        return;
 
     /* Convert positions to markers and adjust for definition scope */
     EditorMarker *functionStart = newEditorMarkerForPosition(bounds.functionBegin);
