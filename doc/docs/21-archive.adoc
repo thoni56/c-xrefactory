@@ -472,6 +472,13 @@ If successful, it would be much better, since we could probably get
 rid of the bootstrap, but primarily it would be more explicit about
 which fields are actually necessary to set.
 
+=== Refactoring macros to functions
+
+There were also a lot of other macros. Unfortunately macros are hard to refactor to
+functions, and there is no general way to do it, so various techniques must be applied.
+I wrote https://www.responsive.se/thomas/2020/05/14/refactoring-macros-to-functions/[a blog post]
+about one that has been fairly successful.
+
 === Users
 
 **The `-user` option has now been removed, both in the tool and the

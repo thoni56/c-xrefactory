@@ -1,40 +1,22 @@
 [[development-environment]]
 == Development Environment
 
-=== Developing, here be dragons...
+=== Getting started
 
-First the code is *terrible*, lots of single and double character
-variables (`cc`, `ccc`, ..) and lost of administration on local
-variables rather than the structures that are actually there. And
-there are also a lot of macros. Unfortunately macros are hard to
-refactor to functions. (But I'm making progress...)
+When I recovered the code it was *terrible*: single and double character variables, lots
+of macros, and administration of local variables instead of the structures that are
+actually there. (But I'm making progress...)
 
-As there is no general way to refactor a macro to a function, various
-techniques must be applied. I wrote https://www.responsive.se/thomas/2020/05/14/refactoring-macros-to-functions/[a blog post]
-about one that have been fairly successful.
+What you need:
 
-But actually it's rather fun to be able to make small changes and
-see the structure emerge, hone your refactoring and design skills,
-and working on a project that started 20 years ago which still is
-valuable, to me, and I hope, to others.
+- A C development environment (GCC or Clang, Make)
+- https://github.com/cgreen-devs/cgreen[Cgreen], which the unittests are written in
+- Clean code and refactoring knowledge, to drive the code to a better and cleaner state
+- Compiler building knowledge helps (Yacc, but ASTs and symbol tables are heavily used)
 
-There should probably be a whole section on how to contribute and
-develop `c-xrefactory` but until then here's a short list of what
-you need:
-
-- C development environment (GNU/Clang/Make/...)
-- Unittests are written using https://github.com/cgreen-devs/cgreen[`Cgreen`]
-- Clean code and refactoring knowledge (to drive the code to a better and cleaner state)
-
-Helpful would be:
-
-- Compiler building knowledge (in the general sense, Yacc, but AST:s
-  and symbol table stuff are heavily used)
-
-
-=== Setup
-
-TBD.
+Your machine needs Cgreen, `lcov`, `libcjson` and Python 3 with `utils/requirements.txt`
+installed, and `watchexec` for the watchers. `.travis_install_linux.sh` shows how CI
+does it on Linux.
 
 === Building
 
