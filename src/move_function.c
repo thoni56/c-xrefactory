@@ -479,6 +479,21 @@ static int compareDefinitions(const void *a, const void *b) {
     return positionIsLessThan(second, first);
 }
 
+static void composeLeftBehindMessage(UsesOfMovedFunction *uses, char message[]) {
+    char name[TMP_STRING_SIZE];
+    prettyPrintLinkName(name, uses->moved->linkName, TMP_STRING_SIZE);
+    int length = sprintf(message, "'%s' uses ", name);
+    for (int i = 0; i < uses->leftBehindCount; i++) {
+        char *separator = i == 0 ? "" : i == uses->leftBehindCount - 1 ? " and " : ", ";
+        prettyPrintLinkName(name, uses->leftBehind[i].item->linkName, TMP_STRING_SIZE);
+        length += sprintf(message + length, "%s'%s'", separator, name);
+    }
+    if (uses->leftBehindCount == 1)
+        sprintf(message + length, ", which is static in this file. Move '%s' first.", name);
+    else
+        sprintf(message + length, ", which are static in this file. Move them first.");
+}
+
 /* A static in the source file that the function uses would be left behind */
 static bool refuseToLeaveStaticBehind(FunctionBoundariesResult bounds) {
     /* Find statics left behind */
@@ -488,19 +503,8 @@ static bool refuseToLeaveStaticBehind(FunctionBoundariesResult bounds) {
         return false;
     qsort(uses.leftBehind, uses.leftBehindCount, sizeof(StaticLeftBehind), compareDefinitions);
 
-    char name[TMP_STRING_SIZE];
     char message[(MAX_STATICS_NAMED+2)*TMP_STRING_SIZE];
-    prettyPrintLinkName(name, uses.moved->linkName, TMP_STRING_SIZE);
-    int length = sprintf(message, "'%s' uses ", name);
-    for (int i = 0; i < uses.leftBehindCount; i++) {
-        char *separator = i == 0 ? "" : i == uses.leftBehindCount-1 ? " and " : ", ";
-        prettyPrintLinkName(name, uses.leftBehind[i].item->linkName, TMP_STRING_SIZE);
-        length += sprintf(message+length, "%s'%s'", separator, name);
-    }
-    if (uses.leftBehindCount == 1)
-        sprintf(message+length, ", which is static in this file. Move '%s' first.", name);
-    else
-        sprintf(message+length, ", which are static in this file. Move them first.");
+    composeLeftBehindMessage(&uses, message);
     errorMessage(ERR_ST, message);
     return true;
 }
