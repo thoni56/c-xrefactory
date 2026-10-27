@@ -448,15 +448,30 @@ Roadmap → Optimization has the baseline: a cold-start PUSH on ffmpeg, measured
     Constant**, **C11 `_Generic`** (`tests/test_parsing_generics`). All in
     `11-planned-features.adoc`.
     After: move-function-comment-prompt
+- (#82) <a id="browser-for-c"></a>**The browser's Symbol Pane says which symbol each line is** — a line is
+    `+  1/1  LIMIT`, so a macro `LIMIT` and a `static int LIMIT` in another file look the
+    same (`tests/test_menu_filter_levels`). In the Java version the pane was a class tree
+    and the class name told them apart (`c-xref-server-dispatch-classh-lines` in
+    `3b932e0e`). For C, give each line its kind and where it is defined, e.g.
+    `macro LIMIT a.h:1` and `static variable LIMIT c.c:1`. The server already sends
+    `type=`, the client drops it. The file of the definition is a new attribute.
+    Then the user manual's "where they're defined" is true.
+    Ideas for making the rest fit C:
+    - A macro defined in two headers is one entry with `drefn=2`, so the line could list
+      both places, or the entry could be split by definition.
+    - Filter 1 differs from 2 only for an `#include`, so two levels, the symbol and every
+      symbol with the name, are probably enough.
+    - Unused Symbols uses the browser as a plain list. A buffer like
+      `*c-xref-diagnostics*`, with `M-g n`, is what it wants.
+    - It need not take the whole frame without a tree to show.
 - (#27) <a id="local-config-fragments"></a>**Local config fragments: the config names, the fragment binds** —
     ADR-0034, proposed. Decide it, with where the fragment lives and the syntax of a
     default. Then: expand defaults, report an unbound name, read the fragment before the
     environment, and ignore the personal options in a config, with a warning.
     After: project-extent
 - (#28) <a id="chapter-17-hygiene"></a>**Chapter 17 hygiene, opportunistically** — incremental `cxfile.c` cleanup,
-    hashtab → hashlist, split the editor module, elisp recompiled and deleted on every
-    build. Also "tags" in the elisp, the last of the old wording: two docstrings in
-    `c-xref.el` say the search "inspects the tags".
+    hashtab → hashlist, split the editor module. Also "tags" in the elisp, the last of
+    the old wording: two docstrings in `c-xref.el` say the search "inspects the tags".
 - (#76) <a id="macro-expansion-module"></a>**Extract the macro expansion module from `src/yylex.c`** — §17.2.
     `yylex.c` is 2794 lines. The macro stack, the macro arguments memory and the
     expansions of the last lexem (`lastLexemExpansions`, `noteMacroExpansionsOfLastLexem()`)
