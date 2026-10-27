@@ -1,0 +1,2 @@
+void target(void) {
+}

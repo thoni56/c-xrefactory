@@ -9,5 +9,5 @@ int moved(void) {
 }
 
 int main(void) {
-    return moved();
+    return moved() + helper() + count;
 }

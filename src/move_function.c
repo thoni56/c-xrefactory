@@ -430,50 +430,92 @@ static void moveStaticFunctionAndMakeItExtern(EditorMarker *startMarker, EditorM
     }
 }
 
-#define MAX_STATICS_NAMED 10
+#define MAX_STATICS 10
 
 typedef struct {
-    ReferenceableItem *item;
-    Position           definition;
-} StaticLeftBehind;
+    ReferenceableItem       *item;
+    Position                 definition;
+    FunctionBoundariesResult bounds; /* Of a helper */
+} StaticUsed;
 
 typedef struct {
-    Position           begin;
-    Position           end;
-    ReferenceableItem *moved;
-    StaticLeftBehind   leftBehind[MAX_STATICS_NAMED];
-    int                leftBehindCount;
+    FunctionBoundariesResult moved;
+    ReferenceableItem       *movedItem;
+    StaticUsed               leftBehind[MAX_STATICS];
+    int                      leftBehindCount;
+    StaticUsed               helpers[MAX_STATICS]; /* Used only by what moves */
+    int                      helperCount;
+    StaticUsed               candidates[MAX_STATICS];
+    int                      candidateCount;
+    ReferenceableItem       *cannotMove[MAX_STATICS]; /* Helpers that are not functions */
+    int                      cannotMoveCount;
 } UsesOfMovedFunction;
 
-static void findStaticLeftBehind(ReferenceableItem *item, void *pointer) {
+static void addStaticUsed(StaticUsed used, StaticUsed list[], int *count) {
+    if (*count < MAX_STATICS)
+        list[(*count)++] = used;
+}
+
+static bool isInside(Position position, FunctionBoundariesResult bounds) {
+    return positionIsBetween(position, bounds.functionBegin, bounds.functionEnd);
+}
+
+static bool isMoving(UsesOfMovedFunction *uses, Position position) {
+    if (isInside(position, uses->moved))
+        return true;
+    for (int i = 0; i < uses->helperCount; i++)
+        if (isInside(position, uses->helpers[i].bounds))
+            return true;
+    return false;
+}
+
+static bool cannotMove(UsesOfMovedFunction *uses, ReferenceableItem *item) {
+    for (int i = 0; i < uses->cannotMoveCount; i++)
+        if (uses->cannotMove[i] == item)
+            return true;
+    return false;
+}
+
+static void findStaticsUsed(ReferenceableItem *item, void *pointer) {
     UsesOfMovedFunction *uses = pointer;
-    bool usedInFunction = false;
-    bool definedInFunction = false;
+    bool usedInMoving = false;
+    bool usedOutsideMoving = false;
+    bool definedInMoved = false;
+    bool definedInMoving = false;
     bool definedInSourceFile = false;
     Position definition = NO_POSITION;
 
     for (Reference *r = item->references; r != NULL; r = r->next) {
-        bool inFunction = positionIsBetween(r->position, uses->begin, uses->end);
+        bool moving = isMoving(uses, r->position);
         if (isDefinitionUsage(r->usage)) {
-            definedInFunction |= inFunction;
-            if (r->position.file == uses->begin.file) {
+            definedInMoved |= isInside(r->position, uses->moved);
+            definedInMoving |= moving;
+            if (r->position.file == uses->moved.functionBegin.file) {
                 definedInSourceFile = true;
                 definition = r->position;
             }
-        } else if (inFunction) {
-            usedInFunction = true;
+        } else if (moving) {
+            usedInMoving = true;
+        } else {
+            usedOutsideMoving = true;
         }
     }
-    if (definedInFunction && item->visibility == VisibilityGlobal)
-        uses->moved = item;
-    else if (usedInFunction && definedInSourceFile && item->storage == StorageStatic
-             && uses->leftBehindCount < MAX_STATICS_NAMED)
-        uses->leftBehind[uses->leftBehindCount++] = (StaticLeftBehind){item, definition};
+    if (definedInMoved && item->visibility == VisibilityGlobal)
+        uses->movedItem = item;
+    else if (definedInMoving)
+        return;                 /* Already a helper */
+    else if (usedInMoving && definedInSourceFile && item->storage == StorageStatic) {
+        StaticUsed used = {.item = item, .definition = definition};
+        if (usedOutsideMoving || cannotMove(uses, item))
+            addStaticUsed(used, uses->leftBehind, &uses->leftBehindCount);
+        else
+            addStaticUsed(used, uses->candidates, &uses->candidateCount);
+    }
 }
 
 static int compareDefinitions(const void *a, const void *b) {
-    Position first = ((const StaticLeftBehind *)a)->definition;
-    Position second = ((const StaticLeftBehind *)b)->definition;
+    Position first = ((const StaticUsed *)a)->definition;
+    Position second = ((const StaticUsed *)b)->definition;
     if (positionIsLessThan(first, second))
         return -1;
     return positionIsLessThan(second, first);
@@ -481,7 +523,7 @@ static int compareDefinitions(const void *a, const void *b) {
 
 static void composeLeftBehindMessage(UsesOfMovedFunction *uses, char message[]) {
     char name[TMP_STRING_SIZE];
-    prettyPrintLinkName(name, uses->moved->linkName, TMP_STRING_SIZE);
+    prettyPrintLinkName(name, uses->movedItem->linkName, TMP_STRING_SIZE);
     int length = sprintf(message, "'%s' uses ", name);
     for (int i = 0; i < uses->leftBehindCount; i++) {
         char *separator = i == 0 ? "" : i == uses->leftBehindCount - 1 ? " and " : ", ";
@@ -494,18 +536,79 @@ static void composeLeftBehindMessage(UsesOfMovedFunction *uses, char message[]) 
         sprintf(message + length, ", which are static in this file. Move them first.");
 }
 
-/* A static in the source file that the function uses would be left behind */
-static bool refuseToLeaveStaticBehind(FunctionBoundariesResult bounds) {
-    /* Find statics left behind */
-    UsesOfMovedFunction uses = {.begin = bounds.functionBegin, .end = bounds.functionEnd};
-    mapOverReferenceableItemTableWithPointer(findStaticLeftBehind, &uses);
-    if (uses.moved == NULL || uses.leftBehindCount == 0)
-        return false;
-    qsort(uses.leftBehind, uses.leftBehindCount, sizeof(StaticLeftBehind), compareDefinitions);
+/* A candidate that is not a function, e.g. a variable, has no boundaries, so it stays */
+static void addCandidatesAsHelpers(UsesOfMovedFunction *uses) {
+    for (int i = 0; i < uses->candidateCount; i++) {
+        StaticUsed candidate = uses->candidates[i];
+        EditorMarker *definition = newEditorMarkerForPosition(candidate.definition);
+        candidate.bounds = getFunctionBoundaries(definition);
+        freeEditorMarker(definition);
+        if (candidate.bounds.found && uses->helperCount < MAX_STATICS)
+            addStaticUsed(candidate, uses->helpers, &uses->helperCount);
+        else if (uses->cannotMoveCount < MAX_STATICS)
+            uses->cannotMove[uses->cannotMoveCount++] = candidate.item;
+    }
+}
 
-    char message[(MAX_STATICS_NAMED+2)*TMP_STRING_SIZE];
-    composeLeftBehindMessage(&uses, message);
+/* Helpers can have helpers, so look again until nothing new is found */
+static UsesOfMovedFunction findUsesOfMovedFunction(FunctionBoundariesResult bounds) {
+    UsesOfMovedFunction uses = {.moved = bounds};
+    int decided;
+    do {
+        uses.leftBehindCount = 0;
+        uses.candidateCount = 0;
+        mapOverReferenceableItemTableWithPointer(findStaticsUsed, &uses);
+        decided = uses.helperCount + uses.cannotMoveCount;
+        addCandidatesAsHelpers(&uses);
+    } while (uses.candidateCount > 0 && uses.helperCount + uses.cannotMoveCount > decided);
+    /* Out of room, so the candidates left stay behind */
+    for (int i = 0; i < uses.candidateCount && uses.helperCount + uses.cannotMoveCount == decided; i++)
+        addStaticUsed(uses.candidates[i], uses.leftBehind, &uses.leftBehindCount);
+    qsort(uses.helpers, uses.helperCount, sizeof(StaticUsed), compareDefinitions);
+    return uses;
+}
+
+/* A static in the source file that the function uses would be left behind */
+static bool refuseToLeaveStaticBehind(UsesOfMovedFunction *uses) {
+    if (uses->movedItem == NULL || uses->leftBehindCount == 0)
+        return false;
+    qsort(uses->leftBehind, uses->leftBehindCount, sizeof(StaticUsed), compareDefinitions);
+
+    char message[(MAX_STATICS+2)*TMP_STRING_SIZE];
+    composeLeftBehindMessage(uses, message);
     errorMessage(ERR_ST, message);
+    return true;
+}
+
+static EditorMarker *newDefinitionScopeStart(FunctionBoundariesResult bounds) {
+    EditorMarker *marker = newEditorMarkerForPosition(bounds.functionBegin);
+    moveMarkerToTheBeginOfDefinitionScope(marker);
+    return marker;
+}
+
+static EditorMarker *newDefinitionScopeEnd(FunctionBoundariesResult bounds) {
+    EditorMarker *marker = newEditorMarkerForPosition(bounds.functionEnd);
+    moveMarkerToTheEndOfDefinitionScope(marker);
+    return marker;
+}
+
+/* The helpers keep 'static' and go before the moved function, in their order */
+static bool moveHelpersAlong(FunctionBoundariesResult bounds, EditorMarker *target) {
+    UsesOfMovedFunction uses = findUsesOfMovedFunction(bounds);
+    if (refuseToLeaveStaticBehind(&uses))
+        return false;
+
+    EditorMarker *starts[MAX_STATICS];
+    EditorMarker *ends[MAX_STATICS];
+    for (int i = 0; i < uses.helperCount; i++) {
+        starts[i] = newDefinitionScopeStart(uses.helpers[i].bounds);
+        ends[i] = newDefinitionScopeEnd(uses.helpers[i].bounds);
+    }
+    for (int i = 0; i < uses.helperCount; i++) {
+        moveBlockInEditorBuffer(starts[i], target, ends[i]->offset - starts[i]->offset, &editorUndo);
+        freeEditorMarker(starts[i]);
+        freeEditorMarker(ends[i]);
+    }
     return true;
 }
 
@@ -523,16 +626,14 @@ void moveFunction(EditorMarker *point) {
         FATAL_ERROR(ERR_INTERNAL, "Can't find declaration coordinates", EXIT_FAILURE);
     }
 
-    if (target->buffer != point->buffer && refuseToLeaveStaticBehind(bounds))
-        return;
-
-    /* Convert positions to markers and adjust for definition scope */
-    EditorMarker *functionStart = newEditorMarkerForPosition(bounds.functionBegin);
-    EditorMarker *functionEnd = newEditorMarkerForPosition(bounds.functionEnd);
-    moveMarkerToTheBeginOfDefinitionScope(functionStart);
-    moveMarkerToTheEndOfDefinitionScope(functionEnd);
+    /* Markers before any change, since the positions are from the parse */
+    EditorMarker *functionStart = newDefinitionScopeStart(bounds);
+    EditorMarker *functionEnd = newDefinitionScopeEnd(bounds);
 
     int lines = countLinesBetweenEditorMarkers(functionStart, functionEnd);
+
+    if (target->buffer != point->buffer && !moveHelpersAlong(bounds, target))
+        return;
 
     moveStaticFunctionAndMakeItExtern(functionStart, point, functionEnd, target);
 

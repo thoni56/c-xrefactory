@@ -1,0 +1,41 @@
+CXREF -server -o server-buffer
+-getproject CURDIR/source.c
+end-of-options
+
+<sync>
+<set-info len=<n>>CURDIR</set-info>
+-rfct-move-function -commentmovinglevel=0 -movetargetfile=target.c -rfct-target-line=3 -cursor=95 CURDIR/source.c
+end-of-options
+
+<sync>
+<goto>
+ <position-off off=0 len=<n>>CURDIR/source.c</position-off>
+</goto>
+<cut-block val=41 len=<n>></cut-block>
+<goto>
+ <position-off off=22 len=<n>>CURDIR/target.c</position-off>
+</goto>
+<paste-block len=<n>></paste-block>
+<goto>
+ <position-off off=1 len=<n>>CURDIR/source.c</position-off>
+</goto>
+<cut-block val=48 len=<n>></cut-block>
+<goto>
+ <position-off off=63 len=<n>>CURDIR/target.c</position-off>
+</goto>
+<paste-block len=<n>></paste-block>
+<goto>
+ <position-off off=2 len=<n>>CURDIR/source.c</position-off>
+</goto>
+<cut-block val=41 len=<n>></cut-block>
+<goto>
+ <position-off off=111 len=<n>>CURDIR/target.c</position-off>
+</goto>
+<paste-block len=<n>></paste-block>
+<goto>
+ <position-off off=115 len=<n>>CURDIR/target.c</position-off>
+</goto>
+<indent-block val=3 len=<n>></indent-block>
+-exit
+end-of-options
+
