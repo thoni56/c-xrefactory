@@ -38,8 +38,7 @@ static void moveMarkerToTheEndOfDefinitionScope(EditorMarker *marker) {
         return;
     }
     if (CHAR_ON_MARKER(marker) == '/' && CHAR_AFTER_MARKER(marker) == '/') {
-        if (!options.moveComments)
-            return;
+        /* A comment on the same line belongs to the definition */
         moveEditorMarkerToNewline(marker, 1);
         marker->offset++;
     } else if (CHAR_ON_MARKER(marker) == '/' && CHAR_AFTER_MARKER(marker) == '*') {
