@@ -415,12 +415,9 @@ Roadmap → Optimization has the baseline: a cold-start PUSH on ffmpeg, measured
     Goes with: index-based-sessions
 
 - (#21) <a id="move-function-comment-prompt"></a>**Move Function comment y/n prompt** — replaces the `c-xref-comments-moving-level`
-    customization; collapse `CommentMovingMode` to a bool and stop the backward walk at a
-    blank line (`src/options.h`, `src/move_function.c`). The TDD scaffolding already
-    landed: four `tests/test_move_function_*comment*` tests; sweep
-    `-commentmovinglevel=6` → `=1` in the three "with…" `commands.input` files and add
-    `test_move_function_stops_at_blank_line` in the same change. Most shovel-ready item
-    here.
+    customization; collapse `CommentMovingMode` to a bool (`src/options.h`,
+    `src/move_function.c`) and sweep `-commentmovinglevel=6` → `=1` in the three "with…"
+    `commands.input` files.
     The helpers and variables that move along have comments too, and only the server knows
     which ones move. So the server asks, once the blocks are known, and one answer covers
     them all.

@@ -134,6 +134,9 @@ static void moveMarkerToTheBeginOfDefinitionScope(EditorMarker *marker) {
         }
         if (options.commentMovingMode == CM_NO_COMMENT)
             break;
+        moveEditorMarkerToNonBlankOrNewline(marker, -1);
+        if (CHAR_ON_MARKER(marker) == '\n')   /* A blank line ends what belongs to the definition */
+            break;
         moveEditorMarkerToNonBlank(marker, -1);
         int comBeginOffset;
         MarkerLocationKind markerLocationKind = markerWRTComment(marker, &comBeginOffset);
