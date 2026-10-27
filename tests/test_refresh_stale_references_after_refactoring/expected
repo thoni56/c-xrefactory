@@ -4,7 +4,7 @@ end-of-options
 
 <sync>
 <set-info len=<n>>CURDIR</set-info>
--rfct-move-function -commentmovinglevel=0 -movetargetfile=CURDIR/source_a.c -rfct-target-line=7 -cursor=5 CURDIR/source_a.c
+-rfct-move-function -movetargetfile=CURDIR/source_a.c -rfct-target-line=7 -cursor=5 CURDIR/source_a.c
 end-of-options
 
 <sync>

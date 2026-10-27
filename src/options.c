@@ -86,8 +86,6 @@ Options presetOptions = {
     /* --- REFACTORING --- */
     .theRefactoring = AVR_NO_REFACTORING,
     .continueRefactoring = RC_NONE,
-    .moveComments = false,
-    .askAboutComments = true,
     .extractMode = 0,
     .renameTo = NULL,
     .moveTargetFile = NULL,
@@ -907,12 +905,6 @@ static bool processCOption(int *argi, ArgumentsVector args) {
         options.commandlog = allocateStringForOption(&options.commandlog, args.argv[i]+12);
     else if (strcmp(args.argv[i], "-completioncasesensitive")==0)
         options.completionCaseSensitive = true;
-    else if (strncmp(args.argv[i], "-commentmovinglevel=",20)==0) {
-        int level = 0;
-        sscanf(args.argv[i]+20, "%d", &level);
-        options.moveComments = level != 0;
-        options.askAboutComments = false;
-    }
     else if (strcmp(args.argv[i], "-continuerefactoring")==0) {
         options.continueRefactoring = RC_CONTINUE;
     }

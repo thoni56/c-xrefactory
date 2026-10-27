@@ -651,8 +651,8 @@ void moveFunction(EditorMarker *point) {
             return;
     }
 
-    bool moveComments = options.moveComments;
-    if (options.askAboutComments && anyCommentAbove(bounds, &uses))
+    bool moveComments = false;
+    if (anyCommentAbove(bounds, &uses))
         moveComments = ppcWaitConfirmation("Move the comments too?");
 
     /* Markers before any change, since the positions are from the parse */
