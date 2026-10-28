@@ -431,6 +431,8 @@ Roadmap → Optimization has the baseline: a cold-start PUSH on ffmpeg, measured
     11-planned-features → Move Function → Next steps. Two cases: a target without a header
     (`tests/test_move_function_creates_the_targets_header`, suspended), and moving
     `waitForUserConfirmation()` into `src/ppc.c` needed `log.h` added by hand (2026-10-27).
+    A comment that moves goes with the definition, and the extern in the header gets none.
+    Whether an API comment should go to the header instead is open.
 - (#88) <a id="parse-all"></a>**`-parse-all`, a request that parses every compilation unit the scan found and has not parsed** —
     what ADR-0024's CreateMode reduces to once the priming is a request rather than a mode.
     `test_ffmpeg` and `test_systemd` ask for it today by searching a name nobody defines and
