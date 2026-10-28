@@ -29,12 +29,12 @@ flowchart BT
   indexing_log_buffer["§2 · 23 · The diagnostics buffer reports unresolved includes, with a suggested `-I`"]
   lsp_mode["§2 · 68 · An `LspMode`, and a sink for the messages"]
   startup_command_line["§2 · 7 · Decide, and enforce, what the startup command line may carry"]
-  operands_returned["§2 · 75 · Operands are handed back by `processOptions`, not kept in `options.inputFiles`"]
   options_carry_scope["§2 · 78 · Each option carries its scope, and `processOptions` refuses one outside it"]
   remove_bridge["§2 · 9 · Remove the `parseBufferUsingServer` bridge"]
   docs_audit["§2 · 62 · Audit the docs, chapter by chapter"]
   refactoring_refusals["§3 · 10 · What a refactoring refuses, spelled out and tested"]
   behind_the_back["§3 · 11 · A header changed on disk, which the editor does not hold, keeps its old references when it has more includers than the cap"]
+  settle_left_behind["§3 · 93 · Every request settles each header left behind"]
   token_pasting_trio["§3 · 13 · Token pasting trio"]
   header_static_link_names["§3 · 14 · Header static: prototype and definition get different link names"]
   relative_include_path["§3 · 15b · A relative `-I` in `.c-xrefrc` resolves against the working directory of the server process"]
@@ -77,7 +77,6 @@ flowchart BT
   request_through_includers["§7 · 54 · A request in a header is parsed through its includers"]
   cursor_parse_reuse["§7 · 1 · The request CU is parsed for the cursor, also when its knowledge is current"]
   header_not_half["§7 · 39 · Unconfirmed: a changed header the editor holds is stripped also when not all its includers fit"]
-  closed_buffer_strip["§7 · 56 · A header whose buffer the client stops sending is stripped, and none of its includers built"]
   time_budget["§7 · 40 · A time budget instead of the cap"]
   freshness_docs["§7 · 41 · The docs follow"]
   include_edges["§7 · 42 · Who writes include edges"]
@@ -130,8 +129,6 @@ flowchart BT
   install_server --&gt; announce
   readme_first_screen --&gt; announce
   root_path_id -.-&gt; no_section_headers
-  startup_command_line -.-&gt; operands_returned
-  operands_returned -.-&gt; options_carry_scope
   freshness_docs -.-&gt; docs_audit
   sweep -.-&gt; refactoring_refusals
   adr_0031 -.-&gt; relative_include_path
@@ -144,7 +141,6 @@ flowchart BT
   local_config_fragments -.-&gt; compile_commands
   cu_inputs -.-&gt; out_of_date
   request_through_includers -.-&gt; cursor_parse_reuse
-  header_not_half -.-&gt; closed_buffer_strip
   sweep -.-&gt; sweep_cost
   class partition_options ready
   class root_path_id ready
@@ -156,12 +152,12 @@ flowchart BT
   class indexing_log_buffer ready
   class lsp_mode ready
   class startup_command_line ready
-  class operands_returned ready
   class options_carry_scope ready
   class remove_bridge ready
   class docs_audit ready
   class refactoring_refusals ready
   class behind_the_back blocked
+  class settle_left_behind ready
   class token_pasting_trio ready
   class header_static_link_names blocked
   class relative_include_path ready
@@ -204,7 +200,6 @@ flowchart BT
   class request_through_includers ready
   class cursor_parse_reuse ready
   class header_not_half ready
-  class closed_buffer_strip ready
   class time_budget ready
   class freshness_docs ready
   class include_edges ready
