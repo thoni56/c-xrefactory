@@ -5150,6 +5150,13 @@ the reset was performed, nil if the reset was cancelled."
     (load file nil t))
   )
 
+(defun c-xref-installed-version ()
+  "The revision the installed c-xref was built from, as its About reports it."
+  (with-temp-buffer
+    (insert-file-contents (expand-file-name "src/options_config.h" c-xref-install-directory))
+    (when (re-search-forward "#define GIT_HASH \"\\([^\"]*\\)\"" nil t)
+      (match-string 1))))
+
 (defun c-xref-upgrade ()
   "Upgrade the installed c-xref, if available."
   (interactive)
@@ -5181,7 +5188,7 @@ the reset was performed, nil if the reset was cancelled."
           (makunbound 'c-xref-misc-menu)
           (c-xref-reload-directory c-xref-elisp-directory)
           (kill-buffer output-buffer)
-          (message "C-xref upgraded successfully")))))
+          (message "c-xrefactory %s installed" (c-xref-installed-version))))))
 
 (defun c-xref-interactive-help-escape ()
   (interactive "")
