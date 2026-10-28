@@ -365,6 +365,10 @@ void callServer(ArgumentsVector baseArgs, ArgumentsVector requestArgs) {
         && operationParsesRequestFile(options.serverOperation))
         collectRequestCU(buildList, inputs, requestFileNumber);
 
+    if (hasInputFile && !requiresProcessingInputFile(options.serverOperation)
+        && !answeredWithoutReferences(options.serverOperation))
+        collectRequestCUToBuild(buildList, inputs, requestFileNumber);
+
     /* Sibling CUs that share headers with the request file but are out of date,
      * e.g. on a cold start */
     if (projectContextInitialized && hasInputFile && !answeredWithoutReferences(options.serverOperation))

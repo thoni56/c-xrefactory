@@ -88,6 +88,13 @@ void collectRequestCU(BuildList *list, Inputs *inputs, int requestFileNumber) {
     }
 }
 
+/* An operation that parses nothing has its request built like any other CU (#91) */
+void collectRequestCUToBuild(BuildList *list, Inputs *inputs, int requestFileNumber) {
+    if (isCompilationUnit(getFileItemWithFileNumber(requestFileNumber)->name)
+        && knowledgeIsOutOfDate(inputs, requestFileNumber))
+        addToBuildList(list, requestFileNumber);
+}
+
 /* Only after the collecting, since the request's include references lead to its
  * siblings. Never for a header: its references were put there by its includers,
  * and parsing it on its own cannot put them all back. */

@@ -204,3 +204,19 @@ Ensure(Server, push_collects_its_request_file_for_stripping) {
     ArgumentsVector args = {.argc = 0, .argv = NULL};
     callServer(args, args);
 }
+
+/* Next parses nothing itself, so a request file left out of date would keep a header it
+ * includes left behind (#91) */
+Ensure(Server, next_puts_its_request_file_on_the_build_list) {
+    FileItem fileItem = {.name = "a.c"};
+    setRequestFileArgument(42);
+    options.serverOperation = OP_BROWSE_NEXT;
+
+    cgreen_mocks_are(loose_mocks);
+    always_expect(getFileItemWithFileNumber, will_return(&fileItem));
+    expectAProjectToBeFound();
+    expect(collectRequestCUToBuild, when(requestFileNumber, is_equal_to(42)));
+
+    ArgumentsVector args = {.argc = 0, .argv = NULL};
+    callServer(args, args);
+}

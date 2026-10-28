@@ -567,19 +567,6 @@ are noted in `cu-inputs`, `out-of-date`, `time-budget` and `sweep-cost`.
 - (#56) <a id="closed-buffer-strip"></a>**A header whose buffer the client stops sending is stripped, and none of its includers built** —
     `tests/test_reverted_held_header_keeps_its_references/.suspended`.
     After: header-not-half
-- (#91) <a id="left-behind-sticks"></a>**A header marked left behind stays marked through requests from one of its includers** —
-    so each of them rebuilds all its includers. For a Next, the request CU is not put on the
-    build list (`collectRequestCU()` only for operations that `requiresProcessingInputFile()`,
-    `src/server.c`), while its siblings are built. So `markHeadersLeftBehind()`
-    (`src/rebuild.c`) marks a header it includes, and the sibling walk, which skips the
-    request, can never strip it. Seen after an edit of `options.h` on disk: every Next in
-    `move_function.c` rebuilt the same 63 CUs, 5 to 9 s each (WSL, session `d25255b8`,
-    2026-10-27). A red test, `tests/test_next_after_a_header_changed_rebuilds_once`, is
-    untracked on that machine until the fix. The likely fix: put the request CU on the list
-    whenever it is out of date, whatever the operation. It does not wait for
-    `index-based-sessions`, but that needs it: when Next reads the table, an unbuilt request
-    CU gives a wrong answer, not only a slow one.
-    After: closed-buffer-strip
 - (#40) <a id="time-budget"></a>**A time budget instead of the cap** — the cap (`MAX_CUS_TO_REPARSE`,
     128 today) becomes a time budget, and above it the question
     with an estimate. Browsing remembers a "no" for the session, an operation that edits

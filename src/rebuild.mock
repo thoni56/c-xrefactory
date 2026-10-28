@@ -40,6 +40,10 @@ void collectRequestCU(BuildList *list, Inputs *inputs, int requestFileNumber) {
     mock(list, inputs, requestFileNumber);
 }
 
+void collectRequestCUToBuild(BuildList *list, Inputs *inputs, int requestFileNumber) {
+    mock(list, inputs, requestFileNumber);
+}
+
 void stripRequestCU(BuildList *list, int requestFileNumber) {
     mock(list, requestFileNumber);
 }
