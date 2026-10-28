@@ -25,7 +25,6 @@
 #include "progress.h"
 #include "projectstructure.h"
 #include "referenceableitemtable.h"
-#include "referencerefresh.h"
 #include "session.h"
 #include "startup.h"
 #include "timestamp.h"
