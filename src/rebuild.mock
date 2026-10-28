@@ -59,3 +59,7 @@ void stripHeadersWhoseIncludersAreAllBuilt(BuildList *list) {
 int buildListCount(BuildList *list) {
     return (int)mock(list);
 }
+
+void markAllCompilationUnitsStale(void) {
+    mock();
+}

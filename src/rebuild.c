@@ -218,6 +218,16 @@ void markHeadersLeftBehind(BuildList *list, Inputs *inputs) {
     free(closure);
 }
 
+void markAllCompilationUnitsStale(void) {
+    for (int i = getNextExistingFileNumber(0); i != -1; i = getNextExistingFileNumber(i + 1)) {
+        FileItem *fileItem = getFileItemWithFileNumber(i);
+        if (isCompilationUnit(fileItem->name)) {
+            fileItem->lastParsedMtime = NULL_TIMESTAMP;
+            fileItem->knowledgeTime = NULL_TIMESTAMP;
+        }
+    }
+}
+
 /* The mark is not in the snapshot, so the includers of a marked header are
  * saved without knowledge, and are out of date in the next session (#80) */
 void forgetKnowledgeOfHeadersLeftBehind(void) {

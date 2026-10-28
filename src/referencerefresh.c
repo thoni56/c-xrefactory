@@ -8,7 +8,6 @@
 #include "filedescriptor.h"
 #include "filetable.h"
 #include "globals.h"
-#include "misc.h"
 #include "parsing.h"
 #include "referenceableitemtable.h"
 #include "startup.h"
@@ -69,19 +68,4 @@ void buildKnowledgeOfCU(int fileNumber, ArgumentsVector baseArgs) {
     fileItem->lastParsedMtime = editorFileModificationTime(fileName);
     if (parsed)
         fileItem->knowledgeTime = knowledgeTime;
-}
-
-/* Mark every compilation unit unparsed so the next entry refresh reparses it.
- * Called after a project-config change, which can invalidate any file's parse
- * (defines flip #ifdefs, -I re-resolves includes) with no cheap way to know
- * which — so treat it as a logical cold restart. Old refs are left in place
- * until buildKnowledgeOfCU clears and builds each CU as it is touched. */
-void markAllCompilationUnitsStale(void) {
-    for (int i = getNextExistingFileNumber(0); i != -1; i = getNextExistingFileNumber(i + 1)) {
-        FileItem *fileItem = getFileItemWithFileNumber(i);
-        if (isCompilationUnit(fileItem->name)) {
-            fileItem->lastParsedMtime = NULL_TIMESTAMP;
-            fileItem->knowledgeTime = NULL_TIMESTAMP;
-        }
-    }
 }
