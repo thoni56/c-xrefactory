@@ -9,10 +9,6 @@ void buildKnowledgeOfCU(int fileNumber, ArgumentsVector baseArgs) {
     mock(fileNumber);
 }
 
-void reparseFile(int fileNumber, ArgumentsVector baseArgs) {
-    mock(fileNumber);
-}
-
 void markAllCompilationUnitsStale(void) {
     mock();
 }

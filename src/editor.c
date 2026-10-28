@@ -537,16 +537,23 @@ void closeEditorBuffersNoLongerHeld(ArgumentsVector baseArgs) {
     for (EditorBufferList *l = allEditorBuffers; l != NULL; l = l->next) {
         if (holdsAuthoritativeContent(l->buffer) && !l->buffer->heldThisRequest) {
             log_trace("Closing held ghost buffer '%s' (fileNumber=%d)", l->buffer->fileName, l->buffer->fileNumber);
-            int fileNumber = l->buffer->fileNumber;
+            int fileNumber = l->buffer->fileNumber; /* Save it before deregistering the buffer */
             EditorBuffer *buffer = deregisterEditorBuffer(l->buffer->fileName);
             freeEditorBuffer(buffer);
+
             /* The editor's view is no longer authoritative. A CU is
              * parsed again from disk, a header is left behind until its
-             * includers are built again. A file that is not on disk is
+             * includers are built again, since on its own it has no
+             * preprocessor context. A file that is not on disk is
              * gone, e.g. one a refactoring created and the client undid. */
-            if (fileExists(getFileItemWithFileNumber(fileNumber)->name))
-                reparseFile(fileNumber, baseArgs);
-            else
+            FileItem *fileItem = getFileItemWithFileNumber(fileNumber);
+            if (fileExists(fileItem->name)) {
+                if (isCompilationUnit(fileItem->name)) {
+                    buildKnowledgeOfCU(fileNumber, baseArgs);
+                } else {
+                    fileItem->isLeftBehind = true;
+                }
+            } else
                 markFileAsDeleted(fileNumber);
         }
     }
