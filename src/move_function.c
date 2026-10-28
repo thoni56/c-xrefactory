@@ -160,13 +160,13 @@ static EditorMarker *getTargetFromOptions(void) {
     return target;
 }
 
-static char *extractFunctionSignature(EditorMarker *startMarker, EditorMarker *endMarker) {
+static char *extractFunctionSignature(EditorMarker *definitionStart, EditorMarker *definitionEnd) {
 
-    int searchOffset = startMarker->offset;
+    int searchOffset = definitionStart->offset;
     int braceOffset = -1;
-    char *text = startMarker->buffer->allocation.text;
+    char *text = definitionStart->buffer->allocation.text;
 
-    while (searchOffset < endMarker->offset) {
+    while (searchOffset < definitionEnd->offset) {
         if (text[searchOffset] == '{') {
             braceOffset = searchOffset;
             break;
@@ -177,9 +177,9 @@ static char *extractFunctionSignature(EditorMarker *startMarker, EditorMarker *e
     char *functionSignature = NULL;
     if (braceOffset != -1) {
         /* Extract signature (from start to just before '{') */
-        int signatureLength = braceOffset - startMarker->offset;
+        int signatureLength = braceOffset - definitionStart->offset;
         functionSignature = stackMemoryAlloc(signatureLength + 1);
-        strncpy(functionSignature, &text[startMarker->offset], signatureLength);
+        strncpy(functionSignature, &text[definitionStart->offset], signatureLength);
         functionSignature[signatureLength] = '\0';
 
         /* Trim trailing whitespace from signature */
@@ -345,20 +345,20 @@ static int findIncludeInsertionPoint(EditorBuffer *buffer) {
 }
 
 
-static void moveStaticFunctionAndMakeItExtern(EditorMarker *startMarker, EditorMarker *definitionStart,
-                                              EditorMarker *point, EditorMarker *endMarker,
+static void moveStaticFunctionAndMakeItExtern(EditorMarker *blockStart, EditorMarker *definitionStart,
+                                              EditorMarker *point, EditorMarker *blockEnd,
                                               EditorMarker *target) {
-    int functionBlockSize = endMarker->offset - startMarker->offset;
-    EditorBuffer *sourceBuffer = startMarker->buffer;
-    if (target->buffer == startMarker->buffer && target->offset > startMarker->offset &&
-        target->offset < startMarker->offset + functionBlockSize) {
+    int functionBlockSize = blockEnd->offset - blockStart->offset;
+    EditorBuffer *sourceBuffer = blockStart->buffer;
+    if (target->buffer == blockStart->buffer && target->offset > blockStart->offset &&
+        target->offset < blockStart->offset + functionBlockSize) {
         errorMessage(ERR_ST, "You can't move something into itself.");
         return;
     }
 
     /* Check if function has "static" keyword and remove it when moving between files.
      * When moving within the same file, keep static (visibility doesn't change). */
-    bool movingBetweenFiles = (startMarker->buffer != target->buffer);
+    bool movingBetweenFiles = (blockStart->buffer != target->buffer);
 
     if (movingBetweenFiles) {
         functionBlockSize = removeStaticKeywordIfPresent(definitionStart, point, functionBlockSize);
@@ -368,11 +368,11 @@ static void moveStaticFunctionAndMakeItExtern(EditorMarker *startMarker, EditorM
     char *functionSignature = NULL;
     if (movingBetweenFiles) {
         /* Find the opening brace to determine where signature ends */
-        functionSignature = extractFunctionSignature(definitionStart, endMarker);
+        functionSignature = extractFunctionSignature(definitionStart, blockEnd);
     }
 
     /* Now move the (possibly modified) function block */
-    moveBlockInEditorBuffer(startMarker, target, functionBlockSize, &editorUndo);
+    moveBlockInEditorBuffer(blockStart, target, functionBlockSize, &editorUndo);
 
     /* After moving the function, check if we need to add an extern declaration to the header */
     char *headerFileName = NULL;
@@ -657,15 +657,15 @@ void moveFunction(EditorMarker *point) {
         moveComments = ppcWaitConfirmation("Move the comments too?");
 
     /* Markers before any change, since the positions are from the parse */
-    EditorMarker *functionStart = newDefinitionScopeStart(bounds, moveComments);
+    EditorMarker *blockStart = newDefinitionScopeStart(bounds, moveComments);
     EditorMarker *definitionStart = newDefinitionScopeStart(bounds, false);
-    EditorMarker *functionEnd = newDefinitionScopeEnd(bounds);
+    EditorMarker *blockEnd = newDefinitionScopeEnd(bounds);
 
-    int lines = countLinesBetweenEditorMarkers(functionStart, functionEnd);
+    int lines = countLinesBetweenEditorMarkers(blockStart, blockEnd);
 
     moveHelpersAlong(&uses, target, moveComments);
 
-    moveStaticFunctionAndMakeItExtern(functionStart, definitionStart, point, functionEnd, target);
+    moveStaticFunctionAndMakeItExtern(blockStart, definitionStart, point, blockEnd, target);
 
     // and generate output
     applyWholeRefactoringFromUndo();
