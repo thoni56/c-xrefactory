@@ -185,7 +185,7 @@ Ensure(Server, search_does_not_strip_its_request_file) {
     cgreen_mocks_are(loose_mocks);
     always_expect(getFileItemWithFileNumber, will_return(&fileItem));
     expectAProjectToBeFound();
-    never_expect(collectRequestCU);
+    never_expect(collectRequestCUForStripping);
 
     ArgumentsVector args = {.argc = 0, .argv = NULL};
     callServer(args, args);
@@ -199,7 +199,7 @@ Ensure(Server, push_collects_its_request_file_for_stripping) {
     cgreen_mocks_are(loose_mocks);
     always_expect(getFileItemWithFileNumber, will_return(&fileItem));
     expectAProjectToBeFound();
-    expect(collectRequestCU, when(requestFileNumber, is_equal_to(42)));
+    expect(collectRequestCUForStripping, when(requestFileNumber, is_equal_to(42)));
 
     ArgumentsVector args = {.argc = 0, .argv = NULL};
     callServer(args, args);

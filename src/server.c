@@ -363,7 +363,7 @@ void callServer(ArgumentsVector baseArgs, ArgumentsVector requestArgs) {
 
     if (hasInputFile && requiresProcessingInputFile(options.serverOperation)
         && operationParsesRequestFile(options.serverOperation))
-        collectRequestCU(buildList, inputs, requestFileNumber);
+        collectRequestCUForStripping(buildList, inputs, requestFileNumber);
 
     if (hasInputFile && !requiresProcessingInputFile(options.serverOperation)
         && !answeredWithoutReferences(options.serverOperation))

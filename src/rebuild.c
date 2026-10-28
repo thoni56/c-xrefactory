@@ -80,7 +80,7 @@ static bool everyIncluderIsBuilt(int includers[], int includerCount, bool rebuil
 }
 
 /* The request is parsed by the operation itself, not here */
-void collectRequestCU(BuildList *list, Inputs *inputs, int requestFileNumber) {
+void collectRequestCUForStripping(BuildList *list, Inputs *inputs, int requestFileNumber) {
     if (isCompilationUnit(getFileItemWithFileNumber(requestFileNumber)->name)
         && knowledgeIsOutOfDate(inputs, requestFileNumber)) {
         list->built[requestFileNumber] = true;

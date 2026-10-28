@@ -36,7 +36,7 @@ void buildKnowledgeOfAll(BuildList *list, ArgumentsVector baseArgs_) {
     mock(list, baseArgs);
 }
 
-void collectRequestCU(BuildList *list, Inputs *inputs, int requestFileNumber) {
+void collectRequestCUForStripping(BuildList *list, Inputs *inputs, int requestFileNumber) {
     mock(list, inputs, requestFileNumber);
 }
 
