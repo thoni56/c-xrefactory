@@ -21,7 +21,7 @@ extern ProjectConfig *getProjectConfig(void);
 
 extern void initializeCoreSubsystems(void);
 extern void totalTaskEntryInitialisations(void);
-extern void mainTaskEntryInitialisations(ArgumentsVector args);
+extern void mainTaskEntryInitialisations(ArgumentsVector args, StringList **operands);
 
 extern bool initializeProjectContext(char *fileName, ArgumentsVector baseArgs, ArgumentsVector requestArgs);
 extern bool initializeFileProcessing(ArgumentsVector args, ArgumentsVector nargs);

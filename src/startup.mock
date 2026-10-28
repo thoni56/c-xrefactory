@@ -6,8 +6,8 @@ void totalTaskEntryInitialisations(void) {
   mock();
 }
 
-void mainTaskEntryInitialisations(ArgumentsVector args) {
-  mock(args.argc, args.argv);
+void mainTaskEntryInitialisations(ArgumentsVector args, StringList **operands) {
+  mock(args.argc, args.argv, operands);
 }
 
 bool initializeProjectContext(char *fileName, ArgumentsVector baseArgs, ArgumentsVector requestArgs) {

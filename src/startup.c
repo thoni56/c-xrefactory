@@ -698,7 +698,8 @@ static void clearFileItem(FileItem *fileItem) {
     fileItem->needsBrowsingStackRefresh = false;
 }
 
-void mainTaskEntryInitialisations(ArgumentsVector args) {
+/* The operands are handed back for main() to refuse */
+void mainTaskEntryInitialisations(ArgumentsVector args, StringList **operands) {
     ENTER();
 
     initializeCoreSubsystems();
@@ -714,9 +715,7 @@ void mainTaskEntryInitialisations(ArgumentsVector args) {
     previousProjectConfigurationFile[0] = 0;
     previousProjectConfigurationSection[0] = 0;
 
-    /* YES only so that a bare word is told from an option's value; main()
-     * refuses any that land in options.inputFiles */
-    processOptions(args, NULL, COLLECT_ARGUMENTS_YES);
+    processOptions(args, operands, COLLECT_ARGUMENTS_NO);
 
     LEAVE();
 }
