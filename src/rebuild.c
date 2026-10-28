@@ -454,11 +454,6 @@ void buildKnowledgeOfAll(BuildList *list, ArgumentsVector baseArgs) {
     if (options.cxrefProtocol)
         setupProgress(list);
 
-    /* Clear cursorOffset so the lexer doesn't set positionOfSelectedReference
-     * during the reparse — that would trigger on-line action handling (browsing stack
-     * assertions) before the operation has set things up. */
-    int savedCursorOffset = options.cursorOffset;
-    options.cursorOffset = NO_CURSOR_OFFSET;
     for (int i = 0; i < list->count; i++) {
         buildKnowledgeOfCU(list->fileNumbers[i], baseArgs);
         getFileItemWithFileNumber(list->fileNumbers[i])->needsBrowsingStackRefresh = true;
@@ -468,5 +463,4 @@ void buildKnowledgeOfAll(BuildList *list, ArgumentsVector baseArgs) {
         if ((i + 1) % 100 == 0)
             saveReferences();
     }
-    options.cursorOffset = savedCursorOffset;
 }
