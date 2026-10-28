@@ -348,10 +348,10 @@ static int findIncludeInsertionPoint(EditorBuffer *buffer) {
 static void moveStaticFunctionAndMakeItExtern(EditorMarker *blockStart, EditorMarker *definitionStart,
                                               EditorMarker *point, EditorMarker *blockEnd,
                                               EditorMarker *target) {
-    int functionBlockSize = blockEnd->offset - blockStart->offset;
+    int blockSize = blockEnd->offset - blockStart->offset;
     EditorBuffer *sourceBuffer = blockStart->buffer;
     if (target->buffer == blockStart->buffer && target->offset > blockStart->offset &&
-        target->offset < blockStart->offset + functionBlockSize) {
+        target->offset < blockStart->offset + blockSize) {
         errorMessage(ERR_ST, "You can't move something into itself.");
         return;
     }
@@ -361,7 +361,7 @@ static void moveStaticFunctionAndMakeItExtern(EditorMarker *blockStart, EditorMa
     bool movingBetweenFiles = (blockStart->buffer != target->buffer);
 
     if (movingBetweenFiles) {
-        functionBlockSize = removeStaticKeywordIfPresent(definitionStart, point, functionBlockSize);
+        blockSize = removeStaticKeywordIfPresent(definitionStart, point, blockSize);
     }
 
     /* Extract function signature for extern declaration (before moving) */
@@ -372,7 +372,7 @@ static void moveStaticFunctionAndMakeItExtern(EditorMarker *blockStart, EditorMa
     }
 
     /* Now move the (possibly modified) function block */
-    moveBlockInEditorBuffer(blockStart, target, functionBlockSize, &editorUndo);
+    moveBlockInEditorBuffer(blockStart, target, blockSize, &editorUndo);
 
     /* After moving the function, check if we need to add an extern declaration to the header */
     char *headerFileName = NULL;
