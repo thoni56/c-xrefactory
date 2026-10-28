@@ -530,7 +530,9 @@ are noted in `cu-inputs`, `out-of-date`, `time-budget` and `sweep-cost`.
 - (#36) <a id="out-of-date"></a>**The config as an input of `knowledgeIsOutOfDate()`** — it
     replaces `markAllCompilationUnitsStale()`, and the zero sentinel goes. The config is the
     `.c-xrefrc` and its local fragment (ADR-0034), and its change time is the later of the
-    two.
+    two. Until then a `.c-xrefrc` changed while no server runs is probably not seen: its
+    mtime is recorded when it is read at startup, so the snapshot's knowledge stays current.
+    Found by reading the code, not tested (WSL, session `d25255b8`, 2026-10-28).
     Left until real use shows the cost (see `sweep-cost`): `MAX_INCLUDE_CLOSURE` (1000)
     has no measured reason, and evaluating change first, i.e. `stat` each known file once
     and walk the reverse include graph to the CUs whose knowledge is older, costs in
