@@ -231,6 +231,12 @@ every push, `After` dashed and `Goes with` not at all, linked at the end of this
     that never happens. Ghosts from before that are not seen as left behind, and stay.
     Waits for: request-target
     Goes with: sweep
+- (#93) <a id="settle-left-behind"></a>**Every request settles each header left behind** —
+    puts all includers of a header marked `isLeftBehind` on the build list, not only those
+    the request reaches (siblings, the request CU, a name operation's
+    `collectOutOfDateCUs()`). Until then a request elsewhere still reads the header's old
+    references. Above the cap it meets #11.
+    Goes with: behind-the-back
 - (#13) <a id="token-pasting-trio"></a>**Token pasting trio**, in this order — the later two assume the first
     (`doc/docs/18-known-bugs.adoc`): `tests/test_token_pasting_numbers` (changes the
     passing `test_collate_const_suffix_pasting`) → `tests/test_token_pasting_float` →
@@ -547,9 +553,6 @@ are noted in `cu-inputs`, `out-of-date`, `time-budget` and `sweep-cost`.
     e.g. under an `#ifdef` they set, is missing until they are built. Strip only when
     `everyIncluderIsRebuilt()`, as the sibling collection does (ADR-0032). It still asks
     `fileNumberIsStale()`, which has no coarse-clock gap, and records the header as parsed. Not needed once `sweep` is in.
-- (#56) <a id="closed-buffer-strip"></a>**A header whose buffer the client stops sending is stripped, and none of its includers built** —
-    `tests/test_reverted_held_header_keeps_its_references/.suspended`.
-    After: header-not-half
 - (#40) <a id="time-budget"></a>**A time budget instead of the cap** — the cap (`MAX_CUS_TO_REPARSE`,
     128 today) becomes a time budget, and above it the question
     with an estimate. Browsing remembers a "no" for the session, an operation that edits

@@ -540,12 +540,10 @@ void closeEditorBuffersNoLongerHeld(ArgumentsVector baseArgs) {
             int fileNumber = l->buffer->fileNumber;
             EditorBuffer *buffer = deregisterEditorBuffer(l->buffer->fileName);
             freeEditorBuffer(buffer);
-            /* Refresh the file's references from disk content, since
-             * the editor's view is no longer authoritative. For a CU
-             * this re-parses the file; for a header it strips refs and
-             * relies on a CU includer's reparse to re-emit them. A file
-             * that is not on disk is gone, e.g. one a refactoring created
-             * and the client undid. */
+            /* The editor's view is no longer authoritative. A CU is
+             * parsed again from disk, a header is left behind until its
+             * includers are built again. A file that is not on disk is
+             * gone, e.g. one a refactoring created and the client undid. */
             if (fileExists(getFileItemWithFileNumber(fileNumber)->name))
                 reparseFile(fileNumber, baseArgs);
             else

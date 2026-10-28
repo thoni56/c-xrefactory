@@ -80,9 +80,9 @@ A held buffer wins over a changed disk file::
   While the editor sends a file as a preload, the server works on that buffer and
   does not look at the disk. A change on disk behind an edited buffer is a conflict
   between the editor and the user, and Emacs raises it itself. If the user keeps the
-  buffer, it stays the truth. If they revert, the editor stops sending it, the server
-  lets go of the buffer and reads the disk version, which is newer than the last parse
-  and so gets reparsed.
+  buffer, it stays the truth. If they revert, the editor stops sending it and the server
+  lets go of the buffer. A CU is parsed again from disk. A header is left behind, so its
+  includers are built again.
 
 Behind-the-back changes are not detected (known limitation)::
   A file the server has buffered but the editor does not have open — a header
@@ -339,8 +339,10 @@ Knowledge time::
 
 Left behind::
   A header that some of its includers have been built into since it changed, but not all.
-  It holds old references beside the new ones. Its other includers are out of date until
-  all of them are built and it is stripped (ADR-0033).
+  It holds old references beside the new ones.
+  A header whose buffer the editor stops sending is left behind too, since its references
+  came from that buffer.
+  Its includers are out of date until all of them are built and it is stripped (ADR-0033).
 
 Lightweight scan::
   Discovery of project structure by globbing for compilation units and text-scanning

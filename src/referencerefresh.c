@@ -87,15 +87,15 @@ void markAllCompilationUnitsStale(void) {
 }
 
 /* Refresh references for a file. For a compilation unit, parse the
- * file directly. For a header, just strip its refs — the includer
- * CU's reparse (in Pass 1 or Pass 2) will re-emit them in proper CU
- * context. Standalone header parse would lose preprocessor context
- * and produce wrong refs. */
+ * file directly. A header is marked left behind: its references stay
+ * until every includer is built again, which re-emits them in proper
+ * CU context (ADR-0032). Standalone header parse would lose
+ * preprocessor context and produce wrong refs. */
 void reparseFile(int fileNumber, ArgumentsVector baseArgs) {
     FileItem *fileItem = getFileItemWithFileNumber(fileNumber);
     if (isCompilationUnit(fileItem->name)) {
         buildKnowledgeOfCU(fileNumber, baseArgs);
     } else {
-        removeReferenceableItemsForFile(fileNumber);
+        fileItem->isLeftBehind = true;
     }
 }
