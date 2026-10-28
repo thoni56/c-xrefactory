@@ -170,7 +170,8 @@ every push, `After` dashed and `Goes with` not at all, linked at the end of this
      parse. Nothing walks a file argument any more: a request enters its file directly
      (`addRequestFileToFileTable()`), and the walk, with its backquoted commands and
      `dirInputFile()`, is gone, and an `-I` is one directory. Left: two
-     operands in a request are not reported, which #75 makes easy.
+     operands in a request are not reported, which the operands `processOptions()`
+     hands back make easy.
    - `.c-xrefrc` also lists source directories, as its operands
      (`loadProjectSettings()`). Do not assume that list is legacy. What dies with `-p` is the
      *registry*: several `[project]` sections, each covering directories, one selected by
@@ -180,14 +181,6 @@ every push, `After` dashed and `Goes with` not at all, linked at the end of this
      look. Auto-discovery gives you the tree under the config; anything outside it still
      has to be named. Likely home: the config, or the machine-specific sibling, since an
      external source tree is usually a local path.
-- (#75) <a id="operands-returned"></a>**`processOptions` loses its `ProcessFileArguments` parameter** — *no repo home yet.*
-    The operands, POSIX's name for the arguments that are not options or their values,
-    come back through a `StringList **operands` (`NULL`: not wanted), and every caller
-    uses them, so the parameter has no use (WSL, session `d25255b8`, 2026-10-28). Left:
-    Delete Parameter on it, then the enum in `proto.h` goes.
-    A step towards #3's pure `parseCommandLine()` (Mac, session `4839a129`, 2026-10-21).
-    After: startup-command-line
-    Goes with: partition-options
 - (#78) <a id="options-carry-scope"></a>**Each option carries its scope, and `processOptions` refuses one outside it** — *no repo home yet.*
     Every source goes through the same `processOptions()` and every option is accepted
     from all of them. The sources are three contexts: startup (`mainTaskEntryInitialisations()`),
@@ -195,14 +188,12 @@ every push, `After` dashed and `Goes with` not at all, linked at the end of this
     `-optinclude`, which takes the context it appears in) and request (`initServer()`, and
     the bridge in `refactory.c` until #9). These are #3's lifetimes, which `options.h`
     already marks per field as SESSION, PROJECT and REQUEST.
-    `processOptions()` takes the context instead of the `ProcessFileArguments` flag that
-    #75 removes, and an option's entry states where it is allowed, e.g. a `-server` in
+    `processOptions()` takes the context, and an option's entry states where it is allowed, e.g. a `-server` in
     `.c-xrefrc` is reported with its position, as an unterminated quote is. #7 decides the
     startup column. The replays in `loadProjectSettings()` and
     `initializeFileProcessing()` are not a context, they go with #3.
     Test first: an `options_tests.c` case where a request-only option in the project
     context is refused (WSL, session `d25255b8`, 2026-10-25).
-    After: operands-returned
     Goes with: partition-options, startup-command-line
 - (#9) <a id="remove-bridge"></a>**Remove the `parseBufferUsingServer` bridge** — §17.3; 9 refactoring call sites
    re-entering `callServer`. Independent of the rest of this section, but it is the last

@@ -26,11 +26,6 @@ typedef enum resolveDialog {
 } ResolveDialog;
 
 typedef enum {
-    COLLECT_ARGUMENTS_NO,
-    COLLECT_ARGUMENTS_YES
-} ProcessFileArguments;
-
-typedef enum {
     CHECK_NULL_NO,
     CHECK_NULL_YES
 } CheckNull;

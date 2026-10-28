@@ -843,7 +843,7 @@ static int handleIncludeOption(int i, ArgumentsVector args) {
     ensureNextArgumentIsAFileName(&i, args);
 
     includedArgs = readOptionsFromFile(args.argv[i]);
-    processOptions(includedArgs, NULL, COLLECT_ARGUMENTS_NO);
+    processOptions(includedArgs, NULL);
 
     return i;
 }
@@ -1454,7 +1454,7 @@ static bool processDoubleDashOption(int *argi, ArgumentsVector args) {
     return true;
 }
 
-void processOptions(ArgumentsVector args, StringList **operands, ProcessFileArguments doProcessFiles) {
+void processOptions(ArgumentsVector args, StringList **operands) {
     int i;
     bool matched;
 

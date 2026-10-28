@@ -366,7 +366,7 @@ static void getAndProcessProjectConfig(char *configFileName, StringList **operan
     ArgumentsVector args;
 
     args = readOptionsFromFile(configFileName);
-    processOptions(args, operands, COLLECT_ARGUMENTS_NO); /* .c-xrefrc opts*/
+    processOptions(args, operands); /* .c-xrefrc opts*/
 }
 
 /* Memory checkpoint structure */
@@ -430,13 +430,13 @@ static void loadProjectSettings(ArgumentsVector baseArgs, ArgumentsVector reques
                      * save/restore them (see startup loop in server.c). */
 
     /* Process options in specific order: command line, request args, .c-xrefrc */
-    processOptions(baseArgs, NULL, COLLECT_ARGUMENTS_NO);   /* command line opts */
+    processOptions(baseArgs, NULL);   /* command line opts */
     /* piped options (no include or define options)
        must be before .xrefrc file options, but, the s_cachedOptions
        must be set after .c-xrefrc file, but s_cachedOptions can't contain
        piped options, !!! berk.
     */
-    processOptions(requestArgs, NULL, COLLECT_ARGUMENTS_NO);
+    processOptions(requestArgs, NULL);
     reInitCwd(projectConfigFileName, projectSectionName);
 
     tmpIncludeDirs = options.includeDirs;
@@ -481,7 +481,7 @@ static void loadProjectSettings(ArgumentsVector baseArgs, ArgumentsVector reques
 
     LIST_APPEND(StringList, options.includeDirs, tmpIncludeDirs);
 
-    processOptions(requestArgs, NULL, COLLECT_ARGUMENTS_NO);
+    processOptions(requestArgs, NULL);
 
     /* Apply convention-based db path for auto-detected projects (after all options processed) */
     applyConventionBasedDatabasePath();
@@ -633,7 +633,7 @@ bool initializeFileProcessing(ArgumentsVector baseArgs, ArgumentsVector requestA
         restoreCheckpoint(&projectCheckpoint); /* Skip phases 2-3, restore cached compiler discovery */
 
         deepCopyOptionsFromTo(&savedOptions, &options);
-        processOptions(requestArgs, NULL, COLLECT_ARGUMENTS_NO); /* no include or define options */
+        processOptions(requestArgs, NULL); /* no include or define options */
         applyCurrentPassOptions();
         inputOpened = computeAndOpenInputFile(inputFileName); /* Phase 5 only */
     }
@@ -715,7 +715,7 @@ void mainTaskEntryInitialisations(ArgumentsVector args, StringList **operands) {
     previousProjectConfigurationFile[0] = 0;
     previousProjectConfigurationSection[0] = 0;
 
-    processOptions(args, operands, COLLECT_ARGUMENTS_NO);
+    processOptions(args, operands);
 
     LEAVE();
 }

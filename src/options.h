@@ -143,7 +143,7 @@ extern StringList *resolvePrunePaths(void);
 extern void recoverMemoryFromIncludeList(void);
 
 extern int addRequestFileToFileTable(StringList *operands);
-extern void processOptions(ArgumentsVector args, StringList **operands, ProcessFileArguments infilesFlag);
+extern void processOptions(ArgumentsVector args, StringList **operands);
 
 /* Handling of allocated string and string list options that need to be "shifted" on deep copy */
 extern char *allocateStringForOption(char **pointerToOption, char *string);

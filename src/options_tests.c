@@ -162,7 +162,7 @@ Ensure(Options, can_parse_about_command_line_option) {
     char *argv[] = {"", "-about"};
     ArgumentsVector args = {2, argv};
 
-    processOptions(args, NULL, COLLECT_ARGUMENTS_NO);
+    processOptions(args, NULL);
     assert_that(options.serverOperation, is_equal_to(OP_ABOUT));
 }
 
@@ -170,7 +170,7 @@ Ensure(Options, can_parse_version_command_line_option) {
     char *argv[] = {"", "-version"};
     ArgumentsVector args = {2, argv};
 
-    processOptions(args, NULL, COLLECT_ARGUMENTS_NO);
+    processOptions(args, NULL);
     assert_that(options.serverOperation, is_equal_to(OP_ABOUT));
 }
 
@@ -178,7 +178,7 @@ Ensure(Options, can_parse_double_dash_version_command_line_option) {
     char *argv[] = {"", "--version"};
     ArgumentsVector args = {2, argv};
 
-    processOptions(args, NULL, COLLECT_ARGUMENTS_NO);
+    processOptions(args, NULL);
     assert_that(options.serverOperation, is_equal_to(OP_ABOUT));
 }
 
@@ -193,13 +193,13 @@ Ensure(Options, notes_xrefrc_option_with_equals_without_reporting_it) {
     ArgumentsVector args = {2, argv};
 
     never_expect(errorMessage);
-    processOptions(args, NULL, COLLECT_ARGUMENTS_NO);
+    processOptions(args, NULL);
 }
 
 Ensure(Options, reports_a_noted_xrefrc_option_as_no_longer_supported) {
     char *argv[] = {"", "-xrefrc=abc"};
     ArgumentsVector args = {2, argv};
-    processOptions(args, NULL, COLLECT_ARGUMENTS_NO);
+    processOptions(args, NULL);
 
     expect(errorMessage);
     reportUnsupportedOptions();
@@ -214,7 +214,7 @@ Ensure(Options, notes_xrefrc_option_with_filename_separate_without_reporting_it_
     StringList *operands = NULL;
 
     never_expect(errorMessage);
-    processOptions(args, &operands, COLLECT_ARGUMENTS_YES);
+    processOptions(args, &operands);
     assert_that(operands, is_null);
 }
 
@@ -603,7 +603,7 @@ Ensure(Options, can_parse_parameter_name_option) {
     char* arguments[] = {"", "-rfct-parameter-name=int arg"};
     ArgumentsVector args = {2, arguments};
 
-    processOptions(args, NULL, false);
+    processOptions(args, NULL);
     assert_that(options.refactorParameterName, is_equal_to_string("int arg"));
 }
 
@@ -611,7 +611,7 @@ Ensure(Options, can_parse_parameter_value_option) {
     char* arguments[] = {"", "-rfct-parameter-value=42"};
     ArgumentsVector args = {2, arguments};
 
-    processOptions(args, NULL, false);
+    processOptions(args, NULL);
     assert_that(options.refactorParameterValue, is_equal_to_string("42"));
 }
 
@@ -619,7 +619,7 @@ Ensure(Options, can_parse_target_line_option) {
     char* arguments[] = {"", "-rfct-target-line=99"};
     ArgumentsVector args = {2, arguments};
 
-    processOptions(args, NULL, false);
+    processOptions(args, NULL);
     assert_that(options.refactorTargetLine, is_equal_to_string("99"));
 }
 
@@ -632,7 +632,7 @@ Ensure(Options, hands_back_operands_but_not_option_values) {
     ArgumentsVector args = {4, arguments};
     StringList *operands = NULL;
 
-    processOptions(args, &operands, COLLECT_ARGUMENTS_YES);
+    processOptions(args, &operands);
 
     /* -prune's value is classified as a prune name, not a path */
     assert_that(options.pruneNames, is_not_null);
@@ -887,7 +887,7 @@ Ensure(Options, enters_the_file_the_request_named_in_the_file_table) {
     ArgumentsVector args = {2, arguments};
 
     StringList *operands = NULL;
-    processOptions(args, &operands, COLLECT_ARGUMENTS_YES);
+    processOptions(args, &operands);
 
     expect(addFileNameToFileTable, when(fileName, is_equal_to_string("new.c")),
            will_return(42));
