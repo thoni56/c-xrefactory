@@ -12,6 +12,7 @@ typedef struct buildList BuildList;
 
 extern BuildList *newBuildList(int capacity);
 extern void freeBuildList(BuildList *list);
+extern bool addToBuildList(BuildList *list, int fileNumber);
 
 extern int collectCUsIncluding(int fileNumber, int cuFileNumbers[], int cuCount, int maxCUs);
 

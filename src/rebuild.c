@@ -40,7 +40,7 @@ void freeBuildList(BuildList *list) {
     free(list);
 }
 
-static bool addToBuildList(BuildList *list, int fileNumber) {
+bool addToBuildList(BuildList *list, int fileNumber) {
     if (list->built[fileNumber])
         return true;
     if (list->count < list->capacity) {

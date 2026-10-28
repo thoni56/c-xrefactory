@@ -307,10 +307,12 @@ void callServer(ArgumentsVector baseArgs, ArgumentsVector requestArgs) {
 
     loadAllOpenedEditorBuffers();
 
+    BuildList *buildList = newBuildList(MAX_CUS_TO_REPARSE);
+
     /* Close preloaded buffers that the client no longer sends — the user has saved
      * and/or closed the file in the editor. Without this, the server would keep parsing
      * from preloaded content the client has dropped. */
-    closeEditorBuffersNoLongerHeld(baseArgs);
+    closeEditorBuffersNoLongerHeld(buildList);
 
     /* Held files are brought up to date only in a project that was open already */
     bool projectWasOpen = projectContextInitialized;
@@ -355,8 +357,6 @@ void callServer(ArgumentsVector baseArgs, ArgumentsVector requestArgs) {
 
     Inputs *inputs = collectInputs();
 
-    BuildList *buildList = newBuildList(MAX_CUS_TO_REPARSE);
-
     /* Stale preloaded files are built before dispatching the operation, so all
      * operations see fresh in-memory references */
     if (projectWasOpen)
@@ -379,7 +379,6 @@ void callServer(ArgumentsVector baseArgs, ArgumentsVector requestArgs) {
 
     markHeadersLeftBehind(buildList, inputs);
     buildKnowledgeOfAll(buildList, baseArgs);
-    freeBuildList(buildList);
 
     /* Completeness for name-based operations: if CUs are out of date, ask user
      * before proceeding */
@@ -406,6 +405,7 @@ void callServer(ArgumentsVector baseArgs, ArgumentsVector requestArgs) {
     freeInputs(inputs);
 
 done:
+    freeBuildList(buildList);
     LEAVE();
 }
 

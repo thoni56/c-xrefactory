@@ -15,6 +15,10 @@ void freeBuildList(BuildList *list) {
     mock(list);
 }
 
+bool addToBuildList(BuildList *list, int fileNumber) {
+    return (bool)mock(list, fileNumber);
+}
+
 void collectOutOfDateHeldFiles(BuildList *list, Inputs *inputs) {
     mock(list, inputs);
 }

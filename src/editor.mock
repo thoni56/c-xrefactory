@@ -63,9 +63,8 @@ void clearHeldThisRequestFlags(void) {
   mock();
 }
 
-void closeEditorBuffersNoLongerHeld(ArgumentsVector baseArgs) {
-  (void)baseArgs;
-  mock();
+void closeEditorBuffersNoLongerHeld(BuildList *list) {
+  mock(list);
 }
 
 // Hopefully temporary while extracting EditorBuffer module

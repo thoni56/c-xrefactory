@@ -13,7 +13,6 @@
 #include "log.h"
 #include "misc.h"
 #include "proto.h"
-#include "referencerefresh.h"
 #include "timestamp.h"
 #include "undo.h"
 #include "usage.h"
@@ -532,7 +531,7 @@ void clearHeldThisRequestFlags(void) {
     freeEditorBufferListButNotBuffers(allEditorBuffers);
 }
 
-void closeEditorBuffersNoLongerHeld(ArgumentsVector baseArgs) {
+void closeEditorBuffersNoLongerHeld(BuildList *list) {
     EditorBufferList *allEditorBuffers = computeListOfAllEditorBuffers();
     for (EditorBufferList *l = allEditorBuffers; l != NULL; l = l->next) {
         if (holdsAuthoritativeContent(l->buffer) && !l->buffer->heldThisRequest) {
@@ -542,14 +541,14 @@ void closeEditorBuffersNoLongerHeld(ArgumentsVector baseArgs) {
             freeEditorBuffer(buffer);
 
             /* The editor's view is no longer authoritative. A CU is
-             * parsed again from disk, a header is left behind until its
+             * built again from disk, a header is left behind until its
              * includers are built again, since on its own it has no
              * preprocessor context. A file that is not on disk is
              * gone, e.g. one a refactoring created and the client undid. */
             FileItem *fileItem = getFileItemWithFileNumber(fileNumber);
             if (fileExists(fileItem->name)) {
                 if (isCompilationUnit(fileItem->name)) {
-                    buildKnowledgeOfCU(fileNumber, baseArgs);
+                    addToBuildList(list, fileNumber);
                 } else {
                     fileItem->isLeftBehind = true;
                 }

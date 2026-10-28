@@ -9,6 +9,7 @@
 #include "editorbuffer.h"
 #include "editormarker.h"
 #include "proto.h"
+#include "rebuild.h"
 #include "reference.h"
 #include "undo.h"
 
@@ -27,7 +28,7 @@ extern void loadAllOpenedEditorBuffers(void);
 extern void closeEditorBufferIfCloseable(char *name);
 extern void closeAllEditorBuffersIfClosable(void);
 extern void clearHeldThisRequestFlags(void);
-extern void closeEditorBuffersNoLongerHeld(ArgumentsVector baseArgs);
+extern void closeEditorBuffersNoLongerHeld(BuildList *list);
 
 extern void freeTextSpace(char *space, int index);
 extern void loadFileIntoEditorBuffer(EditorBuffer *buffer, FileTimestamp modificationTime, size_t fileSize);

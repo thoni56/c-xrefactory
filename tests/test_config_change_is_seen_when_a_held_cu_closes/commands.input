@@ -1,0 +1,9 @@
+CXREF -server
+-getproject CURDIR/a.c
+<sync>
+-browse-push -cursor=36 -preload CURDIR/a.c CURDIR/a.c.preload CURDIR/a.c
+<sync>
+!touch CURDIR/.c-xrefrc
+-browse-push -cursor=36 CURDIR/b.c
+<sync>
+<exit>
