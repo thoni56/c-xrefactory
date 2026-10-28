@@ -71,7 +71,6 @@ typedef struct options {
     char *compiler;                             /* PROJECT */
     char *definitionStrings;                    /* PROJECT */
     StringList *pruneNames;                     /* PROJECT */
-    StringList *inputFiles;                     /* PROJECT */
     StringList *includeDirs;                    /* PROJECT */
     char *cxFileLocation;                       /* PROJECT */
     char *cFilesSuffixes;                       /* PROJECT */

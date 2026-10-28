@@ -171,8 +171,8 @@ every push, `After` dashed and `Goes with` not at all, linked at the end of this
      (`addRequestFileToFileTable()`), and the walk, with its backquoted commands and
      `dirInputFile()`, is gone, and an `-I` is one directory. Left: two
      operands in a request are not reported, which #75 makes easy.
-   - `.c-xrefrc` is also read with `YES` (`startup.c:446`), for the source directories
-     listed in it. Do not assume that list is legacy. What dies with `-p` is the
+   - `.c-xrefrc` also lists source directories, as its operands
+     (`loadProjectSettings()`). Do not assume that list is legacy. What dies with `-p` is the
      *registry*: several `[project]` sections, each covering directories, one selected by
      name. Saying "these directories are also part of my project" is a different need and
      it survives — a project using a library you have the source for, which you want to
@@ -180,27 +180,14 @@ every push, `After` dashed and `Goes with` not at all, linked at the end of this
      look. Auto-discovery gives you the tree under the config; anything outside it still
      has to be named. Likely home: the config, or the machine-specific sibling, since an
      external source tree is usually a local path.
-- (#75) <a id="operands-returned"></a>**Operands are handed back by `processOptions`, not kept in `options.inputFiles`** — *no repo home yet.*
-    The operands, POSIX's name for the arguments that are not options or their values:
-    startup refuses them, the config read makes them `projectConfig.sourceDirs`, a
-    request takes one as its file; nothing else reads them since the startup walk went.
-    `processOptions` hands them back through a `StringList **operands` (`NULL`: not
-    wanted), each caller with a local list, built with `newStringList()` and freed, not
-    with `addToStringListOption()`, which records the list's address for moving
-    `options`. `mainTaskEntryInitialisations()` gets the same parameter for `main()` to
-    check, and `addRequestFileToFileTable()` takes the list instead of a global. Then
-    `options.inputFiles` goes, with the clears at `startup.c` (around the second
-    `getAndProcessProjectConfig()`, whose comment about `server.c` adding "." is stale)
-    and `refactory.c` (`parseBufferUsingServer`), the `requestFileArgumentName` global
-    and `clearRequestFileArgument()` in `options.c`, and the `ProcessFileArguments` enum.
-    Today the list grows within a request, is reset from `savedOptions` at the next, and
-    the `-getproject` lock (`cxref.c`) copies the request's file into `savedOptions`;
-    harmless only because no one reads it. In progress: `processOptions` fills
-    `operands` (`hands_back_operands_but_not_option_values`) and, until the consumers
-    have moved, `options.inputFiles` too. The config read and `main()` collect into a
-    local list (WSL, session `d25255b8`, 2026-10-28), so nothing reads
-    `options.inputFiles`. Left, in order: remove it, then the server
-    (`addRequestFileToFileTable()` and its tests); then the enum has no users.
+- (#75) <a id="operands-returned"></a>**A request takes its file from the operands `processOptions` hands back, not from a global** — *no repo home yet.*
+    The operands, POSIX's name for the arguments that are not options or their values,
+    come back through a `StringList **operands` (`NULL`: not wanted). The config read and
+    `main()` already collect into a local list, and `options.inputFiles` is gone (WSL,
+    session `d25255b8`, 2026-10-28). Left: `initServer()` collects into a list, and
+    `addRequestFileToFileTable()` takes it instead of the `requestFileArgumentName`
+    global. Then that global, `clearRequestFileArgument()` and the `ProcessFileArguments`
+    enum go.
     A step towards #3's pure `parseCommandLine()` (Mac, session `4839a129`, 2026-10-21).
     After: startup-command-line
     Goes with: partition-options

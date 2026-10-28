@@ -103,11 +103,6 @@ void parseBufferUsingServer(char *project, EditorMarker *point, EditorMarker *ma
 
     currentPass = ANY_PASS;
 
-    /* Clear accumulated input files from previous parses to avoid global state pollution,
-     * since parseBufferUsingServer() can be called several times (e.g., target validation
-     * followed by function boundaries check). */
-    options.inputFiles = NULL;
-
     setArguments(argumentVector, project, point, mark);
     argumentCount = argument_count(argumentVector);
     if (pushOption != NULL) {

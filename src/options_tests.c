@@ -211,9 +211,11 @@ Ensure(Options, notes_xrefrc_option_with_filename_separate_without_reporting_it_
     char *argv[] = {"", "-xrefrc", "abc"};
     ArgumentsVector args = {3, argv};
 
+    StringList *operands = NULL;
+
     never_expect(errorMessage);
-    processOptions(args, NULL, COLLECT_ARGUMENTS_YES);
-    assert_that(options.inputFiles, is_null);
+    processOptions(args, &operands, COLLECT_ARGUMENTS_YES);
+    assert_that(operands, is_null);
 }
 
 Ensure(Options, can_readOptionsFromFileIntoArgs) {

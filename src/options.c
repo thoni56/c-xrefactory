@@ -51,7 +51,6 @@ Options presetOptions = {
     .compiler = "gcc",
     .definitionStrings = NULL,
     .pruneNames = NULL,
-    .inputFiles = NULL,
     .includeDirs = NULL,
     .cxFileLocation = NULL,
 #if defined (__WIN32__)
@@ -1547,7 +1546,6 @@ void processOptions(ArgumentsVector args, StringList **operands, ProcessFileArgu
                 *last = newStringList(args.argv[i], NULL);
             }
             if (doProcessFiles == COLLECT_ARGUMENTS_YES) {
-                addToStringListOption(&options.inputFiles, args.argv[i]);
                 requestFileArgumentName = args.argv[i];
             }
         }
