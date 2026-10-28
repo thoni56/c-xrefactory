@@ -237,6 +237,13 @@ every push, `After` dashed and `Goes with` not at all, linked at the end of this
     `collectOutOfDateCUs()`). Until then a request elsewhere still reads the header's old
     references. Above the cap it meets #11.
     Goes with: behind-the-back
+- (#94) <a id="inserted-text-loses-non-ascii"></a>**Investigate: which refactorings insert text copied from the server's buffer** —
+    *no repo home yet.* A loaded buffer has each multibyte character replaced by a space
+    (`convertUtf8()`, `src/encoding.c`), so that byte offsets are character offsets. Text the
+    server copies from its buffer into an insertion loses its non-ASCII characters. Move
+    Function's `extern` declaration is one, a block it moves is not (the client moves that).
+    Extract Function is not checked. Seen in a Move Function's comment (WSL, session
+    `d25255b8`, 2026-10-28).
 - (#13) <a id="token-pasting-trio"></a>**Token pasting trio**, in this order — the later two assume the first
     (`doc/docs/18-known-bugs.adoc`): `tests/test_token_pasting_numbers` (changes the
     passing `test_collate_const_suffix_pasting`) → `tests/test_token_pasting_float` →
