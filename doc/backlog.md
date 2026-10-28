@@ -197,11 +197,10 @@ every push, `After` dashed and `Goes with` not at all, linked at the end of this
     the `-getproject` lock (`cxref.c`) copies the request's file into `savedOptions`;
     harmless only because no one reads it. In progress: `processOptions` fills
     `operands` (`hands_back_operands_but_not_option_values`) and, until the consumers
-    have moved, `options.inputFiles` too. Left, in order: the config read
-    (`getAndProcessProjectConfig()` collects into a local list), `main()` (through
+    have moved, `options.inputFiles` too. The config read collects into a local list
+    (WSL, session `d25255b8`, 2026-10-28). Left, in order: `main()` (through
     `mainTaskEntryInitialisations()`), the server (`addRequestFileToFileTable()` and
-    its tests); then `options.inputFiles` and the enum have no users (Mac, session
-    `4839a129`, 2026-10-28).
+    its tests); then `options.inputFiles` and the enum have no users.
     A step towards #3's pure `parseCommandLine()` (Mac, session `4839a129`, 2026-10-21).
     After: startup-command-line
     Goes with: partition-options

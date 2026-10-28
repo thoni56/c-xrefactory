@@ -358,17 +358,15 @@ static void discoverStandardDefines(void) {
     LEAVE();
  }
 
-static void getAndProcessProjectConfig(char *configFileName) {
+/* The operands of the config are its source directories */
+static void getAndProcessProjectConfig(char *configFileName, StringList **operands) {
     if (*configFileName == 0)
         return;
 
     ArgumentsVector args;
 
     args = readOptionsFromFile(configFileName);
-    /* YES so bare (non-option) config arguments are collected into
-     * options.inputFiles with correct option/value classification. Both callers
-     * want this; the caller clears inputFiles between passes to collect once. */
-    processOptions(args, NULL, COLLECT_ARGUMENTS_YES); /* .c-xrefrc opts*/
+    processOptions(args, operands, COLLECT_ARGUMENTS_NO); /* .c-xrefrc opts*/
 }
 
 /* Memory checkpoint structure */
@@ -446,7 +444,7 @@ static void loadProjectSettings(ArgumentsVector baseArgs, ArgumentsVector reques
 
     int savedPass = currentPass;
     currentPass = NO_PASS;
-    getAndProcessProjectConfig(projectConfigFileName);
+    getAndProcessProjectConfig(projectConfigFileName, NULL);
 
     /* === PHASE 3: Compiler Interrogation === */
     /* Run compiler to discover system includes and predefined macros (expensive!) */
@@ -458,33 +456,25 @@ static void loadProjectSettings(ArgumentsVector baseArgs, ArgumentsVector reques
     /* Save memory state so subsequent files in same project can skip phases 2-3 */
     saveCheckpoint(&projectCheckpoint);
 
-    /* Then for the particular pass. Discard the NO_PASS pass's file-argument
-     * collection so only this pass's bare config paths land in inputFiles. */
-    options.inputFiles = NULL;
+    /* Then for the particular pass */
+    StringList *configOperands = NULL;
     /* The first read has reported what is wrong with the config. Reading it once is #3's. */
     silenceMessages();
-    getAndProcessProjectConfig(projectConfigFileName);
+    getAndProcessProjectConfig(projectConfigFileName, &configOperands);
     resumeMessages();
     currentPass = savedPass;
 
-    /* Collect source directories from the config into ProjectConfig.
-     * These are the bare path arguments (non-option lines) of the .c-xrefrc
-     * section, which getAndProcessProjectConfig routed into options.inputFiles —
-     * with correct option/value classification (e.g. -prune's value is a prune
-     * name, not a path). Normalize each to an absolute path relative to the
-     * config dir, then clear inputFiles: it has no further use in the
-     * auto-detect server flow, and the legacy path expects it NULL (server.c
-     * adds "." when empty). */
+    /* The source directories, absolute, relative to the config dir */
     freeStringList(projectConfig.sourceDirs);
     projectConfig.sourceDirs = NULL;
 
     char *configDir = directoryName_static(projectConfigFileName);
-    for (StringList *f = options.inputFiles; f != NULL; f = f->next) {
+    for (StringList *f = configOperands; f != NULL; f = f->next) {
         char absolutePath[MAX_FILE_NAME_SIZE];
         strcpy(absolutePath, normalizeFileName_static(f->string, configDir));
         projectConfig.sourceDirs = newStringList(absolutePath, projectConfig.sourceDirs);
     }
-    options.inputFiles = NULL;
+    freeStringList(configOperands);
 
     resetOptionSets(&projectConfig.optionSets);
     readOptionSetsFromFile(projectConfigFileName, &projectConfig.optionSets);
