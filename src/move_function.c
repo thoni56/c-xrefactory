@@ -361,7 +361,7 @@ static void moveStaticFunctionAndMakeItExtern(EditorMarker *startMarker, EditorM
     bool movingBetweenFiles = (startMarker->buffer != target->buffer);
 
     if (movingBetweenFiles) {
-        functionBlockSize = removeStaticKeywordIfPresent(startMarker, point, functionBlockSize);
+        functionBlockSize = removeStaticKeywordIfPresent(definitionStart, point, functionBlockSize);
     }
 
     /* Extract function signature for extern declaration (before moving) */
