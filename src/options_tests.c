@@ -886,17 +886,15 @@ Ensure(Options, enters_the_file_the_request_named_in_the_file_table) {
     char *arguments[] = {"", "new.c"};
     ArgumentsVector args = {2, arguments};
 
-    clearRequestFileArgument();
-    processOptions(args, NULL, COLLECT_ARGUMENTS_YES);
+    StringList *operands = NULL;
+    processOptions(args, &operands, COLLECT_ARGUMENTS_YES);
 
     expect(addFileNameToFileTable, when(fileName, is_equal_to_string("new.c")),
            will_return(42));
 
-    assert_that(addRequestFileToFileTable(), is_equal_to(42));
+    assert_that(addRequestFileToFileTable(operands), is_equal_to(42));
 }
 
 Ensure(Options, enters_no_file_when_the_request_named_none) {
-    clearRequestFileArgument();
-
-    assert_that(addRequestFileToFileTable(), is_equal_to(NO_FILE_NUMBER));
+    assert_that(addRequestFileToFileTable(NULL), is_equal_to(NO_FILE_NUMBER));
 }

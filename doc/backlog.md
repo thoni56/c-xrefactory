@@ -180,14 +180,11 @@ every push, `After` dashed and `Goes with` not at all, linked at the end of this
      look. Auto-discovery gives you the tree under the config; anything outside it still
      has to be named. Likely home: the config, or the machine-specific sibling, since an
      external source tree is usually a local path.
-- (#75) <a id="operands-returned"></a>**A request takes its file from the operands `processOptions` hands back, not from a global** — *no repo home yet.*
+- (#75) <a id="operands-returned"></a>**`processOptions` loses its `ProcessFileArguments` parameter** — *no repo home yet.*
     The operands, POSIX's name for the arguments that are not options or their values,
-    come back through a `StringList **operands` (`NULL`: not wanted). The config read and
-    `main()` already collect into a local list, and `options.inputFiles` is gone (WSL,
-    session `d25255b8`, 2026-10-28). Left: `initServer()` collects into a list, and
-    `addRequestFileToFileTable()` takes it instead of the `requestFileArgumentName`
-    global. Then that global, `clearRequestFileArgument()` and the `ProcessFileArguments`
-    enum go.
+    come back through a `StringList **operands` (`NULL`: not wanted), and every caller
+    uses them, so the parameter has no use (WSL, session `d25255b8`, 2026-10-28). Left:
+    Delete Parameter on it, then the enum in `proto.h` goes.
     A step towards #3's pure `parseCommandLine()` (Mac, session `4839a129`, 2026-10-21).
     After: startup-command-line
     Goes with: partition-options

@@ -418,7 +418,6 @@ char *getOptionVariable(char *name) {
 /* The bare file argument of the command line being processed. Only the request's
  * own arguments are of interest, so the server clears this before processing a
  * request and reads it right after. */
-static char *requestFileArgumentName = NULL;
 
 /* Resolve each -prune entry into an absolute path anchored at the detected
  * project root. The lightweight scan compares discovered directory entries against
@@ -1545,9 +1544,6 @@ void processOptions(ArgumentsVector args, StringList **operands, ProcessFileArgu
                     last = &(*last)->next;
                 *last = newStringList(args.argv[i], NULL);
             }
-            if (doProcessFiles == COLLECT_ARGUMENTS_YES) {
-                requestFileArgumentName = args.argv[i];
-            }
         }
         if (!matched) {
             char tmpBuff[TMP_BUFF_SIZE];
@@ -1558,18 +1554,14 @@ void processOptions(ArgumentsVector args, StringList **operands, ProcessFileArgu
     LEAVE();
 }
 
-void clearRequestFileArgument(void) {
-    requestFileArgumentName = NULL;
-}
-
 /* Enter the file the request named in the file table and return its file number,
  * or NO_FILE_NUMBER if the request named none. It is the editor's current buffer,
  * which need not exist on disk yet. */
-int addRequestFileToFileTable(void) {
-    if (requestFileArgumentName == NULL)
+int addRequestFileToFileTable(StringList *operands) {
+    if (operands == NULL)
         return NO_FILE_NUMBER;
 
-    return addFileNameToFileTable(requestFileArgumentName);
+    return addFileNameToFileTable(operands->string);
 }
 
 

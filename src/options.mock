@@ -14,12 +14,8 @@ void usage(void) {
     mock();
 }
 
-void clearRequestFileArgument(void) {
-    mock();
-}
-
-int addRequestFileToFileTable(void) {
-    return (int)mock();
+int addRequestFileToFileTable(StringList *operands) {
+    return (int)mock(operands);
 }
 
 void processOptions(ArgumentsVector args, StringList **operands, ProcessFileArguments infilesFlag) {

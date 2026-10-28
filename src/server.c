@@ -177,9 +177,10 @@ static void parseInputFile(void) {
 
 void initServer(ArgumentsVector args) {
     clearAvailableRefactorings();
-    clearRequestFileArgument();
-    processOptions(args, NULL, COLLECT_ARGUMENTS_YES); /* no include or define options */
-    setRequestFileArgument(addRequestFileToFileTable());
+    StringList *operands = NULL;
+    processOptions(args, &operands, COLLECT_ARGUMENTS_YES); /* no include or define options */
+    setRequestFileArgument(addRequestFileToFileTable(operands));
+    freeStringList(operands);
     initCompletions(&collectedCompletions, 0, NO_POSITION);
 }
 
