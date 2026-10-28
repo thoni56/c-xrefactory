@@ -345,8 +345,9 @@ static int findIncludeInsertionPoint(EditorBuffer *buffer) {
 }
 
 
-static void moveStaticFunctionAndMakeItExtern(EditorMarker *startMarker, EditorMarker *point,
-                                              EditorMarker *endMarker, EditorMarker *target) {
+static void moveStaticFunctionAndMakeItExtern(EditorMarker *startMarker, EditorMarker *definitionStart,
+                                              EditorMarker *point, EditorMarker *endMarker,
+                                              EditorMarker *target) {
     int functionBlockSize = endMarker->offset - startMarker->offset;
     EditorBuffer *sourceBuffer = startMarker->buffer;
     if (target->buffer == startMarker->buffer && target->offset > startMarker->offset &&
@@ -367,7 +368,7 @@ static void moveStaticFunctionAndMakeItExtern(EditorMarker *startMarker, EditorM
     char *functionSignature = NULL;
     if (movingBetweenFiles) {
         /* Find the opening brace to determine where signature ends */
-        functionSignature = extractFunctionSignature(startMarker, endMarker);
+        functionSignature = extractFunctionSignature(definitionStart, endMarker);
     }
 
     /* Now move the (possibly modified) function block */
@@ -657,13 +658,14 @@ void moveFunction(EditorMarker *point) {
 
     /* Markers before any change, since the positions are from the parse */
     EditorMarker *functionStart = newDefinitionScopeStart(bounds, moveComments);
+    EditorMarker *definitionStart = newDefinitionScopeStart(bounds, false);
     EditorMarker *functionEnd = newDefinitionScopeEnd(bounds);
 
     int lines = countLinesBetweenEditorMarkers(functionStart, functionEnd);
 
     moveHelpersAlong(&uses, target, moveComments);
 
-    moveStaticFunctionAndMakeItExtern(functionStart, point, functionEnd, target);
+    moveStaticFunctionAndMakeItExtern(functionStart, definitionStart, point, functionEnd, target);
 
     // and generate output
     applyWholeRefactoringFromUndo();
