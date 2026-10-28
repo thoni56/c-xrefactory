@@ -600,16 +600,14 @@ bool initializeFileProcessing(ArgumentsVector baseArgs, ArgumentsVector requestA
         modifiedTime = previousProjectConfigurationFileModificationTime;               // !!! just for now
 
     /* Determine if we need full initialization or can restore from checkpoint.
-     * Full init required when: first pass, different pass, different project,
-     * or the current options file changed. */
-    log_debug("initializeFileProcessing - pass %d (previous %d), config '%s' (previous '%s'), section '%s' (previous '%s'), config mtime %s",
+     * Full init required when: first pass, different pass or different project.
+     * A change to the options file is callServer()'s, see reloadProjectConfig(). */
+    log_debug("initializeFileProcessing - pass %d (previous %d), config '%s' (previous '%s'), section '%s' (previous '%s')",
               currentPass, previousPass, projectConfigFileName, previousProjectConfigurationFile,
-              projectSectionName, previousProjectConfigurationSection,
-              fileTimestampsEqual(previousProjectConfigurationFileModificationTime, modifiedTime) ? "unchanged" : "changed");
+              projectSectionName, previousProjectConfigurationSection);
     if (previousPass != currentPass                                       /* We are in a different pass */
         || strcmp(previousProjectConfigurationFile, projectConfigFileName) != 0 /* or we are using a different options file */
         || strcmp(previousProjectConfigurationSection, projectSectionName) != 0 /* or a different project */
-        || !fileTimestampsEqual(previousProjectConfigurationFileModificationTime, modifiedTime) /* or the options file has changed */
     ) {
         /* === PHASE 2-4: Options reading, compiler discovery, memory checkpointing === */
         loadProjectSettings(baseArgs, requestArgs, projectConfigFileName, projectSectionName);
