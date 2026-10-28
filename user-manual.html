@@ -5,7 +5,7 @@
 <meta http-equiv="X-UA-Compatible" content="IE=edge">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <meta name="generator" content="Asciidoctor 2.0.26">
-<meta name="author" content="v{VERSION} - Generated 2026-10-27">
+<meta name="author" content="v{VERSION} - Generated 2026-10-28">
 <title>C-xrefactory User Manual</title>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Open+Sans:300,300italic,400,400italic,600,600italic%7CNoto+Serif:400,400italic,700,700italic%7CDroid+Sans+Mono:400,700">
 <style>
@@ -441,7 +441,7 @@ body.book #toc,body.book #preamble,body.book h1.sect0,body.book .sect1>h2{page-b
 <div id="header">
 <h1>C-xrefactory User Manual</h1>
 <div class="details">
-<span id="author" class="author">v{VERSION} - Generated 2026-10-27</span><br>
+<span id="author" class="author">v{VERSION} - Generated 2026-10-28</span><br>
 </div>
 <div id="toc" class="toc2">
 <div id="toctitle">Table of Contents</div>
@@ -541,6 +541,10 @@ The path of the file is investigated upwards until a <code>.c-xrefrc</code> (C-x
 <div class="paragraph">
 <p>If no config file could be found, you&#8217;ll be prompted to create a project.
 Project &gt; Show Active shows the active project.</p>
+</div>
+<div class="paragraph">
+<p>If the references seem off, use Project &gt; Remove References and Restart Server.
+It removes the project&#8217;s saved references, and the next operation analyses the project again.</p>
 </div>
 </div>
 <div class="sect2">
@@ -970,6 +974,15 @@ The new variable is always declared as <code>int</code>, and the declaration mig
 <p><strong>Move Function</strong> — moves the function at cursor to another place, possibly in another file.
 Mark the place first with <strong>Set Target for Next Moving Refactoring</strong>.</p>
 </div>
+<div class="paragraph">
+<p>When it moves to another file, the <code>static</code> functions and variables that are only used by that function move along with it, and stay <code>static</code>.
+If it uses a <code>static</code> that something else in the file also uses, it will refuse the move and name those.</p>
+</div>
+<div class="paragraph">
+<p>If there is a comment above what is moved, Move Function asks whether to move the comments too.
+A comment is taken up to a blank line.
+A comment on the same line after the function always moves with it.</p>
+</div>
 </div>
 <div class="sect2">
 <h3 id="_includes">6.5. Includes</h3>
@@ -1100,7 +1113,7 @@ Search Symbol → enter <code>config*</code> → browse results</p>
 </div>
 <div id="footer">
 <div id="footer-text">
-Last updated 2026-10-27 19:56:10 UTC
+Last updated 2026-10-28 08:54:13 UTC
 </div>
 </div>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.18.3/highlight.min.js"></script>

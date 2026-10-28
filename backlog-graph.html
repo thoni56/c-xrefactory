@@ -63,6 +63,7 @@ flowchart BT
   lsp_tiers["§5 · 25 · LSP tiers 1–2"]
   move_function_next["§5 · 26 · Move Function next steps"]
   parse_all["§5 · 88 · `-parse-all`, a request that parses every compilation unit the scan found and has not parsed"]
+  refactoring_help["§5 · 92 · The refactoring dialog's help describes what the dialog offers"]
   browser_for_c["§5 · 82 · The browser's Symbol Pane says which symbol each line is"]
   local_config_fragments["§5 · 27 · Local config fragments: the config names, the fragment binds"]
   chapter_17_hygiene["§5 · 28 · Chapter 17 hygiene, opportunistically"]
@@ -77,7 +78,6 @@ flowchart BT
   cursor_parse_reuse["§7 · 1 · The request CU is parsed for the cursor, also when its knowledge is current"]
   header_not_half["§7 · 39 · Unconfirmed: a changed header the editor holds is stripped also when not all its includers fit"]
   closed_buffer_strip["§7 · 56 · A header whose buffer the client stops sending is stripped, and none of its includers built"]
-  left_behind_sticks["§7 · 91 · A header marked left behind stays marked through requests from one of its includers"]
   time_budget["§7 · 40 · A time budget instead of the cap"]
   freshness_docs["§7 · 41 · The docs follow"]
   include_edges["§7 · 42 · Who writes include edges"]
@@ -145,7 +145,6 @@ flowchart BT
   cu_inputs -.-&gt; out_of_date
   request_through_includers -.-&gt; cursor_parse_reuse
   header_not_half -.-&gt; closed_buffer_strip
-  closed_buffer_strip -.-&gt; left_behind_sticks
   sweep -.-&gt; sweep_cost
   class partition_options ready
   class root_path_id ready
@@ -191,6 +190,7 @@ flowchart BT
   class lsp_tiers ready
   class move_function_next ready
   class parse_all ready
+  class refactoring_help ready
   class browser_for_c ready
   class local_config_fragments ready
   class chapter_17_hygiene ready
@@ -205,7 +205,6 @@ flowchart BT
   class cursor_parse_reuse ready
   class header_not_half ready
   class closed_buffer_strip ready
-  class left_behind_sticks ready
   class time_budget ready
   class freshness_docs ready
   class include_edges ready
