@@ -845,7 +845,7 @@ static int handleIncludeOption(int i, ArgumentsVector args) {
     ensureNextArgumentIsAFileName(&i, args);
 
     includedArgs = readOptionsFromFile(args.argv[i]);
-    processOptions(includedArgs, COLLECT_ARGUMENTS_NO);
+    processOptions(includedArgs, NULL, COLLECT_ARGUMENTS_NO);
 
     return i;
 }
@@ -1456,7 +1456,7 @@ static bool processDoubleDashOption(int *argi, ArgumentsVector args) {
     return true;
 }
 
-void processOptions(ArgumentsVector args, ProcessFileArguments doProcessFiles) {
+void processOptions(ArgumentsVector args, StringList **operands, ProcessFileArguments doProcessFiles) {
     int i;
     bool matched;
 
@@ -1538,8 +1538,14 @@ void processOptions(ArgumentsVector args, ProcessFileArguments doProcessFiles) {
                 matched = false;
             }
         } else {
-            /* input file */
+            /* operand */
             matched = true;
+            if (operands != NULL) {
+                StringList **last = operands;
+                while (*last != NULL)
+                    last = &(*last)->next;
+                *last = newStringList(args.argv[i], NULL);
+            }
             if (doProcessFiles == COLLECT_ARGUMENTS_YES) {
                 addToStringListOption(&options.inputFiles, args.argv[i]);
                 requestFileArgumentName = args.argv[i];

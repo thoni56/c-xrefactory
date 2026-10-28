@@ -162,7 +162,7 @@ Ensure(Options, can_parse_about_command_line_option) {
     char *argv[] = {"", "-about"};
     ArgumentsVector args = {2, argv};
 
-    processOptions(args, COLLECT_ARGUMENTS_NO);
+    processOptions(args, NULL, COLLECT_ARGUMENTS_NO);
     assert_that(options.serverOperation, is_equal_to(OP_ABOUT));
 }
 
@@ -170,7 +170,7 @@ Ensure(Options, can_parse_version_command_line_option) {
     char *argv[] = {"", "-version"};
     ArgumentsVector args = {2, argv};
 
-    processOptions(args, COLLECT_ARGUMENTS_NO);
+    processOptions(args, NULL, COLLECT_ARGUMENTS_NO);
     assert_that(options.serverOperation, is_equal_to(OP_ABOUT));
 }
 
@@ -178,7 +178,7 @@ Ensure(Options, can_parse_double_dash_version_command_line_option) {
     char *argv[] = {"", "--version"};
     ArgumentsVector args = {2, argv};
 
-    processOptions(args, COLLECT_ARGUMENTS_NO);
+    processOptions(args, NULL, COLLECT_ARGUMENTS_NO);
     assert_that(options.serverOperation, is_equal_to(OP_ABOUT));
 }
 
@@ -193,13 +193,13 @@ Ensure(Options, notes_xrefrc_option_with_equals_without_reporting_it) {
     ArgumentsVector args = {2, argv};
 
     never_expect(errorMessage);
-    processOptions(args, COLLECT_ARGUMENTS_NO);
+    processOptions(args, NULL, COLLECT_ARGUMENTS_NO);
 }
 
 Ensure(Options, reports_a_noted_xrefrc_option_as_no_longer_supported) {
     char *argv[] = {"", "-xrefrc=abc"};
     ArgumentsVector args = {2, argv};
-    processOptions(args, COLLECT_ARGUMENTS_NO);
+    processOptions(args, NULL, COLLECT_ARGUMENTS_NO);
 
     expect(errorMessage);
     reportUnsupportedOptions();
@@ -212,7 +212,7 @@ Ensure(Options, notes_xrefrc_option_with_filename_separate_without_reporting_it_
     ArgumentsVector args = {3, argv};
 
     never_expect(errorMessage);
-    processOptions(args, COLLECT_ARGUMENTS_YES);
+    processOptions(args, NULL, COLLECT_ARGUMENTS_YES);
     assert_that(options.inputFiles, is_null);
 }
 
@@ -601,7 +601,7 @@ Ensure(Options, can_parse_parameter_name_option) {
     char* arguments[] = {"", "-rfct-parameter-name=int arg"};
     ArgumentsVector args = {2, arguments};
 
-    processOptions(args, false);
+    processOptions(args, NULL, false);
     assert_that(options.refactorParameterName, is_equal_to_string("int arg"));
 }
 
@@ -609,7 +609,7 @@ Ensure(Options, can_parse_parameter_value_option) {
     char* arguments[] = {"", "-rfct-parameter-value=42"};
     ArgumentsVector args = {2, arguments};
 
-    processOptions(args, false);
+    processOptions(args, NULL, false);
     assert_that(options.refactorParameterValue, is_equal_to_string("42"));
 }
 
@@ -617,29 +617,30 @@ Ensure(Options, can_parse_target_line_option) {
     char* arguments[] = {"", "-rfct-target-line=99"};
     ArgumentsVector args = {2, arguments};
 
-    processOptions(args, false);
+    processOptions(args, NULL, false);
     assert_that(options.refactorTargetLine, is_equal_to_string("99"));
 }
 
-/* When asked to collect file arguments, the parser must route bare path tokens
- * into options.inputFiles while NOT mistaking a separate-token option VALUE
- * (here, -prune's argument) for a path. This is the classification that
- * server-mode source-dir collection should rely on, instead of the
- * leading-dash heuristic currently hand-rolled in startup.c. */
-Ensure(Options, collects_bare_paths_as_input_files_not_option_values) {
+/* The operands, the arguments that are not options, are handed back to the
+ * caller, who knows what they are: the config's source directories, a request's
+ * file, or something startup refuses. An option's VALUE (here, -prune's
+ * argument) is not an operand. */
+Ensure(Options, hands_back_operands_but_not_option_values) {
     char *arguments[] = {"", "-prune", "NAME", "/abs/path"};
     ArgumentsVector args = {4, arguments};
+    StringList *operands = NULL;
 
-    processOptions(args, COLLECT_ARGUMENTS_YES);
+    processOptions(args, &operands, COLLECT_ARGUMENTS_YES);
 
     /* -prune's value is classified as a prune name, not a path */
     assert_that(options.pruneNames, is_not_null);
     assert_that(options.pruneNames->string, is_equal_to_string("NAME"));
 
-    /* the lone bare path is the only input file; "NAME" never leaks in */
-    assert_that(options.inputFiles, is_not_null);
-    assert_that(options.inputFiles->string, is_equal_to_string("/abs/path"));
-    assert_that(options.inputFiles->next, is_null);
+    /* the lone path is the only operand; "NAME" never leaks in */
+    assert_that(operands, is_not_null);
+    assert_that(operands->string, is_equal_to_string("/abs/path"));
+    assert_that(operands->next, is_null);
+    freeStringList(operands);
 }
 
 /* resolvePrunePaths materialises each -prune entry as an absolute path anchored
@@ -884,7 +885,7 @@ Ensure(Options, enters_the_file_the_request_named_in_the_file_table) {
     ArgumentsVector args = {2, arguments};
 
     clearRequestFileArgument();
-    processOptions(args, COLLECT_ARGUMENTS_YES);
+    processOptions(args, NULL, COLLECT_ARGUMENTS_YES);
 
     expect(addFileNameToFileTable, when(fileName, is_equal_to_string("new.c")),
            will_return(42));

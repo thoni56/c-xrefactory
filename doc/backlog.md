@@ -159,7 +159,7 @@ every push, `After` dashed and `Goes with` not at all, linked at the end of this
      `-about` by scanning argv, before any option is processed, so only `-server` runs the
      initialisations. That scan is where the check belongs: `-lsp`, `-about` and `-help`
      take nothing else, and `-server` takes the startup options above.
-   - Done: `c-xref -server file.c` is refused, `main()` reports the bare word and exits
+   - Done: `c-xref -server file.c` is refused, `main()` reports the operand and exits
      (`tests/test_server_refuses_startup_file`), as `c-xref file.c` answers "No mode
      given" (`tests/test_options_mode_required`).
    - **File arguments: none at startup, exactly one per request.** A request's only bare
@@ -170,7 +170,7 @@ every push, `After` dashed and `Goes with` not at all, linked at the end of this
      parse. Nothing walks a file argument any more: a request enters its file directly
      (`addRequestFileToFileTable()`), and the walk, with its backquoted commands and
      `dirInputFile()`, is gone, and an `-I` is one directory. Left: two
-     bare words in a request are not reported, which #75 makes easy.
+     operands in a request are not reported, which #75 makes easy.
    - `.c-xrefrc` is also read with `YES` (`startup.c:446`), for the source directories
      listed in it. Do not assume that list is legacy. What dies with `-p` is the
      *registry*: several `[project]` sections, each covering directories, one selected by
@@ -180,19 +180,28 @@ every push, `After` dashed and `Goes with` not at all, linked at the end of this
      look. Auto-discovery gives you the tree under the config; anything outside it still
      has to be named. Likely home: the config, or the machine-specific sibling, since an
      external source tree is usually a local path.
-- (#75) <a id="bare-words-returned"></a>**Bare words are handed back by `processOptions`, not kept in `options.inputFiles`** — *no repo home yet.*
-    Startup refuses them, the config read makes them `projectConfig.sourceDirs`, a
+- (#75) <a id="operands-returned"></a>**Operands are handed back by `processOptions`, not kept in `options.inputFiles`** — *no repo home yet.*
+    The operands, POSIX's name for the arguments that are not options or their values:
+    startup refuses them, the config read makes them `projectConfig.sourceDirs`, a
     request takes one as its file; nothing else reads them since the startup walk went.
-    Let `processOptions` return them through a `StringList **` (`NULL`: not wanted,
-    replacing `COLLECT_ARGUMENTS_NO`), each caller with a local list. Then
+    `processOptions` hands them back through a `StringList **operands` (`NULL`: not
+    wanted), each caller with a local list, built with `newStringList()` and freed, not
+    with `addToStringListOption()`, which records the list's address for moving
+    `options`. `mainTaskEntryInitialisations()` gets the same parameter for `main()` to
+    check, and `addRequestFileToFileTable()` takes the list instead of a global. Then
     `options.inputFiles` goes, with the clears at `startup.c` (around the second
     `getAndProcessProjectConfig()`, whose comment about `server.c` adding "." is stale)
     and `refactory.c` (`parseBufferUsingServer`), the `requestFileArgumentName` global
     and `clearRequestFileArgument()` in `options.c`, and the `ProcessFileArguments` enum.
     Today the list grows within a request, is reset from `savedOptions` at the next, and
     the `-getproject` lock (`cxref.c`) copies the request's file into `savedOptions`;
-    harmless only because no one reads it. Test first: `options_tests.c`'s
-    `collects_bare_paths_as_input_files_not_option_values` asserts the returned list.
+    harmless only because no one reads it. In progress: `processOptions` fills
+    `operands` (`hands_back_operands_but_not_option_values`) and, until the consumers
+    have moved, `options.inputFiles` too. Left, in order: the config read
+    (`getAndProcessProjectConfig()` collects into a local list), `main()` (through
+    `mainTaskEntryInitialisations()`), the server (`addRequestFileToFileTable()` and
+    its tests); then `options.inputFiles` and the enum have no users (Mac, session
+    `4839a129`, 2026-10-28).
     A step towards #3's pure `parseCommandLine()` (Mac, session `4839a129`, 2026-10-21).
     After: startup-command-line
     Goes with: partition-options
@@ -210,7 +219,7 @@ every push, `After` dashed and `Goes with` not at all, linked at the end of this
     `initializeFileProcessing()` are not a context, they go with #3.
     Test first: an `options_tests.c` case where a request-only option in the project
     context is refused (WSL, session `d25255b8`, 2026-10-25).
-    After: bare-words-returned
+    After: operands-returned
     Goes with: partition-options, startup-command-line
 - (#9) <a id="remove-bridge"></a>**Remove the `parseBufferUsingServer` bridge** — §17.3; 9 refactoring call sites
    re-entering `callServer`. Independent of the rest of this section, but it is the last

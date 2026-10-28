@@ -145,7 +145,7 @@ extern void recoverMemoryFromIncludeList(void);
 
 extern void clearRequestFileArgument(void);
 extern int addRequestFileToFileTable(void);
-extern void processOptions(ArgumentsVector args, ProcessFileArguments infilesFlag);
+extern void processOptions(ArgumentsVector args, StringList **operands, ProcessFileArguments infilesFlag);
 
 /* Handling of allocated string and string list options that need to be "shifted" on deep copy */
 extern char *allocateStringForOption(char **pointerToOption, char *string);

@@ -368,7 +368,7 @@ static void getAndProcessProjectConfig(char *configFileName) {
     /* YES so bare (non-option) config arguments are collected into
      * options.inputFiles with correct option/value classification. Both callers
      * want this; the caller clears inputFiles between passes to collect once. */
-    processOptions(args, COLLECT_ARGUMENTS_YES); /* .c-xrefrc opts*/
+    processOptions(args, NULL, COLLECT_ARGUMENTS_YES); /* .c-xrefrc opts*/
 }
 
 /* Memory checkpoint structure */
@@ -432,13 +432,13 @@ static void loadProjectSettings(ArgumentsVector baseArgs, ArgumentsVector reques
                      * save/restore them (see startup loop in server.c). */
 
     /* Process options in specific order: command line, request args, .c-xrefrc */
-    processOptions(baseArgs, COLLECT_ARGUMENTS_NO);   /* command line opts */
+    processOptions(baseArgs, NULL, COLLECT_ARGUMENTS_NO);   /* command line opts */
     /* piped options (no include or define options)
        must be before .xrefrc file options, but, the s_cachedOptions
        must be set after .c-xrefrc file, but s_cachedOptions can't contain
        piped options, !!! berk.
     */
-    processOptions(requestArgs, COLLECT_ARGUMENTS_NO);
+    processOptions(requestArgs, NULL, COLLECT_ARGUMENTS_NO);
     reInitCwd(projectConfigFileName, projectSectionName);
 
     tmpIncludeDirs = options.includeDirs;
@@ -491,7 +491,7 @@ static void loadProjectSettings(ArgumentsVector baseArgs, ArgumentsVector reques
 
     LIST_APPEND(StringList, options.includeDirs, tmpIncludeDirs);
 
-    processOptions(requestArgs, COLLECT_ARGUMENTS_NO);
+    processOptions(requestArgs, NULL, COLLECT_ARGUMENTS_NO);
 
     /* Apply convention-based db path for auto-detected projects (after all options processed) */
     applyConventionBasedDatabasePath();
@@ -643,7 +643,7 @@ bool initializeFileProcessing(ArgumentsVector baseArgs, ArgumentsVector requestA
         restoreCheckpoint(&projectCheckpoint); /* Skip phases 2-3, restore cached compiler discovery */
 
         deepCopyOptionsFromTo(&savedOptions, &options);
-        processOptions(requestArgs, COLLECT_ARGUMENTS_NO); /* no include or define options */
+        processOptions(requestArgs, NULL, COLLECT_ARGUMENTS_NO); /* no include or define options */
         applyCurrentPassOptions();
         inputOpened = computeAndOpenInputFile(inputFileName); /* Phase 5 only */
     }
@@ -726,7 +726,7 @@ void mainTaskEntryInitialisations(ArgumentsVector args) {
 
     /* YES only so that a bare word is told from an option's value; main()
      * refuses any that land in options.inputFiles */
-    processOptions(args, COLLECT_ARGUMENTS_YES);
+    processOptions(args, NULL, COLLECT_ARGUMENTS_YES);
 
     LEAVE();
 }

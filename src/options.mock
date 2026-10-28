@@ -22,7 +22,7 @@ int addRequestFileToFileTable(void) {
     return (int)mock();
 }
 
-void processOptions(ArgumentsVector args, ProcessFileArguments infilesFlag) {
+void processOptions(ArgumentsVector args, StringList **operands, ProcessFileArguments infilesFlag) {
   mock(args.argc, args.argv, infilesFlag);
 }
 
