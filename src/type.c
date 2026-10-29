@@ -2,6 +2,10 @@
 
 #include <stddef.h>
 
+#include "commons.h"
+#include "globals.h"
+
+
 const char *typeNamesTable[] = {
     ALL_TYPE_ENUMS(GENERATE_ENUM_STRING)
 };
@@ -39,4 +43,41 @@ const char *cTypeSpelling(Type type) {
     if (type < MAX_CTYPE && cTypeSpellings[type] != NULL)
         return cTypeSpellings[type];
     return typeNamesTable[type];
+}
+
+Type combinedType(Type base, Type modifier) {
+    Type r = 0;
+    switch (modifier) {
+    case TmodLong:
+        r = typeLongChange[base];
+        break;
+    case TmodShort:
+        r = typeShortChange[base];
+        break;
+    case TmodSigned:
+        r = typeSignedChange[base];
+        break;
+    case TmodUnsigned:
+        r = typeUnsignedChange[base];
+        break;
+    case TmodShortSigned:
+        r = typeSignedChange[base];
+        r = typeShortChange[r];
+        break;
+    case TmodShortUnsigned:
+        r = typeUnsignedChange[base];
+        r = typeShortChange[r];
+        break;
+    case TmodLongSigned:
+        r = typeSignedChange[base];
+        r = typeLongChange[r];
+        break;
+    case TmodLongUnsigned:
+        r = typeUnsignedChange[base];
+        r = typeLongChange[r];
+        break;
+    default:
+        assert(0);
+    }
+    return r;
 }

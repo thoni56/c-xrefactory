@@ -458,43 +458,6 @@ static TypeModifier *createSimpleTypeModifier(Type type) {
     return p;
 }
 
-static Type combinedType(Type base, Type modifier) {
-    Type r = 0;
-    switch (modifier) {
-    case TmodLong:
-        r = typeLongChange[base];
-        break;
-    case TmodShort:
-        r = typeShortChange[base];
-        break;
-    case TmodSigned:
-        r = typeSignedChange[base];
-        break;
-    case TmodUnsigned:
-        r = typeUnsignedChange[base];
-        break;
-    case TmodShortSigned:
-        r = typeSignedChange[base];
-        r = typeShortChange[r];
-        break;
-    case TmodShortUnsigned:
-        r = typeUnsignedChange[base];
-        r = typeShortChange[r];
-        break;
-    case TmodLongSigned:
-        r = typeSignedChange[base];
-        r = typeLongChange[r];
-        break;
-    case TmodLongUnsigned:
-        r = typeUnsignedChange[base];
-        r = typeLongChange[r];
-        break;
-    default:
-        assert(0);
-    }
-    return r;
-}
-
 static bool isModifier(Type type) {
     return type > MODIFIERS_START && type < TYPE_MODIFIERS_END;
 }
