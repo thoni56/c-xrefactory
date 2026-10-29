@@ -7,7 +7,6 @@
 #include "constants.h"
 #include "id.h"
 #include "proto.h"
-#include "timestamp.h"
 #include "usage.h"
 
 
@@ -55,11 +54,6 @@ extern TypeModifier defaultVoidModifier;
 extern Symbol defaultVoidDefinition;
 extern TypeModifier errorModifier;
 extern Symbol errorSymbol;
-
-extern uchar typeLongChange[MAX_TYPE];
-extern uchar typeShortChange[MAX_TYPE];
-extern uchar typeSignedChange[MAX_TYPE];
-extern uchar typeUnsignedChange[MAX_TYPE];
 
 extern TypeModifier *structMemberCompletionType;
 extern TypeModifier *upLevelFunctionCompletionType;

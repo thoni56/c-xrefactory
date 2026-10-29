@@ -3,7 +3,7 @@
 #include <stddef.h>
 
 #include "commons.h"
-#include "globals.h"
+#include "proto.h"
 
 
 const char *typeNamesTable[] = {
@@ -37,6 +37,16 @@ static const char *cTypeSpellings[MAX_CTYPE] = {
     [TypeLong]             = "long",
     [TypeBool]             = "bool",
 };
+
+/* ********************************************************************** */
+/*                            real constants                              */
+/* ********************************************************************** */
+
+static uchar typeShortChange[MAX_TYPE];
+static uchar typeLongChange[MAX_TYPE];
+static uchar typeSignedChange[MAX_TYPE];
+static uchar typeUnsignedChange[MAX_TYPE];
+
 
 /* How a type is written in C, or its name if it has no C spelling */
 const char *cTypeSpelling(Type type) {

@@ -81,16 +81,6 @@ char cwd[MAX_FILE_NAME_SIZE]; /* current working directory */
 
 char ppcTmpBuff[MAX_PPC_RECORD_SIZE];
 
-/* ********************************************************************** */
-/*                            real constants                              */
-/* ********************************************************************** */
-
-uchar typeShortChange[MAX_TYPE];
-uchar typeLongChange[MAX_TYPE];
-uchar typeSignedChange[MAX_TYPE];
-uchar typeUnsignedChange[MAX_TYPE];
-
-
 /* These should go together in a struct. Also the lengths are not just
  * the lengths of the names, some slots do not have names, so they are
  * NULL and the length is zero. */
