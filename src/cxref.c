@@ -156,14 +156,14 @@ static void setAvailableRefactorings(Symbol *symbol, Usage usage) {
     case TypeKeyword:
     case TypeLong:
     case TypeLongInt:
-    case TypeLongSignedInt:
-    case TypeLongUnsignedInt:
+    case TypeSignedLongInt:
+    case TypeUnsignedLongInt:
     case TypeNull:
     case TypePackedType:
     case TypePointer:
     case TypeShortInt:
-    case TypeShortSignedInt:
-    case TypeShortUnsignedInt:
+    case TypeSignedShortInt:
+    case TypeUnsignedShortInt:
     case TypeSignedChar:
     case TypeSignedInt:
     case TypeSpecialComplete:

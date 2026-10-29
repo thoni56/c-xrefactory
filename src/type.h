@@ -41,11 +41,11 @@
         ENUM(TypeUnsignedInt)                                           \
         ENUM(TypeSignedInt)                                             \
         ENUM(TypeShortInt)                                              \
-        ENUM(TypeShortUnsignedInt)                                      \
-        ENUM(TypeShortSignedInt)                                        \
+        ENUM(TypeUnsignedShortInt)                                      \
+        ENUM(TypeSignedShortInt)                                        \
         ENUM(TypeLongInt)                                               \
-        ENUM(TypeLongUnsignedInt)                                       \
-        ENUM(TypeLongSignedInt)                                         \
+        ENUM(TypeUnsignedLongInt)                                       \
+        ENUM(TypeSignedLongInt)                                         \
         ENUM(TypeFloat)                                                 \
         ENUM(TypeDouble)                                                \
         ENUM(TypeStruct)                                                \
