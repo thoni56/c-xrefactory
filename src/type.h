@@ -68,6 +68,8 @@
         ENUM(TmodShortUnsigned)                                         \
         ENUM(TmodLongSigned)                                            \
         ENUM(TmodLongUnsigned)                                          \
+        ENUM(TmodLongLong)                                              \
+        ENUM(TmodLongLongUnsigned)                                      \
         ENUM(TYPE_MODIFIERS_END)                                        \
         ENUM(TypeEllipsis)                                              \
         ENUM(TypeLong)                                                  \

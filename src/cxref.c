@@ -198,6 +198,8 @@ static void setAvailableRefactorings(Symbol *symbol, Usage usage) {
     case TmodShortUnsigned:
     case TmodLongSigned:
     case TmodLongUnsigned:
+    case TmodLongLong:
+    case TmodLongLongUnsigned:
     case TYPE_MODIFIERS_END:
     case MAX_CTYPE:
     case MAX_TYPE:

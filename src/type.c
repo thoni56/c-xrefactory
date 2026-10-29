@@ -34,6 +34,8 @@ static const char *cTypeSpellings[MAX_CTYPE] = {
     [TmodShortUnsigned]    = "unsigned short",
     [TmodLongSigned]       = "signed long",
     [TmodLongUnsigned]     = "unsigned long",
+    [TmodLongLong]         = "long long",
+    [TmodLongLongUnsigned] = "unsigned long long",
     [TypeLong]             = "long",
     [TypeBool]             = "bool",
 };
@@ -105,19 +107,21 @@ typedef struct typeModificationsInit {
 
 /* What each modifier makes of a type, -1 where it leaves it as it is */
 static TypeModificationsInitTable typeModificationsInitTable[] = {
-    //  type             short                 long                 signed              unsigned
-    {TypeDefault,     TypeShortInt,         TypeLongInt,         TypeSignedInt,      TypeUnsignedInt},
-    {TypeChar,        -1,                   -1,                  TypeSignedChar,     TypeUnsignedChar},
-    {TypeInt,         TypeShortInt,         TypeLongInt,         TypeSignedInt,      TypeUnsignedInt},
-    {TypeUnsignedInt, TypeUnsignedShortInt, TypeUnsignedLongInt, -1,                 -1},
-    {TypeSignedInt,   TypeSignedShortInt,   TypeSignedLongInt,   -1,                 -1},
-    {TypeShortInt,    -1,                   -1,                  TypeSignedShortInt, TypeUnsignedShortInt},
-    {TypeLongInt,     -1,                   -1,                  TypeSignedLongInt,  TypeUnsignedLongInt},
-    {TmodLong,        -1,                   -1,                  TmodLongSigned,     TmodLongUnsigned},
-    {TmodShort,       -1,                   -1,                  TmodShortSigned,    TmodShortUnsigned},
-    {TmodSigned,      TmodShortSigned,      TmodLongSigned,      -1,                 -1},
-    {TmodUnsigned,    TmodShortUnsigned,    TmodLongUnsigned,    -1,                 -1},
-    {-1,              -1,                   -1,                  -1,                 -1}
+    //  type              short                 long                  signed              unsigned
+    {TypeDefault,      TypeShortInt,         TypeLongInt,          TypeSignedInt,      TypeUnsignedInt},
+    {TypeChar,         -1,                   -1,                   TypeSignedChar,     TypeUnsignedChar},
+    {TypeInt,          TypeShortInt,         TypeLongInt,          TypeSignedInt,      TypeUnsignedInt},
+    {TypeUnsignedInt,  TypeUnsignedShortInt, TypeUnsignedLongInt,  -1,                 -1},
+    {TypeSignedInt,    TypeSignedShortInt,   TypeSignedLongInt,    -1,                 -1},
+    {TypeShortInt,     -1,                   -1,                   TypeSignedShortInt, TypeUnsignedShortInt},
+    {TypeLongInt,      -1,                   -1,                   TypeSignedLongInt,  TypeUnsignedLongInt},
+    {TmodLong,         -1,                   TmodLongLong,         TmodLongSigned,     TmodLongUnsigned},
+    {TmodLongLong,     -1,                   -1,                   -1,                 TmodLongLongUnsigned},
+    {TmodLongUnsigned, -1,                   TmodLongLongUnsigned, -1,                 -1},
+    {TmodShort,        -1,                   -1,                   TmodShortSigned,    TmodShortUnsigned},
+    {TmodSigned,       TmodShortSigned,      TmodLongSigned,       -1,                 -1},
+    {TmodUnsigned,     TmodShortUnsigned,    TmodLongUnsigned,     -1,                 -1},
+    {-1,               -1,                   -1,                   -1,                 -1}
 };
 
 void initTypeModifications(void) {
