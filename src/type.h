@@ -1,6 +1,8 @@
 #ifndef TYPES_H_INCLUDED
 #define TYPES_H_INCLUDED
 
+#include <stdbool.h>
+
 /*
   SYMBOL TYPES
 
@@ -108,5 +110,6 @@ extern const char *typeNamesTable[];
 extern const char *cTypeSpelling(Type type);
 extern Type combinedType(Type base, Type modifier);
 extern void initTypeModifications(void);
+extern bool isModifier(Type type);
 
 #endif /* _TYPES_H_ */

@@ -47,6 +47,9 @@ static uchar typeLongChange[MAX_TYPE];
 static uchar typeSignedChange[MAX_TYPE];
 static uchar typeUnsignedChange[MAX_TYPE];
 
+bool isModifier(Type type) {
+    return type > MODIFIERS_START && type < TYPE_MODIFIERS_END;
+}
 
 /* How a type is written in C, or its name if it has no C spelling */
 const char *cTypeSpelling(Type type) {

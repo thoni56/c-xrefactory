@@ -458,10 +458,6 @@ static TypeModifier *createSimpleTypeModifier(Type type) {
     return p;
 }
 
-static bool isModifier(Type type) {
-    return type > MODIFIERS_START && type < TYPE_MODIFIERS_END;
-}
-
 static TypeModifier *mergeBaseType(TypeModifier *t1, TypeModifier *t2) {
     assert(t1->type < TYPE_MODIFIERS_END && t2->type < TYPE_MODIFIERS_END);
 

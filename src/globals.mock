@@ -24,12 +24,6 @@ int maxPasses;
 FILE *outputFile;
 FILE *errOut=NULL;
 
-
-uchar typeShortChange[MAX_TYPE];
-uchar typeLongChange[MAX_TYPE];
-uchar typeSignedChange[MAX_TYPE];
-uchar typeUnsignedChange[MAX_TYPE];
-
 char *yytext;
 Id yyIdBuffer[YYIDBUFFER_SIZE];
 int yyIdBufferIndex = 0;
