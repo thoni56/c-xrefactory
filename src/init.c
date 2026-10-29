@@ -10,6 +10,7 @@
 #include "storage.h"
 #include "symboltable.h"
 #include "typemodifier.h"
+#include "type.h"
 
 
 /* *********************************************************************** */
@@ -159,32 +160,6 @@ static TokenNamesInitTable tokenNamesAliases[] = {
     {"_Bool",           _BOOL},
     {"_Static_assert",  _STATIC_ASSERT},
     {NULL,              0}
-};
-
-
-typedef struct typeModificationsInit {
-    int type;
-    int modShort;
-    int modLong;
-    int modSigned;
-    int modUnsigned;
-} TypeModificationsInitTable;
-
-/* What each modifier makes of a type, -1 where it leaves it as it is */
-static TypeModificationsInitTable typeModificationsInitTable[] = {
-    //  type             short                 long                 signed              unsigned
-    {TypeDefault,     TypeShortInt,         TypeLongInt,         TypeSignedInt,      TypeUnsignedInt},
-    {TypeChar,        -1,                   -1,                  TypeSignedChar,     TypeUnsignedChar},
-    {TypeInt,         TypeShortInt,         TypeLongInt,         TypeSignedInt,      TypeUnsignedInt},
-    {TypeUnsignedInt, TypeUnsignedShortInt, TypeUnsignedLongInt, -1,                 -1},
-    {TypeSignedInt,   TypeSignedShortInt,   TypeSignedLongInt,   -1,                 -1},
-    {TypeShortInt,    -1,                   -1,                  TypeSignedShortInt, TypeUnsignedShortInt},
-    {TypeLongInt,     -1,                   -1,                  TypeSignedLongInt,  TypeUnsignedLongInt},
-    {TmodLong,        -1,                   -1,                  TmodLongSigned,     TmodLongUnsigned},
-    {TmodShort,       -1,                   -1,                  TmodShortSigned,    TmodShortUnsigned},
-    {TmodSigned,      TmodShortSigned,      TmodLongSigned,      -1,                 -1},
-    {TmodUnsigned,    TmodShortUnsigned,    TmodLongUnsigned,    -1,                 -1},
-    {-1,              -1,                   -1,                  -1,                 -1}
 };
 
 
@@ -369,26 +344,6 @@ void initBuiltinTypes(void) {
 
         /* pre-create **X */
         builtinPtr2Ptr2TypeTable[t] = newTypeModifier(TypePointer, NULL, builtinPtr2TypeTable[t]);
-    }
-}
-
-static void initTypeModifications(void) {
-    for (int i=0; i<MAX_TYPE; i++) {
-        typeShortChange[i] = i;
-        typeLongChange[i] = i;
-        typeSignedChange[i] = i;
-        typeUnsignedChange[i] = i;
-    }
-    for (int i=0; typeModificationsInitTable[i].type >= 0; i++) {
-        TypeModificationsInitTable *m = &typeModificationsInitTable[i];
-        if (m->modShort >= 0)
-            typeShortChange[m->type] = m->modShort;
-        if (m->modLong >= 0)
-            typeLongChange[m->type] = m->modLong;
-        if (m->modSigned >= 0)
-            typeSignedChange[m->type] = m->modSigned;
-        if (m->modUnsigned >= 0)
-            typeUnsignedChange[m->type] = m->modUnsigned;
     }
 }
 

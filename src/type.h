@@ -107,5 +107,6 @@ extern const char *typeNamesTable[];
 
 extern const char *cTypeSpelling(Type type);
 extern Type combinedType(Type base, Type modifier);
+extern void initTypeModifications(void);
 
 #endif /* _TYPES_H_ */
