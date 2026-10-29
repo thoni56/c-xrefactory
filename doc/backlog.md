@@ -395,18 +395,15 @@ Roadmap → Optimization has the baseline: a cold-start PUSH on ffmpeg, measured
     Test: `tests/test_extract_array_declared_in_region_used_after`.
 - (#95) <a id="extract-typing-ladder"></a>**Extract gets its types right, in this sequence** — *no repo home yet.*
     Each step starts from a red test.
-    1. `long long`. There is no type for it, so `long` and `long` stay `TmodLong` in
-       `mergeBaseType()` (`src/semact.c`) and Extract Function writes `long`. A new value
-       in `ALL_TYPE_ENUMS` shifts the ones after it, so probably a snapshot format bump.
-    2. Keep the qualifiers. The grammar maps `const` to TypeDefault (`src/c_parser.y`).
-    3. Extract Variable asks for the type, pre-filled, as Add Parameter asks for its
+    1. Keep the qualifiers. The grammar maps `const` to TypeDefault (`src/c_parser.y`).
+    2. Extract Variable asks for the type, pre-filled, as Add Parameter asks for its
        declaration. Today it always writes `int` (`generateNewVariableDeclaration()`).
-    4. Put the declaration before the statement.
-    5. Extract Predicate, a `bool`. It needs a marker for an expression, since
+    3. Put the declaration before the statement.
+    4. Extract Predicate, a `bool`. It needs a marker for an expression, since
        `putRegionMarker()` (`src/lexer.c`) wraps the region in braces and a marked
        expression no longer parses.
-    6. Deduce the type of the expression. `prettyPrintType()` (`src/misc.c`) can print it.
-    7. Extract an Expression as a Function. Today that gives a void function and a
+    5. Deduce the type of the expression. `prettyPrintType()` (`src/misc.c`) can print it.
+    6. Extract an Expression as a Function. Today that gives a void function and a
        statement call, and `isInExpression` (`src/extract.c`) is read but never set.
 - (#20) <a id="remove-references-stopgap"></a>**Take the client's "Remove References and Restart Server" back out** — it landed
     2026-09-24 as a deliberate stopgap (`c-xref-project-remove-references-and-restart`,
