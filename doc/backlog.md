@@ -395,7 +395,8 @@ Roadmap → Optimization has the baseline: a cold-start PUSH on ffmpeg, measured
     Test: `tests/test_extract_array_declared_in_region_used_after`.
 - (#95) <a id="extract-typing-ladder"></a>**Extract gets its types right, in this sequence** — *no repo home yet.*
     Each step starts from a red test.
-    1. Keep the qualifiers. The grammar maps `const` to TypeDefault (`src/c_parser.y`).
+    1. Keep `volatile`, `restrict` and `_Atomic`, and the qualifiers on a pointer (`char *const`).
+       The grammar maps them to QualifierNone (`src/c_parser.y`).
     2. Extract Variable asks for the type, pre-filled, as Add Parameter asks for its
        declaration. Today it always writes `int` (`generateNewVariableDeclaration()`).
     3. Put the declaration before the statement.

@@ -88,6 +88,7 @@ void prettyPrintType(char *buffer, int *bufferSize, TypeModifier *typeModifier, 
     char    typeString[COMPLETION_STRING_SIZE];
     int     l;
     bool    par;
+    Qualifier qualifiers = QualifierNone;
 
     typeString[0] = 0;
 
@@ -111,6 +112,7 @@ void prettyPrintType(char *buffer, int *bufferSize, TypeModifier *typeModifier, 
         assert(i > 2);
         if (typeModifier == NULL)
             goto typebreak;
+        qualifiers = typeModifier->qualifiers;
 
         if (typeModifier->typedefSymbol != NULL && typedefexp) {
             assert(typeModifier->typedefSymbol->name);
@@ -190,12 +192,14 @@ void prettyPrintType(char *buffer, int *bufferSize, TypeModifier *typeModifier, 
     }
 typebreak:
     postString[j]  = 0;
-    int realsize = strlen(typeString) + strlen(preString + i) + strlen(name) + strlen(postString) + 2;
+    char *qualifierString = (qualifiers & QualifierConst) ? "const " : "";
+    int realsize = strlen(qualifierString) + strlen(typeString) + strlen(preString + i) + strlen(name)
+        + strlen(postString) + 2;
     if (realsize < *bufferSize) {
         if (separator == ' ') {
-            sprintf(buffer, "%s %s", typeString, preString + i);
+            sprintf(buffer, "%s%s %s", qualifierString, typeString, preString + i);
         } else {
-            sprintf(buffer, "%s%c %s", typeString, separator, preString + i);
+            sprintf(buffer, "%s%s%c %s", qualifierString, typeString, separator, preString + i);
         }
         *bufferSize = strlen(buffer);
         sprintf(buffer + *bufferSize, "%s", name);

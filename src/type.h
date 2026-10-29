@@ -110,6 +110,12 @@ typedef enum type {
     ALL_TYPE_ENUMS(GENERATE_ENUM_VALUE)
 } Type;
 
+/* Bits, so that a declaration can carry several */
+typedef enum qualifier {
+    QualifierNone  = 0,
+    QualifierConst = 1,
+} Qualifier;
+
 
 extern const char *typeNamesTable[];
 

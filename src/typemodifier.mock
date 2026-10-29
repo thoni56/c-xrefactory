@@ -28,6 +28,10 @@ TypeModifier *newArrayTypeModifier(void) {
   return (TypeModifier *) mock();
 }
 
+TypeModifier *newQualifiedTypeModifier(TypeModifier *original, Qualifier qualifiers) {
+  return (TypeModifier *) mock(original, qualifiers);
+}
+
 TypeModifier *newEnumTypeModifier(Symbol *symbol) {
     return (TypeModifier *)mock(symbol);
 }

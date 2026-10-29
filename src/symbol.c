@@ -17,6 +17,7 @@ static void fillSymbol(Symbol *symbol, char *name, char *linkName, Position posi
     symbol->type = TypeDefault;
     symbol->storage = StorageDefault;
     symbol->npointers = 0;
+    symbol->qualifiers = QualifierNone;
 }
 
 /* Storage = StorageDefault */

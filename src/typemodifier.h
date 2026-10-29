@@ -11,6 +11,7 @@ typedef struct typeModifier {
         struct symbol *typeSymbol; /* Struct/Union/Enum */
     };
     struct symbol            *typedefSymbol;   /* the typedef symbol (if any) */
+    Qualifier                 qualifiers;
     struct typeModifier      *next;
 } TypeModifier;
 
@@ -27,6 +28,7 @@ extern TypeModifier *newFunctionTypeModifier(Symbol *args, Symbol *typedefSymbol
 extern TypeModifier *newPointerTypeModifier(TypeModifier *next);
 extern TypeModifier *newArrayTypeModifier(void);
 extern TypeModifier *newEnumTypeModifier(Symbol *symbol);
+extern TypeModifier *newQualifiedTypeModifier(TypeModifier *original, Qualifier qualifiers);
 
 /* And here are some fill/init functions if you need them, e.g. if you allocate elsewhere */
 extern void initTypeModifier(TypeModifier *typeModifier, Type kind);

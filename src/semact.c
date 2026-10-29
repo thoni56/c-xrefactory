@@ -534,7 +534,10 @@ void completeDeclarator(Symbol *type, Symbol *declarator) {
     assert(type->type == TypeDefault);
     declaratorModifier = &(declarator->typeModifier);
     typeModifier = type->typeModifier;
-    if (declarator->npointers) {
+    if (type->qualifiers != QualifierNone)
+        /* The pointer shortcuts below are shared, so they can't carry them */
+        typeModifier = newQualifiedTypeModifier(typeModifier, type->qualifiers);
+    else if (declarator->npointers) {
         if (declarator->npointers >= 1 && (typeModifier->type == TypeStruct || typeModifier->type == TypeUnion)
             && typeModifier->typedefSymbol == NULL) {
             declarator->npointers--;

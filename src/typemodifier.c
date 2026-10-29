@@ -16,6 +16,7 @@ static void fillTypeModifier(TypeModifier *typeModifier, Type type, Symbol *type
     memset(typeModifier, 0, sizeof(*typeModifier));
     typeModifier->type = type;
     typeModifier->typedefSymbol = typedefSymbol;
+    typeModifier->qualifiers = QualifierNone;
     typeModifier->next = next;
 }
 
@@ -77,5 +78,13 @@ TypeModifier *newArrayTypeModifier(void) {
 TypeModifier *newEnumTypeModifier(Symbol *symbol) {
     TypeModifier *typeModifier = newTypeModifier(TypeEnum, NULL, NULL);
     typeModifier->typeSymbol = symbol;
+    return typeModifier;
+}
+
+/* A copy, since the original may be a shared builtin type */
+TypeModifier *newQualifiedTypeModifier(TypeModifier *original, Qualifier qualifiers) {
+    TypeModifier *typeModifier = stackMemoryAlloc(sizeof(TypeModifier));
+    *typeModifier = *original;
+    typeModifier->qualifiers |= qualifiers;
     return typeModifier;
 }

@@ -658,7 +658,7 @@ declaration_specifiers0
     }
     | declaration_specifiers0 type_modality_specifier       {
         $$.data = $1.data;
-        declTypeSpecifier1($1.data,$2.data);
+        $$.data->qualifiers |= $2.data;
     }
     | declaration_specifiers0 type_specifier1               {
         $$.data = $1.data;
@@ -693,10 +693,11 @@ declaration_modality_specifiers
         $$.data->storage = $2.data;
     }
     | type_modality_specifier                               {
-        $$.data  = typeSpecifier1($1.data);
+        $$.data  = typeSpecifier1(TypeDefault);
+        $$.data->qualifiers = $1.data;
     }
     | declaration_modality_specifiers type_modality_specifier       {
-        declTypeSpecifier1($1.data, $2.data);
+        $1.data->qualifiers |= $2.data;
     }
     | function_specifier                                    {
         $$.data = typeSpecifier1(TypeDefault);
@@ -736,11 +737,11 @@ storage_class_specifier
     ;
 
 type_modality_specifier
-    : CONST         { $$.data = TypeDefault; }
-    | RESTRICT      { $$.data = TypeDefault; }
-    | VOLATILE      { $$.data = TypeDefault; }
-    | _ATOMIC       { $$.data = TypeDefault; }
-    | ANONYMOUS_MODIFIER   { $$.data = TypeDefault; }
+    : CONST         { $$.data = QualifierConst; }
+    | RESTRICT      { $$.data = QualifierNone; }
+    | VOLATILE      { $$.data = QualifierNone; }
+    | _ATOMIC       { $$.data = QualifierNone; }
+    | ANONYMOUS_MODIFIER   { $$.data = QualifierNone; }
     ;
 
 type_modality_specifier_opt
@@ -998,10 +999,11 @@ pointer
 
 type_mod_specifier_list
     : type_modality_specifier                                   {
-        $$.data  = typeSpecifier1($1.data);
+        $$.data  = typeSpecifier1(TypeDefault);
+        $$.data->qualifiers = $1.data;
     }
     | type_mod_specifier_list type_modality_specifier           {
-        declTypeSpecifier1($1.data, $2.data);
+        $1.data->qualifiers |= $2.data;
     }
     ;
 
@@ -1057,7 +1059,7 @@ type_specifier_list0
     }
     | type_specifier_list0 type_modality_specifier      {
         $$.data = $1.data;
-        declTypeSpecifier1($1.data,$2.data);
+        $$.data->qualifiers |= $2.data;
     }
     | type_specifier_list0 type_specifier1              {
         $$.data = $1.data;
