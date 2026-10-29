@@ -393,6 +393,21 @@ Roadmap → Optimization has the baseline: a cold-start PUSH on ffmpeg, measured
     an array. Move the declaration out of the region, before the call, and pass the array, as
     when it is declared before the region (`char message[]` as a parameter). The refusal goes.
     Test: `tests/test_extract_array_declared_in_region_used_after`.
+- (#95) <a id="extract-typing-ladder"></a>**Extract gets its types right, in this sequence** — *no repo home yet.*
+    Each step starts from a red test.
+    1. Restore the base-type tables. `c1311a0d` commented out `initTypeModifiersTabs()`,
+       so `mergeBaseType()` (`src/semact.c`) gives TypeDefault and Extract Function writes
+       `Default u` for an `unsigned long u`.
+    2. Keep the qualifiers. The grammar maps `const` to TypeDefault (`src/c_parser.y`).
+    3. Extract Variable asks for the type, pre-filled, as Add Parameter asks for its
+       declaration. Today it always writes `int` (`generateNewVariableDeclaration()`).
+    4. Put the declaration before the statement.
+    5. Extract Predicate, a `bool`. It needs a marker for an expression, since
+       `putRegionMarker()` (`src/lexer.c`) wraps the region in braces and a marked
+       expression no longer parses.
+    6. Deduce the type of the expression. `prettyPrintType()` (`src/misc.c`) can print it.
+    7. Extract an Expression as a Function. Today that gives a void function and a
+       statement call, and `isInExpression` (`src/extract.c`) is read but never set.
 - (#20) <a id="remove-references-stopgap"></a>**Take the client's "Remove References and Restart Server" back out** — it landed
     2026-09-24 as a deliberate stopgap (`c-xref-project-remove-references-and-restart`,
     `editors/emacs/c-xref.el`), because discarding the database is the standing remedy for
