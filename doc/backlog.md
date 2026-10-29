@@ -405,6 +405,10 @@ Roadmap → Optimization has the baseline: a cold-start PUSH on ffmpeg, measured
     5. Deduce the type of the expression. `prettyPrintType()` (`src/misc.c`) can print it.
     6. Extract an Expression as a Function. Today that gives a void function and a
        statement call, and `isInExpression` (`src/extract.c`) is read but never set.
+- (#96) <a id="extract-out-locals-declared"></a>**Extract Function declares the locals it returns through out parameters** —
+    when the region declares two or more locals used after it, the call site passes them by
+    address but no longer declares them. GitHub issue #79.
+    Test: `tests/test_extract_locals_declared_in_region_used_after` (suspended).
 - (#20) <a id="remove-references-stopgap"></a>**Take the client's "Remove References and Restart Server" back out** — it landed
     2026-09-24 as a deliberate stopgap (`c-xref-project-remove-references-and-restart`,
     `editors/emacs/c-xref.el`), because discarding the database is the standing remedy for
