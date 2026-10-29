@@ -458,49 +458,63 @@ static TypeModifier *createSimpleTypeModifier(Type type) {
     return p;
 }
 
-static TypeModifier *mergeBaseType(TypeModifier *t1,TypeModifier *t2){
-    unsigned b,r;
-    unsigned modif;
-    assert(t1->type<TYPE_MODIFIERS_END && t2->type<TYPE_MODIFIERS_END);
-    b=t1->type; modif=t2->type;// just to confuse compiler warning
-    /* if both are types, error, return the new one only*/
-    if (t1->type <= MODIFIERS_START && t2->type <= MODIFIERS_START)
-        return t2;
-    /* if not use tables*/
-    if (t1->type > MODIFIERS_START) {modif = t1->type; b = t2->type; }
-    if (t2->type > MODIFIERS_START) {modif = t2->type; b = t1->type; }
-    switch (modif) {
+static Type combinedType(Type base, Type modifier) {
+    Type r = 0;
+    switch (modifier) {
     case TmodLong:
-        r = typeLongChange[b];
+        r = typeLongChange[base];
         break;
     case TmodShort:
-        r = typeShortChange[b];
+        r = typeShortChange[base];
         break;
     case TmodSigned:
-        r = typeSignedChange[b];
+        r = typeSignedChange[base];
         break;
     case TmodUnsigned:
-        r = typeUnsignedChange[b];
+        r = typeUnsignedChange[base];
         break;
     case TmodShortSigned:
-        r = typeSignedChange[b];
+        r = typeSignedChange[base];
         r = typeShortChange[r];
         break;
     case TmodShortUnsigned:
-        r = typeUnsignedChange[b];
+        r = typeUnsignedChange[base];
         r = typeShortChange[r];
         break;
     case TmodLongSigned:
-        r = typeSignedChange[b];
+        r = typeSignedChange[base];
         r = typeLongChange[r];
         break;
     case TmodLongUnsigned:
-        r = typeUnsignedChange[b];
+        r = typeUnsignedChange[base];
         r = typeLongChange[r];
         break;
-    default: assert(0); r=0;
+    default:
+        assert(0);
     }
-    return createSimpleTypeModifier(r);
+    return r;
+}
+
+static bool isModifier(Type type) {
+    return type > MODIFIERS_START && type < TYPE_MODIFIERS_END;
+}
+
+static TypeModifier *mergeBaseType(TypeModifier *t1, TypeModifier *t2) {
+    assert(t1->type < TYPE_MODIFIERS_END && t2->type < TYPE_MODIFIERS_END);
+
+    /* Two base types is an error, keep the last one */
+    if (!isModifier(t1->type) && !isModifier(t2->type))
+        return t2;
+
+    Type base, modifier;
+    if (isModifier(t2->type)) {
+        modifier = t2->type;
+        base = t1->type;
+    } else {
+        modifier = t1->type;
+        base = t2->type;
+    }
+    return createSimpleTypeModifier(combinedType(base, modifier));
 }
 
 static TypeModifier * mergeBaseModTypes(TypeModifier *t1, TypeModifier *t2) {
