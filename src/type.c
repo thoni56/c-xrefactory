@@ -3,7 +3,6 @@
 #include <stddef.h>
 
 #include "commons.h"
-#include "proto.h"
 
 
 const char *typeNamesTable[] = {
@@ -48,10 +47,10 @@ static const char *cTypeSpellings[MAX_CTYPE] = {
 /*                            real constants                              */
 /* ********************************************************************** */
 
-static uchar typeShortChange[MAX_TYPE];
-static uchar typeLongChange[MAX_TYPE];
-static uchar typeSignedChange[MAX_TYPE];
-static uchar typeUnsignedChange[MAX_TYPE];
+static Type withShort[MAX_TYPE];
+static Type withLong[MAX_TYPE];
+static Type withSigned[MAX_TYPE];
+static Type withUnsigned[MAX_TYPE];
 
 bool isModifier(Type type) {
     return type > MODIFIERS_START && type < TYPE_MODIFIERS_END;
@@ -65,66 +64,45 @@ const char *cTypeSpelling(Type type) {
 }
 
 Type combinedType(Type base, Type modifier) {
-    Type r = 0;
     switch (modifier) {
     case TmodLong:
-        r = typeLongChange[base];
-        break;
+        return withLong[base];
     case TmodShort:
-        r = typeShortChange[base];
-        break;
+        return withShort[base];
     case TmodSigned:
-        r = typeSignedChange[base];
-        break;
+        return withSigned[base];
     case TmodUnsigned:
-        r = typeUnsignedChange[base];
-        break;
+        return withUnsigned[base];
     case TmodShortSigned:
-        r = typeSignedChange[base];
-        r = typeShortChange[r];
-        break;
+        return withShort[withSigned[base]];
     case TmodShortUnsigned:
-        r = typeUnsignedChange[base];
-        r = typeShortChange[r];
-        break;
+        return withShort[withUnsigned[base]];
     case TmodLongSigned:
-        r = typeSignedChange[base];
-        r = typeLongChange[r];
-        break;
+        return withLong[withSigned[base]];
     case TmodLongUnsigned:
-        r = typeUnsignedChange[base];
-        r = typeLongChange[r];
-        break;
+        return withLong[withUnsigned[base]];
     case TmodLongLong:
-        r = typeLongChange[base];
-        r = typeLongChange[r];
-        break;
+        return withLong[withLong[base]];
     case TmodLongLongUnsigned:
-        r = typeUnsignedChange[base];
-        r = typeLongChange[r];
-        r = typeLongChange[r];
-        break;
+        return withLong[withLong[withUnsigned[base]]];
     case TmodLongLongSigned:
-        r = typeSignedChange[base];
-        r = typeLongChange[r];
-        r = typeLongChange[r];
-        break;
+        return withLong[withLong[withSigned[base]]];
     default:
         assert(0);
+        return TypeDefault;
     }
-    return r;
 }
 
-typedef struct typeModificationsInit {
+typedef struct {
     int type;
-    int modShort;
-    int modLong;
-    int modSigned;
-    int modUnsigned;
-} TypeModificationsInitTable;
+    int modifiedUsingShort;
+    int modifiedUsingLong;
+    int modifiedUsingSigned;
+    int modifiedUsingUnsigned;
+} TypeModificationRow;
 
 /* What each modifier makes of a type, -1 where it leaves it as it is */
-static TypeModificationsInitTable typeModificationsInitTable[] = {
+static TypeModificationRow typeModifications[] = {
     //  type                 short                 long                     signed                 unsigned
     {TypeDefault,         TypeShortInt,         TypeLongInt,             TypeSignedInt,         TypeUnsignedInt},
     {TypeChar,            -1,                   -1,                      TypeSignedChar,        TypeUnsignedChar},
@@ -146,22 +124,27 @@ static TypeModificationsInitTable typeModificationsInitTable[] = {
     {-1,                  -1,                   -1,                      -1,                    -1}
 };
 
-void initTypeModifications(void) {
-    for (int i = 0; i < MAX_TYPE; i++) {
-        typeShortChange[i] = i;
-        typeLongChange[i] = i;
-        typeSignedChange[i] = i;
-        typeUnsignedChange[i] = i;
+static void initializeTypeModificationsToIdentity(void) {
+    for (Type t = TypeDefault; t < MAX_TYPE; t++) {
+        withShort[t] = t;
+        withLong[t] = t;
+        withSigned[t] = t;
+        withUnsigned[t] = t;
     }
-    for (int i = 0; typeModificationsInitTable[i].type >= 0; i++) {
-        TypeModificationsInitTable *m = &typeModificationsInitTable[i];
-        if (m->modShort >= 0)
-            typeShortChange[m->type] = m->modShort;
-        if (m->modLong >= 0)
-            typeLongChange[m->type] = m->modLong;
-        if (m->modSigned >= 0)
-            typeSignedChange[m->type] = m->modSigned;
-        if (m->modUnsigned >= 0)
-            typeUnsignedChange[m->type] = m->modUnsigned;
+}
+
+void initTypeModifications(void) {
+    initializeTypeModificationsToIdentity();
+
+    for (int i = 0; typeModifications[i].type != -1; i++) {
+        TypeModificationRow *row = &typeModifications[i];
+        if (row->modifiedUsingShort != -1)
+            withShort[row->type] = row->modifiedUsingShort;
+        if (row->modifiedUsingLong != -1)
+            withLong[row->type] = row->modifiedUsingLong;
+        if (row->modifiedUsingSigned != -1)
+            withSigned[row->type] = row->modifiedUsingSigned;
+        if (row->modifiedUsingUnsigned != -1)
+            withUnsigned[row->type] = row->modifiedUsingUnsigned;
     }
 }
