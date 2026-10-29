@@ -11,33 +11,37 @@ const char *typeNamesTable[] = {
 };
 
 static const char *cTypeSpellings[MAX_CTYPE] = {
-    [TypeChar]             = "char",
-    [TypeUnsignedChar]     = "unsigned char",
-    [TypeSignedChar]       = "signed char",
-    [TypeInt]              = "int",
-    [TypeUnsignedInt]      = "unsigned int",
-    [TypeSignedInt]        = "signed int",
-    [TypeShortInt]         = "short int",
-    [TypeUnsignedShortInt] = "unsigned short int",
-    [TypeSignedShortInt]   = "signed short int",
-    [TypeLongInt]          = "long int",
-    [TypeUnsignedLongInt]  = "unsigned long int",
-    [TypeSignedLongInt]    = "signed long int",
-    [TypeFloat]            = "float",
-    [TypeDouble]           = "double",
-    [TypeVoid]             = "void",
-    [TmodLong]             = "long",
-    [TmodShort]            = "short",
-    [TmodSigned]           = "signed",
-    [TmodUnsigned]         = "unsigned",
-    [TmodShortSigned]      = "signed short",
-    [TmodShortUnsigned]    = "unsigned short",
-    [TmodLongSigned]       = "signed long",
-    [TmodLongUnsigned]     = "unsigned long",
-    [TmodLongLong]         = "long long",
-    [TmodLongLongUnsigned] = "unsigned long long",
-    [TypeLong]             = "long",
-    [TypeBool]             = "bool",
+    [TypeChar]                = "char",
+    [TypeUnsignedChar]        = "unsigned char",
+    [TypeSignedChar]          = "signed char",
+    [TypeInt]                 = "int",
+    [TypeUnsignedInt]         = "unsigned int",
+    [TypeSignedInt]           = "signed int",
+    [TypeShortInt]            = "short int",
+    [TypeUnsignedShortInt]    = "unsigned short int",
+    [TypeSignedShortInt]      = "signed short int",
+    [TypeLongInt]             = "long int",
+    [TypeUnsignedLongInt]     = "unsigned long int",
+    [TypeSignedLongInt]       = "signed long int",
+    [TypeLongLongInt]         = "long long int",
+    [TypeUnsignedLongLongInt] = "unsigned long long int",
+    [TypeSignedLongLongInt]   = "signed long long int",
+    [TypeFloat]               = "float",
+    [TypeDouble]              = "double",
+    [TypeVoid]                = "void",
+    [TmodLong]                = "long",
+    [TmodShort]               = "short",
+    [TmodSigned]              = "signed",
+    [TmodUnsigned]            = "unsigned",
+    [TmodShortSigned]         = "signed short",
+    [TmodShortUnsigned]       = "unsigned short",
+    [TmodLongSigned]          = "signed long",
+    [TmodLongUnsigned]        = "unsigned long",
+    [TmodLongLong]            = "long long",
+    [TmodLongLongUnsigned]    = "unsigned long long",
+    [TmodLongLongSigned]      = "signed long long",
+    [TypeLong]                = "long",
+    [TypeBool]                = "bool",
 };
 
 /* ********************************************************************** */
@@ -91,6 +95,20 @@ Type combinedType(Type base, Type modifier) {
         r = typeUnsignedChange[base];
         r = typeLongChange[r];
         break;
+    case TmodLongLong:
+        r = typeLongChange[base];
+        r = typeLongChange[r];
+        break;
+    case TmodLongLongUnsigned:
+        r = typeUnsignedChange[base];
+        r = typeLongChange[r];
+        r = typeLongChange[r];
+        break;
+    case TmodLongLongSigned:
+        r = typeSignedChange[base];
+        r = typeLongChange[r];
+        r = typeLongChange[r];
+        break;
     default:
         assert(0);
     }
@@ -107,21 +125,25 @@ typedef struct typeModificationsInit {
 
 /* What each modifier makes of a type, -1 where it leaves it as it is */
 static TypeModificationsInitTable typeModificationsInitTable[] = {
-    //  type              short                 long                  signed              unsigned
-    {TypeDefault,      TypeShortInt,         TypeLongInt,          TypeSignedInt,      TypeUnsignedInt},
-    {TypeChar,         -1,                   -1,                   TypeSignedChar,     TypeUnsignedChar},
-    {TypeInt,          TypeShortInt,         TypeLongInt,          TypeSignedInt,      TypeUnsignedInt},
-    {TypeUnsignedInt,  TypeUnsignedShortInt, TypeUnsignedLongInt,  -1,                 -1},
-    {TypeSignedInt,    TypeSignedShortInt,   TypeSignedLongInt,    -1,                 -1},
-    {TypeShortInt,     -1,                   -1,                   TypeSignedShortInt, TypeUnsignedShortInt},
-    {TypeLongInt,      -1,                   -1,                   TypeSignedLongInt,  TypeUnsignedLongInt},
-    {TmodLong,         -1,                   TmodLongLong,         TmodLongSigned,     TmodLongUnsigned},
-    {TmodLongLong,     -1,                   -1,                   -1,                 TmodLongLongUnsigned},
-    {TmodLongUnsigned, -1,                   TmodLongLongUnsigned, -1,                 -1},
-    {TmodShort,        -1,                   -1,                   TmodShortSigned,    TmodShortUnsigned},
-    {TmodSigned,       TmodShortSigned,      TmodLongSigned,       -1,                 -1},
-    {TmodUnsigned,     TmodShortUnsigned,    TmodLongUnsigned,     -1,                 -1},
-    {-1,               -1,                   -1,                   -1,                 -1}
+    //  type                 short                 long                     signed                 unsigned
+    {TypeDefault,         TypeShortInt,         TypeLongInt,             TypeSignedInt,         TypeUnsignedInt},
+    {TypeChar,            -1,                   -1,                      TypeSignedChar,        TypeUnsignedChar},
+    {TypeInt,             TypeShortInt,         TypeLongInt,             TypeSignedInt,         TypeUnsignedInt},
+    {TypeUnsignedInt,     TypeUnsignedShortInt, TypeUnsignedLongInt,     -1,                    -1},
+    {TypeSignedInt,       TypeSignedShortInt,   TypeSignedLongInt,       -1,                    -1},
+    {TypeShortInt,        -1,                   -1,                      TypeSignedShortInt,    TypeUnsignedShortInt},
+    {TypeLongInt,         -1,                   TypeLongLongInt,         TypeSignedLongInt,     TypeUnsignedLongInt},
+    {TypeUnsignedLongInt, -1,                   TypeUnsignedLongLongInt, -1,                    -1},
+    {TypeSignedLongInt,   -1,                   TypeSignedLongLongInt,   -1,                    -1},
+    {TypeLongLongInt,     -1,                   -1,                      TypeSignedLongLongInt, TypeUnsignedLongLongInt},
+    {TmodLong,            -1,                   TmodLongLong,            TmodLongSigned,        TmodLongUnsigned},
+    {TmodLongLong,        -1,                   -1,                      TmodLongLongSigned,    TmodLongLongUnsigned},
+    {TmodLongUnsigned,    -1,                   TmodLongLongUnsigned,    -1,                    -1},
+    {TmodLongSigned,      -1,                   TmodLongLongSigned,      -1,                    -1},
+    {TmodShort,           -1,                   -1,                      TmodShortSigned,       TmodShortUnsigned},
+    {TmodSigned,          TmodShortSigned,      TmodLongSigned,          -1,                    -1},
+    {TmodUnsigned,        TmodShortUnsigned,    TmodLongUnsigned,        -1,                    -1},
+    {-1,                  -1,                   -1,                      -1,                    -1}
 };
 
 void initTypeModifications(void) {

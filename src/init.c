@@ -177,6 +177,9 @@ static int builtinTypesInitTable[] = {
     TypeLongInt,
     TypeUnsignedLongInt,
     TypeSignedLongInt,
+    TypeLongLongInt,
+    TypeUnsignedLongLongInt,
+    TypeSignedLongLongInt,
     TypeFloat,
     TypeDouble,
     TypeLong,
@@ -194,6 +197,9 @@ static int builtinTypesInitTable[] = {
     TmodShortUnsigned,
     TmodLongSigned,
     TmodLongUnsigned,
+    TmodLongLong,
+    TmodLongLongUnsigned,
+    TmodLongLongSigned,
     -1,
 };
 

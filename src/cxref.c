@@ -158,6 +158,9 @@ static void setAvailableRefactorings(Symbol *symbol, Usage usage) {
     case TypeLongInt:
     case TypeSignedLongInt:
     case TypeUnsignedLongInt:
+    case TypeLongLongInt:
+    case TypeUnsignedLongLongInt:
+    case TypeSignedLongLongInt:
     case TypeNull:
     case TypePackedType:
     case TypePointer:
@@ -200,6 +203,7 @@ static void setAvailableRefactorings(Symbol *symbol, Usage usage) {
     case TmodLongUnsigned:
     case TmodLongLong:
     case TmodLongLongUnsigned:
+    case TmodLongLongSigned:
     case TYPE_MODIFIERS_END:
     case MAX_CTYPE:
     case MAX_TYPE:

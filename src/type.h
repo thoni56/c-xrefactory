@@ -48,6 +48,9 @@
         ENUM(TypeLongInt)                                               \
         ENUM(TypeUnsignedLongInt)                                       \
         ENUM(TypeSignedLongInt)                                         \
+        ENUM(TypeLongLongInt)                                           \
+        ENUM(TypeUnsignedLongLongInt)                                   \
+        ENUM(TypeSignedLongLongInt)                                     \
         ENUM(TypeFloat)                                                 \
         ENUM(TypeDouble)                                                \
         ENUM(TypeStruct)                                                \
@@ -70,6 +73,7 @@
         ENUM(TmodLongUnsigned)                                          \
         ENUM(TmodLongLong)                                              \
         ENUM(TmodLongLongUnsigned)                                      \
+        ENUM(TmodLongLongSigned)                                        \
         ENUM(TYPE_MODIFIERS_END)                                        \
         ENUM(TypeEllipsis)                                              \
         ENUM(TypeLong)                                                  \
