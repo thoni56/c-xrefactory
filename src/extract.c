@@ -1070,7 +1070,7 @@ static void makeExtraction(void) {
         generateNewVariableAccess(program, extractionName);
         generateNewVariableDeclaration(program, extractionName);
         generateNewVariableTail();
-        generateLineNumber(currentFile.lineNumber);
+        generateLineNumber(parsedInfo.blockBeginLine);
     } else {
         generateNewFunctionCall(program, extractionName);
         generateNewFunctionHead(program, extractionName);

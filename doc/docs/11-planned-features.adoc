@@ -657,8 +657,8 @@ Turning a single in/out parameter into the return value is the natural next step
 *Extract Variable* replaces the marked expression with a new variable and declares it, initialized to the expression.
 The declaration is always suggested as `int`, since the type of the expression is not known (`generateNewVariableDeclaration()` in `extract.c`).
 You can change it, since the client asks for the declaration of the new variable, as Add Parameter does.
-It also goes in at the wrong place.
-The line it is given is `currentFile.lineNumber`, i.e. probably wherever parsing was, not the start of the statement that held the expression.
+It goes in on the line where the expression starts, not at the start of the statement that held it.
+So it lands in the wrong place when the statement started on an earlier line, and when the statement is the body of an `if` without braces or follows `} else if`.
 
 Even so it was an immense help when generalizing a function.
 Extracting the varying parts of a function body as variables first, and then extracting the function, gives them as parameters.

@@ -1,0 +1,18 @@
+CXREF -server -o server-buffer
+-getproject CURDIR/source.c
+end-of-options
+
+<sync>
+<set-info len=<n>>CURDIR</set-info>
+-rfct-extract-variable -mark=48 -cursor=43 CURDIR/source.c
+end-of-options
+
+<sync>
+<extraction-dialog type=newVariable_> <str len=<n>>newVariable_</str>
+ <str len=<n>>int newVariable_ = </str>
+ <str len=<n>>;</str>
+  <int val=3 len=<n>></int>
+</extraction-dialog>
+-exit
+end-of-options
+
