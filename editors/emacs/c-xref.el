@@ -6017,6 +6017,33 @@ refactoring.
       )
     ))
 
+(defun c-xref-split-declaration (declaration)
+  ;; "long sum" gives ("long" . "sum"), nil if there is no type and name
+  (if (string-match "\\([A-Za-z_][A-Za-z0-9_]*\\)[ \t]*\\'" declaration)
+      (let ((name (match-string 1 declaration))
+            (type (replace-regexp-in-string "\\`[ \t]+\\|[ \t]+\\'" ""
+                                            (substring declaration 0 (match-beginning 1)))))
+        (if (not (string= type ""))
+            (cons type name)))))
+
+(defun c-xref-ask-for-variable-declaration (mhead dname)
+  ;; mhead is the declaration up to the initialiser, e.g. "int newVariable_ = ".
+  ;; Returns the name and mhead with the type answered, or a name of "" to cancel.
+  (let* ((at (string-match (regexp-quote dname) mhead))
+         (answer (read-from-minibuffer
+                  "Declaration of the new variable (empty string cancels the extraction): "
+                  (concat (substring mhead 0 at) dname)))
+         (declaration (c-xref-split-declaration answer)))
+    (cond ((string-match "\\`[ \t]*\\'" answer)
+           (cons "" mhead))
+          ((null declaration)
+           (message "[c-xref] '%s' is not a type and a name, extraction cancelled" answer)
+           (cons "" mhead))
+          (t
+           (let ((type (car declaration)))
+             (cons (cdr declaration)
+                   (concat type (if (string-suffix-p "*" type) "" " ") (substring mhead at))))))))
+
 (defun c-xref-extraction-dialog (minvocation mhead mtail mline dname)
   ;; dname - name of the extracted entity, need to contain one of the strings
   (let ((mbody) (name) (saved-case-fold-search-mode) (mbuff) (kind) (sw)
@@ -6077,10 +6104,14 @@ refactoring.
 
     (goto-char (point-min))
     (display-buffer c-xref-extraction-buffer)
-    (if c-xref-renaming-default-name
-            (setq name c-xref-renaming-default-name)
-      (setq name (read-from-minibuffer (format "Enter name for the new %s (empty string cancels the extraction): " kind)))
-      )
+    (cond (c-xref-renaming-default-name
+           (setq name c-xref-renaming-default-name))
+          ((string= kind "variable")
+           (let ((declaration (c-xref-ask-for-variable-declaration mhead dname)))
+             (setq name (car declaration))
+             (setq mhead (cdr declaration))))
+          (t
+           (setq name (read-from-minibuffer (format "Enter name for the new %s (empty string cancels the extraction): " kind)))))
 
     (c-xref-delete-window-in-any-frame c-xref-extraction-buffer nil)
     (select-window sw)

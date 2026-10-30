@@ -395,16 +395,14 @@ Roadmap → Optimization has the baseline: a cold-start PUSH on ffmpeg, measured
     Test: `tests/test_extract_array_declared_in_region_used_after`.
 - (#95) <a id="extract-typing-ladder"></a>**Extract gets its types right, in this sequence** — *no repo home yet.*
     Each step starts from a red test.
-    1. Keep `volatile`, `restrict` and `_Atomic`, and the qualifiers on a pointer (`char *const`).
+    1. Put Extract Variable's declaration before the statement.
+    2. Keep `volatile`, `restrict` and `_Atomic`, and the qualifiers on a pointer (`char *const`).
        The grammar maps them to QualifierNone (`src/c_parser.y`).
-    2. Extract Variable asks for the type, pre-filled, as Add Parameter asks for its
-       declaration. Today it always writes `int` (`generateNewVariableDeclaration()`).
-    3. Put the declaration before the statement.
-    4. Extract Predicate, a `bool`. It needs a marker for an expression, since
+    3. Extract Predicate, a `bool`. It needs a marker for an expression, since
        `putRegionMarker()` (`src/lexer.c`) wraps the region in braces and a marked
        expression no longer parses.
-    5. Deduce the type of the expression. `prettyPrintType()` (`src/misc.c`) can print it.
-    6. Extract an Expression as a Function. Today that gives a void function and a
+    4. Deduce the type of the expression. `prettyPrintType()` (`src/misc.c`) can print it.
+    5. Extract an Expression as a Function. Today that gives a void function and a
        statement call, and `isInExpression` (`src/extract.c`) is read but never set.
 - (#96) <a id="extract-out-locals-declared"></a>**Extract Function declares the locals it returns through out parameters** —
     when the region declares two or more locals used after it, the call site passes them by

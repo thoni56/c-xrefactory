@@ -655,7 +655,8 @@ Turning a single in/out parameter into the return value is the natural next step
 ==== Background
 
 *Extract Variable* replaces the marked expression with a new variable and declares it, initialized to the expression.
-The declaration is always `int`, since the type of the expression is not known (`generateNewVariableDeclaration()` in `extract.c`).
+The declaration is always suggested as `int`, since the type of the expression is not known (`generateNewVariableDeclaration()` in `extract.c`).
+You can change it, since the client asks for the declaration of the new variable, as Add Parameter does.
 It also goes in at the wrong place.
 The line it is given is `currentFile.lineNumber`, i.e. probably wherever parsing was, not the start of the statement that held the expression.
 
