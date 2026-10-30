@@ -58,6 +58,8 @@ flowchart BT
   move_shared_static["§5 · 85 · Move Function asks about a `static` shared with what stays"]
   move_to_new_module["§5 · 87 · Move Function to New Module"]
   extract_array_used_after["§5 · 86 · Extract Function passes an array declared in the region and used after it"]
+  extract_typing_ladder["§5 · 95 · Extract gets its types right, in this sequence"]
+  extract_out_locals_declared["§5 · 96 · Extract Function declares the locals it returns through out parameters"]
   remove_references_stopgap["§5 · 20 · Take the client's #quot;Remove References and Restart Server#quot; back out"]
   index_based_sessions["§5 · 22 · Index-based sessions"]
   retry_creating_request["§5 · 24 · Retry the request that created the project"]
@@ -182,6 +184,8 @@ flowchart BT
   class move_shared_static ready
   class move_to_new_module ready
   class extract_array_used_after ready
+  class extract_typing_ladder ready
+  class extract_out_locals_declared ready
   class remove_references_stopgap blocked
   class index_based_sessions ready
   class retry_creating_request ready

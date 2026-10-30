@@ -5,7 +5,7 @@
 <meta http-equiv="X-UA-Compatible" content="IE=edge">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <meta name="generator" content="Asciidoctor 2.0.26">
-<meta name="author" content="v{VERSION} - Generated 2026-10-28">
+<meta name="author" content="v{VERSION} - Generated 2026-10-30">
 <title>C-xrefactory User Manual</title>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Open+Sans:300,300italic,400,400italic,600,600italic%7CNoto+Serif:400,400italic,700,700italic%7CDroid+Sans+Mono:400,700">
 <style>
@@ -441,7 +441,7 @@ body.book #toc,body.book #preamble,body.book h1.sect0,body.book .sect1>h2{page-b
 <div id="header">
 <h1>C-xrefactory User Manual</h1>
 <div class="details">
-<span id="author" class="author">v{VERSION} - Generated 2026-10-28</span><br>
+<span id="author" class="author">v{VERSION} - Generated 2026-10-30</span><br>
 </div>
 <div id="toc" class="toc2">
 <div id="toctitle">Table of Contents</div>
@@ -962,7 +962,8 @@ C-xrefactory analyses the code to determine parameters and return values.</p>
 </td>
 <td class="content">
 Extract Variable is not finished.
-The new variable is always declared as <code>int</code>, and the declaration might not end up where it should.
+It suggests <code>int</code> as the type, so you might need to change it when it asks for the declaration.
+The declaration might not end up where it should for some statements, e.g. a statement spanning several lines.
 </td>
 </tr>
 </table>
@@ -1113,7 +1114,7 @@ Search Symbol → enter <code>config*</code> → browse results</p>
 </div>
 <div id="footer">
 <div id="footer-text">
-Last updated 2026-10-28 23:25:20 UTC
+Last updated 2026-10-30 13:59:20 UTC
 </div>
 </div>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.18.3/highlight.min.js"></script>

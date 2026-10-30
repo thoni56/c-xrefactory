@@ -5,7 +5,7 @@
 <meta http-equiv="X-UA-Compatible" content="IE=edge">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <meta name="generator" content="Asciidoctor 2.0.26">
-<meta name="author" content="v{VERSION} - Generated 2026-10-28">
+<meta name="author" content="v{VERSION} - Generated 2026-10-30">
 <title>C-xrefactory - a C/Yacc refactoring and code browsing tool - Design Documentation</title>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Open+Sans:300,300italic,400,400italic,600,600italic%7CNoto+Serif:400,400italic,700,700italic%7CDroid+Sans+Mono:400,700">
 <style>
@@ -441,7 +441,7 @@ body.book #toc,body.book #preamble,body.book h1.sect0,body.book .sect1>h2{page-b
 <div id="header">
 <h1>C-xrefactory - a C/Yacc refactoring and code browsing tool - Design Documentation</h1>
 <div class="details">
-<span id="author" class="author">v{VERSION} - Generated 2026-10-28</span><br>
+<span id="author" class="author">v{VERSION} - Generated 2026-10-30</span><br>
 </div>
 <div id="toc" class="toc2">
 <div id="toctitle">Table of Contents</div>
@@ -615,6 +615,7 @@ body.book #toc,body.book #preamble,body.book h1.sect0,body.book .sect1>h2{page-b
 <li><a href="#_header_static_prototype_and_definition_are_two_symbols">17.4. Header static: prototype and definition are two symbols</a></li>
 <li><a href="#_token_pasting_that_forms_numbers">17.5. Token pasting that forms numbers</a></li>
 <li><a href="#_a_stale_snapshot_keeps_symbols_the_parser_no_longer_makes_global">17.6. A stale snapshot keeps symbols the parser no longer makes global</a></li>
+<li><a href="#_extract_variable_puts_the_declaration_in_the_wrong_place_for_some_statements">17.7. Extract Variable puts the declaration in the wrong place for some statements</a></li>
 </ul>
 </li>
 <li><a href="#_refactoring_recipes">18. Refactoring Recipes</a>
@@ -4918,9 +4919,10 @@ Done one at a time, the local is set but never read in between, and <code>-Werro
 <h4 id="_background_15">11.20.1. Background</h4>
 <div class="paragraph">
 <p><strong>Extract Variable</strong> replaces the marked expression with a new variable and declares it, initialized to the expression.
-The declaration is always <code>int</code>, since the type of the expression is not known (<code>generateNewVariableDeclaration()</code> in <code>extract.c</code>).
-It also goes in at the wrong place.
-The line it is given is <code>currentFile.lineNumber</code>, i.e. probably wherever parsing was, not the start of the statement that held the expression.</p>
+The declaration is always suggested as <code>int</code>, since the type of the expression is not known (<code>generateNewVariableDeclaration()</code> in <code>extract.c</code>).
+You can change it, since the client asks for the declaration of the new variable, as Add Parameter does.
+It goes in on the line where the expression starts, not at the start of the statement that held it.
+So it lands in the wrong place when the statement started on an earlier line, and when the statement is the body of an <code>if</code> without braces or follows <code>} else if</code>.</p>
 </div>
 <div class="paragraph">
 <p>Even so it was an immense help when generalizing a function.
@@ -10232,6 +10234,45 @@ which rebuilds from the sources. It also clears the shadow occurrences that
 behind-the-back disk changes leave behind. It is a stopgap for both.</p>
 </div>
 </div>
+<div class="sect2">
+<h3 id="_extract_variable_puts_the_declaration_in_the_wrong_place_for_some_statements">17.7. Extract Variable puts the declaration in the wrong place for some statements</h3>
+<div class="paragraph">
+<p><strong>Symptom:</strong> The declaration goes in on the line where the expression starts, which is only right when the statement starts on that line too.</p>
+</div>
+<div class="paragraph">
+<p><strong>Observed behaviour:</strong></p>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p>A statement that started on an earlier line, e.g. the second argument line of a call, gets the declaration in the middle of the statement.</p>
+</li>
+<li>
+<p>A body without braces, <code>if (x)</code> with the expression on the next line, gets the declaration between the <code>if</code> and its body, so the declaration becomes the body and the assignment always runs.</p>
+</li>
+<li>
+<p><code>} else if (x+y) {</code> gets the declaration before that line, i.e. inside the block that just closed.</p>
+</li>
+<li>
+<p>The first statement after a <code>case</code> label gets the declaration directly after the label, which is not valid before C23.</p>
+</li>
+<li>
+<p>A <code>for</code> condition gets no answer at all from the server, neither a dialog nor a message.</p>
+</li>
+</ul>
+</div>
+<div class="paragraph">
+<p><strong>Analysis:</strong></p>
+</div>
+<div class="paragraph">
+<p>The line is <code>parsedInfo.blockBeginLine</code> (<code>src/extract.c</code>), i.e. the line of the region&#8217;s first marker.
+The server has no idea of the start of the statement.
+The region markers wrap the region in braces (<code>putRegionMarker()</code>, <code>src/lexer.c</code>), which makes a marked expression a syntax error, so the parser recovers rather than reduces a statement around it.</p>
+</div>
+<div class="paragraph">
+<p><strong>Workaround:</strong> Move the declaration by hand, or add the braces first.</p>
+</div>
+</div>
 </div>
 </div>
 <div class="sect1">
@@ -12472,7 +12513,7 @@ operation reads the in-memory table.</p>
 </div>
 <div id="footer">
 <div id="footer-text">
-Last updated 2026-10-28 23:25:58 UTC
+Last updated 2026-10-30 13:59:55 UTC
 </div>
 </div>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.18.3/highlight.min.js"></script>
