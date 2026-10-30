@@ -146,3 +146,23 @@ from Project → Remove References and Restart Server
 (`c-xref-project-remove-references-and-restart`); the next request starts a fresh one,
 which rebuilds from the sources. It also clears the shadow occurrences that
 behind-the-back disk changes leave behind. It is a stopgap for both.
+
+=== Extract Variable puts the declaration in the wrong place for some statements
+
+*Symptom:* The declaration goes in on the line where the expression starts, which is only right when the statement starts on that line too.
+
+*Observed behaviour:*
+
+- A statement that started on an earlier line, e.g. the second argument line of a call, gets the declaration in the middle of the statement.
+- A body without braces, `if (x)` with the expression on the next line, gets the declaration between the `if` and its body, so the declaration becomes the body and the assignment always runs.
+- `} else if (x+y) {` gets the declaration before that line, i.e. inside the block that just closed.
+- The first statement after a `case` label gets the declaration directly after the label, which is not valid before C23.
+- A `for` condition gets no answer at all from the server, neither a dialog nor a message.
+
+*Analysis:*
+
+The line is `parsedInfo.blockBeginLine` (`src/extract.c`), i.e. the line of the region's first marker.
+The server has no idea of the start of the statement.
+The region markers wrap the region in braces (`putRegionMarker()`, `src/lexer.c`), which makes a marked expression a syntax error, so the parser recovers rather than reduces a statement around it.
+
+*Workaround:* Move the declaration by hand, or add the braces first.

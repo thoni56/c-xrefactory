@@ -262,7 +262,8 @@ C-xrefactory analyses the code to determine parameters and return values.
 *Extract Variable* — select an expression, then replace it with a new variable that is initialised to it.
 
 NOTE: Extract Variable is not finished.
-The new variable is always declared as `int`, and the declaration might not end up where it should.
+It suggests `int` as the type, so you might need to change it when it asks for the declaration.
+The declaration might not end up where it should for some statements, e.g. a statement spanning several lines.
 
 === Moving Code
 

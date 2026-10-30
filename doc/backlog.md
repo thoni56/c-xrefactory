@@ -395,9 +395,8 @@ Roadmap → Optimization has the baseline: a cold-start PUSH on ffmpeg, measured
     Test: `tests/test_extract_array_declared_in_region_used_after`.
 - (#95) <a id="extract-typing-ladder"></a>**Extract gets its types right, in this sequence** — *no repo home yet.*
     Each step starts from a red test.
-    1. Put Extract Variable's declaration before the statement, also when the statement
-       starts on an earlier line, is a body without braces, or follows `} else if`.
-       Today it goes in on the line where the expression starts.
+    1. Put Extract Variable's declaration before the statement: see "Extract Variable puts
+       the declaration in the wrong place for some statements" in `18-known-bugs.adoc`.
     2. Keep `volatile`, `restrict` and `_Atomic`, and the qualifiers on a pointer (`char *const`).
        The grammar maps them to QualifierNone (`src/c_parser.y`).
     3. Extract Predicate, a `bool`. It needs a marker for an expression, since
