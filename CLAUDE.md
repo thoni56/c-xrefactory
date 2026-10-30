@@ -136,10 +136,10 @@ a fine outcome; say so in one line.
 ### Docs pass
 
 A change in behaviour, or a fact that turned out different from what was believed,
-also gets a docs pass. A refactoring does not. Grep `doc/docs/` and the man pages for
-the identifiers and concepts the change touched, and report each passage it now
-contradicts or makes stale, with file and line, one line each. A passage that is only
-related is not reported. Report, do not fix; the user decides what is updated now and
+also gets a docs pass. A refactoring does not. Grep `doc/docs/`, `doc/user-manual.adoc`
+and the man pages for the identifiers and concepts the change touched, and report each
+passage it now contradicts or makes stale, with file and line, one line each. A passage
+that is only related is not reported. Report, do not fix; the user decides what is updated now and
 what becomes a backlog line. A pass that finds nothing is one line too: "docs: nothing
 contradicts".
 
