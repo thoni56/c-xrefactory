@@ -5211,9 +5211,8 @@ the reset was performed, nil if the reset was cancelled."
 (defun c-xref-help ()
   "Show basic help informations for use of C-xrefactory."
   (interactive "")
-  (let ()
-    (c-xref-display-and-set-new-dialog-window c-xref-info-buffer nil t)
-    (insert " C-xref Help.
+  (c-xref-display-and-set-new-dialog-window c-xref-info-buffer nil t)
+  (insert " C-xref Help.
 
 C-xrefactory is a refactoring and browsing environment for C (and
 Yacc).  You reach it from the `C-xref' menu or with the keys below.
@@ -5221,10 +5220,10 @@ Yacc).  You reach it from the `C-xref' menu or with the keys below.
 The User Manual covers everything in more detail:
 
   ")
-    (insert-text-button c-xref-user-manual-url
-                        'action (lambda (_button) (browse-url c-xref-user-manual-url))
-                        'follow-link t)
-    (insert "
+  (insert-text-button c-xref-user-manual-url
+                      'action (lambda (_button) (browse-url c-xref-user-manual-url))
+                      'follow-link t)
+  (insert "
 
 GETTING STARTED:
 
@@ -5262,9 +5261,9 @@ TUTORIAL:
 `C-xref Misc -> Tutorial' gives you some code to practise on.
 
 ")
-    (goto-char (point-min))
-    (c-xref-use-local-map c-xref-help-mode-map)
-    ))
+  (goto-char (point-min))
+  (c-xref-use-local-map c-xref-help-mode-map)
+  )
 
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
