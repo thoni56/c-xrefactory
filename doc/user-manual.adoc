@@ -275,7 +275,7 @@ When it moves to another file, the `static` functions and variables that are onl
 If it uses a `static` that something else in the file also uses, it will refuse the move and name those.
 
 The target's header gets an `extern` for the function, and the source file includes that header.
-If the target has no header, and the function is still used somewhere else, the header is created.
+If the target has no header, and the function is still used somewhere else, the header is created and saved.
 
 If there is a comment above what is moved, Move Function asks whether to move the comments too.
 A comment is taken up to a blank line.

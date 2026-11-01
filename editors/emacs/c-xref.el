@@ -5972,13 +5972,30 @@ refactoring.
       (select-window other)
       (goto-char position))))
 
+(defun c-xref-buffers-of-new-files ()
+  ;; Buffers visiting a file that isn't on disk yet
+  (let ((buffers nil))
+    (dolist (buffer (buffer-list) buffers)
+      (let ((file (buffer-file-name buffer)))
+        (if (and file (not (file-exists-p file)))
+            (push buffer buffers))))))
+
+(defun c-xref-save-created-files (new-files-before)
+  ;; A file the refactoring created is out of sight, and the code now needs it
+  (dolist (buffer (c-xref-buffers-of-new-files))
+    (unless (memq buffer new-files-before)
+      (with-current-buffer buffer (save-buffer))
+      (message "Created and saved %s" (file-name-nondirectory (buffer-file-name buffer))))))
+
 (defun c-xref-move-function (_rd)
-  (let ((name) (caller (selected-window)) (source (current-buffer)))
+  (let ((name) (caller (selected-window)) (source (current-buffer))
+        (new-files (c-xref-buffers-of-new-files)))
         (setq name (c-xref-get-identifier-on-point))
         (c-xref-refactoring-init-actions (format "moving %s" name))
         (c-xref-moving '("-rfct-move-function"))
         (c-xref-refactoring-finish-actions)
         (c-xref-show-source-beside-target caller source)
+        (c-xref-save-created-files new-files)
 ))
 
 (defun c-xref-organize-includes (_rd)
