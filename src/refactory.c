@@ -189,7 +189,7 @@ static void pushReferences(EditorMarker *point, char *pushOption, char *resolveM
 
     assert(browsingStack.top != NULL);
     if (browsingStack.top->hkSelectedSym == NULL) {
-        errorMessage(ERR_INTERNAL, "no symbol found for refactoring push");
+        errorMessage(ERR_ST, "No symbol found at the cursor. Does the code around it parse?");
     }
     createSelectionMenuForOperation(browsingStack.top->operation);
     if (resolveMessage != NULL && showSelectionMenu()) {
@@ -621,7 +621,8 @@ static EditorMarkerList *getReferences(EditorMarker *point, char *resolveMessage
                                        int messageType) {
     EditorMarkerList *occs;
     pushReferences(point, "-internal-push-for-rename", resolveMessage, messageType); /* TODO: WTF do we use "rename"?!? */
-    assert(browsingStack.top && browsingStack.top->hkSelectedSym);
+    if (browsingStack.top->hkSelectedSym == NULL)
+        return NULL;
     occs = convertReferencesToEditorMarkers(browsingStack.top->references);
     return occs;
 }
@@ -630,6 +631,8 @@ static EditorMarkerList *getAndPreCheckReferences(EditorMarker *point, char *nam
                                                       char *resolveMessage, int messageType) {
     EditorMarkerList *occs;
     occs = getReferences(point, resolveMessage, messageType);
+    if (occs == NULL)
+        return NULL;
     if (precheckThatSymbolRefsCorresponds(nameOnPoint, occs) != RESULT_OK) {
         freeEditorMarkerListAndMarkers(occs);
         return NULL;
@@ -823,6 +826,8 @@ static void renameAtInclude(EditorMarker *point) {
     char includedFileName[TMP_STRING_SIZE];
     EditorMarkerList *occurrences;
     occurrences = getReferences(point, message, PPCV_BROWSER_TYPE_INFO);
+    if (occurrences == NULL)
+        return;
     strcpy(includedFileName, getStringInInclude_static(point));
 
     EditorUndo *undoStartPoint = editorUndo;
