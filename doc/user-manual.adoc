@@ -264,6 +264,7 @@ C-xrefactory analyses the code to determine parameters and return values.
 NOTE: Extract Variable is not finished.
 It suggests `int` as the type, so you might need to change it when it asks for the declaration.
 The declaration might not end up where it should for some statements, e.g. a statement spanning several lines.
+If the new code does not parse, the extraction is undone and a window shows what happened.
 
 === Moving Code
 

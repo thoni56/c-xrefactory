@@ -8,7 +8,7 @@ end-of-options
 end-of-options
 
 <sync>
-<error len=<n>>No symbol found at the cursor. Does the code around it parse?
+<error len=<n>>No symbol found at the cursor.
 </error>
 -exit
 end-of-options

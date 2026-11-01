@@ -153,7 +153,7 @@ behind-the-back disk changes leave behind. It is a stopgap for both.
 
 *Observed behaviour:*
 
-- A statement that started on an earlier line, e.g. the second argument line of a call, gets the declaration in the middle of the statement.
+- A statement that started on an earlier line, e.g. the second argument line of a call, gets the declaration in the middle of the statement. That does not parse, so the extraction is undone and a window shows what happened.
 - A body without braces, `if (x)` with the expression on the next line, gets the declaration between the `if` and its body, so the declaration becomes the body and the assignment always runs.
 - `} else if (x+y) {` gets the declaration before that line, i.e. inside the block that just closed.
 - The first statement after a `case` label gets the declaration directly after the label, which is not valid before C23.
@@ -166,3 +166,4 @@ The server has no idea of the start of the statement.
 The region markers wrap the region in braces (`putRegionMarker()`, `src/lexer.c`), which makes a marked expression a syntax error, so the parser recovers rather than reduces a statement around it.
 
 *Workaround:* Move the declaration by hand, or add the braces first.
+If the extraction was undone, put the statement on one line first, or write the variable by hand.

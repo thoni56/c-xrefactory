@@ -189,7 +189,7 @@ static void pushReferences(EditorMarker *point, char *pushOption, char *resolveM
 
     assert(browsingStack.top != NULL);
     if (browsingStack.top->hkSelectedSym == NULL) {
-        errorMessage(ERR_ST, "No symbol found at the cursor. Does the code around it parse?");
+        errorMessage(ERR_ST, "No symbol found at the cursor.");
     }
     createSelectionMenuForOperation(browsingStack.top->operation);
     if (resolveMessage != NULL && showSelectionMenu()) {

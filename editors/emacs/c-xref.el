@@ -2232,12 +2232,19 @@ Returned with the index after the end tag, as (TEXT . INDEX)."
       )
     ))
 
+(define-error 'c-xref-refused "The server refused")
+
+(defvar c-xref-refusal-is-signalled nil
+  "Non-nil when the caller deals with an error from the server itself.")
+
 (defun c-xref-server-dispatch-error (ss i len dispatch-data tag)
   (let ((record) (cc) (cw))
     (setq cw (selected-window))
     (setq record (c-xref-server-dispatch-read-record ss i len tag))
     (setq cc (car record))
     (setq i (cdr record))
+    (if (and c-xref-refusal-is-signalled (equal tag c-xref_PPC_ERROR))
+        (signal 'c-xref-refused (list cc)))
     (c-xref-select-dispach-data-caller-window dispatch-data)
     (c-xref-display-and-set-new-dialog-window c-xref-error-modal-buffer nil t)
     (insert "[error] : ")
@@ -5208,6 +5215,18 @@ the reset was performed, nil if the reset was cancelled."
 (defvar c-xref-user-manual-url "https://thoni56.github.io/c-xrefactory/user-manual.html"
   "Where the User Manual is published.")
 
+(defvar c-xref-known-bugs-url "https://thoni56.github.io/c-xrefactory/guidebook.html#_known_bugs"
+  "Where the Known Bugs are published.")
+
+(defvar c-xref-issues-url "https://github.com/thoni56/c-xrefactory/issues"
+  "Where to report a bug.")
+
+(defun c-xref-insert-link (url)
+  (insert-text-button url
+                      'url url
+                      'action (lambda (button) (browse-url (button-get button 'url)))
+                      'follow-link t))
+
 (defun c-xref-help ()
   "Show basic help informations for use of C-xrefactory."
   (interactive "")
@@ -5220,9 +5239,7 @@ Yacc).  You reach it from the `C-xref' menu or with the keys below.
 The User Manual covers everything in more detail:
 
   ")
-  (insert-text-button c-xref-user-manual-url
-                      'action (lambda (_button) (browse-url c-xref-user-manual-url))
-                      'follow-link t)
+  (c-xref-insert-link c-xref-user-manual-url)
   (insert "
 
 GETTING STARTED:
@@ -5997,10 +6014,48 @@ refactoring.
              (cons (cdr declaration)
                    (concat type (if (string-suffix-p "*" type) "" " ") (substring mhead at))))))))
 
+(defun c-xref-roll-back-extraction ()
+  ;; Back to the checkpoint from c-xref-refactoring-init-actions
+  (c-xref-undo-until-undo-state (cdr (cdr (car c-xref-multifile-undo-state))) nil nil)
+  (setq c-xref-multifile-undo-state (cdr c-xref-multifile-undo-state))
+  (c-xref-switch-to-marker c-xref-refactoring-beginning-marker))
+
+(defun c-xref-show-failed-extraction (kind declaration line line-text)
+  (c-xref-display-and-set-new-dialog-window c-xref-info-buffer nil t)
+  (insert (format "Extract %s failed, the new code did not parse, sorry.\nYour code has not been modified.\n\n"
+                  (capitalize kind)))
+  (if (string= kind "variable")
+      (progn
+        (insert "It is probably because the declaration was put in the wrong place.\n"
+                "Consult the Known Bugs list at:\n\n  ")
+        (c-xref-insert-link c-xref-known-bugs-url)
+        (insert "\n\nIf you can't find this exact situation described there, please report it:\n\n  ")
+        (c-xref-insert-link c-xref-issues-url)
+        (insert (format "\n\nThe declaration:\n\n  %s\n\nwas put on line %d, before:\n\n  %s\n"
+                        declaration line line-text)))
+    (insert "Please report it:\n\n  ")
+    (c-xref-insert-link c-xref-issues-url)
+    (insert "\n"))
+  (goto-char (point-min))
+  (c-xref-use-local-map c-xref-help-mode-map))
+
+(defun c-xref-rename-extraction (name kind declaration line line-text)
+  ;; The last step. It can fail, and then the edits the dialog made are undone.
+  (condition-case failure
+      (let ((c-xref-refusal-is-signalled t))
+        (c-xref-do-refactoring (list "-rfct-rename" (format "-renameto=%s" name))))
+    (c-xref-refused
+     (c-xref-roll-back-extraction)
+     (c-xref-show-failed-extraction kind declaration line line-text)
+     (error "[c-xref] The extraction failed"))
+    (error
+     (c-xref-roll-back-extraction)
+     (signal (car failure) (cdr failure)))))
+
 (defun c-xref-extraction-dialog (minvocation mhead mtail mline dname)
   ;; dname - name of the extracted entity, need to contain one of the strings
   (let ((mbody) (name) (saved-case-fold-search-mode) (mbuff) (kind) (sw)
-            (mm) (pp) (bb) (ilen) (sr))
+            (mm) (pp) (bb) (ilen) (sr) (line-text))
     (setq sw (selected-window))
     (setq mbuff (current-buffer))
     (setq mm (min (mark) (point)))
@@ -6072,6 +6127,7 @@ refactoring.
             (progn
               (set-buffer mbuff)
               (c-xref-goto-line mline)
+              (setq line-text (buffer-substring (line-beginning-position) (line-end-position)))
               (set-marker c-xref-extraction-marker (point))
               (goto-char mm)
               (set-marker c-xref-extraction-marker2 (point))
@@ -6101,8 +6157,10 @@ refactoring.
                   (error "[c-xref] internal error, can't find identifier")
                 )
               (backward-char 2)
-              (c-xref-do-refactoring
-               (list "-rfct-rename" (format "-renameto=%s" name)))
+              (c-xref-rename-extraction name kind
+                                        (replace-regexp-in-string (regexp-quote dname) name
+                                                                  (concat mhead mbody mtail) t t)
+                                        mline line-text)
               ))
     ))
 
