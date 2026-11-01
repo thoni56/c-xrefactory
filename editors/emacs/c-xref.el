@@ -3509,11 +3509,12 @@ Special hotkeys available:
 (defun c-xref-find-project-root ()
   "Find project root by looking for .git directory.
 Returns the directory containing .git, or the current file's directory
-if not found."
-  (let ((git-root (locate-dominating-file (buffer-file-name) ".git")))
+if not found. A buffer without a file starts from its `default-directory'."
+  (let* ((start (or (buffer-file-name) default-directory))
+         (git-root (locate-dominating-file start ".git")))
     (if git-root
         (expand-file-name git-root)
-      (file-name-directory (buffer-file-name)))))
+      (file-name-directory start))))
 
 (defun c-xref-project-new ()
   "Create a new C-xrefactory project.
