@@ -129,6 +129,13 @@ EditorBuffer *findOrCreateAndLoadEditorBufferForFile(char *fileName) {
     return editorBuffer;
 }
 
+EditorBuffer *createEditorBufferForNewFile(char *fileName) {
+    EditorBuffer *buffer = createNewEditorBuffer(fileName, NULL, fileTimestampNow(), 0);
+    allocateNewEditorBufferTextSpace(buffer, 0);
+    buffer->textLoaded = true;
+    return buffer;
+}
+
 // Only used from Options for preload
 EditorBuffer *openEditorBufferFromPreload(char *fileName, char *preLoadedFromFile) {
     EditorBuffer *buffer = getEditorBufferForFile(fileName);

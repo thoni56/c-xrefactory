@@ -611,8 +611,11 @@ A-Za-z0-9.\t-- incremental search, insert character
               (find-file file)                  ;; full standard find-file
             (setq buff (create-file-buffer file))
             (switch-to-buffer buff)
-            (insert-file-contents file t nil nil t)
-            (after-find-file nil t t nil t)
+            (if (file-exists-p file)
+                (progn
+                  (insert-file-contents file t nil nil t)
+                  (after-find-file nil t t nil t))
+              (set-visited-file-name file t))
             ))
     ))
 
@@ -5958,12 +5961,24 @@ refactoring.
       )
     ))
 
+(defun c-xref-show-source-beside-target (caller source)
+  ;; The server's last goto took the caller window to what moved. If another
+  ;; window shows that file, go there and give the caller its source back.
+  (let ((target (current-buffer))
+        (position (point))
+        (other (car (delq caller (get-buffer-window-list (current-buffer) nil nil)))))
+    (when (and other (not (eq target source)))
+      (c-xref-switch-to-marker c-xref-refactoring-beginning-marker)
+      (select-window other)
+      (goto-char position))))
+
 (defun c-xref-move-function (_rd)
-  (let ((name))
+  (let ((name) (caller (selected-window)) (source (current-buffer)))
         (setq name (c-xref-get-identifier-on-point))
         (c-xref-refactoring-init-actions (format "moving %s" name))
         (c-xref-moving '("-rfct-move-function"))
         (c-xref-refactoring-finish-actions)
+        (c-xref-show-source-beside-target caller source)
 ))
 
 (defun c-xref-organize-includes (_rd)

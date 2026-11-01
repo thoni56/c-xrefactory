@@ -38,6 +38,10 @@ EditorBuffer *findOrCreateAndLoadEditorBufferForFile(char *fileName) {
     return (EditorBuffer *) mock(fileName);
 }
 
+EditorBuffer *createEditorBufferForNewFile(char *fileName) {
+    return (EditorBuffer *) mock(fileName);
+}
+
 EditorBuffer *openEditorBufferFromPreload(char *fileName, char *preLoadedFromFile) {
     return (EditorBuffer *) mock(fileName, preLoadedFromFile);
 }

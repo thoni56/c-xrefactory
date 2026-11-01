@@ -45,6 +45,7 @@ extern EditorBuffer *newEditorBuffer(char *fileName, int fileNumber, char *preLo
 extern EditorBuffer *createNewEditorBuffer(char *fileName, char *preLoadedFromFile, FileTimestamp modificationTime,
                                            size_t size);
 extern EditorBuffer *findOrCreateAndLoadEditorBufferForFile(char *fileName);
+extern EditorBuffer *createEditorBufferForNewFile(char *fileName);
 extern EditorBuffer *openEditorBufferFromPreload(char *fileName, char *preLoadedFromFile);
 extern EditorBuffer *getOpenedAndLoadedEditorBuffer(char *name);
 extern void renameEditorBuffer(EditorBuffer *buffer, char *newName, EditorUndo **undo);

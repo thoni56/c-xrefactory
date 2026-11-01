@@ -25,6 +25,25 @@ end-of-options
 </goto>
 <paste-block len=<n>></paste-block>
 <goto>
+ <position-off off=0 len=<n>>CURDIR/target.h</position-off>
+</goto>
+<replacement>
+ <str len=<n>></str>  <str len=<n>>#ifndef TARGET_H
+#define TARGET_H
+
+extern int moved(void);
+
+#endif
+</str>
+</replacement>
+<goto>
+ <position-off off=0 len=<n>>CURDIR/source.c</position-off>
+</goto>
+<replacement>
+ <str len=<n>></str>  <str len=<n>>#include "target.h"
+</str>
+</replacement>
+<goto>
  <position-off off=68 len=<n>>CURDIR/target.c</position-off>
 </goto>
 <indent-block val=3 len=<n>></indent-block>

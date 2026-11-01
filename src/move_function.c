@@ -195,7 +195,8 @@ static char *extractFunctionSignature(EditorMarker *definitionStart, EditorMarke
     return functionSignature;
 }
 
-static char *findCorrespondingHeaderFile(EditorMarker *target) {
+/* NULL if the target isn't a .c file. The header doesn't have to exist. */
+static char *correspondingHeaderFileName(EditorMarker *target) {
     char *targetFileName = target->buffer->fileName;
     char *suffix = getFileSuffix(targetFileName);
     char *headerFileName = NULL;
@@ -209,10 +210,8 @@ static char *findCorrespondingHeaderFile(EditorMarker *target) {
         headerPath[baseLength] = '\0';
         strcat(headerPath, ".h");
 
-        if (fileExists(headerPath)) {
-            headerFileName = stackMemoryAlloc(strlen(headerPath) + 1);
-            strcpy(headerFileName, headerPath);
-        }
+        headerFileName = stackMemoryAlloc(strlen(headerPath) + 1);
+        strcpy(headerFileName, headerPath);
     }
 
     return headerFileName;
@@ -255,6 +254,26 @@ static void insertExternDeclaration(char *functionSignature, EditorBuffer *heade
 
     /* Insert at the beginning of the header file */
     replaceStringInEditorBuffer(headerBuffer, offset, 0, externDecl, strlen(externDecl), &editorUndo);
+}
+
+/* "target.h" gives "TARGET_H" */
+static char *includeGuardFor(char *headerFileName) {
+    char *name = simpleFileName(headerFileName);
+    char *guard = stackMemoryAlloc(strlen(name) + 1);
+    strcpy(guard, name);
+    for (char *p = guard; *p; p++)
+        *p = isalnum(*p) ? toupper(*p) : '_';
+    return guard;
+}
+
+static void createHeaderWithDeclaration(char *headerFileName, char *functionSignature) {
+    char *guard = includeGuardFor(headerFileName);
+    char *format = "#ifndef %s\n#define %s\n\nextern %s;\n\n#endif\n";
+    char *text = stackMemoryAlloc(strlen(format) + 2*strlen(guard) + strlen(functionSignature) + 1);
+    sprintf(text, format, guard, guard, functionSignature);
+
+    EditorBuffer *headerBuffer = createEditorBufferForNewFile(headerFileName);
+    replaceStringInEditorBuffer(headerBuffer, 0, 0, text, strlen(text), &editorUndo);
 }
 
 static bool lookingAtStatic(char *text, int remaining) {
@@ -347,7 +366,7 @@ static int findIncludeInsertionPoint(EditorBuffer *buffer) {
 
 static void moveStaticFunctionAndMakeItExtern(EditorMarker *blockStart, EditorMarker *definitionStart,
                                               EditorMarker *point, EditorMarker *blockEnd,
-                                              EditorMarker *target) {
+                                              EditorMarker *target, bool isUsedElsewhere) {
     int blockSize = blockEnd->offset - blockStart->offset;
     EditorBuffer *sourceBuffer = blockStart->buffer;
     if (target->buffer == blockStart->buffer && target->offset > blockStart->offset &&
@@ -377,14 +396,21 @@ static void moveStaticFunctionAndMakeItExtern(EditorMarker *blockStart, EditorMa
     /* After moving the function, check if we need to add an extern declaration to the header */
     char *headerFileName = NULL;
     if (movingBetweenFiles) {
-        headerFileName = findCorrespondingHeaderFile(target);
+        headerFileName = correspondingHeaderFileName(target);
     }
 
     /* Insert extern declaration into header file if we have both header and signature */
     if (headerFileName != NULL && functionSignature != NULL) {
         EditorBuffer *headerBuffer = findOrCreateAndLoadEditorBufferForFile(headerFileName);
-        int insertionOffset = findHeaderInsertionPoint(headerBuffer);
-        insertExternDeclaration(functionSignature, headerBuffer, insertionOffset);
+        if (headerBuffer == NULL && !isUsedElsewhere)
+            return;
+
+        if (headerBuffer == NULL) {
+            createHeaderWithDeclaration(headerFileName, functionSignature);
+        } else {
+            int insertionOffset = findHeaderInsertionPoint(headerBuffer);
+            insertExternDeclaration(functionSignature, headerBuffer, insertionOffset);
+        }
 
         /* Check if source file needs to include the header */
         if (!sourceAlreadyIncludesHeader(sourceBuffer, headerFileName)) {
@@ -413,6 +439,7 @@ typedef struct {
 typedef struct {
     DefinitionBoundariesResult moved;
     ReferenceableItem       *movedItem;
+    bool                     movedIsUsedElsewhere;
     StaticUsed               leftBehind[MAX_STATICS];
     int                      leftBehindCount;
     StaticUsed               helpers[MAX_STATICS]; /* Used only by what moves */
@@ -474,9 +501,10 @@ static void findStaticsUsed(ReferenceableItem *item, void *pointer) {
             usedOutsideMoving = true;
         }
     }
-    if (definedInMoved && item->visibility == VisibilityGlobal)
+    if (definedInMoved && item->visibility == VisibilityGlobal) {
         uses->movedItem = item;
-    else if (definedInMoving)
+        uses->movedIsUsedElsewhere = usedOutsideMoving;
+    } else if (definedInMoving)
         return;                 /* Already a helper */
     else if (usedInMoving && definedInSourceFile && item->storage == StorageStatic) {
         StaticUsed used = {.item = item, .definition = definition};
@@ -665,7 +693,8 @@ void moveFunction(EditorMarker *point) {
 
     moveHelpersAlong(&uses, target, moveComments);
 
-    moveStaticFunctionAndMakeItExtern(blockStart, definitionStart, point, blockEnd, target);
+    moveStaticFunctionAndMakeItExtern(blockStart, definitionStart, point, blockEnd, target,
+                                      uses.movedIsUsedElsewhere);
 
     // and generate output
     applyWholeRefactoringFromUndo();
