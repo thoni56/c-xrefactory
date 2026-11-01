@@ -964,11 +964,11 @@ static bool programStructureMismatch() {
         || parsedInfo.blockAtBegin != parsedInfo.blockAtEnd;
 }
 
-static void generateNewVariableAccess(ProgramGraphNode *program, char *extractionName) {
+static void generateNewVariableAccess(char *extractionName) {
     ppcGenRecord(PPC_STRING_VALUE, extractionName);
 }
 
-static void generateNewVariableDeclaration(ProgramGraphNode *program, char *extractionName) {
+static void generateNewVariableDeclaration(char *extractionName) {
     char resultingString[EXTRACT_GEN_BUFFER_SIZE+1] = "";
     /* TODO: How do we generate the correct type? This must already be done when extracting function? */
     sprintf(resultingString, "int %s = ", extractionName);
@@ -1020,11 +1020,29 @@ static bool refuseToReturnAnArray(ProgramGraphNode *program) {
     return false;
 }
 
+/* Needs no program graph: the region is an expression, so its markers
+ * are a syntax error and the graph can miss what recovery skipped. */
+static void makeVariableExtraction(void) {
+    char *extractionName = "newVariable_";
+
+    ppcBeginWithStringAttribute(PPC_EXTRACTION_DIALOG, PPCA_TYPE, extractionName);
+    generateNewVariableAccess(extractionName);
+    generateNewVariableDeclaration(extractionName);
+    generateNewVariableTail();
+    generateLineNumber(parsedInfo.blockBeginLine);
+    ppcEnd(PPC_EXTRACTION_DIALOG);
+}
+
 static void makeExtraction(void) {
     ProgramGraphNode *program;
 
     if (programStructureMismatch()) {
         errorMessage(ERR_ST, "Region / program structure mismatch");
+        return;
+    }
+
+    if (parsingConfig.extractMode == EXTRACT_VARIABLE) {
+        makeVariableExtraction();
         return;
     }
 
@@ -1052,9 +1070,7 @@ static void makeExtraction(void) {
         return;
 
     char *extractionName;
-    if (parsingConfig.extractMode == EXTRACT_VARIABLE)
-        extractionName = "newVariable_";
-    else if (parsingConfig.extractMode==EXTRACT_MACRO) {
+    if (parsingConfig.extractMode==EXTRACT_MACRO) {
         extractionName = "NEW_MACRO_";
     } else
         extractionName = "newFunction_";
@@ -1066,11 +1082,6 @@ static void makeExtraction(void) {
         generateNewMacroHead(program, extractionName);
         generateNewMacroTail();
         generateLineNumber(extractionInsertionPosition());
-    } else if (parsingConfig.extractMode == EXTRACT_VARIABLE) {
-        generateNewVariableAccess(program, extractionName);
-        generateNewVariableDeclaration(program, extractionName);
-        generateNewVariableTail();
-        generateLineNumber(parsedInfo.blockBeginLine);
     } else {
         generateNewFunctionCall(program, extractionName);
         generateNewFunctionHead(program, extractionName);
