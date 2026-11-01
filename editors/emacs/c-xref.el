@@ -5205,6 +5205,9 @@ the reset was performed, nil if the reset was cancelled."
   )
 
 
+(defvar c-xref-user-manual-url "https://thoni56.github.io/c-xrefactory/user-manual.html"
+  "Where the User Manual is published.")
+
 (defun c-xref-help ()
   "Show basic help informations for use of C-xrefactory."
   (interactive "")
@@ -5212,101 +5215,51 @@ the reset was performed, nil if the reset was cancelled."
     (c-xref-display-and-set-new-dialog-window c-xref-info-buffer nil t)
     (insert " C-xref Help.
 
-C-xrefactory is a refactoring development environment for C (and
-Yacc).  Its functions can be accessed via the `c-xref' menu.
-Optionally the most frequently used functions are accessible via
-hot-keys.  Documentation of a particular function is available
-through the \"C-h k\" key combination (i.e.  the `control' key
-together with `h' key and then the `k' key) followed by mouse
-selection of the corresponding menu item.
+C-xrefactory is a refactoring and browsing environment for C (and
+Yacc).  You reach it from the `C-xref' menu or with the keys below.
 
-PROJECTS:
+The User Manual covers everything in more detail:
 
-C-xrefactory is project based: you will need to create or select
-an `active project' before doing anything else. In particular,
-you should start your work with C-xrefactory by invoking the
-'Project -> New' menu item. C-xrefactory will also prompt for
-creating a project if you invoke a C-xrefactory function, such as
-'Push This Symbol and Goto Definition' in a file not belonging to
-a project.
+  ")
+    (insert-text-button c-xref-user-manual-url
+                        'action (lambda (_button) (browse-url c-xref-user-manual-url))
+                        'follow-link t)
+    (insert "
 
-C-xrefactory will automatically try to identify which project you
-are working with from the location of the current source file.
+GETTING STARTED:
 
-Projects may use #ifdef:s and to cover code inside all such
-conditional segments C-xrefactory might need to do multiple
-passes over the source with different preprocessor settings. You
-can define them during the creation of the project or modify them
-later. See CUSTOMIZATION below.
+C-xrefactory works on one project at a time.  It finds the project
+by searching upwards from the current file for a `.c-xrefrc' file.
+If there isn't one, it offers to create it.  You can also use
+`Project -> New'.
 
-REFERENCES DATABASE:
+Every operation analyses what it needs from your sources, so the
+first ones might take longer.
 
-The references database stores all the necessary information
-about your project sources, in particular informations about all
-symbols, their linking properties, definition place(s) and all
-usages.  The maintenance of the database is the responsibility of
-the user.  An out of date database will cause mistakes in source
-browsing.  However, some functions, like the `Complete
-Identifier' function and the 'Extract Function/Macro/Variable'
-refactorings, are independent of the database as they depend only
-on file-local information.
+KEYS:
 
-Three functions are available for maintenance of the references
-database, trading time against accuracy.  The `Full Update'
-function should guarantee correct content of the database; it is
-recomended to re-create the database from time to time in order
-to remove garbage. Particularaly when navigation seems to be off.
+  F6      Push This Symbol and Goto Definition
+  C-F6    Push This Symbol and Display Browser
+  M-F6    Search Definition
+  F5      Pop Symbol and Return
+  C-F5    Re-push Popped Symbol
+  F3, F4  Previous and Next Reference
+  F7      Delete One Window
+  F8      Complete Identifier
+  F11     Refactor Menu
 
-BROWSING AND REFACTORINGS:
+Put the cursor on a symbol and press F11 to see what you can do
+with it.  For the Extract refactorings, mark a region first.
 
-With browsing we mean jumping between all usages of the same
-symbol. Note that with c-xref semantically different symbols are
-considered different. You can start such browsing either by
-placing the position on a symbol and activating the function
-c-xref-push-and-goto-definition, which is usually bound to
-function key F6, or from the menu `Browsing with Symbol
-Stack'. Once you have pushed a symbol you can navigate through
-all detected occurences with F3 and F4. F5 will pop that symbol
-and move back to where the position was before the symbol
-push. This can be done recursively to any depth.
+IF SOMETHING SEEMS WRONG:
 
-To invoke a refactoring (bound to F11) you have to position the
-point on the browsed (refactored) symbol. For a rename you place
-the cursor on a symbol, press F11 and select `Rename'.
-
-For parameter manipulations (adding or deleting a parameter) you
-need to position the point on the name of the function/macro,
-not on the parameter itself.  Before invoking any of the `Extract
-Function/Macro/Variable' functions you need to select a
-region (with your mouse or by specifying begin of the region by
-C-<space> and the end by the point).
-
-C-xrefactory may open some dialogs in a horizontally split
-window; in general in those screens the middle mouse button makes
-a choice, and the right button gives a menu of available actions.
-
-C-XREF BACKGROUND TASK:
-
-Emacs C-xref functions cooperate with an external `c-xref' task;
-if you think that the task has entered an inconsistent state, or
-if you wish to interrupt creation or update of the references
-database, you can invoke the `Kill c-xref task' function.
-
-CUSTOMIZATION:
-
-C-xrefactory can be customized via the `C-xref -> Options' menu
-item and via the project's .c-xrefrc file.  The `Options'
-menu item customizes project independent behaviour which is
-mainly the user interface.  In the `.c-xrefrc' file you can
-specify your projects' settings and preferences.  There are many
-options you can customize via .c-xrefrc; for more information
-read the c-xref and c-xrefrc man pages. Before using C-xrefactory
-you should also read the README file included in the distribution
-package.
+If the references seem off, use `Project -> Remove References and
+Restart Server'.  If the server hangs, use `C-xref Misc -> Kill
+C-xref Process'.
 
 TUTORIAL:
 
-You can invoke a tutorial from the menu, `C-xref -> Misc -> Tutorial'.
+`C-xref Misc -> Tutorial' gives you some code to practise on.
 
 ")
     (goto-char (point-min))

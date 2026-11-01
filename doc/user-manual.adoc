@@ -42,7 +42,7 @@ If no config file could be found, you'll be prompted to create a project.
 Project > Show Active shows the active project.
 
 If the references seem off, use Project > Remove References and Restart Server.
-It removes the project's saved references, and the next operation analyses the project again.
+It removes the project's saved references, and the following operations analyse what they need again.
 
 === Project Configuration
 
