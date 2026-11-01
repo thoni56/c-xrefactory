@@ -409,6 +409,10 @@ Roadmap → Optimization has the baseline: a cold-start PUSH on ffmpeg, measured
     when the region declares two or more locals used after it, the call site passes them by
     address but no longer declares them. GitHub issue #79.
     Test: `tests/test_extract_locals_declared_in_region_used_after` (suspended).
+- (#97) <a id="rename-partial-in-broken-code"></a>**Rename in code that does not parse leaves occurrences behind** —
+    with the cursor on a declaration the parser still saw, only that occurrence is renamed,
+    with no warning. On a use it refuses, see `tests/test_rename_in_code_that_does_not_parse`,
+    whose `source.c` also shows this with the cursor on offset 66 (WSL session d25255b8).
 - (#20) <a id="remove-references-stopgap"></a>**Take the client's "Remove References and Restart Server" back out** — it landed
     2026-09-24 as a deliberate stopgap (`c-xref-project-remove-references-and-restart`,
     `editors/emacs/c-xref.el`), because discarding the database is the standing remedy for
