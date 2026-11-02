@@ -3,8 +3,8 @@ CXREF -server -o server-buffer
 end-of-options
 
 <sync>
-<set-info len=<n>>project_a</set-info>
--browse-push -cursor=4 CURDIR/project_a/source.c -p project_a
+<set-info len=<n>>CURDIR/project_a</set-info>
+-browse-push -cursor=4 CURDIR/project_a/source.c -p CURDIR/project_a
 end-of-options
 
 <sync>
@@ -15,7 +15,7 @@ end-of-options
 end-of-options
 
 <sync>
-<project-mismatch len=<n>>project_a</project-mismatch>
+<project-mismatch len=<n>>CURDIR/project_a</project-mismatch>
 -exit
 end-of-options
 

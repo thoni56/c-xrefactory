@@ -3,7 +3,7 @@ CXREF -server -o server-buffer
 end-of-options
 
 <sync>
-<set-info len=<n>>test_navigation_finds_shifted_reference</set-info>
+<set-info len=<n>>CURDIR</set-info>
 -browse-push -cursor=29 CURDIR/source.c
 end-of-options
 

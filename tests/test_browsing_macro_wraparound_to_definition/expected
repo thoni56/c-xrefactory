@@ -3,7 +3,7 @@ CXREF -server -o server-buffer
 end-of-options
 
 <sync>
-<set-info len=<n>>test_navigation_macro_wraparound_to_definition</set-info>
+<set-info len=<n>>CURDIR</set-info>
 -browse-push -preload CURDIR/zzz_define.h CURDIR/zzz_define.preload -cursor=8 CURDIR/zzz_define.h
 end-of-options
 

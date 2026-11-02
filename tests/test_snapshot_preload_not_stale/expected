@@ -3,7 +3,7 @@ CXREF -server -o server-buffer
 end-of-options
 
 <sync>
-<set-info len=<n>>test_snapshot_preload_not_stale</set-info>
+<set-info len=<n>>CURDIR</set-info>
 -browse-push -preload CURDIR/header.h CURDIR/header.preload -cursor=77 CURDIR/source.c
 end-of-options
 
@@ -26,7 +26,7 @@ CXREF -server -o server-buffer
 end-of-options
 
 <sync>
-<set-info len=<n>>test_snapshot_preload_not_stale</set-info>
+<set-info len=<n>>CURDIR</set-info>
 -browse-push -cursor=77 CURDIR/source.c
 end-of-options
 

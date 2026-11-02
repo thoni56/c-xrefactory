@@ -3,7 +3,7 @@ CXREF -server -o server-buffer
 end-of-options
 
 <sync>
-<set-info len=<n>>test_peek</set-info>
+<set-info len=<n>>CURDIR</set-info>
 -browse-push -cursor=4 source.c
 end-of-options
 

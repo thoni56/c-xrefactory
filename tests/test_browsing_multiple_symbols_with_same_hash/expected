@@ -3,7 +3,7 @@ CXREF -server -o server-buffer
 end-of-options
 
 <sync>
-<set-info len=<n>>test_navigation_stale_preserves_other_refs</set-info>
+<set-info len=<n>>CURDIR</set-info>
 -browse-push -preload CURDIR/server.h CURDIR/server.preload1 -cursor=486 CURDIR/server.h
 end-of-options
 

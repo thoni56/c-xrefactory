@@ -3,7 +3,7 @@ CXREF -server -o server-buffer
 end-of-options
 
 <sync>
-<set-info len=<n>>project</set-info>
+<set-info len=<n>>CURDIR</set-info>
 -search=feature_only source.c
 end-of-options
 

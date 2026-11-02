@@ -3,7 +3,7 @@ CXREF -server -o server-buffer
 end-of-options
 
 <sync>
-<set-info len=<n>>test_navigation_macro_to_macro_reference</set-info>
+<set-info len=<n>>CURDIR</set-info>
 -browse-push -preload CURDIR/macros.h CURDIR/macros.preload -cursor=79 CURDIR/macros.h
 end-of-options
 

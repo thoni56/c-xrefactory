@@ -3,7 +3,7 @@ CXREF -server -o server-buffer
 end-of-options
 
 <sync>
-<set-info len=<n>>projectB</set-info>
+<set-info len=<n>>CURDIR/projectB</set-info>
 -get FROM_A
 end-of-options
 

@@ -3,7 +3,7 @@ CXREF -server -o server-buffer
 end-of-options
 
 <sync>
-<set-info len=<n>>test_extract_static_updated_in_region_is_passed_by_address</set-info>
+<set-info len=<n>>CURDIR</set-info>
 -rfct-extract-function -mark=64 -cursor=112 CURDIR/source.c
 end-of-options
 

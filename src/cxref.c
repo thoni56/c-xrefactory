@@ -56,7 +56,7 @@ static unsigned menuFilterLevels[MAX_MENU_FILTER_LEVEL] = {
 #define RENAME_FILTER_LEVEL (FILE_MATCH_RELATED | NAME_MATCH_APPLICABLE)
 
 /* Single-project policy: the server locks to the first project discovered.
- * lockedProject / lockedProjectRoot live in globals.c. */
+ * lockedProject, its root path, lives in globals.c. */
 
 static bool fileIsUnderIncludePaths(char *fileName) {
     for (StringList *dir = options.includeDirs; dir != NULL; dir = dir->next) {
@@ -1799,7 +1799,7 @@ static void handleProject() {
             if (lockedProject != NULL) {
                 /* Server is locked - the file is in scope if it is under the project
                  * root or under a configured include path */
-                if (strncmp(fileName, lockedProjectRoot, strlen(lockedProjectRoot)) == 0
+                if (strncmp(fileName, lockedProject, strlen(lockedProject)) == 0
                     || fileIsUnderIncludePaths(fileName)) {
                     ppcGenRecord(PPC_SET_INFO, lockedProject);
                 } else {
@@ -1815,14 +1815,12 @@ static void handleProject() {
                     ppcGenRecord(PPC_NO_PROJECT, fileName);
                 } else {
                     applyConventionBasedDatabasePath();
-                    /* Lock to this project. Discovery cannot find a config without a
-                     * root, so the two are always locked together. */
-                    lockedProject = strdup(projectOptionsSectionName);
-                    lockedProjectRoot = strdup(options.detectedProjectRoot);
-                    log_debug("Server locked to project: %s (root: %s)", lockedProject,
-                              lockedProjectRoot);
+                    /* Lock to this project. Its id is its root path (ADR-0029), and
+                     * discovery cannot find a config without a root. */
+                    lockedProject = strdup(options.detectedProjectRoot);
+                    log_debug("Server locked to project: %s", lockedProject);
                     reportUnsupportedOptions();
-                    ppcGenRecord(PPC_SET_INFO, projectOptionsSectionName);
+                    ppcGenRecord(PPC_SET_INFO, lockedProject);
                     /* Persist the lock across requests: sync into savedOptions so
                      * cxFileLocation survives the next request's options reset,
                      * and mark project context initialized so server.c's

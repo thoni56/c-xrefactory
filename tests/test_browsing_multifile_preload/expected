@@ -3,7 +3,7 @@ CXREF -server -o server-buffer
 end-of-options
 
 <sync>
-<set-info len=<n>>test_navigation_multifile_preload</set-info>
+<set-info len=<n>>CURDIR</set-info>
 -browse-push -preload CURDIR/source1.c CURDIR/source1.preload -cursor=25 CURDIR/source1.c
 end-of-options
 

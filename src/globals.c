@@ -45,12 +45,11 @@ bool completionStringServed = false;
 Usage olstringUsage = 0;
 char *completionStringInMacroBody;
 
-/* Server session project lock, always set as a pair. Set by cxref.c
+/* Server session project lock, the project's root path. Set by cxref.c
  * handleProject when -getproject first picks a project; read by startup.c
  * initializeFileProcessing to skip re-discovery for subsequent requests whose
  * files live in different subtrees. */
 char *lockedProject = NULL;
-char *lockedProjectRoot = NULL;
 
 /* ******************* yytext for yacc ****************** */
 char *yytext;

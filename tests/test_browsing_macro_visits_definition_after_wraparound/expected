@@ -3,7 +3,7 @@ CXREF -server -o server-buffer
 end-of-options
 
 <sync>
-<set-info len=<n>>test_navigation_macro_visits_definition_after_wraparound</set-info>
+<set-info len=<n>>CURDIR</set-info>
 -browse-push -preload CURDIR/common.h CURDIR/common.preload -cursor=8 CURDIR/common.h
 end-of-options
 

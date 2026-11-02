@@ -3,7 +3,7 @@ CXREF -server -o server-buffer
 end-of-options
 
 <sync>
-<set-info len=<n>>test_navigation_cold_start_shared_header</set-info>
+<set-info len=<n>>CURDIR</set-info>
 -browse-push -cursor=66 CURDIR/ins.c
 end-of-options
 
