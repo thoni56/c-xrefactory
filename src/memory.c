@@ -4,7 +4,6 @@
 
 #include "log.h"
 #include "head.h"
-#include "constants.h"
 #include "proto.h"
 
 

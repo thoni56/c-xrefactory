@@ -6,10 +6,9 @@
 
 #include "commons.h"
 #include "filetable.h"
+#include "head.h"
 #include "list.h"
-#include "options.h"
 #include "referenceableitem.h"
-#include "session.h"
 #include "symbol.h"
 
 

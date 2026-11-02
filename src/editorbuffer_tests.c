@@ -1,10 +1,7 @@
 #include <cgreen/cgreen.h>
 #include <cgreen/constraint_syntax_helpers.h>
 
-#include "editor.h"
 #include "editorbuffer.h"
-
-#include "editorbuffertable.h"
 #include "log.h"
 
 #include "commons.mock"

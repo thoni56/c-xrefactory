@@ -6,7 +6,6 @@
 #include "filetable.h"
 #include "globals.h"
 #include "log.h"
-#include "memory.h"
 #include "misc.h"
 #include "options.h"
 #include "parsers.h"

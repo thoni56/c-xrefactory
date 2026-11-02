@@ -5,10 +5,10 @@
 #include "browsingmenu.h"
 #include "commons.h"
 #include "cxref.h"
+#include "head.h"
 #include "match.h"
 #include "options.h"
 #include "reference.h"
-
 
 SearchingStack searchingStack;
 CompletionStack completionStack;

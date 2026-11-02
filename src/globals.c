@@ -1,6 +1,5 @@
 #include "globals.h"
 
-#include "head.h"
 #include "proto.h"
 #include "usage.h"
 #include "lexem.h"

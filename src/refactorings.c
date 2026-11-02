@@ -1,6 +1,5 @@
 #include "refactorings.h"
 
-// This should move to refactorings.c
 typedef struct availableRefactoring {
     bool available;
     char *option;

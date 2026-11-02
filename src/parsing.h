@@ -41,13 +41,14 @@
  */
 
 #include <stdbool.h>
-#include "position.h"
-#include "stringlist.h"
+
 #include "editorbuffer.h"
 #include "extract.h"
-#include "server.h"
+#include "head.h"
 #include "options.h"
-
+#include "position.h"
+#include "server.h"
+#include "stringlist.h"
 
 typedef struct editorMarker EditorMarker;
 

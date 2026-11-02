@@ -5,10 +5,8 @@
 #include <stdio.h>
 
 #include "argumentsvector.h"
-#include "completion.h"
 #include "constants.h"
 #include "extract.h"
-#include "head.h"
 #include "memory.h"
 #include "position.h"
 #include "proto.h"

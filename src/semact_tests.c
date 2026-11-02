@@ -2,7 +2,6 @@
 #include <cgreen/mocks.h>
 
 #include "globals.h"
-#include "options.h"
 #include "parsing.h"
 #include "position.h"
 #include "semact.h"

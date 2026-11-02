@@ -13,7 +13,6 @@
 #include "editormarker.h"
 #include "editorbuffer.h"
 #include "filetable.h"
-#include "fileio.h"
 #include "globals.h"
 #include "misc.h"
 #include "options.h"

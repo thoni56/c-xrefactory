@@ -11,8 +11,6 @@
 #include <stdlib.h>
 
 #include "commons.h"
-#include "editor.h"
-#include "fileio.h"
 #include "filetable.h"
 #include "globals.h"
 #include "log.h"
