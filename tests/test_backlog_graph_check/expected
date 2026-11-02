@@ -9,3 +9,6 @@ wrapped.md: #2 is not read as an item, its title must be on one line
 title on two lines: exit=1
 two_afters.md: third-item comes after 2 items, only one is allowed
 two afters: exit=1
+parent.md: second-item waits for first-item, which is split into parts, so name one of them
+parent.md: second-item comes after first-item, which is split into parts, so name one of them
+an item with parts: exit=1

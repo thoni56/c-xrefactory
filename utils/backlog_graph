@@ -250,16 +250,22 @@ def problems_in(path, text):
         m = NUMBERED.match(line)
         if m and not ITEM.match(line):
             found.append(f"{path}: #{m.group(1)} is not read as an item, its title must be on one line")
+    # An item with parts is drawn as its parts, so an order naming it has nothing to point at
+    split = {slug for slug, item in items.items() if item['parts']}
     for item in items.values():
         for waited in item['waits']:
             if waited not in known:
                 found.append(f"{path}: {item['slug']} waits for {waited}, which is not in the backlog")
+            elif waited in split:
+                found.append(f"{path}: {item['slug']} waits for {waited}, which is split into parts, so name one of them")
         # One at most, so that the preferred orders form trees
         if len(item['after']) > 1:
             found.append(f"{path}: {item['slug']} comes after {len(item['after'])} items, only one is allowed")
         for before in item['after']:
             if before not in known:
                 found.append(f"{path}: {item['slug']} comes after {before}, which is not in the backlog")
+            elif before in split:
+                found.append(f"{path}: {item['slug']} comes after {before}, which is split into parts, so name one of them")
         for other in item['goes_with']:
             if other not in known:
                 found.append(f"{path}: {item['slug']} goes with {other}, which is not in the backlog")
