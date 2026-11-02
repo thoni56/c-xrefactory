@@ -33,8 +33,7 @@
     (should (string-match-p "locked to project '~/project'" asked))))
 
 (ert-deftest c-xref-project-new-asks-only-for-the-root ()
-  (let* ((directory (file-name-as-directory (make-temp-file "c-xref-project" t)))
-         (name (file-name-nondirectory (directory-file-name directory))))
+  (let* ((directory (file-name-as-directory (make-temp-file "c-xref-project" t))))
     (unwind-protect
         (with-temp-buffer
           (setq default-directory directory)
@@ -45,7 +44,7 @@
             (c-xref-project-new))
           (with-temp-buffer
             (insert-file-contents (expand-file-name ".c-xrefrc" directory))
-            (should (equal (buffer-string) (format "[%s]\n  .\n" name)))))
+            (should (equal (buffer-string) "  .\n"))))
       (delete-directory directory t))))
 
 (ert-deftest c-xref-project-new-says-where-the-project-is ()

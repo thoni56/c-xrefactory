@@ -3533,12 +3533,12 @@ Creates a .c-xrefrc file in the project root directory.
 The project root is auto-detected from .git location, or you can
 specify it manually.
 
-The created config file is minimal - just the project name and
-source directory. You can edit it later to add include paths (-I)
-or macro definitions (-D) if needed.
+The created config file is minimal - just the source directory.
+You can edit it later to add include paths (-I) or macro
+definitions (-D) if needed.
 "
   (interactive "")
-  (let ((project-root) (project-name) (config-file))
+  (let ((project-root) (config-file))
     (c-xref-soft-select-dispach-data-caller-window c-xref-this-buffer-dispatch-data)
     (c-xref-entry-point-make-initialisations-no-project-required)
 
@@ -3546,9 +3546,6 @@ or macro definitions (-D) if needed.
     (setq project-root (c-xref-find-project-root))
     (setq project-root (read-directory-name "Project root: " project-root nil t))
     (setq project-root (expand-file-name project-root))
-
-    ;; The root is the project's id, the name in the header is only its basename
-    (setq project-name (file-name-nondirectory (directory-file-name project-root)))
 
     ;; Create .c-xrefrc file in project root
     (setq config-file (expand-file-name ".c-xrefrc" project-root))
@@ -3558,7 +3555,6 @@ or macro definitions (-D) if needed.
 
     ;; Write minimal config file
     (with-temp-file config-file
-      (insert (format "[%s]\n" project-name))
       (insert "  .\n"))
 
     (message "Created %s" config-file)

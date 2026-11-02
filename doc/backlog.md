@@ -68,21 +68,6 @@ every push, `After` dashed and `Goes with` not at all, linked at the end of this
       After: typed-request-pilot
 - (#4) <a id="setup-ladder"></a>**The Setup Ladder, in this sequence**, each small once the partition lands
    (`doc/docs/10-roadmap.adoc`, Convergence: The Setup Ladder → Remaining):
-   a. <a id="root-path-id"></a>**the server's project id is its root path** — ADR-0029. `lockedProject` becomes the
-      detected project root and `lockedProjectRoot` goes, so `SET_INFO` and
-      `PROJECT_MISMATCH` carry the path, not the `[section]` name. Test first:
-      `test_project_lock`'s `expected` gets the path, then the server, then the other
-      `expected` files with named sections (about 15). The client's half is in `e476e396`,
-      its project is only what `-getproject` answers. Where the client shows the project,
-      Project > Show Active (`c-xref-project-active`) and the mismatch dialog
-      (`c-xref-server-dispatch-project-mismatch`), it shows the path through
-      `abbreviate-file-name`. Project > New (`c-xref-project-new`) asks only for the root.
-      Then `foundProjectName` in `searchForProjectConfigFileAndProjectForFile()` goes, with
-      the section buffers of its callers in `src/startup.c` and `src/cxref.c`.
-      In `src/startup.c` the section name also decides a full reload in
-      `initializeFileProcessing()`, and `reInitCwd()` takes it as the directory when it is
-      an absolute path. Both go.
-      Waits for: adr-0029
    b. <a id="client-stops-p"></a>**the client stops sending `-p` on every request** — ADR-0029: this is not tidying,
       it is what re-enables `PPC_PROJECT_MISMATCH`, since `handleProject()`
       (`src/cxref.c:1805`) returns on its first line when `options.project` is set and
@@ -96,7 +81,7 @@ every push, `After` dashed and `Goes with` not at all, linked at the end of this
       membership query may reparse a changed preload of a file in the project, but not
       of one outside it. Once `-p` stops, membership is answered for real, and today's rule (the root as a prefix, or under `-I`) is
       wrong both ways, so it waits for the project's extent;
-      Waits for: adr-0029, root-path-id, project-extent
+      Waits for: adr-0029, project-extent
       Goes with: startup-command-line, adr-0030
    c. <a id="setup-into-openproject"></a>**project setup moves into the future `-openproject`** — discovery, config read, compiler
       interrogation, snapshot load;
@@ -128,7 +113,6 @@ every push, `After` dashed and `Goes with` not at all, linked at the end of this
     and so does `sectionHeaderSeen` in `readOptionsIntoArgs()`. Supersedes ADR-0031's "a
     second header ends what is read": no config with several sections exists outside the
     author's own, so nothing merges (WSL, session `d25255b8`, 2026-10-25).
-    After: root-path-id
 
 ## 2. After XrefMode
 
