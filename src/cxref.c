@@ -1799,7 +1799,9 @@ static void handleProject() {
             if (lockedProject != NULL) {
                 /* Server is locked - the file is in scope if it is under the project
                  * root or under a configured include path */
-                if (strncmp(fileName, lockedProject, strlen(lockedProject)) == 0
+                int rootLength = strlen(lockedProject);
+                if ((strncmp(fileName, lockedProject, rootLength) == 0
+                     && (fileName[rootLength] == '/' || fileName[rootLength] == '\0'))
                     || fileIsUnderIncludePaths(fileName)) {
                     ppcGenRecord(PPC_SET_INFO, lockedProject);
                 } else {

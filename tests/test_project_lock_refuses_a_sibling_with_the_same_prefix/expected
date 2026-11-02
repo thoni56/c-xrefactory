@@ -1,0 +1,14 @@
+CXREF -server -o server-buffer
+-getproject CURDIR/project_a/source.c
+end-of-options
+
+<sync>
+<set-info len=<n>>CURDIR/project_a</set-info>
+-getproject CURDIR/project_ab/source.c
+end-of-options
+
+<sync>
+<project-mismatch len=<n>>CURDIR/project_a</project-mismatch>
+-exit
+end-of-options
+

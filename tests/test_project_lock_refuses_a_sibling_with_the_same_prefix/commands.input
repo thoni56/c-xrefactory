@@ -1,0 +1,6 @@
+CXREF -server
+-getproject CURDIR/project_a/source.c
+<sync>
+-getproject CURDIR/project_ab/source.c
+<sync>
+<exit>
