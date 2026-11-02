@@ -3562,7 +3562,7 @@ or macro definitions (-D) if needed.
       (insert "  .\n"))
 
     (message "Created %s" config-file)
-    (message "Project '%s' created with root at %s" project-name project-root)
+    (message "Created project at %s" (abbreviate-file-name (directory-file-name project-root)))
     ))
 
 
