@@ -387,6 +387,7 @@ Roadmap → Optimization has the baseline: a cold-start PUSH on ffmpeg, measured
 - (#87) <a id="move-to-new-module"></a>**Move Function to New Module** — create the target `.c` and the includes
     the function needs, then make the ordinary move, which creates the header, so the refusal and the helpers come with it. Adding the module to the build, and a mock, may be the user's.
     11-planned-features → Move Function → Next steps.
+    After: move-function-next
 - (#86) <a id="extract-array-used-after"></a>**Extract Function passes an array declared in the region and used after it** —
     today it refuses (`refuseToReturnAnArray()`, `src/extract.c`), since a function can't return
     an array. Move the declaration out of the region, before the call, and pass the array, as
