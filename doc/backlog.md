@@ -27,36 +27,45 @@ every push, `After` dashed and `Goes with` not at all, linked at the end of this
 
 ## 1. The foundational one
 
-- (#3) <a id="partition-options"></a>**Partition `options` by lifetime** — Session / Project / Request, one owner each, and
-   a pure `parseCommandLine()`. `doc/docs/17-major-codebase-improvements.adoc` §17.4. The
-   roadmap's Setup Ladder says it gates the rows below it. Largest single item here.
-   Begin with step 2 of that section, extracting side effects, in the order it gives.
-   Steps 2.a and 2.b take `test_cold_start_interrogates_compiler_once` off suspension.
-   When it moves `ProjectConfig` off being a file-static singleton (`src/startup.c:42`,
-   `static ProjectConfig projectConfig = {0};`), give it a `makeProjectConfig()` that
-   returns `{.sourceDirs = NULL, .optionSets = makeOptionSets()}`. Today both fields are
-   emptied by code that frees first — `freeStringList(projectConfig.sourceDirs)` and
-   `resetOptionSets()` — which is only safe because static storage zeroes them; an
-   automatic `ProjectConfig` declared without `= {0}` would free garbage. A constructor
-   makes "born empty" one expression instead of every declaration site remembering, and
-   gives `makeOptionSets()` its first production caller.
-   A small first step: the global `inputFileName` is two things. It is the request file
-   for the cursor parse (`processFile`), for `-get` and for the refactorings
-   (`refactory.c`), and the file to parse when a CU is built (`parseFileWithFullInit`) or
-   a macro expanded (`singlePass`). The second becomes a parameter to
-   `initializeFileProcessing()`, the first goes to the `Request` (§17.4), or to the
-   `RefactoringRequest` for the refactorings.
-   Today a CU built during entry refresh resets the request's options: the fast path of
-   `initializeFileProcessing()` copies `savedOptions`, taken at server start, over
-   `options`. `parseFileWithFullInit()` keeps only `cursorOffset`,
-   `serverOperation` and, as stopgaps, `dumpSelection` (`test_dump_after_a_rebuild`) and
-   `index` (`test_completion_select_after_a_rebuild`).
-   Every other REQUEST option is lost when a rebuild comes before the dispatch.
-   The other way round, the lock that `-getproject` takes copies all of `options` into
-   `savedOptions` (`src/cxref.c:1829`), so the next request starts as `OP_GET_PROJECT`
-   unless it names an operation. A request with no operation of its own then gets a
-   `-getproject` answer, "No source file to identify project" (WSL, session `d25255b8`,
-   2026-10-14).
+- (#3) <a id="partition-options"></a>**Partition `options` by lifetime, in this sequence** — Session / Project / Request,
+   one owner each, and a pure `parseCommandLine()`. `doc/docs/17-major-codebase-improvements.adoc` §17.4.
+   The roadmap's Setup Ladder says it gates the rows below it.
+   a. <a id="request-file-name"></a>**`inputFileName` is two things** — the request file (`processFile`, `-get`,
+      `refactory.c`) and the file a CU build or a macro expansion parses (`parseFileWithFullInit`,
+      `singlePass`). The second becomes a parameter to `initializeFileProcessing()`.
+   b. <a id="pass-count-as-data"></a>**The number of passes comes from `ProjectConfig.optionSets`** — not from
+      `maxPasses` set to 1 and raised by a config read. §17.4 step 2.a.
+      After: request-file-name
+   c. <a id="config-without-pass"></a>**The config is read without a pass** — base only, per-pass options through
+      `applyOptionSet()`, so a change of pass no longer forces a full reload. Takes
+      `test_cold_start_interrogates_compiler_once` off suspension. A first attempt also changed
+      three move function tests, for a reason not understood. §17.4 step 2.b.
+      After: pass-count-as-data
+   d. <a id="defines-at-parse-start"></a>**`-D` is applied when a parse starts** — from `definitionStrings`, which takes
+      the config's defines out of the memory checkpoint. §17.4 step 2.c.
+      After: config-without-pass
+   e. <a id="side-effects-to-dispatcher"></a>**Opening the output file and initialising file processing move into the dispatcher** —
+      the last side effects of option parsing. §17.4 step 2.d.
+      After: defines-at-parse-start
+   f. <a id="rebuild-keeps-request-options"></a>**A rebuild keeps the request's options** — today the fast path of
+      `initializeFileProcessing()` copies `savedOptions` over `options`, and `parseFileWithFullInit()`
+      keeps only `cursorOffset`, `serverOperation` and, as stopgaps, `dumpSelection`
+      (`test_dump_after_a_rebuild`) and `index` (`test_completion_select_after_a_rebuild`). The
+      other way round, the `-getproject` lock copies all of `options` into `savedOptions`
+      (`src/cxref.c:1829`), so a request with no operation gets a `-getproject` answer (WSL, session
+      `d25255b8`, 2026-10-14). Solved once `savedOptions` holds only Session and Project.
+      After: side-effects-to-dispatcher
+   g. <a id="project-config-constructor"></a>**`ProjectConfig` grows, and gets `makeProjectConfig()`** — §17.4 step 1, one
+      field at a time. When it stops being a file-static singleton (`src/startup.c:42`), the
+      constructor returns `{.sourceDirs = NULL, .optionSets = makeOptionSets()}`, since both
+      are emptied today by code that frees first and is safe only because static storage is zeroed.
+   h. <a id="typed-request-pilot"></a>**A typed `Request` for one operation** — `OP_SEARCH` or `OP_ABOUT`, parsed and
+      dispatched end to end. §17.4 step 3. `inputFileName`'s request half goes here.
+      After: side-effects-to-dispatcher
+   i. <a id="refactoring-request"></a>**Refactoring owns a `RefactoringRequest`** — `refactoringOptions`,
+      `deepCopyOptionsFromTo(&options, &refactoringOptions)` and `beInteractive`'s
+      `localSavedOptions` go together. §17.4 step 4.
+      After: typed-request-pilot
 - (#4) <a id="setup-ladder"></a>**The Setup Ladder, in this sequence**, each small once the partition lands
    (`doc/docs/10-roadmap.adoc`, Convergence: The Setup Ladder → Remaining):
    a. <a id="root-path-id"></a>**the server's project id is its root path** — ADR-0029. `lockedProject` becomes the
@@ -94,7 +103,7 @@ every push, `After` dashed and `Goes with` not at all, linked at the end of this
       Then `initializeFileProcessing()` discovers nothing. Today it must skip the config
       search once locked, since the search sets `autoDetectedProjectRoot` (`src/options.c`)
       and so `cxFileLocation`. `initializeProjectContext()` has a copy of that discovery.
-      Waits for: partition-options, adr-0030
+      Waits for: side-effects-to-dispatcher, adr-0030
    d. <a id="openproject-tripwire"></a>**the assert that nothing before the future `-openproject` reads a project-scoped option** — the
       tripwire, as the disk-read assert was for Memory as Truth;
       Waits for: setup-into-openproject
@@ -387,7 +396,7 @@ Roadmap → Optimization has the baseline: a cold-start PUSH on ffmpeg, measured
 - (#87) <a id="move-to-new-module"></a>**Move Function to New Module** — create the target `.c` and the includes
     the function needs, then make the ordinary move, which creates the header, so the refusal and the helpers come with it. Adding the module to the build, and a mock, may be the user's.
     11-planned-features → Move Function → Next steps.
-    After: move-function-next
+    After: move-includes
 - (#86) <a id="extract-array-used-after"></a>**Extract Function passes an array declared in the region and used after it** —
     today it refuses (`refuseToReturnAnArray()`, `src/extract.c`), since a function can't return
     an array. Move the declaration out of the region, before the call, and pass the array, as
@@ -446,19 +455,25 @@ Roadmap → Optimization has the baseline: a cold-start PUSH on ffmpeg, measured
     `refactory.c`, `extract.c` and `cxref.c`). The `assert(options.cxrefProtocol)` lines
     roughly map where an operation depends on the native protocol, so keep them until then.
     After: lsp-mode
-- (#26) <a id="move-function-next"></a>**Move Function next steps** — the extern and forward declarations,
-    include management, header placement and preview.
-    11-planned-features → Move Function → Next steps. Moving
-    `waitForUserConfirmation()` into `src/ppc.c` needed `log.h` added by hand (2026-10-27).
-    A new header is created also when the only caller is in the target, and only the
-    source file gets the include, not other files that call a function that wasn't static.
-    A comment that moves goes with the definition, and the extern in the header gets none.
-    Whether an API comment should go to the header instead is open.
-    The moved function is not put between blank lines, so today the target needs one added
-    by hand first.
-    A static table the function uses moves along, but its `typedef` does not
-    (`initTypeModifications()` into `src/type.c`). Investigate whether the move can take a
-    type that only moved code uses.
+- (#26) <a id="move-function-next"></a>**Move Function next steps** — smarter header placement and a preview.
+    11-planned-features → Move Function → Next steps.
+- (#98) <a id="move-between-blank-lines"></a>**Move Function puts the moved function between blank lines** —
+    today the target needs one added by hand first.
+- (#99) <a id="move-removes-forward-declaration"></a>**Move Function removes the forward declaration in the source** —
+    a `static` one left behind breaks the build. 11-planned-features → Move Function → Next steps.
+- (#100) <a id="move-includes"></a>**Move Function adds the includes the moved function needs to the target** —
+    moving `waitForUserConfirmation()` into `src/ppc.c` needed `log.h` added by hand (2026-10-27).
+    11-planned-features → Move Function → Include management.
+- (#101) <a id="move-header-for-callers"></a>**Move Function declares the function for every caller, and only for them** —
+    a header is created also when the only caller is in the target, and only the source file
+    gets the include, not other files that call a function that wasn't static.
+    After: move-includes
+- (#102) <a id="move-removes-extern"></a>**Move Function removes the extern from the source's header** —
+    when the function was not static. 11-planned-features → Move Function → Remove extern declaration.
+- (#103) <a id="move-takes-types"></a>**Move Function takes a type that only moved code uses** — a static
+    table moves along, but its `typedef` does not (`initTypeModifications()` into `src/type.c`).
+- (#104) <a id="move-api-comment"></a>**Where an API comment goes when a function moves** — today the comment goes
+    with the definition, and the extern in the header gets none. Open whether it belongs in the header.
 - (#88) <a id="parse-all"></a>**`-parse-all`, a request that parses every compilation unit the scan found and has not parsed** —
     what ADR-0024's CreateMode reduces to once the priming is a request rather than a mode.
     `test_ffmpeg` and `test_systemd` ask for it today by searching a name nobody defines and
