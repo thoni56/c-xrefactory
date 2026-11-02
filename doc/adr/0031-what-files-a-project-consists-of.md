@@ -6,6 +6,9 @@ Date: 2026-09-30
 
 Accepted (2026-10-02)
 
+Amended (2026-11-02): every section header is reported, and the rest of the config is
+read, see below.
+
 Settles the open outcome of [ADR-0005](0005-automatically-find-config-files.md)
 Corrects and builds on [ADR-0029](0029-project-identity-is-the-root-path.md)
 Defines own, visible and outside for [ADR-0030](0030-opening-a-project-and-asking-about-a-file-are-separate.md)
@@ -120,7 +123,11 @@ _we propose to_
   ends what is read, as in practice it does today, and `-openproject` warns about it —
   ignoring it instead would merge the sections and silently change the project. The
   path-prefix matching of later sections goes, and so does `__BASE`, the variable that
-  held the section name. Nothing in the repository or in the configs in use refers to it,
+  held the section name. Nothing in the repository or in the configs in use refers to it.
+  (*Amended 2026-11-02:* a second header never ended what was read for options, only for
+  source directories, since `readOptionSets()` always skipped headers. Every header is
+  now reported, and the rest of the config is read. The sections merge, but not silently,
+  and no config with several sections is in use.),
 - let **`-openproject` accept a directory as well as a file**, with the same upward
   search from it (`searchUpwardForProjectLocalConfig()` already starts at a directory
   when given one). A directory holding the config opens that root; requiring the config
@@ -184,6 +191,9 @@ implicit `-prune`. The root path is the project's id everywhere; a config's sect
 header means nothing, and a second one ends what is read, with a warning.
 `-openproject` takes a file or a directory under the root.
 
+*Amended 2026-11-02:* a section header is reported wherever it is, and the rest of the
+config is read.
+
 For this repository that means: the root is the repository, `tests` is pruned
 explicitly (the generated configs in the test directories would do it only after the
 tests have run), and a third-party tree outside the root would be listed as a directory.
@@ -202,7 +212,8 @@ tests have run), and a third-party tree outside the root would be listed as a di
   `test_getproject_unknown_cu_under_include_path` is suspended on and how a queried file
   ends up in the snapshot. The membership query has to take the name only.
 - *Existing configs with several sections* keep reading only their first section, as
-  they do today; what is new is the warning.
+  they do today; what is new is the warning. (*Amended 2026-11-02:* they now read all
+  their sections as one, with a message for each header.)
 - *Answers change from name to path.* `set-info` and the mismatch answer return the root
   path, so tests with a named section change their expected output —
   `test_project_lock` answers `CURDIR/project_a` instead of `project_a`. Tests generated
@@ -250,3 +261,6 @@ decision. The same session settled the open points on 2026-10-01: *outside* says
 whether a project was found, *visible* is transitive, a nested config is an implicit
 `-prune`, the path is the id and the section header means nothing, and `-prune`
 follows the config's path rule.
+
+The amendment of 2026-11-02 comes from WSL, session `d25255b8`, when the last code that
+looked for a section name was removed.
