@@ -1,4 +1,3 @@
-[CURDIR]
   CURDIR
   -pass1
     -DPASS1

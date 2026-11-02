@@ -1,4 +1,3 @@
-[test_c-xref]
   //  input files and directories (processed recursively)
   .
   ../../src

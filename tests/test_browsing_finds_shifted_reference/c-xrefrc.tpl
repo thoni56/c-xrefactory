@@ -1,1 +1,0 @@
-[test_navigation_finds_shifted_reference]

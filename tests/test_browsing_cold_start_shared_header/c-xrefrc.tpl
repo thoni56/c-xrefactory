@@ -1,1 +1,0 @@
-[test_navigation_cold_start_shared_header]

@@ -1,4 +1,3 @@
-[CURDIR]
   CURDIR/ffmpeg
   //  exclude compat atomics (breaks system stdatomic.h due to state pollution)
   -prune ffmpeg/compat/atomics

@@ -1,2 +1,1 @@
-[CURDIR]
   CURDIR

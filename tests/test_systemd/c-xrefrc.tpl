@@ -1,4 +1,3 @@
-[CURDIR]
   //  input files and directories (processed recursively)
   CURDIR/systemd/src
   -ICURDIR/systemd/src/
