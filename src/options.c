@@ -1565,60 +1565,6 @@ int addRequestFileToFileTable(StringList *operands) {
 }
 
 
-/* Get the project name from an options file (first section header).
- * Used in auto-detection mode where file coverage is implicit.
- * Returns true if a section was found, false otherwise.
- */
-static bool getProjectNameFromConfigFile(FILE *configFile, /* out */ char *projectName) {
-    int ch = ' ';
-
-    while (ch != EOF) {
-        while (ch == ' ' || ch == '\t' || ch == '\n')
-            ch = readChar(configFile);
-        if (ch == '[') {
-            int i = 0;
-            while (ch != ']' && ch != EOF) {
-                ch = readChar(configFile);
-                projectName[i++] = ch;
-            }
-            projectName[i-1] = '\0';
-            return true;
-        } else {
-            while (ch != '\n' && ch != EOF)
-                ch = readChar(configFile);
-        }
-    }
-    return false;
-}
-
-
-/* LEGACY: Return a project name if found, else NULL. Only handles cases where the file
- * path is included in the project name/section. */
-protected bool projectCoveringFileInConfigFile(char *fileName, FILE *configFile, /* out */ char *projectName) {
-    int ch = ' ';              /* Something to get started */
-
-    while (ch != EOF) {
-        while (ch == ' ' || ch == '\t' || ch == '\n')
-            ch = readChar(configFile);
-        if (ch == '[') {
-            char buffer[TMP_BUFF_SIZE];
-            int i=0;
-            while (ch != ']' && ch != EOF) {
-                ch = readChar(configFile);
-                buffer[i++] = ch;
-            }
-            buffer[i-1] = '\0';
-            if (pathncmp(buffer, fileName, strlen(buffer), true)==0) {
-                strcpy(projectName, buffer);
-                return true;
-            }
-        } else
-            while (ch != '\n' && ch != EOF)
-                ch = readChar(configFile);
-    }
-    return false;
-}
-
 /* Apply convention-based database path for auto-detected projects.
  * Called after options processing to set cxFileLocation to <projectRoot>/.c-xref/db.
  * Any -refs from .c-xrefrc is ignored — the snapshot location is a convention,
@@ -1636,7 +1582,7 @@ void applyConventionBasedDatabasePath(void) {
 }
 
 /* Search upward from sourceFilename for a project-local .c-xrefrc file.
- * Returns true if found and the config covers the source file.
+ * Returns true if found, the file is under the directory the config is in.
  * Sets foundConfigFilename to the path of the .c-xrefrc file.
  * Stops at HOME, so that a ~/.c-xrefrc from the old user-central config does not make
  * HOME a project root.
@@ -1666,26 +1612,13 @@ static bool searchUpwardForProjectLocalConfig(char *sourceFilename, char *foundC
         log_trace("Checking for project-local config: %s", candidatePath);
 
         if (fileExists(candidatePath)) {
-            FILE *configFile = openFile(candidatePath, "r");
-            if (configFile != NULL) {
-                char projectName[MAX_FILE_NAME_SIZE+16];
-                /* In auto-detection mode, file coverage is implicit (file is under config dir).
-                 * Just extract the project name from the first section header. */
-                bool found = getProjectNameFromConfigFile(configFile, projectName);
-                closeFile(configFile);
-                if (!found) {
-                    /* Empty config or no section - use directory basename as project name */
-                    strcpy(projectName, simpleFileName(searchDir));
-                    log_debug("Empty config, using directory basename as project name: %s", projectName);
-                }
-                strcpy(foundConfigFilename, candidatePath);
-                /* Store project root in module-static variable (survives initOptions()) */
-                strcpy(autoDetectedProjectRoot, searchDir);
-                log_debug("Detected project-local config '%s' covering '%s', project/root '%s'",
-                          candidatePath, sourceFilename, autoDetectedProjectRoot);
-                LEAVE();
-                return true;
-            }
+            strcpy(foundConfigFilename, candidatePath);
+            /* Store project root in module-static variable (survives initOptions()) */
+            strcpy(autoDetectedProjectRoot, searchDir);
+            log_debug("Detected project-local config '%s' covering '%s', project/root '%s'",
+                      candidatePath, sourceFilename, autoDetectedProjectRoot);
+            LEAVE();
+            return true;
         }
 
         /* Move up one directory */
