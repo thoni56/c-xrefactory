@@ -55,14 +55,17 @@ static unsigned menuFilterLevels[MAX_MENU_FILTER_LEVEL] = {
 
 #define RENAME_FILTER_LEVEL (FILE_MATCH_RELATED | NAME_MATCH_APPLICABLE)
 
+static bool isUnderDirectory(char *fileName, char *dir, int len) {
+    return strncmp(fileName, dir, len) == 0 && (fileName[len] == '/' || fileName[len] == '\0');
+}
+
 /* Single-project policy: the server locks to the first project discovered.
  * lockedProject, its root path, lives in globals.c. */
 
 static bool fileIsUnderIncludePaths(char *fileName) {
     for (StringList *dir = options.includeDirs; dir != NULL; dir = dir->next) {
         int len = strlen(dir->string);
-        if (strncmp(fileName, dir->string, len) == 0
-            && (fileName[len] == '/' || fileName[len] == '\0')) {
+        if (isUnderDirectory(fileName, dir->string, len)) {
             return true;
         }
     }
@@ -1800,8 +1803,7 @@ static void handleProject() {
                 /* Server is locked - the file is in scope if it is under the project
                  * root or under a configured include path */
                 int rootLength = strlen(lockedProject);
-                if ((strncmp(fileName, lockedProject, rootLength) == 0
-                     && (fileName[rootLength] == '/' || fileName[rootLength] == '\0'))
+                if (isUnderDirectory(fileName, lockedProject, rootLength)
                     || fileIsUnderIncludePaths(fileName)) {
                     ppcGenRecord(PPC_SET_INFO, lockedProject);
                 } else {
