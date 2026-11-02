@@ -5,7 +5,7 @@
 <meta http-equiv="X-UA-Compatible" content="IE=edge">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <meta name="generator" content="Asciidoctor 2.0.26">
-<meta name="author" content="v{VERSION} - Generated 2026-11-01">
+<meta name="author" content="v{VERSION} - Generated 2026-11-02">
 <title>C-xrefactory User Manual</title>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Open+Sans:300,300italic,400,400italic,600,600italic%7CNoto+Serif:400,400italic,700,700italic%7CDroid+Sans+Mono:400,700">
 <style>
@@ -441,7 +441,7 @@ body.book #toc,body.book #preamble,body.book h1.sect0,body.book .sect1>h2{page-b
 <div id="header">
 <h1>C-xrefactory User Manual</h1>
 <div class="details">
-<span id="author" class="author">v{VERSION} - Generated 2026-11-01</span><br>
+<span id="author" class="author">v{VERSION} - Generated 2026-11-02</span><br>
 </div>
 <div id="toc" class="toc2">
 <div id="toctitle">Table of Contents</div>
@@ -964,6 +964,7 @@ C-xrefactory analyses the code to determine parameters and return values.</p>
 Extract Variable is not finished.
 It suggests <code>int</code> as the type, so you might need to change it when it asks for the declaration.
 The declaration might not end up where it should for some statements, e.g. a statement spanning several lines.
+If the new code does not parse, the extraction is undone and a window shows what happened.
 </td>
 </tr>
 </table>
@@ -978,6 +979,10 @@ Mark the place first with <strong>Set Target for Next Moving Refactoring</strong
 <div class="paragraph">
 <p>When it moves to another file, the <code>static</code> functions and variables that are only used by that function move along with it, and stay <code>static</code>.
 If it uses a <code>static</code> that something else in the file also uses, it will refuse the move and name those.</p>
+</div>
+<div class="paragraph">
+<p>The target&#8217;s header gets an <code>extern</code> for the function, and the source file includes that header.
+If the target has no header, and the function is still used somewhere else, the header is created and saved.</p>
 </div>
 <div class="paragraph">
 <p>If there is a comment above what is moved, Move Function asks whether to move the comments too.
@@ -1114,7 +1119,7 @@ Search Symbol → enter <code>config*</code> → browse results</p>
 </div>
 <div id="footer">
 <div id="footer-text">
-Last updated 2026-11-01 10:34:43 UTC
+Last updated 2026-11-02 13:12:43 UTC
 </div>
 </div>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.18.3/highlight.min.js"></script>
