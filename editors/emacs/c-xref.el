@@ -2444,7 +2444,7 @@ Returned with the index after the end tag, as (TEXT . INDEX)."
     (setq i (cdr record))
     (if (c-xref-yes-or-no-window
          (format "Server is locked to project '%s'.\nSwitch to this file's project? (Server will restart)"
-                 locked-project)
+                 (abbreviate-file-name locked-project))
          t dispatch-data)
         (progn
           ;; Kill the server process to release the lock
@@ -3573,7 +3573,7 @@ or macro definitions (-D) if needed.
   "Show the active project, i.e. the project the current file belongs to."
   (interactive "")
   (c-xref-entry-point-make-initialisations)
-  (message "Active project: %s" c-xref-active-project))
+  (message "Active project: %s" (abbreviate-file-name c-xref-active-project)))
 
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
