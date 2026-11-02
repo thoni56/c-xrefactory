@@ -78,9 +78,8 @@ ArgumentsVector readOptionsFromPipe(void) {
     return *(ArgumentsVector*)mock();
 }
 
-void searchForProjectConfigFileAndProjectForFile(char *sourceFilename, char *foundConfigFilename,
-                                                 char *foundProjectName) {
-  mock(sourceFilename, foundConfigFilename, foundProjectName);
+void searchForProjectConfigFileAndProjectForFile(char *sourceFilename, char *foundConfigFilename) {
+  mock(sourceFilename, foundConfigFilename);
 }
 
 void applyConventionBasedDatabasePath(void) {

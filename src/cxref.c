@@ -1812,10 +1812,8 @@ static void handleProject() {
             } else {
                 /* Not locked yet - search for project and lock to it */
                 char projectConfigFileName[MAX_FILE_NAME_SIZE];
-                char projectOptionsSectionName[MAX_FILE_NAME_SIZE];
-                searchForProjectConfigFileAndProjectForFile(fileName, projectConfigFileName,
-                                                             projectOptionsSectionName);
-                if (projectConfigFileName[0] == 0 || projectOptionsSectionName[0] == 0) {
+                searchForProjectConfigFileAndProjectForFile(fileName, projectConfigFileName);
+                if (projectConfigFileName[0] == 0) {
                     ppcGenRecord(PPC_NO_PROJECT, fileName);
                 } else {
                     applyConventionBasedDatabasePath();

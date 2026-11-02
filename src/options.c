@@ -1638,12 +1638,10 @@ void applyConventionBasedDatabasePath(void) {
 /* Search upward from sourceFilename for a project-local .c-xrefrc file.
  * Returns true if found and the config covers the source file.
  * Sets foundConfigFilename to the path of the .c-xrefrc file.
- * Sets foundProjectName to the project name from the matching section.
  * Stops at HOME, so that a ~/.c-xrefrc from the old user-central config does not make
  * HOME a project root.
  */
-static bool searchUpwardForProjectLocalConfig(char *sourceFilename, char *foundConfigFilename,
-                                               char *foundProjectName) {
+static bool searchUpwardForProjectLocalConfig(char *sourceFilename, char *foundConfigFilename) {
     char searchDir[MAX_FILE_NAME_SIZE];
     char candidatePath[MAX_FILE_NAME_SIZE + 16];  /* Extra space for "/.c-xrefrc" suffix */
     char *homeDir = getEnv("HOME");
@@ -1681,11 +1679,10 @@ static bool searchUpwardForProjectLocalConfig(char *sourceFilename, char *foundC
                     log_debug("Empty config, using directory basename as project name: %s", projectName);
                 }
                 strcpy(foundConfigFilename, candidatePath);
-                strcpy(foundProjectName, projectName);
                 /* Store project root in module-static variable (survives initOptions()) */
                 strcpy(autoDetectedProjectRoot, searchDir);
-                log_debug("Detected project-local config '%s' covering '%s', project '%s', root '%s'",
-                          candidatePath, sourceFilename, foundProjectName, autoDetectedProjectRoot);
+                log_debug("Detected project-local config '%s' covering '%s', project/root '%s'",
+                          candidatePath, sourceFilename, autoDetectedProjectRoot);
                 LEAVE();
                 return true;
             }
@@ -1704,16 +1701,14 @@ static bool searchUpwardForProjectLocalConfig(char *sourceFilename, char *foundC
     return false;
 }
 
-void searchForProjectConfigFileAndProjectForFile(char *sourceFilename, char *foundConfigFilename,
-                                                  char *foundProjectName) {
+void searchForProjectConfigFileAndProjectForFile(char *sourceFilename, char *foundConfigFilename) {
     foundConfigFilename[0] = 0;
-    foundProjectName[0] = 0;
     autoDetectedProjectRoot[0] = '\0';  /* Reset for each invocation */
 
     if (sourceFilename == NULL)
         return;
 
-    searchUpwardForProjectLocalConfig(sourceFilename, foundConfigFilename, foundProjectName);
+    searchUpwardForProjectLocalConfig(sourceFilename, foundConfigFilename);
 }
 
 void printOptionsMemoryStatistics(void) {

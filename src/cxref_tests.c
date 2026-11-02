@@ -67,8 +67,7 @@ Ensure(CxRef, will_return_no_active_project_if_no_optionfile_found) {
            will_return(&fileItem));
     expect(searchForProjectConfigFileAndProjectForFile,
            when(sourceFilename, is_equal_to_string("file.c")),
-           will_set_contents_of_parameter(foundConfigFilename, "", 1),
-           will_set_contents_of_parameter(foundProjectName, "", 1));
+           will_set_contents_of_parameter(foundConfigFilename, "", 1));
     expect(ppcGenRecord,
            when(kind, is_equal_to(PPC_NO_PROJECT)),
            when(message, contains_string("file.c")));

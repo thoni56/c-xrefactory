@@ -30,7 +30,6 @@
 
 
 static char previousProjectConfigurationFile[MAX_FILE_NAME_SIZE];
-static char previousProjectConfigurationSection[MAX_FILE_NAME_SIZE];
 static FileTimestamp previousProjectConfigurationFileModificationTime;
 static int previousPass;
 static ProjectConfig projectConfig = {0};
@@ -413,7 +412,7 @@ static void restoreCheckpoint(MemoryCheckpoint *checkpoint) {
 }
 
 static void loadProjectSettings(ArgumentsVector baseArgs, ArgumentsVector requestArgs,
-                                char projectConfigFileName[], char projectSectionName[]) {
+                                char projectConfigFileName[]) {
     StringList *tmpIncludeDirs;
     /* === PHASE 2: Options File Processing === */
     if (cleanCheckpoint.saved)
@@ -437,7 +436,7 @@ static void loadProjectSettings(ArgumentsVector baseArgs, ArgumentsVector reques
        piped options, !!! berk.
     */
     processOptions(requestArgs, NULL);
-    reInitCwd(projectConfigFileName, projectSectionName);
+    reInitCwd(projectConfigFileName);
 
     tmpIncludeDirs = options.includeDirs;
     options.includeDirs = NULL;
@@ -511,8 +510,7 @@ bool isProjectConfigChanged(void) {
  * detectedProjectRoot are not affected by loadProjectSettings(). */
 void reloadProjectConfig(ArgumentsVector baseArgs, ArgumentsVector requestArgs) {
     log_info("Config file '%s' changed, reloading project settings", previousProjectConfigurationFile);
-    loadProjectSettings(baseArgs, requestArgs,
-                        previousProjectConfigurationFile, previousProjectConfigurationSection);
+    loadProjectSettings(baseArgs, requestArgs, previousProjectConfigurationFile);
 
     previousProjectConfigurationFileModificationTime = fileModificationTime(previousProjectConfigurationFile);
 }
@@ -526,12 +524,11 @@ void reloadProjectConfig(ArgumentsVector baseArgs, ArgumentsVector requestArgs) 
  */
 bool initializeProjectContext(char *fileName, ArgumentsVector baseArgs, ArgumentsVector requestArgs) {
     char projectConfigFileName[MAX_FILE_NAME_SIZE];
-    char projectSectionName[MAX_FILE_NAME_SIZE];
     FileTimestamp modifiedTime;
 
     /* === PHASE 1: Project Discovery === */
     /* TODO: Duplicated in `intializeProjectContext` */
-    searchForProjectConfigFileAndProjectForFile(fileName, projectConfigFileName, projectSectionName);
+    searchForProjectConfigFileAndProjectForFile(fileName, projectConfigFileName);
     writeConfigFileMessage(projectConfigFileName);
 
     if (projectConfigFileName[0] == 0)
@@ -542,10 +539,9 @@ bool initializeProjectContext(char *fileName, ArgumentsVector baseArgs, Argument
     modifiedTime = fileModificationTime(projectConfigFileName);
 
     /* === PHASES 2-4: Options, compiler interrogation, checkpoint === */
-    loadProjectSettings(baseArgs, requestArgs, projectConfigFileName, projectSectionName);
+    loadProjectSettings(baseArgs, requestArgs, projectConfigFileName);
 
     strcpy(previousProjectConfigurationFile, projectConfigFileName);
-    strcpy(previousProjectConfigurationSection, projectSectionName);
     previousProjectConfigurationFileModificationTime = modifiedTime;
     previousPass = currentPass;
     return true;
@@ -567,7 +563,6 @@ static void applyCurrentPassOptions(void) {
  */
 bool initializeFileProcessing(ArgumentsVector baseArgs, ArgumentsVector requestArgs) {
     char projectConfigFileName[MAX_FILE_NAME_SIZE];
-    char projectSectionName[MAX_FILE_NAME_SIZE];
     FileTimestamp modifiedTime;
     char *fileName = NULL;
     bool inputOpened;
@@ -576,7 +571,7 @@ bool initializeFileProcessing(ArgumentsVector baseArgs, ArgumentsVector requestA
 
     /* === PHASE 1: Project Discovery === */
     /* TODO: Duplicated in `intializeProjectContext` */
-    /* Find which .c-xrefrc file and project section applies to this file */
+    /* Find which .c-xrefrc file applies to this file */
     fileName = inputFileName;
     if (lockedProject != NULL) {
         /* Project is already locked from a prior request (set by handleProject
@@ -586,9 +581,8 @@ bool initializeFileProcessing(ArgumentsVector baseArgs, ArgumentsVector requestA
          * overwrite cxFileLocation, breaking the project lock and routing
          * snapshot writes to the wrong directory. */
         strcpy(projectConfigFileName, previousProjectConfigurationFile);
-        strcpy(projectSectionName, previousProjectConfigurationSection);
     } else {
-        searchForProjectConfigFileAndProjectForFile(fileName, projectConfigFileName, projectSectionName);
+        searchForProjectConfigFileAndProjectForFile(fileName, projectConfigFileName);
         writeConfigFileMessage(projectConfigFileName);
     }
 
@@ -602,15 +596,13 @@ bool initializeFileProcessing(ArgumentsVector baseArgs, ArgumentsVector requestA
     /* Determine if we need full initialization or can restore from checkpoint.
      * Full init required when: first pass, different pass or different project.
      * A change to the options file is callServer()'s, see reloadProjectConfig(). */
-    log_debug("initializeFileProcessing - pass %d (previous %d), config '%s' (previous '%s'), section '%s' (previous '%s')",
-              currentPass, previousPass, projectConfigFileName, previousProjectConfigurationFile,
-              projectSectionName, previousProjectConfigurationSection);
+    log_debug("initializeFileProcessing - pass %d (previous %d), config '%s' (previous '%s')",
+              currentPass, previousPass, projectConfigFileName, previousProjectConfigurationFile);
     if (previousPass != currentPass                                       /* We are in a different pass */
-        || strcmp(previousProjectConfigurationFile, projectConfigFileName) != 0 /* or we are using a different options file */
-        || strcmp(previousProjectConfigurationSection, projectSectionName) != 0 /* or a different project */
+        || strcmp(previousProjectConfigurationFile, projectConfigFileName) != 0 /* or a different project */
     ) {
         /* === PHASE 2-4: Options reading, compiler discovery, memory checkpointing === */
-        loadProjectSettings(baseArgs, requestArgs, projectConfigFileName, projectSectionName);
+        loadProjectSettings(baseArgs, requestArgs, projectConfigFileName);
 
         /* Before the input is opened: a -D is lexed through the same input */
         applyCurrentPassOptions();
@@ -620,7 +612,6 @@ bool initializeFileProcessing(ArgumentsVector baseArgs, ArgumentsVector requestA
 
         /* Save these values as previous */
         strcpy(previousProjectConfigurationFile,projectConfigFileName);
-        strcpy(previousProjectConfigurationSection,projectSectionName);
         previousProjectConfigurationFileModificationTime = modifiedTime;
         previousPass = currentPass;
 
@@ -711,7 +702,6 @@ void mainTaskEntryInitialisations(ArgumentsVector args, StringList **operands) {
     initCwd();
 
     previousProjectConfigurationFile[0] = 0;
-    previousProjectConfigurationSection[0] = 0;
 
     processOptions(args, operands);
 

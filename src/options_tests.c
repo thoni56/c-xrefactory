@@ -386,7 +386,6 @@ Ensure(Options, can_see_if_a_project_in_a_configuration_file_with_other_project_
 
 Ensure(Options, can_return_project_name_from_autodetected_config) {
     char configFilename[1000];
-    char sectionName[1000];
     FILE file;
 
     // Searches upward, only reads section header
@@ -405,14 +404,12 @@ Ensure(Options, can_return_project_name_from_autodetected_config) {
     expect(closeFile);
 
     searchForProjectConfigFileAndProjectForFile("/home/thoni/Utveckling/c-xrefactory/tests/myproject",
-                                               configFilename, sectionName);
-
-    assert_that(sectionName, is_equal_to_string("myproject"));
+                                               configFilename);
+    assert_that(configFilename, is_equal_to_string("HOME/projectdir/.c-xrefrc"));
 }
 
 Ensure(Options, finds_no_config_for_a_file_without_a_project_local_config) {
     char configFilename[1000];
-    char sectionName[1000];
 
     always_expect(getEnv, will_return("/home/user"));
     expect(isDirectory, will_return(false));
@@ -421,15 +418,13 @@ Ensure(Options, finds_no_config_for_a_file_without_a_project_local_config) {
     never_expect(openFile);
 
     searchForProjectConfigFileAndProjectForFile("/home/user/src/source.c",
-                                               configFilename, sectionName);
+                                                configFilename);
 
     assert_that(configFilename, is_equal_to_string(""));
-    assert_that(sectionName, is_equal_to_string(""));
 }
 
 Ensure(Options, sets_convention_based_database_path) {
     char configFilename[1000];
-    char sectionName[1000];
     FILE file;
 
     always_expect(getEnv, will_return("HOME"));
@@ -446,7 +441,7 @@ Ensure(Options, sets_convention_based_database_path) {
     expect(closeFile);
 
     searchForProjectConfigFileAndProjectForFile("/home/user/myproject/source.c",
-                                               configFilename, sectionName);
+                                               configFilename);
 
     applyConventionBasedDatabasePath();
 
@@ -456,7 +451,6 @@ Ensure(Options, sets_convention_based_database_path) {
 
 Ensure(Options, uses_directory_basename_as_project_name_for_empty_config) {
     char configFilename[1000];
-    char sectionName[1000];
     FILE file;
 
     // AUTO-DETECT mode with empty .c-xrefrc - project name defaults to directory basename
@@ -477,10 +471,9 @@ Ensure(Options, uses_directory_basename_as_project_name_for_empty_config) {
     expect(simpleFileName, will_return("myproject"));
 
     searchForProjectConfigFileAndProjectForFile("/home/user/myproject/source.c",
-                                               configFilename, sectionName);
+                                                configFilename);
 
-    /* Project name should be basename of the directory */
-    assert_that(sectionName, is_equal_to_string("myproject"));
+    assert_that(configFilename, is_equal_to_string("/home/user/myproject/.c-xrefrc"));
 }
 
 Ensure(Options, collects_option_field_that_allocate_a_string_in_options_space) {

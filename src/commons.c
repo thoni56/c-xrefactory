@@ -74,18 +74,9 @@ void initCwd(void) {
 #endif
 }
 
-void reInitCwd(char *dffname, char *dffsect) {
+void reInitCwd(char *dffname) {
     if (dffname[0]!=0) {
         extractPathInto(dffname, cwd);
-    }
-    if (dffsect[0]!=0
-#ifdef __WIN32__
-        && dffsect[1]==':' && dffsect[2]==FILE_PATH_SEPARATOR
-#else
-        && dffsect[0]==FILE_PATH_SEPARATOR
-#endif
-        ) {
-        strcpy(cwd, dffsect);
     }
 }
 

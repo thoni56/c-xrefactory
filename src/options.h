@@ -157,8 +157,7 @@ extern int getOptionFromFile(FILE *file, Position *position, char *foundText, in
 extern ArgumentsVector readOptionsFromFile(char *fileName);
 extern ArgumentsVector readOptionsFromPipe(void);
 
-extern void searchForProjectConfigFileAndProjectForFile(char *filename, char *optionsFilename,
-                                                         char *foundProjectName);
+extern void searchForProjectConfigFileAndProjectForFile(char *filename, char *optionsFilename);
 extern void applyConventionBasedDatabasePath(void);
 extern void reportUnsupportedOptions(void);
 

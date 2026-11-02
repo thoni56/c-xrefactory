@@ -16,8 +16,8 @@ void initCwd(void) {
     mock();
 }
 
-void reInitCwd(char *dffname, char *dffsect) {
-    mock(dffname, dffsect);
+void reInitCwd(char *dffname) {
+    mock(dffname);
 }
 
 void parsingMessage(int code, char *message) {

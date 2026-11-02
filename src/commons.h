@@ -14,7 +14,7 @@
 #define assert(expr) InternalCheck(expr)
 
 extern void initCwd(void);
-extern void reInitCwd(char *dffname, char *dffsect);
+extern void reInitCwd(char *dffname);
 
 extern void silenceMessages(void);
 extern void resumeMessages(void);
