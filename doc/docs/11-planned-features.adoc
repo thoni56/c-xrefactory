@@ -44,8 +44,8 @@ If there is a comment above it, or above something that moves along, Move Functi
 
 **Include management**: Add the `#include` directives the moved function needs to the target.
 
-**Move Function to New Module**: Create the target `.c` and `.h`, with an include guard
-  and the includes, and add the module to the build (and a mock for the unit tests).
+**Move Function to New Module**: Create the target `.c` and the includes the function needs, then make the ordinary move,
+  which creates the header, and add the module to the build (and a mock for the unit tests).
 
 **A `static` shared with what stays**: Today it makes the move refuse. Ask whether to make it extern where it is (its
   declaration goes in the source's header, which the target then includes) or to move it
