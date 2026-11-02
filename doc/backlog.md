@@ -384,9 +384,8 @@ Roadmap → Optimization has the baseline: a cold-start PUSH on ffmpeg, measured
 - (#85) <a id="move-shared-static"></a>**Move Function asks about a `static` shared with what stays** —
     make it extern where it is, or move it and make it extern from the target.
     11-planned-features → Move Function → A `static` shared with what stays.
-- (#87) <a id="move-to-new-module"></a>**Move Function to New Module** — create the target `.c` and `.h`,
-    with an include guard and the includes, then make the ordinary move, so the refusal and the
-    helpers come with it. Adding the module to the build, and a mock, may be the user's.
+- (#87) <a id="move-to-new-module"></a>**Move Function to New Module** — create the target `.c`, then make
+    the ordinary move, which creates the header, so the refusal and the helpers come with it. Adding the module to the build, and a mock, may be the user's.
     11-planned-features → Move Function → Next steps.
 - (#86) <a id="extract-array-used-after"></a>**Extract Function passes an array declared in the region and used after it** —
     today it refuses (`refuseToReturnAnArray()`, `src/extract.c`), since a function can't return
@@ -447,7 +446,7 @@ Roadmap → Optimization has the baseline: a cold-start PUSH on ffmpeg, measured
     roughly map where an operation depends on the native protocol, so keep them until then.
     After: lsp-mode
 - (#26) <a id="move-function-next"></a>**Move Function next steps** — the extern and forward declarations,
-    include management, header placement, preview, and what is shown afterwards.
+    include management, header placement and preview.
     11-planned-features → Move Function → Next steps. Moving
     `waitForUserConfirmation()` into `src/ppc.c` needed `log.h` added by hand (2026-10-27).
     A new header is created also when the only caller is in the target, and only the

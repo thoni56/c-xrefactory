@@ -62,8 +62,6 @@ Macros and types defined in the source `.c` have the same problem, and belong wi
 
 **Preview**: Show what will be changed before applying the refactoring.
 
-**Show the target and the source afterwards**: Today the target is shown in both windows.
-
 **Delete Function**: Remove a function definition and its declaration. Safety check warns
   if callers exist. Reuses the function boundary detection from Move Function and the
   unused detection logic to verify no references remain.
