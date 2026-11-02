@@ -3547,9 +3547,8 @@ or macro definitions (-D) if needed.
     (setq project-root (read-directory-name "Project root: " project-root nil t))
     (setq project-root (expand-file-name project-root))
 
-    ;; Default project name to directory basename
+    ;; The root is the project's id, the name in the header is only its basename
     (setq project-name (file-name-nondirectory (directory-file-name project-root)))
-    (setq project-name (read-string "Project name: " project-name))
 
     ;; Create .c-xrefrc file in project root
     (setq config-file (expand-file-name ".c-xrefrc" project-root))

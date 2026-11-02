@@ -33,3 +33,19 @@
                (lambda (text &rest _) (setq asked text) nil)))
       (should-error (c-xref-server-dispatch-project-mismatch nil 0 0 nil)))
     (should (string-match-p "locked to project '~/project'" asked))))
+
+(ert-deftest c-xref-project-new-asks-only-for-the-root ()
+  (let* ((directory (file-name-as-directory (make-temp-file "c-xref-project" t)))
+         (name (file-name-nondirectory (directory-file-name directory))))
+    (unwind-protect
+        (with-temp-buffer
+          (setq default-directory directory)
+          (cl-letf (((symbol-function 'read-directory-name)
+                     (lambda (_prompt dir &rest _) dir))
+                    ((symbol-function 'read-string)
+                     (lambda (&rest _) (ert-fail "Project > New must not ask for a name"))))
+            (c-xref-project-new))
+          (with-temp-buffer
+            (insert-file-contents (expand-file-name ".c-xrefrc" directory))
+            (should (equal (buffer-string) (format "[%s]\n  .\n" name)))))
+      (delete-directory directory t))))
