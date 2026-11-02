@@ -46,10 +46,9 @@ but not 'src/build'. Use one '-prune' per directory.
 .PP
 .I SECTIONS
 
-The file may start with a section header, a line '[name]'. The name is
-shown as the project's name; without a header, the name of the root
-directory is used. Options before the header apply as well. A
-\&'.c-xrefrc' holds one project: further sections are not used.
+A '.c-xrefrc' holds one project, the one rooted where the file is.
+A section header, a line '[name]' from older versions, is reported
+and not used, and the rest of the file is still read.
 
 .I VARIABLES
 
@@ -90,8 +89,6 @@ editing.
 
 ---------------------------------------------------------
 
-.br
-[solver]
 .br
 // scan a sibling directory too
 .br

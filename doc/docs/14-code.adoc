@@ -622,10 +622,10 @@ The configuration file is a `.c-xrefrc` in the root of the project, found by sea
 upward from the file being worked on. The search stops at the user's home directory, so a
 `~/.c-xrefrc` from the old user-central model is not read.
 
-Each "project" or "section" requires a name of the "project", which is the argument to
-the `-p` command line option. And it may contain most other command line options on one
-line each. These are always read, unless `-no-stdop` is used, before anything else. This
-allows for different "default" options for each project.
+It may contain most command line options, one per line. These are always read, unless
+`-no-stdop` is used, before anything else. This allows for different "default" options
+for each project. A section header, `[name]`, is not used, and is reported with its
+position.
 
 ==== Options
 

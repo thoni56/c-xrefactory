@@ -260,6 +260,17 @@ Ensure(Options, collects_the_options_of_a_well_formed_pass_marker) {
     assert_that(maxPasses, is_equal_to(2));
 }
 
+Ensure(Options, reads_the_options_after_a_second_section_header) {
+    ArgumentsVector nargs;
+
+    expect_characters("[one]\n-DFIRST\n[two]\n-DSECOND\n", true);
+
+    readOptionsIntoArgs(NULL, NULL, &nargs, &ppmMemory);
+
+    assert_that(argsContain(nargs, "-DFIRST"), is_true);
+    assert_that(argsContain(nargs, "-DSECOND"), is_true);
+}
+
 Ensure(Options, drops_the_section_of_a_pass_marker_without_a_number) {
     ArgumentsVector nargs;
 
@@ -285,17 +296,6 @@ Ensure(Options, does_not_raise_maxPasses_above_the_maximum) {
     readOptionsIntoArgs(NULL, NULL, &nargs, &ppmMemory);
 
     assert_that(maxPasses, is_equal_to(1));
-}
-
-Ensure(Options, does_not_collect_the_options_after_a_second_section_header) {
-    ArgumentsVector nargs;
-
-    expect_characters("[/a/b]\n-DFIRST\n[/a]\n-DSECOND\n", true);
-
-    readOptionsIntoArgs(NULL, NULL, &nargs, &ppmMemory);
-
-    assert_that(argsContain(nargs, "-DFIRST"), is_true);
-    assert_that(argsContain(nargs, "-DSECOND"), is_false);
 }
 
 static bool errorMessageCalled;

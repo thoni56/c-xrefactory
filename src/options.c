@@ -630,6 +630,8 @@ int getOptionFromFile(FILE *file, Position *position, char *foundText, int *char
             if (count < MAX_OPTION_LEN-1)
                 foundText[count++]=ch;
         } else if (ch=='[') {
+            Position headerPosition = position != NULL ? *position : (Position){0};
+            headerPosition.col--;
             foundText[count++] = ch;
             ch=readOptionChar(file, position);
             while (ch!=EOF && ch!='\n' && ch!=']') {
@@ -639,6 +641,9 @@ int getOptionFromFile(FILE *file, Position *position, char *foundText, int *char
             }
             if (ch==']')
                 foundText[count++]=ch;
+            /* A config is one project, the root path is its id (ADR-0029) */
+            if (position != NULL)
+                parsingMessageAt(headerPosition, ERR_ST, "section headers are not used");
         } else {
             while (ch!=EOF && ch>' ') {
                 if (count < MAX_OPTION_LEN-1)
@@ -718,8 +723,7 @@ static int handleSetOption(int i, ArgumentsVector args) {
 bool readOptionsIntoArgs(FILE *file, Position *position, ArgumentsVector *outArgs, Memory *memory) {
     char optionText[MAX_OPTION_LEN];
     int len, ch, passNumber=0;
-    bool inProjectSection, isActivePass;
-    bool sectionHeaderSeen = false;
+    bool isActivePass;
     PassMarker passMarker;
 
     ENTER();
@@ -727,7 +731,7 @@ bool readOptionsIntoArgs(FILE *file, Position *position, ArgumentsVector *outArg
     int argc = 1;
     char *argv[MAX_STD_ARGS];
 
-    inProjectSection = isActivePass = true;
+    isActivePass = true;
 
     if (memory == &optMemory)
         memoryInit(&optMemory, "argument options", OptionsMemorySize);
@@ -745,19 +749,15 @@ bool readOptionsIntoArgs(FILE *file, Position *position, ArgumentsVector *outArg
             log_debug("got option from file: '%s'", optionText);
         }
         if (len>=2 && optionText[0]=='[' && optionText[len-1]==']') {
-            /* A first section header is ignored, a second ends the project (ADR-0031).
-             * The rest is still read, the pipe uses this too. */
-            if (sectionHeaderSeen)
-                inProjectSection = false;
-            sectionHeaderSeen = true;
-        } else if (inProjectSection && (passMarker = readPassMarker(optionText, &passNumber)) != NotAPassMarker) {
+            /* Reported by getOptionFromFile(), and the rest is read */
+        } else if ((passMarker = readPassMarker(optionText, &passNumber)) != NotAPassMarker) {
             /* An unusable marker leaves the section it introduces unread, rather
              * than silently attributing it to the pass before it. */
             isActivePass = passMarker == WellFormedPassMarker
                 && (passNumber == currentPass || currentPass == ANY_PASS);
             if (passMarker == WellFormedPassMarker && passNumber > maxPasses)
                 maxPasses = passNumber;
-        } else if (strcmp(optionText,"-set")==0 && (inProjectSection && isActivePass) && memory != NULL) {
+        } else if (strcmp(optionText,"-set")==0 && isActivePass && memory != NULL) {
             // pre-evaluation of -set
             found = true;
             if (memory != NULL) {
@@ -778,7 +778,7 @@ bool readOptionsIntoArgs(FILE *file, Position *position, ArgumentsVector *outArg
                 ArgumentsVector args = {.argc = argc, .argv = argv};
                 handleSetOption(argc - 3, args);
             }
-        } else if (ch != EOF && (inProjectSection && isActivePass)) {
+        } else if (ch != EOF && isActivePass) {
             found = true;
             expandEnvironmentVariables(optionText, MAX_OPTION_LEN, &len, false);
             if (memory != NULL) {
