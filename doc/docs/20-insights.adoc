@@ -39,60 +39,6 @@ Position position
 ....
 
 
-=== Navigation Architecture and Preloading
-
-Date: 2025-12-22, updated 2026-02-21
-
-==== How Symbol Navigation Works
-
-Symbol navigation (PUSH/NEXT/PREVIOUS/POP) merges references from **two sources**:
-
-1. **Disk CXrefs Database** - Reflects saved files on disk
-2. **In-Memory ReferenceableItem Table** - Reflects current server state including preloaded editor buffers
-
-When you PUSH on a symbol, the navigation menu creation (`createSelectionMenuForOperation`) does:
-
-1. **Load from disk** - Scans CXrefs files for the symbol (via `scanReferencesToCreateMenu`)
-   * Creates menu items with disk-based line numbers
-
-2. **Merge from memory** - Maps over the in-memory table (via `putOnLineLoadedReferences`)
-   * Adds references from parsed/preloaded buffers with current line numbers
-   * Duplicate detection prevents the same reference appearing twice
-
-3. **Build session** - Copies merged references to the navigation session
-
-This dual-source approach allows navigation without full project parse while providing updated positions for modified files.
-
-NOTE: Client preloading behavior and stale file detection are now documented in link:12-components.adoc[Chapter 12: Components] under Server (Entry-Point Reparse) and Editor Extension (Preloading).
-
-NOTE: Several sections describing pre-memory-as-truth behaviour have been moved to
-link:21-archive.adoc[Archive]:
-
-* "Architectural Invariants" and "RefactoryMode Internally Calls XrefMode" — the
-  invariants described a model where the disk database was the source of truth.
-* "The lastParsedMtime Optimization and Refactoring Conflict" — the workaround it
-  describes is no longer needed; under server-side refactoring, `callXref()` is not
-  in the refactoring path and entry refresh keeps both navigation and refactoring on
-  the same in-memory table.
-* "Stale File Refresh and Cross-File References" — describes
-  `refreshStaleReferencesInSession()`, no longer in the source. Current refresh is
-  lazy via `needsBrowsingStackRefresh` and `updateSessionReferencesForFile` (see
-  link:08-algorithms.adoc[Chapter 8]). The dedup-key insight from that section is
-  carried forward in link:21-archive.adoc#cu-reparse-header-staleness[a later investigation].
-
-As of 2026-03, the in-memory reference table is authoritative — see
-link:06-principles.adoc[Principles].
-
-=== Unified In-Memory Table Discovery
-
-Date: 2025-01-25
-
-Investigation revealed that **both XrefMode and ServerMode use the same in-memory `ReferenceableItemTable`**. This is the key enabler for the incremental path to "Memory as Truth" (see link:10-roadmap.adoc[Chapter 10: Roadmap]).
-
-`handleFoundSymbolReference()` in `cxref.c` handles references found during parsing. It calls `isMemberInReferenceableItemTable()` to check if a symbol exists; if not found, creates a new entry; if found, adds a reference to the existing entry. This same table is used by both modes — there is no separate "server table" vs "xref table".
-
-The disk scan operations (`ensureReferencesAreLoadedFor`, `scanReferencesToCreateMenu`, etc.) read from `.cx` files on disk and also call `isMemberInReferenceableItemTable()` to check/merge with existing entries. If parsing has already populated the table, these operations find data already present — making them effective no-ops once all files are parsed.
-
 === Editor Buffer Lifecycle in the Server
 
 Date: 2026-03-17
@@ -111,9 +57,9 @@ Client-preloaded buffers (`preLoadedFromFile != NULL`) are NOT freed — they re
 
 === Freshness Is Make, for the Goal
 
-Date: 2026-10-12
+Date: 2026-10-12, updated 2026-11-03
 
-ADR-0032 and ADR-0033 make the entry refresh work like Make. The terms map like this:
+ADR-0032 and ADR-0035 make the entry refresh work like Make. The terms map like this:
 
 [cols="1,2"]
 |===
@@ -123,13 +69,13 @@ ADR-0032 and ADR-0033 make the entry refresh work like Make. The terms map like 
 |the knowledge of a CU, i.e. the references its parse put in the table
 
 |prerequisites
-|the CU and its include closure (and, not yet, the project config)
+|the CU, its include closure and the project config
 
 |the target's mtime
 |the CU's `knowledgeTime`, taken before the content is read
 
 |a prerequisite's mtime
-|the change time of the content the client sends for a file the editor holds, or the disk mtime
+|the change time of the content the server reads for a file: the held buffer's, the disk mtime, or the moment the server stops reading a held buffer
 
 |the recipe
 |parsing the CU, `buildKnowledgeOfCU()`
@@ -152,11 +98,36 @@ What this guarantees is an absence.
 After the entry refresh, no CU on the goal is out of date without that being known, i.e. every rule reachable from the goal has been evaluated and the recipes that need to run are known.
 The position the operation asks about is only looked at after that.
 
-Where it is not yet Make (items in `doc/backlog.md`):
+Make has no counterpart for one thing: several recipes write the same output.
+A header's references are put in the table by every CU that includes it.
+ADR-0035 removes them when the header changes, so every includer is out of date and puts its part back when it is built.
+Until the last one has, the header is incomplete, and the CUs that are out of date say what is missing.
+Nothing has to be cleared afterwards.
 
+==== The shape it converges to
+
+[source]
+----
+remove = the references of every file whose content changed   (ADR-0035)
+goal   = reach(request file) or the whole project              (policy)
+build  = the out-of-date CUs in the goal, ask above the budget (one predicate)
+answer (a cursor parse only where it is needed)
+----
+
+Each step of the request should belong to one of these lines.
+The removal is a fact about a file, the goal is policy, and the build is the one predicate.
+A step that belongs to none of them is a workaround, usually for the removal.
+The shape was first written down on the Mac, session `4839a129`, with the removal last, as a sweep.
+
+==== Where it is not yet Make
+
+Items in `doc/backlog.md`:
+
+* *The removal is not on change yet* (`remove-on-change`). A header is stripped only when every includer is built in one round, and a mark, *left behind*, makes up for the rest.
+* *The cap* (`cap-is-a-question`). At most 128 recipes run, and the rest stay out of date without a question. They are known, though. ADR-0032 makes it a question, and later a time budget (`time-budget`).
 * *The goal is too small* (`request-target`). We run `make request.o`, but the answer is linked from more objects than that.
-* *The cap.* At most 128 recipes run, and the rest stay out of date. They are known, though (`time-budget`, `header-not-half`).
-* *The config is not a prerequisite* (`out-of-date`). That is the classic Make pitfall where changing `CFLAGS` rebuilds nothing. `markAllCompilationUnitsStale()` covers it for now.
-* *A header changed on disk, outside the goal,* keeps its old references (`behind-the-back`).
-* *Several recipes write the same output.* A header's references are put in the table by every CU that includes it, which Make cannot express. Hence ADR-0032's all or nothing for a header, and in the end the sweep with generations (ADR-0033, `sweep`).
+* *The config is not a prerequisite* (`out-of-date`). That is the classic Make pitfall where changing `CFLAGS` rebuilds nothing. `markAllCompilationUnitsStale()` covers it for now, but removes no references.
+* *A file changed on disk, outside the goal,* is not seen, and keeps its old references (`behind-the-back`).
+* *A missing include edge* (`include-edges`). A CU that reaches a changed header through an edge the table lacks is not out of date, so its part of the header is missing without that being known.
+* *A recipe that stops writing part of a shared output* leaves that part (`variant-b`). Make writes its targets whole, so it never meets this.
 * *The request's own recipe runs as part of the operation*, since the lexer finds the cursor during the parse. Reusing the knowledge when it is current is `cursor-parse-reuse`.

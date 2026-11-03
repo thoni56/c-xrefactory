@@ -1,6 +1,6 @@
 # Backlog
 
-What to work on next, and in what order. As of 2026-10-27.
+What to work on next, and in what order. As of 2026-11-03.
 
 The *descriptions* live in the guidebook (`doc/docs/`), in the `.suspended` notes and in
 the ADRs. This file carries only the **order** and the **dependencies**, which are
@@ -190,8 +190,9 @@ every push, `After` dashed and `Goes with` not at all, linked at the end of this
 ## 3. Correctness, by (quiet × cheap)
 
 - (#10) <a id="refactoring-refusals"></a>**What a refactoring refuses, spelled out and tested** —
-    *no repo home yet.* ADR-0033 lets ghosts stay visible until the sweep, and relies on
-    refactorings refusing them. Today rename and the parameter refactorings compare only
+    *no repo home yet.* Under ADR-0035 ghosts remain from the Variant-B gap
+    (`variant-b`) and from changes not seen (`behind-the-back`). Missing references are
+    known, through out-of-date CUs, and a refactoring asks about them. Today rename and the parameter refactorings compare only
     the name at each stored position (`precheckThatSymbolRefsCorresponds`,
     `validateReferencePointsToFunction`, `src/refactory.c`). A ghost whose position still
     reads the name passes: a declaration in a branch no longer taken, or the same name
@@ -202,24 +203,17 @@ every push, `After` dashed and `Goes with` not at all, linked at the end of this
     and both fake the ghost by editing the snapshot; add and move parameter have none.
     Write the contract down in the docs — per refactoring, what is refused, what is
     asked, what is edited anyway — and pin it with tests that make their ghosts for real,
-    by changing a shared header on disk. Ghosts can be made that way today, so this does
-    not wait for `sweep`. The message "try re-saving the file" no longer fits. Found by
+    by changing a shared header on disk. The message "try re-saving the file" no longer fits. Found by
     reading the code (Mac, session `05984816`, 2026-10-06), not tested.
     Goes with: behind-the-back
-    After: sweep
-- (#11) <a id="behind-the-back"></a>**A header changed on disk, which the editor does not hold, keeps its old references when it has more includers than the cap** —
-    a header that some includers are built into, but not all, is left behind, and its
-    other includers are then out of date until all are built in one request and it is
-    stripped (`tests/test_ghosts_stay_when_one_includer_is_parsed_alone`). Above the cap
-    that never happens. Ghosts from before that are not seen as left behind, and stay.
-    Waits for: request-target
-    Goes with: sweep
-- (#93) <a id="settle-left-behind"></a>**Every request settles each header left behind** —
-    puts all includers of a header marked `isLeftBehind` on the build list, not only those
-    the request reaches (siblings, the request CU, a name operation's
-    `collectOutOfDateCUs()`). Until then a request elsewhere still reads the header's old
-    references. Above the cap it meets #11.
-    Goes with: behind-the-back
+    After: remove-on-change
+- (#11) <a id="behind-the-back"></a>**A file changed on disk outside the goal is not seen** —
+    the server reads the change times of the goal's files only, so a header changed on
+    disk that no request reaches keeps its old references, and a browse from elsewhere
+    shows them (ADR-0035, "Seeing a change"). Seeing it means a `stat` of every known
+    file, change first, as `out-of-date` and `time-budget` already need for the estimate.
+    After: remove-on-change
+    Goes with: out-of-date
 - (#94) <a id="inserted-text-loses-non-ascii"></a>**Investigate: which refactorings insert text copied from the server's buffer** —
     *no repo home yet.* A loaded buffer has each multibyte character replaced by a space
     (`convertUtf8()`, `src/encoding.c`), so that byte offsets are character offsets. Text the
@@ -263,13 +257,6 @@ every push, `After` dashed and `Goes with` not at all, linked at the end of this
       `18-known-bugs.adoc`.
    h. <a id="push-by-name"></a>**Push by name when a name has several bindings** —
       `tests/test_browsing_push_by_name`. Needs the behaviour decided first.
-   i. <a id="truncated-reference-set"></a>**A refactoring can see a truncated reference set** —
-      `18-known-bugs.adoc`. Severe where it bites, rewriting 13 of 25 occurrences on
-      ffmpeg, but it needs a header included by more than ~130 CUs, and c-xrefactory has
-      79 with a worst fan-in of 39, so it cannot happen here. That, and not its severity,
-      is why it sits here.
-      Goes with: refactoring-refusals
-      After: time-budget
    j. <a id="lsp-position-encoding"></a>**Unconfirmed: the LSP server announces `positionEncoding: "utf-8"` but counts code points** —
       *no repo home yet* (`src/lsp_handler.c`). In LSP 3.17 "utf-8" means columns in
       bytes, while the encoding collapse makes every server column a character column, so
@@ -326,8 +313,8 @@ every push, `After` dashed and `Goes with` not at all, linked at the end of this
     empty list, so the session entry `selectCompletion()` found probably had no matches.
     The completion request also got a syntax error at the cursor (858:45).
 - (#105) <a id="included-c-file"></a>**Investigate: a `.c` file that another file includes** — *no repo home yet.*
-    `isCompilationUnit()` decides by the file name, so an included `.c` is a CU. It is never
-    left behind, and building it on its own removes the references its includer put there
+    `isCompilationUnit()` decides by the file name, so an included `.c` is a CU. Building it
+    on its own removes the references its includer put there
     (`removeReferenceableItemsForFile()` in `buildKnowledgeOfCU()`, `src/rebuild.c`). Find
     out what the scan, the freshness check and a rebuild do with one, and pin it in a test.
 - (#71) <a id="newline-position"></a>**A `'\n'` lexem has the next line's number** — *no repo home yet.*
@@ -409,14 +396,12 @@ Roadmap → Optimization has the baseline: a cold-start PUSH on ffmpeg, measured
     real work is making the database not need discarding — behind-the-back detection and
     entry refresh are probably most of it,
     and item 22 dissolves another part. Remove the entry when they land, and check the
-    symptoms are gone rather than assuming it. Check a third case too: with `sweep`,
-    ghosts in a header are removed only when every CU reaching it has been parsed again,
-    and generations are not in the snapshot (ADR-0033). After a "no" to the completeness
-    question, ghosts in a header like ffmpeg's `avcodec.h` (614 CUs) are written at exit
-    and come back with the snapshot, session after session.
+    symptoms are gone rather than assuming it. Two ghosts stay under ADR-0035: those of
+    the Variant-B gap (`variant-b`), and those in a snapshot written before
+    `remove-on-change`.
     1.10.0 announces the entry in `CHANGES.md`, so its removal needs a line there too.
-    Waits for: behind-the-back
-    Goes with: sweep, time-budget
+    Waits for: remove-on-change
+    Goes with: behind-the-back, time-budget
     Goes with: index-based-sessions
 
 - (#22) <a id="index-based-sessions"></a>**Index-based sessions** — dissolves stale-POP *and* lets an answer grow while you
@@ -528,19 +513,46 @@ Roadmap → Optimization has the baseline: a cold-start PUSH on ffmpeg, measured
     stream, so a client stops with `SYNCHRO PROBLEM`. It works only with the server driver
     or from a shell. The trace gives states, not rule names; byacc's `-v` listing maps them.
 
-## 7. Freshness as make (ADR-0032, ADR-0033)
+## 7. Freshness as make (ADR-0032, ADR-0035)
 
-The order is roughly the numbers. `header-not-half` can be done any time. Next is
-`request-through-includers`.
+The order is roughly as listed. Next is `remove-on-change`. "Freshness Is Make, for the
+Goal" in `20-insights` has the shape the request converges to.
 
 Performance, from reading the code (Mac, session `05984816`, 2026-10-08): at equal
 correctness the design costs the same or less. Parsing dominates, and what is parsed
 follows the request rather than triggers: an edited header no longer parses up to the cap's
 worth of includers at once, only the goal's. More is parsed only where the old answer was
 incomplete (deeper reach, disk changes). The bookkeeping added — a `stat` per input, a
-sweep per request — is small beside what goes. The risks are in the implementation, and
-are noted in `cu-inputs`, `out-of-date`, `time-budget` and `sweep-cost`.
+walk of the table per changed file — is small beside what goes. The risks are in the
+implementation, and are noted in `cu-inputs`, `out-of-date`, `time-budget` and
+`removal-cost`.
 
+- (#106) <a id="remove-on-change"></a>**A file's references are removed when its content changes** —
+    ADR-0035. On a newer disk time, new content in a held buffer, or a held buffer let go,
+    and that moment is the file's change time. A config change removes every file's
+    references, where `markAllCompilationUnitsStale()` is called today. `isLeftBehind`,
+    `markHeadersLeftBehind()`, `stripHeadersWhoseIncludersAreAllBuilt()`,
+    `forgetKnowledgeOfHeadersLeftBehind()`, the strip in `collectSiblingCUs()` and
+    `stripChangedHeldHeaders()` with its `fileNumberIsStale()` go.
+    `test_capped_round_is_not_repeated` and
+    `test_a_header_included_through_another_is_cleared` come in with it,
+    `test_reverted_held_header_keeps_its_references` stays green, and
+    `test_ghosts_stay_when_one_includer_is_parsed_alone` changes what it pins. A change of
+    a file is a change of every file that includes it (ADR-0035, amended): write a test
+    where `a.c` includes `mid.h`, `mid.h` includes `leaf.h` and an `#ifdef FEATURE` in
+    `mid.h` stops being taken when `leaf.h` stops defining it. A snapshot
+    written before this can hold ghosts that no change removes; decide whether a snapshot
+    version bump discards them.
+    Goes with: out-of-date
+- (#107) <a id="cap-is-a-question"></a>**The cap becomes a question for every request** —
+    ADR-0032, amended 2026-11-03. `MAX_CUS_TO_REPARSE` stops capping the sibling list and
+    is where the question is asked, as `analyseAllOutOfDateCUs()` does, and the two build
+    lists become one. The macro-body path (`collectCompilationUnitsExpandingTheMacro()`)
+    asks too, instead of truncating. `MAX_INCLUDE_WALK_FILES` (256), where
+    `collectCUsIncluding()` silently walks no further up, goes with it, since the two
+    limits move together. Fixes "A refactoring can see a truncated reference set" in
+    `18-known-bugs.adoc`, 13 of 25 occurrences on ffmpeg.
+    After: remove-on-change
 - (#35) <a id="cu-inputs"></a>**A CU's inputs** — the CU, its include closure and the project
     config, put together where `out-of-date` uses them, the CU first. `Inputs`
     (`src/freshness.c`) holds them for one request: the include graph and each file's
@@ -548,21 +560,32 @@ are noted in `cu-inputs`, `out-of-date`, `time-budget` and `sweep-cost`.
     closure can hold the scan's includes beside the parse's, which for the predicate only
     costs a parse.
 - (#36) <a id="out-of-date"></a>**The config as an input of `knowledgeIsOutOfDate()`** — it
-    replaces `markAllCompilationUnitsStale()`, and the zero sentinel goes. The config is the
+    replaces `markAllCompilationUnitsStale()`, and the zero sentinel goes. The removal on a
+    config change is `remove-on-change`'s. The config is the
     `.c-xrefrc` and its local fragment (ADR-0034), and its change time is the later of the
     two. Until then a `.c-xrefrc` changed while no server runs is probably not seen: its
     mtime is recorded when it is read at startup, so the snapshot's knowledge stays current.
     Found by reading the code, not tested (WSL, session `d25255b8`, 2026-10-28).
-    Left until real use shows the cost (see `sweep-cost`): `MAX_INCLUDE_CLOSURE` (1000)
+    Left until real use shows the cost (see `removal-cost`): `MAX_INCLUDE_CLOSURE` (1000)
     has no measured reason, and evaluating change first, i.e. `stat` each known file once
     and walk the reverse include graph to the CUs whose knowledge is older, costs in
     proportion to what changed.
     Goes with: local-config-fragments
     After: cu-inputs
+- (#42) <a id="include-edges"></a>**Who writes include edges** — the parse and the lightweight
+    scan both do. The parse records the `#include`s the preprocessor took, quoted and
+    `<...>`, at their real lines. The scan records every quoted `#include`, `#ifdef` or
+    not, no `<...>`, all at line 1, column 0 of the includer. A "defined" reference at
+    line 1 of a file marks the file itself and is not an edge. Today the scan wins after a
+    restart: it adds its edges to CUs that already have knowledge, so an include is listed
+    twice, once on line 1 (`tests/test_restart_keeps_includes_as_parsed`). Decide who may
+    write an edge and which writer wins. Removal on change finds what is missing through
+    the edges, so an edge the graph lacks leaves a part missing that is not known to be
+    (ADR-0035).
+    After: cap-is-a-question
 - (#37) <a id="request-target"></a>**What a request needs** — the CUs that reach the request
-    file's closure, and the whole project for an operation on a name. Left: when its array
-    of 256 files is full, `collectCUsIncluding()` walks no further up, silently, which on
-    ffmpeg cuts a widely included header short. The scan does not record `<...>`
+    file's closure, and the whole project for an operation on a name. Left: the scan does
+    not record `<...>`
     includes (`scan-angle-includes`), so for a project that includes its own headers that
     way, reach misses CUs never parsed.
     Waits for: adr-0032
@@ -578,21 +601,11 @@ are noted in `cu-inputs`, `out-of-date`, `time-budget` and `sweep-cost`.
     which needs a lookup of the reference at a position in the table. Completion, extract
     and the macro body need the parse.
     After: request-through-includers
-- (#39) <a id="header-not-half"></a>**Unconfirmed: a changed header the editor holds is stripped also when not all its includers fit** —
-    `stripChangedHeldHeaders()` (`src/rebuild.c`) strips it and adds its includers to the
-    build list only up to the cap. A reference in the header that only the others emit,
-    e.g. under an `#ifdef` they set, is missing until they are built. Strip only when
-    `everyIncluderIsRebuilt()`, as the sibling collection does (ADR-0032). It still asks
-    `fileNumberIsStale()`, which has no coarse-clock gap, and records the header as parsed. Not needed once `sweep` is in.
-- (#40) <a id="time-budget"></a>**A time budget instead of the cap** — the cap (`MAX_CUS_TO_REPARSE`,
-    128 today) becomes a time budget, and above it the question
-    with an estimate. Browsing remembers a "no" for the session, an operation that edits
+- (#40) <a id="time-budget"></a>**A time budget instead of the count** — the count where
+    `cap-is-a-question` asks becomes a time budget, and the question gets an estimate. Browsing remembers a "no" for the session, an operation that edits
     or works on a name is cancelled by it. Touches the client's question. Open: does a remembered "no" stop parsing, or only the asking, so
-    that each request still parses a budget's worth? With `sweep` the second is safe, and
-    is what lets every reaching CU finally have parsed.
-    Before `sweep`, ADR-0032 rebuilds a changed header with all its includers or none,
-    which can parse more than today's cap. Keep the cap until this item is in, or make
-    the window between them short.
+    that each request still parses a budget's worth? Under ADR-0035 partial work adds up,
+    so the second is safe.
     The estimate needs how many CUs are out of date in the whole project. That can be
     found change first (`out-of-date`): `stat` every known file once and walk the reverse
     include graph to the CUs. Then project-wide goals use that and the rest ask
@@ -600,47 +613,38 @@ are noted in `cu-inputs`, `out-of-date`, `time-budget` and `sweep-cost`.
     The ask-or-not decision (`needsConfirmationToAnalyse()`) takes the budget and is
     unit-tested on both sides of it. The budget is a user setting, so system tests use 0
     (always asks) and unlimited (never asks), and none sit near the boundary.
-- (#41) <a id="freshness-docs"></a>**The docs follow** — *Out of date* replaces *Staleness* in
-    `06-principles`, and `08-algorithms` loses "Dual Semantics". In `06-principles`, the
-    part on why reparsing only a subset is safe also describes strip-then-reparse.
-    `08-algorithms` still describes the entry refresh as Pass 1, 2 and 3; "Freshness Is
-    Make, for the Goal" in `20-insights` is a start for its rewrite.
-- (#42) <a id="include-edges"></a>**Who writes include edges** — the parse and the lightweight
-    scan both do. The parse records the `#include`s the preprocessor took, quoted and
-    `<...>`, at their real lines. The scan records every quoted `#include`, `#ifdef` or
-    not, no `<...>`, all at line 1, column 0 of the includer. A "defined" reference at
-    line 1 of a file marks the file itself and is not an edge. Today the scan wins after a
-    restart: it adds its edges to CUs that already have knowledge, so an include is listed
-    twice, once on line 1 (`tests/test_restart_keeps_includes_as_parsed`). Decide who may
-    write an edge and which writer wins. The sweep needs it: it removes a file's
-    references once every CU reaching it has been parsed again, so an edge the graph
-    lacks makes it remove live references, silently (ADR-0033).
-- (#43) <a id="generations"></a>**Generations** — a counter per parse, a mark on every
-    reference, refreshed in `addToReferenceList()`, and a test that every reference
-    enters the table there.
-    Waits for: adr-0033
-- (#44) <a id="sweep"></a>**Remove references no CU still emits** — after each request that
-    parsed something, remove a reference older than every reaching CU's knowledge
-    generation, and drop every `removeReferenceableItemsForFile()` before a build. A capped reverse walk removes nothing in that file.
-    `test_preprocess_edit_removes_ifdef_define` comes off suspension.
-    Waits for: generations, include-edges
-- (#45) <a id="sweep-cost"></a>**What the sweep costs** — memory and walk time on ffmpeg,
-    whether the reverse walk can go uncapped, and how the mark is stored. The baseline
-    to time against: `removeReferenceableItemsForFile()` walks the whole table, and today
-    runs before every CU reparse and for every changed header the editor holds, so a full
-    cap, 128 CUs, on ffmpeg is 128 walks over 1.24 million references. The sweep is one walk per
-    request that parsed, none for navigation. A stripped reference is also only
-    unlinked, never freed (`cxAlloc`), so every reparse leaves its CU's references behind
-    as dead memory; refreshing in place stops that. For the sweep itself, compute the
-    oldest knowledge generation of a file's reaching CUs once per file, not per
-    reference.
+    After: cap-is-a-question
+- (#108) <a id="variant-b"></a>**A CU that stops emitting into an unchanged header leaves its references there** —
+    what a CU emits into a header is the union over its passes, and it shrinks when the
+    preprocessor state on the way in changes: the CU itself, or a header included before
+    it but not by it, e.g. one that stops defining `FEATURE` (ADR-0035). Nothing about the header
+    changed, so nothing removes them. In `src/` what differs between includers is mostly
+    macro expansions (`doc/freshness-make-model-assessment.md`). Generations are one
+    option, and would need an ADR. `test_preprocess_edit_removes_ifdef_define` stays
+    suspended, and its `.suspended` still names ADR-0033's sweep.
+    After: remove-on-change
+- (#45) <a id="removal-cost"></a>**What removal costs** — `removeReferenceableItemsForFile()`
+    walks the whole table, and runs before every CU build and once per changed file, so a
+    request that sees many files change at once, e.g. after a `git checkout`, walks it
+    many times: 128 CUs on ffmpeg is 128 walks over 1.24 million references. One walk
+    for a set of files would do. A removed reference is also only unlinked, never freed
+    (`cxAlloc`), so every build leaves its CU's old references behind as dead memory.
     For information: the table only answers exact identity, so other lookups walk all
     of it. By file, the strip above. By kind, `buildIncludeGraph()` looking for the
     include items, about 38 ms on a fully parsed ffmpeg, twice per request. By name
     only, `navigation.c` once per menu item. Per request on ffmpeg, 1376 `stat`s took
     about 5 ms and 2434 include closures about 50 ms (WSL, session `d25255b8`,
     2026-10-11).
-    After: sweep
+    After: remove-on-change
+
+- (#41) <a id="freshness-docs"></a>**The docs follow** — *Out of date* replaces *Staleness* in
+    `06-principles`, and `08-algorithms` loses "Dual Semantics". In `06-principles`, the
+    part on why reparsing only a subset is safe also describes strip-then-reparse.
+    `08-algorithms` still describes the entry refresh as Pass 1, 2 and 3; "Freshness Is
+    Make, for the Goal" in `20-insights` is a start for its rewrite. ADR-0035 makes
+    `06-principles.adoc:84`, `:340`-`:343`, `:358`, `08-algorithms.adoc:204` and
+    `15-development-environment.adoc:118` stale.
+    After: remove-on-change
 
 ## 8. Real users: installing and being found
 
@@ -685,7 +689,7 @@ Mac (session `05984816`), 2026-10-07.
     tier 2 is the shape of that, with clangd as the main server; lsp-mode takes add-on
     servers, eglot needs a look. EmacsConf, Sacha Chua's Emacs News, Show HN. A stranger's
     first project working without configuration matters here, see `compile-commands`.
-    Waits for: sweep, refactoring-refusals, install-server, readme-first-screen
+    Waits for: remove-on-change, refactoring-refusals, install-server, readme-first-screen
     Goes with: lsp-tiers, retry-creating-request, compile-commands
 - (#53) <a id="windows-build"></a>**A Windows build** — most of the code is plain C. About 28
     `__WIN32__` remnants from the original Xrefactory are there, unmaintained and untested
@@ -713,7 +717,7 @@ was done.
 - <a id="adr-0030"></a>**ADR-0030: opening a project and asking about a file are separate**
 - <a id="adr-0031"></a>**ADR-0031: what files a project consists of**
 - <a id="adr-0032"></a>**ADR-0032: knowledge is rebuilt like `make` rebuilds targets**
-- <a id="adr-0033"></a>**ADR-0033: references are removed when every reaching CU is parsed again**
+- <a id="adr-0035"></a>**ADR-0035: a file's references are removed when its content changes**
 
 ## Open questions that would reorder this
 
