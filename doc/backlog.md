@@ -325,6 +325,11 @@ every push, `After` dashed and `Goes with` not at all, linked at the end of this
     `getMatchOnNthLine()` (`src/match.c`) counts wrapped lines and returns NULL only for an
     empty list, so the session entry `selectCompletion()` found probably had no matches.
     The completion request also got a syntax error at the cursor (858:45).
+- (#105) <a id="included-c-file"></a>**Investigate: a `.c` file that another file includes** — *no repo home yet.*
+    `isCompilationUnit()` decides by the file name, so an included `.c` is a CU. It is never
+    left behind, and building it on its own removes the references its includer put there
+    (`removeReferenceableItemsForFile()` in `buildKnowledgeOfCU()`, `src/rebuild.c`). Find
+    out what the scan, the freshness check and a rebuild do with one, and pin it in a test.
 - (#71) <a id="newline-position"></a>**A `'\n'` lexem has the next line's number** — *no repo home yet.*
     `handleNewline()` (`src/lexer.c`) puts the `'\n'` after the newline, and the blanks and
     comments after it, have been read. Its column is where the line ended, its line is that
