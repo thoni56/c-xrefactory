@@ -12,6 +12,9 @@ risk, and ghosts surviving a restart. The decision unchanged.
 Amended (2026-10-26): a file left behind makes its reaching CUs out of date, also in
 the snapshot, see below.
 
+Superseded (2026-11-03) by
+[ADR-0035](0035-a-files-references-are-removed-when-its-content-changes.md)
+
 Supersedes the include-structure reparse and fingerprint gate of
 [ADR-0025](0025-clean-stale-header-emissions-by-reparse-not-provenance.md), keeping its
 rejection of provenance

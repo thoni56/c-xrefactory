@@ -13,9 +13,13 @@ Amended (2026-10-11): the request file is no exception, see below.
 Amended (2026-10-26): a header left behind makes its includers out of date, see
 ADR-0033.
 
+Amended (2026-11-03): a changed file loses its references and nothing is left behind
+(ADR-0035), and the time budget is a question for every request, never a cap, see below.
+
 Builds on [ADR-0014](0014-adopt-on-demand-parsing-architecture.md) and
 [ADR-0020](0020-separate-buffer-sync-from-operation-dispatch.md)
-Goes with [ADR-0033](0033-references-are-removed-when-every-cu-reaching-their-file-is-parsed-again.md)
+Goes with [ADR-0035](0035-a-files-references-are-removed-when-its-content-changes.md),
+which supersedes ADR-0033
 
 ## Deciders
 
@@ -36,10 +40,11 @@ Nothing in the table is kept per file or per CU.
 - **Input**: a file or setting that knowledge depends on, i.e. the CU, every file in its
   include closure, and the project config.
 - **Change time**: an input's modification time, from the held buffer if the client
-  holds one, otherwise from disk.
+  holds one, otherwise from disk. When the server stops reading a held buffer, the
+  moment it does (ADR-0035).
 - **Knowledge time**: when the knowledge of a CU was recorded.
-- **Out of date**: a CU's knowledge, when there is none, when an input changed after
-  the knowledge time, or when a header it includes is left behind (ADR-0033).
+- **Out of date**: a CU's knowledge, when there is none, or when an input changed after
+  the knowledge time.
 - **Reach** (of a symbol): the CUs whose knowledge can reference it. For a `static` that is
   its own CU, for a global the CUs that include its declaring header, directly or through
   other headers. Reach walks through headers but ends in CUs, since only a CU is parsed.
@@ -117,13 +122,16 @@ _we propose to_
 - replace the CU count with a **time budget**. What fits in it is parsed without asking.
   Above it, browsing asks with an estimate, e.g. "Parsed 128 of 400 CUs. Completing
   would take about 45 seconds more?", and remembers a "no" for the session,
+- until the time is measured, let the budget be a **count of CUs** (`MAX_CUS_TO_REPARSE`,
+  128). It is where the question is asked, never a cap: the rest of the goal is built
+  after a "yes" and stays out of date after a "no". The question is the same for every
+  kind of request, and nothing is left out without one,
 - let an operation that edits code, like a rename, or that works on a name, bring its
   goal up to date before it runs: silently within the time budget, and above it only
   after the completeness question. A "no" cancels the operation and is not remembered.
   The question counts out-of-date knowledge of every kind, not only CUs never parsed,
-- treat **the references positioned in a header** as all or nothing until ADR-0033 is in
-  place: either all its includers are parsed again, or none is and their knowledge is
-  left out of date. The references are not stripped before that is certain,
+- let **a changed file lose its references** when the change is seen, and its reaching
+  CUs put them back as they are built (ADR-0035),
 
 _disregarding the fact that_
 - a file restored with an older modification time (`cp -p`, `tar`, `rsync -t`) is not
@@ -152,8 +160,8 @@ _because_
 ## Decision Outcome
 
 A CU's knowledge is out of date when it has none, when the CU, a file it includes or
-the project config changed after the knowledge was recorded, or when a header it
-includes is left behind. That is the only freshness test. What is brought up to date is the request's goal, the symbol's reach or for a
+the project config changed after the knowledge was recorded. That is the only
+freshness test. What is brought up to date is the request's goal, the symbol's reach or for a
 name the whole project, within a time budget. Above the budget browsing asks and
 remembers a "no" for the session, while an operation that edits code or works on a name
 asks every time and is cancelled by a "no".
@@ -222,3 +230,7 @@ and the question of what a header's time could mean led to the `make` model.
 The amendment of 2026-10-11 comes from WSL, session `d25255b8`. A test for stripping a
 header that no CU includes found the request header parsed on its own, putting its
 references back (`tests/test_push_in_header_no_cu_includes`).
+
+The amendment of 2026-11-03 comes from WSL, session `d25255b8`. A capped round left the
+same CUs out every time, and the left-behind mark made every request build 128 CUs
+again (`tests/test_capped_round_is_not_repeated`).

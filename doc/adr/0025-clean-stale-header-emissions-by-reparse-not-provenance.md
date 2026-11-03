@@ -9,7 +9,8 @@ Accepted
 Builds on [ADR-0020](0020-separate-buffer-sync-from-operation-dispatch.md)
 Its include-structure reparse and fingerprint gate are superseded by
 [ADR-0033](0033-references-are-removed-when-every-cu-reaching-their-file-is-parsed-again.md),
-which keeps the rejection of provenance
+now [ADR-0035](0035-a-files-references-are-removed-when-its-content-changes.md), which
+keeps the rejection of provenance
 
 ## Deciders
 
