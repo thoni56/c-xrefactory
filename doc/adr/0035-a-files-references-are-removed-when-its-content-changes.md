@@ -6,6 +6,8 @@ Date: 2026-11-03
 
 Accepted (2026-11-03)
 
+Amended (2026-11-03): a change of a file is a change of every file that includes it.
+
 Supersedes [ADR-0033](0033-references-are-removed-when-every-cu-reaching-their-file-is-parsed-again.md),
 and with it the include-structure reparse and fingerprint gate of
 [ADR-0025](0025-clean-stale-header-emissions-by-reparse-not-provenance.md), keeping the
@@ -64,6 +66,10 @@ _we propose to_
 - **remove a file's references when the server sees its content change**: a newer
   modification time on disk, new content in a held buffer, or a held buffer it stops
   reading. Its change time is then the moment of that change,
+- let a **change of a file be a change of every file that includes it**, directly or
+  through other headers. What a header emits depends on what it includes, e.g. an
+  `#ifdef` on a macro the included file defines. Every CU that reaches the including
+  file also reaches the changed one, so no other CU becomes out of date,
 - let a **CU be out of date** when its knowledge is older than the change time of an
   input, as ADR-0032 already says. Every CU that reaches a changed header is then out of
   date, and building one puts its part of the header back,
@@ -99,15 +105,16 @@ _disregarding the fact that_
   is built again, so the include graph below a changed header is incomplete for a while.
   The CUs that would follow those edges are out of date anyway, through the changed
   header, but *visible* (ADR-0031) may answer *outside* for a header only reached
-  through it,
+  through it. The files that include a changed file are found before anything is
+  removed,
 - a CU that stops emitting into a header that did not change, the Variant-B gap
   (`tests/test_preprocess_edit_removes_ifdef_define`), is not handled. What a CU emits
   into a header is the union over all passes. It shrinks when the preprocessor state on
-  the way into the header changes, and the cause can be the CU itself or a header it
-  includes before, e.g. one that stops defining `FEATURE`. Nothing about the header
-  changed, so nothing removes what the CU no longer emits. The config is the third cause,
-  and is handled above. ADR-0033's generations would close the other two, and stay one
-  option for that,
+  the way into the header changes, and the cause can be the CU itself or a header
+  included before it but not by it, e.g. one that stops defining `FEATURE`. Nothing
+  about the header changed, so nothing removes what the CU no longer emits. A file the
+  header includes, and the config, are the other causes, and are handled above.
+  ADR-0033's generations would close the remaining two, and stay one option for that,
 - a CU that includes a header only under an `#ifdef` it does not take is still counted as
   reaching it, so it is built when the header changes, which costs a build but loses
   nothing,
@@ -129,8 +136,9 @@ _because_
 ## Decision Outcome
 
 A file's references are removed when the server sees its content change, and the change
-time is when that happened, including when a held buffer is let go. A config change is a
-change of every file. A CU is out of date when an input changed after its knowledge, and
+time is when that happened, including when a held buffer is let go. A change of a file
+is a change of every file that includes it, and a config change is a change of every
+file. A CU is out of date when an input changed after its knowledge, and
 building it puts its references back. There is no left-behind mark. Until every reaching
 CU has been built again, a changed header's references are incomplete, and the
 out-of-date CUs say which are missing.
