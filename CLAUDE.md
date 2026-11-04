@@ -159,6 +159,21 @@ turned bare directory names in `.c-xrefrc` from "these are the project" into "al
 these", and no ADR recorded it. That surfaced only because the original meaning was
 traced back to the man page.
 
+## Check a fix against the shape
+
+A change to how a request finds, removes, builds or answers from knowledge is checked against the
+shape in `doc/docs/20-insights.adoc`, "The shape it converges to": remove, goal, build, answer, and
+the rule that the goal contains every CU whose references the answer reads.
+
+Say which line of the shape the fix belongs to. If it belongs to none, or moves away from it, say so
+before doing anything. A step that fits no line is a workaround, usually for the removal.
+
+The shape may change or move. Check against its current text, not a remembered one.
+
+The left-behind mark, the all-or-nothing strip and `stripChangedHeldHeaders()` each fixed one case
+without the longer goal in view, and together they kept a server rebuilding 128 CUs on every request
+(ADR-0035).
+
 ## On being redirected
 
 The user has standing authority to interrupt and abort, and exercising it is cheap for them only when you don't resist. If the user flags that you're heading the wrong way, stop immediately — do not defend the thread, do not "almost have it," do not finish the current edit. Treat early correction as the most valuable signal in the session, not as friction. Some sessions are a sunk cost; when the user calls that, accept it without negotiation.

@@ -117,6 +117,11 @@ answer (a cursor parse only where it is needed)
 Each step of the request should belong to one of these lines.
 The removal is a fact about a file, the goal is policy, and the build is the one predicate.
 A step that belongs to none of them is a workaround, usually for the removal.
+
+The goal must contain every CU whose references the answer reads.
+The removal is not limited to the goal, so a changed file outside it has its references missing until a request needs them.
+That is safe because the CUs reaching it are out of date, and the next goal that contains them builds them.
+A goal that is smaller than what the answer reads gives an answer that is incomplete without that being known (`request-target`).
 The shape was first written down on the Mac, session `4839a129`, with the removal last, as a sweep.
 
 ==== Where it is not yet Make
