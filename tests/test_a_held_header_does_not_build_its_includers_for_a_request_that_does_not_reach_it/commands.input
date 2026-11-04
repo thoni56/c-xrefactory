@@ -1,0 +1,8 @@
+CXREF -server -info -log=log
+-getproject CURDIR/a.c
+<sync>
+-browse-push -cursor=36 CURDIR/a.c
+<sync>
+-browse-push -cursor=4 -preload CURDIR/h.h CURDIR/h.h.preload CURDIR/z.c
+<sync>
+<exit>

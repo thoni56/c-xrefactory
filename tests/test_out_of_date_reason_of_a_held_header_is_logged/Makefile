@@ -2,8 +2,8 @@
 #
 # Given a.c and b.c both include h.h
 # When a push in a.c finds both without knowledge, and a push with h.h held
-#   with new content builds every includer of it
-# Then the log names h.h, changed in the editor, for both
+#   with new content builds a.c and its sibling b.c
+# Then the log names h.h as changed for both
 
 include ../Makefile.server
 

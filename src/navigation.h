@@ -9,6 +9,5 @@ extern void setCurrentReferenceToFirstAfterCallerPosition(SessionStackEntry *ses
 extern void setCurrentReferenceToNextOrFirst(SessionStackEntry *sessionEntry, Reference *reference);
 extern void gotoNextReference(SessionStackEntry *sessionEntry);
 extern void gotoPreviousReference(SessionStackEntry *sessionEntry);
-extern bool fileNumberIsStale(int fileNumber);
 
 #endif

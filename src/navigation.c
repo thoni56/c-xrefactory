@@ -129,40 +129,6 @@ void setCurrentReferenceToNextOrFirst(SessionStackEntry *sessionEntry, Reference
  *    a stack update only — no reparsing happens here.
  */
 
-bool fileNumberIsStale(int fileNumber) {
-    if (fileNumber == NO_FILE_NUMBER)
-        return false;
-
-    FileItem *fileItem = getFileItemWithFileNumber(fileNumber);
-
-    // Deleted files should not be reparsed
-    if (fileItem->isDeleted)
-        return false;
-
-    EditorBuffer *buffer = getOpenedAndLoadedEditorBuffer(fileItem->name);
-
-    // No authoritative in-memory content = not stale.
-    // A buffer holds it when the client preloaded it, or when the server
-    // modified it (refactoring). Either way only while it is held: the next
-    // request drops it unless the client preloads the file again
-    // (closeEditorBuffersNoLongerHeld). Auto-created buffers from a parse
-    // (e.g. headers being read while parsing a CU) hold none, so changes
-    // to those files don't make this file stale.
-    if (buffer == NULL || !holdsAuthoritativeContent(buffer))
-        return false;
-
-    // Explicitly marked stale via NEVER_PARSED_TIMESTAMP (see
-    // forgetKnowledgeForHeldContent() for the snapshot-save case).
-    if (fileTimestampIsZero(fileItem->lastParsedMtime))
-        return true;
-
-    // Already refreshed? (lastParsedMtime updated to buffer's mtime after refresh)
-    if (!fileTimestampIsLessThan(fileItem->lastParsedMtime, buffer->modificationTime))
-        return false;
-
-    return true;
-}
-
 /* TODO: Technical Debt from extracting `navigation` */
 extern void recomputeSelectedReferenceable(SessionStackEntry *entry);
 

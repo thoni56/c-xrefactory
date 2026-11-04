@@ -217,6 +217,7 @@ void removeReferencesOfChangedFiles(Inputs *inputs) {
         } else if (fileTimestampIsLessThan(fileItem->changeTime, contentTime)) {
             log_debug("'%s' changed, removing its references", fileItem->name);
             removeReferenceableItemsForFile(i);
+            fileItem->needsBrowsingStackRefresh = true;
             fileItem->changeTime = contentTime;
             changedAt[i] = contentTime;
             anyChanged = true;
@@ -307,38 +308,6 @@ int collectCUsIncluding(int fileNumber, int cuFileNumbers[], int cuCount, int ma
     return cuCount;
 }
 
-static void stripChangedHeldHeaders(BuildList *list) {
-    for (int i = 0; i != -1; i = getNextExistingEditorBufferIndex(i + 1)) {
-        for (EditorBufferList *l = getEditorBufferListElementAt(i); l != NULL; l = l->next) {
-            int fileNumber = l->buffer->fileNumber;
-            FileItem *fileItem = getFileItemWithFileNumber(fileNumber);
-            if (fileNumberIsStale(fileNumber) && !isCompilationUnit(fileItem->name)) {
-                if (!editorFileExists(fileItem->name)) {
-                    log_debug("Changed header '%s' no longer exists, marking as deleted",
-                              fileItem->name);
-                    markFileAsDeleted(fileNumber);
-                } else {
-                    int count = collectCUsIncluding(fileNumber, list->fileNumbers, list->count,
-                                                    MAX_CUS_TO_REPARSE);
-                    for (; list->count < count; list->count++) {
-                        int includer = list->fileNumbers[list->count];
-                        log_info("'%s' is out of date: '%s' changed in the editor",
-                                 getFileItemWithFileNumber(includer)->name, fileItem->name);
-                        list->built[includer] = true;
-                    }
-                    /* The stale header's own references go now; building the CUs
-                     * above re-emits them. */
-                    removeReferenceableItemsForFile(fileNumber);
-                    EditorBuffer *buffer = getOpenedAndLoadedEditorBuffer(fileItem->name);
-                    if (buffer != NULL)
-                        fileItem->lastParsedMtime = buffer->modificationTime;
-                    fileItem->needsBrowsingStackRefresh = true;
-                }
-            }
-        }
-    }
-}
-
 /* Only what the client holds, as for a stale header */
 static bool heldCUIsOutOfDate(Inputs *inputs, EditorBuffer *buffer) {
     if (!holdsAuthoritativeContent(buffer))
@@ -370,12 +339,6 @@ void collectOutOfDateHeldFiles(BuildList *list, Inputs *inputs) {
     /* Held CUs whose knowledge is out of date. They go first, so the cap
      * never leaves one of them out. */
     collectOutOfDateHeldCUs(list, inputs);
-
-    /* Stale held headers are stripped before any CU is built, so each CU
-     * that includes one is built once and puts its part of the header
-     * back. The includers are found through the include references as
-     * they were before this request. */
-    stripChangedHeldHeaders(list);
 }
 
 /* Parse a file using the full initializeFileProcessing machinery (project

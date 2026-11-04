@@ -5,10 +5,6 @@
 #include <cgreen/mocks.h>
 
 
-bool fileNumberIsStale(int fileNumber) {
-    return (bool)mock(fileNumber);
-}
-
 void setCurrentReferenceToFirstAfterCallerPosition(SessionStackEntry *sessionStackEntry) {
     mock(sessionStackEntry);
 }
