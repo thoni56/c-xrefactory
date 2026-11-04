@@ -535,7 +535,7 @@ implementation, and are noted in `cu-inputs`, `out-of-date`, `time-budget` and
     `forgetKnowledgeOfHeadersLeftBehind()`, the strip in `collectSiblingCUs()` and
     `stripChangedHeldHeaders()` with its `fileNumberIsStale()` go.
     `test_capped_round_is_not_repeated` and
-    `test_a_header_included_through_another_is_cleared` come in with it,
+    `test_a_header_let_go_is_current_again_through_another` come in with it,
     `test_reverted_held_header_keeps_its_references` stays green, and
     `test_ghosts_stay_when_one_includer_is_parsed_alone` changes what it pins. A change of
     a file is a change of every file that includes it (ADR-0035, amended): write a test

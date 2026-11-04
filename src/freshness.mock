@@ -12,6 +12,11 @@ bool changedAfterKnowledgeOf(Inputs *inputs, int fileNumber, int cuFileNumber) {
     return (bool)mock(inputs, fileNumber, cuFileNumber);
 }
 
+FileTimestamp changeTimeNow(void) {
+    FileTimestamp *fileTimestampP = (FileTimestamp *)mock();
+    return *fileTimestampP;
+}
+
 Inputs *collectInputs(void) {
     return (Inputs *)mock();
 }

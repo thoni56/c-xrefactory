@@ -55,7 +55,7 @@ _facing the fact that_
     (`tests/test_capped_round_is_not_repeated`),
   - stripping a header removes its own `#include` edges, so a header it includes has no
     includers left when it is looked at later in the same loop, and is never cleared
-    (`tests/test_a_header_included_through_another_is_cleared`),
+    (`tests/test_a_header_let_go_is_current_again_through_another`),
 - together they kept the daily server on c-xrefactory's own `src/` (142 CUs) building
   128 CUs on every request, also after a restart, with or without the snapshot,
 - reverting a held buffer is the one change the change time does not show, since the
@@ -146,7 +146,7 @@ out-of-date CUs say which are missing.
 ## Consequences and Risks
 
 **Benefits:**
-- `test_capped_round_is_not_repeated` and `test_a_header_included_through_another_is_cleared`
+- `test_capped_round_is_not_repeated` and `test_a_header_let_go_is_current_again_through_another`
   pass without a fix of their own.
 - A header's state is its change time and the knowledge times of its reaching CUs, both
   already kept.

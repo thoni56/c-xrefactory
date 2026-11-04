@@ -64,6 +64,10 @@ void removeReferencesOfChangedFiles(void) {
     mock();
 }
 
+void letGoOfHeldHeader(int fileNumber) {
+    mock(fileNumber);
+}
+
 int buildListCount(BuildList *list) {
     return (int)mock(list);
 }

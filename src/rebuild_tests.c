@@ -245,3 +245,24 @@ Ensure(Rebuild, records_the_change_time_of_a_header_seen_for_the_first_time_and_
 
     assert_that(fileTimestampsEqual(fileItem.changeTime, seenTime));
 }
+
+Ensure(Rebuild, letting_go_of_a_held_header_removes_its_references) {
+    FileItem fileItem = {.name = "header.h"};
+    always_expect(getFileItemWithFileNumber, when(fileNumber, is_equal_to(42)), will_return(&fileItem));
+    expect(removeReferenceableItemsForFile, when(fileNumber, is_equal_to(42)));
+    always_expect(changeTimeNow, will_return(&newerTime));
+
+    letGoOfHeldHeader(42);
+}
+
+/* The disk is older than the knowledge built from the buffer, so the change is now */
+Ensure(Rebuild, letting_go_of_a_held_header_changes_it_now) {
+    FileItem fileItem = {.name = "header.h", .changeTime = seenTime};
+    always_expect(getFileItemWithFileNumber, when(fileNumber, is_equal_to(42)), will_return(&fileItem));
+    always_expect(removeReferenceableItemsForFile);
+    expect(changeTimeNow, will_return(&newerTime));
+
+    letGoOfHeldHeader(42);
+
+    assert_that(fileTimestampsEqual(fileItem.changeTime, newerTime));
+}

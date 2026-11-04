@@ -205,6 +205,53 @@ Ensure(Freshness, compilation_unit_with_a_header_that_owes_a_strip_is_out_of_dat
     assert_that(outOfDate.fileNumber, is_equal_to(A_H));
 }
 
+static void expectAHeaderInTheClosureOfTheCU(FileItem *headerItem, FileTimestamp *contentTime) {
+    static int closure[] = {A_H}; /* Read when the mock is called */
+    expect(collectIncludeClosure, when(fileNumber, is_equal_to(A_C)),
+           will_set_contents_of_parameter(fileNumbers, closure, sizeof(closure)),
+           will_return(1));
+    always_expect(getFileItemWithFileNumber, when(fileNumber, is_equal_to(A_H)),
+                  will_return(headerItem));
+    expect(editorFileModificationTime, when(path, is_equal_to_string("a.h")),
+           will_return(contentTime));
+}
+
+/* The disk is older than the knowledge built from the held buffer (ADR-0035) */
+Ensure(Freshness, compilation_unit_with_a_header_let_go_after_its_knowledge_is_out_of_date) {
+    FileTimestamp cuChangeTime = makeFileTimestamp(1000, 0);
+    expectACUWithKnowledgeAt(makeFileTimestamp(2000, 0), &cuChangeTime);
+    FileItem headerItem = {.name = "a.h", .changeTime = makeFileTimestamp(3000, 0)};
+    FileTimestamp diskTime = makeFileTimestamp(1000, 0);
+    expectAHeaderInTheClosureOfTheCU(&headerItem, &diskTime);
+
+    OutOfDate outOfDate = whyKnowledgeIsOutOfDate(inputsWithGraph(NULL), A_C);
+
+    assert_that(outOfDate.reason, is_equal_to(INPUT_CHANGED));
+    assert_that(outOfDate.fileNumber, is_equal_to(A_H));
+}
+
+Ensure(Freshness, compilation_unit_with_a_header_let_go_and_then_removed_is_out_of_date) {
+    FileTimestamp cuChangeTime = makeFileTimestamp(1000, 0);
+    expectACUWithKnowledgeAt(makeFileTimestamp(4000, 0), &cuChangeTime);
+    FileItem headerItem = {.name = "a.h", .changeTime = makeFileTimestamp(3000, 0)};
+    FileTimestamp noContentTime = NULL_TIMESTAMP;
+    expectAHeaderInTheClosureOfTheCU(&headerItem, &noContentTime);
+
+    assert_that(knowledgeIsOutOfDate(inputsWithGraph(NULL), A_C));
+}
+
+/* A change the server makes itself is not stamped by the coarse clock, so
+ * knowledge built right after it must still be current */
+Ensure(Freshness, compilation_unit_built_right_after_a_change_the_server_made_is_not_out_of_date) {
+    FileItem headerItem = {.name = "a.h", .changeTime = changeTimeNow()};
+    FileTimestamp cuChangeTime = makeFileTimestamp(1000, 0);
+    expectACUWithKnowledgeAt(fileTimestampNow(), &cuChangeTime);
+    FileTimestamp diskTime = makeFileTimestamp(1000, 0);
+    expectAHeaderInTheClosureOfTheCU(&headerItem, &diskTime);
+
+    assert_that(knowledgeIsOutOfDate(inputsWithGraph(NULL), A_C), is_false);
+}
+
 /* The closure counts what it found, also beyond what fits; what did not fit
  * could have changed */
 Ensure(Freshness, compilation_unit_whose_include_closure_did_not_fit_is_out_of_date) {

@@ -269,6 +269,13 @@ void removeReferencesOfChangedFiles(void) {
     }
 }
 
+/* The server reads the disk again, so the content changes now, although the
+ * file on disk is older than the knowledge built from the buffer (ADR-0035) */
+void letGoOfHeldHeader(int fileNumber) {
+    removeReferenceableItemsForFile(fileNumber);
+    getFileItemWithFileNumber(fileNumber)->changeTime = changeTimeNow();
+}
+
 int buildListCount(BuildList *list) {
     return list->count;
 }

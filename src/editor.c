@@ -541,16 +541,17 @@ void closeEditorBuffersNoLongerHeld(BuildList *list) {
             freeEditorBuffer(buffer);
 
             /* The editor's view is no longer authoritative. A CU is
-             * built again from disk, a header is left behind until its
-             * includers are built again, since on its own it has no
-             * preprocessor context. A file that is not on disk is
-             * gone, e.g. one a refactoring created and the client undid. */
+             * built again from disk. A header changes now, so its
+             * includers are out of date and put it back, since on its
+             * own it has no preprocessor context. A file that is not on
+             * disk is gone, e.g. one a refactoring created and the
+             * client undid. */
             FileItem *fileItem = getFileItemWithFileNumber(fileNumber);
             if (fileExists(fileItem->name)) {
                 if (isCompilationUnit(fileItem->name)) {
                     addToBuildList(list, fileNumber);
                 } else {
-                    fileItem->isLeftBehind = true;
+                    letGoOfHeldHeader(fileNumber);
                 }
             } else
                 markFileAsDeleted(fileNumber);

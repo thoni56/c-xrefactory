@@ -4,6 +4,7 @@
 #include <stdbool.h>
 
 #include "includegraph.h"
+#include "timestamp.h"
 
 
 /* What the knowledge of a CU is built from, collected once per request */
@@ -23,6 +24,9 @@ typedef struct {
     OutOfDateReason reason;
     int             fileNumber;
 } OutOfDate;
+
+/* The change time of a change the server makes itself, now (ADR-0035) */
+extern FileTimestamp changeTimeNow(void);
 
 extern Inputs *collectInputs(void);
 extern void freeInputs(Inputs *inputs);

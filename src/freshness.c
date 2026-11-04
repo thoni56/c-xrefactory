@@ -33,11 +33,17 @@ void freeInputs(Inputs *inputs) {
     free(inputs);
 }
 
-/* A file that no longer exists has a zero time, which is remembered like any other */
+/* A file that no longer exists has a zero time, which is remembered like any
+ * other. A held file let go changed when it was let go, which is later than its
+ * time on disk (ADR-0035). */
 static FileTimestamp changeTimeOf(Inputs *inputs, int fileNumber) {
     ChangeTime *changeTime = &inputs->changeTimes[fileNumber];
     if (!changeTime->known) {
-        changeTime->time = editorFileModificationTime(getFileItemWithFileNumber(fileNumber)->name);
+        FileItem *fileItem = getFileItemWithFileNumber(fileNumber);
+        changeTime->time = editorFileModificationTime(fileItem->name);
+        if (!fileTimestampIsZero(changeTime->time)
+            && fileTimestampIsLessThan(changeTime->time, fileItem->changeTime))
+            changeTime->time = fileItem->changeTime;
         changeTime->known = true;
     }
     return changeTime->time;
@@ -50,6 +56,12 @@ static FileTimestamp changeTimeOf(Inputs *inputs, int fileNumber) {
 #define COARSE_CLOCK_GAP_IN_NANOSECONDS 10000000L
 
 #define MAX_INCLUDE_CLOSURE 1000
+
+/* Stamped as the coarse clock would, a gap back, so that knowledge built after
+ * it is current and knowledge built before it is not */
+FileTimestamp changeTimeNow(void) {
+    return fileTimestampMinus(fileTimestampNow(), COARSE_CLOCK_GAP_IN_NANOSECONDS);
+}
 
 static bool changedAfter(FileTimestamp changeTime, FileTimestamp knowledgeTime) {
     return fileTimestampIsLessThan(fileTimestampMinus(knowledgeTime, COARSE_CLOCK_GAP_IN_NANOSECONDS),
