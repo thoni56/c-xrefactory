@@ -532,9 +532,9 @@ implementation, and are noted in `cu-inputs`, `out-of-date`, `time-budget` and
     and that moment is the file's change time. Done for headers, and the mark is gone.
     Left: a config change removes every file's references, where
     `markAllCompilationUnitsStale()` is called today. A changed CU still loses its
-    references only when it is built, since `collectCUsIncluding()` finds siblings
-    through the include references in the table; once siblings are found through the
-    include graph in `Inputs`, a CU follows the same rule.
+    references only when it is built, since its include references in the table are
+    also the include graph: `collectCUsIncluding()` and `buildIncludeGraph()` both read
+    them. A CU follows the same rule once the include graph outlives the removal.
     Goes with: out-of-date
 - (#109) <a id="session-refresh-time"></a>**A session refreshes a file by a time, not a flag** —
     a file's references get a time they last changed, never cleared, and a session
