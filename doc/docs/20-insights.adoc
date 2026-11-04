@@ -128,7 +128,7 @@ The shape was first written down on the Mac, session `4839a129`, with the remova
 
 Items in `doc/backlog.md`:
 
-* *The removal on change is only done for headers* (`remove-on-change`). A changed CU loses its references when it is built. A header let go does not yet change the headers that include it, and its change time is lost over a restart.
+* *The removal on change is only done for headers* (`remove-on-change`). A changed CU loses its references when it is built. A header let go does not yet change the headers that include it.
 * *The cap* (`cap-is-a-question`). At most 128 recipes run, and the rest stay out of date without a question. They are known, though. ADR-0032 makes it a question, and later a time budget (`time-budget`).
 * *The goal is too small* (`request-target`). We run `make request.o`, but the answer is linked from more objects than that.
 * *The config is not a prerequisite* (`out-of-date`). That is the classic Make pitfall where changing `CFLAGS` rebuilds nothing. `markAllCompilationUnitsStale()` covers it for now, but removes no references.

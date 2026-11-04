@@ -534,14 +534,10 @@ implementation, and are noted in `cu-inputs`, `out-of-date`, `time-budget` and
     `markAllCompilationUnitsStale()` is called today. `stripChangedHeldHeaders()` with its
     `fileNumberIsStale()` goes, which changes the goal, since it puts the includers of
     every changed held header on it. A header let go does not yet change the headers that
-    include it. The change time is not in the snapshot, so a header let go just before an
-    exit leaves its includers current after a restart, without its references; a restart
-    test and a format version bump. A changed CU still loses
+    include it. A changed CU still loses
     its references only when it is built, since `collectCUsIncluding()` finds siblings
     through the include references in the table; once siblings are found through the
-    include graph in `Inputs`, a CU follows the same rule. A snapshot
-    written before this can hold ghosts that no change removes; decide whether a snapshot
-    version bump discards them.
+    include graph in `Inputs`, a CU follows the same rule.
     Goes with: out-of-date
 - (#107) <a id="cap-is-a-question"></a>**The cap becomes a question for every request** —
     ADR-0032, amended 2026-11-03. `MAX_CUS_TO_REPARSE` stops capping the sibling list and
