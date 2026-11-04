@@ -529,18 +529,14 @@ implementation, and are noted in `cu-inputs`, `out-of-date`, `time-budget` and
 
 - (#106) <a id="remove-on-change"></a>**A file's references are removed when its content changes** —
     ADR-0035. On a newer disk time, new content in a held buffer, or a held buffer let go,
-    and that moment is the file's change time. A config change removes every file's
-    references, where `markAllCompilationUnitsStale()` is called today. `isLeftBehind`,
-    `markHeadersLeftBehind()`, `stripHeadersWhoseIncludersAreAllBuilt()`,
-    `forgetKnowledgeOfHeadersLeftBehind()`, the strip in `collectSiblingCUs()` and
-    `stripChangedHeldHeaders()` with its `fileNumberIsStale()` go.
-    `test_capped_round_is_not_repeated` and
-    `test_a_header_let_go_is_current_again_through_another` come in with it,
-    `test_reverted_held_header_keeps_its_references` stays green, and
-    `test_ghosts_stay_when_one_includer_is_parsed_alone` changes what it pins. A change of
-    a file is a change of every file that includes it (ADR-0035, amended): write a test
-    where `a.c` includes `mid.h`, `mid.h` includes `leaf.h` and an `#ifdef FEATURE` in
-    `mid.h` stops being taken when `leaf.h` stops defining it. A changed CU still loses
+    and that moment is the file's change time. Done for headers, and the mark is gone.
+    Left: a config change removes every file's references, where
+    `markAllCompilationUnitsStale()` is called today. `stripChangedHeldHeaders()` with its
+    `fileNumberIsStale()` goes, which changes the goal, since it puts the includers of
+    every changed held header on it. A header let go does not yet change the headers that
+    include it. The change time is not in the snapshot, so a header let go just before an
+    exit leaves its includers current after a restart, without its references; a restart
+    test and a format version bump. A changed CU still loses
     its references only when it is built, since `collectCUsIncluding()` finds siblings
     through the include references in the table; once siblings are found through the
     include graph in `Inputs`, a CU follows the same rule. A snapshot
