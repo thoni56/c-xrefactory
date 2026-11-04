@@ -5,7 +5,7 @@
 <meta http-equiv="X-UA-Compatible" content="IE=edge">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <meta name="generator" content="Asciidoctor 2.0.26">
-<meta name="author" content="v{VERSION} - Generated 2026-11-03">
+<meta name="author" content="v{VERSION} - Generated 2026-11-04">
 <title>C-xrefactory - a C/Yacc refactoring and code browsing tool - Design Documentation</title>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Open+Sans:300,300italic,400,400italic,600,600italic%7CNoto+Serif:400,400italic,700,700italic%7CDroid+Sans+Mono:400,700">
 <style>
@@ -441,7 +441,7 @@ body.book #toc,body.book #preamble,body.book h1.sect0,body.book .sect1>h2{page-b
 <div id="header">
 <h1>C-xrefactory - a C/Yacc refactoring and code browsing tool - Design Documentation</h1>
 <div class="details">
-<span id="author" class="author">v{VERSION} - Generated 2026-11-03</span><br>
+<span id="author" class="author">v{VERSION} - Generated 2026-11-04</span><br>
 </div>
 <div id="toc" class="toc2">
 <div id="toctitle">Table of Contents</div>
@@ -628,10 +628,8 @@ body.book #toc,body.book #preamble,body.book h1.sect0,body.book .sect1>h2{page-b
 <li><a href="#_insights">19. Insights</a>
 <ul class="sectlevel2">
 <li><a href="#_yacc_semantic_data">19.1. Yacc semantic data</a></li>
-<li><a href="#_navigation_architecture_and_preloading">19.2. Navigation Architecture and Preloading</a></li>
-<li><a href="#_unified_in_memory_table_discovery">19.3. Unified In-Memory Table Discovery</a></li>
-<li><a href="#_editor_buffer_lifecycle_in_the_server">19.4. Editor Buffer Lifecycle in the Server</a></li>
-<li><a href="#_freshness_is_make_for_the_goal">19.5. Freshness Is Make, for the Goal</a></li>
+<li><a href="#_editor_buffer_lifecycle_in_the_server">19.2. Editor Buffer Lifecycle in the Server</a></li>
+<li><a href="#_freshness_is_make_for_the_goal">19.3. Freshness Is Make, for the Goal</a></li>
 </ul>
 </li>
 <li><a href="#_archive">20. Archive</a>
@@ -652,6 +650,8 @@ body.book #toc,body.book #preamble,body.book h1.sect0,body.book .sect1>h2{page-b
 <li><a href="#_stale_file_refresh_and_cross_file_references_historical">20.14. Stale File Refresh and Cross-File References (Historical)</a></li>
 <li><a href="#cu-reparse-header-staleness">20.15. Investigation: Does CU Reparse Leave Header-Position References Stale?</a></li>
 <li><a href="#_memory_as_truth_convergence_implementation_path_historical">20.16. Memory-as-Truth Convergence: Implementation Path (Historical)</a></li>
+<li><a href="#_navigation_architecture_and_preloading_historical">20.17. Navigation Architecture and Preloading (Historical)</a></li>
+<li><a href="#_unified_in_memory_table_discovery_historical">20.18. Unified In-Memory Table Discovery (Historical)</a></li>
 </ul>
 </li>
 </ul>
@@ -1185,8 +1185,9 @@ re-reads the file from disk, so the saved content is picked up.</p>
 does not look at the disk. A change on disk behind an edited buffer is a conflict
 between the editor and the user, and Emacs raises it itself. If the user keeps the
 buffer, it stays the truth. If they revert, the editor stops sending it and the server
-lets go of the buffer. A CU is parsed again from disk. A header is left behind, so its
-includers are built again.</p>
+lets go of the buffer. A CU is parsed again from disk. A header changes at that moment
+and loses its references, so its includers are out of date and are built again
+(ADR-0035).</p>
 </dd>
 <dt class="hdlist1">Behind-the-back changes are not detected (known limitation)</dt>
 <dd>
@@ -1456,8 +1457,9 @@ are listed alphabetically; terms to avoid are noted to reduce ambiguity.</p>
 <dl>
 <dt class="hdlist1">Change time</dt>
 <dd>
-<p>An input&#8217;s modification time, from the held buffer if the client holds one, otherwise
-from disk (ADR-0032).</p>
+<p>When the content the server reads for a file last changed. That is the held buffer&#8217;s
+modification time if the client holds one, otherwise the disk&#8217;s. When the server lets
+go of a held buffer, the content changes at that moment (ADR-0032, ADR-0035).</p>
 </dd>
 <dt class="hdlist1">Cold start</dt>
 <dd>
@@ -1538,14 +1540,6 @@ of its own (ADR-0032).</p>
 <dd>
 <p>When the knowledge of a CU was recorded (ADR-0032).</p>
 </dd>
-<dt class="hdlist1">Left behind</dt>
-<dd>
-<p>A header that some of its includers have been built into since it changed, but not all.
-It holds old references beside the new ones.
-A header whose buffer the editor stops sending is left behind too, since its references
-came from that buffer.
-Its includers are out of date until all of them are built and it is stripped (ADR-0033).</p>
-</dd>
 <dt class="hdlist1">Lightweight scan</dt>
 <dd>
 <p>Discovery of project structure by globbing for compilation units and text-scanning
@@ -1559,8 +1553,8 @@ Replaced <code>-create</code> and the <code>callXref()</code> pre-refactoring pa
 </dd>
 <dt class="hdlist1">Out of date</dt>
 <dd>
-<p>A CU&#8217;s knowledge, when there is none, when an input changed after the knowledge time,
-or when a header it includes is left behind (ADR-0032). It replaces <em>Staleness</em>.</p>
+<p>A CU&#8217;s knowledge, when there is none, or when an input changed after the knowledge time
+(ADR-0032). It replaces <em>Staleness</em>.</p>
 </dd>
 <dt class="hdlist1">Persisted snapshot</dt>
 <dd>
@@ -2166,9 +2160,8 @@ It is also the case when a header the CU includes changed on disk.</p>
 </div>
 <div class="paragraph">
 <p><strong>Detection:</strong> <code>collectOutOfDateHeldCUs()</code> takes each held CU for which
-<code>knowledgeIsOutOfDate()</code> is true, i.e. it has no knowledge, an input is gone, an
-input changed after its knowledge was built, or a header it includes is left behind
-(ADR-0032, ADR-0033).
+<code>knowledgeIsOutOfDate()</code> is true, i.e. it has no knowledge, an input is gone, or an
+input changed after its knowledge was built (ADR-0032, ADR-0035).
 A held CU that is gone from disk is marked as deleted instead.</p>
 </div>
 <div class="paragraph">
@@ -6128,6 +6121,11 @@ written. A 1.12.0 snapshot can hold a knowledge time that makes a CU look curren
 its references are not the ones on disk, and the freshness test trusts the knowledge
 time.</p>
 </li>
+<li>
+<p>1.15.0: a header&#8217;s references stopped being removed all or nothing (ADR-0035). A 1.14.0
+snapshot can hold old references in a header beside the new ones, and nothing removes
+them unless the header changes.</p>
+</li>
 </ul>
 </div>
 <div class="paragraph">
@@ -8148,7 +8146,7 @@ to a file. This makes it possible to capture command sequences and
 <div class="paragraph">
 <p>With <code>-info</code> the server logs why it analyses a file, e.g. <code>'cxref.c' is out of date:
 'cxref.h' changed</code>. The other reasons are that there is no knowledge of it, that it
-changed, that a header is left behind, and that its include closure is too large to check.</p>
+changed, and that its include closure is too large to check.</p>
 </div>
 <div class="paragraph">
 <p>To get this from the server in your own Emacs, set <code>c-xref-server-startup-options</code> to
@@ -11037,130 +11035,7 @@ pointer to a <code>Symbol</code>.</p>
 </div>
 </div>
 <div class="sect2">
-<h3 id="_navigation_architecture_and_preloading">19.2. Navigation Architecture and Preloading</h3>
-<div class="paragraph">
-<p>Date: 2025-12-22, updated 2026-02-21</p>
-</div>
-<div class="sect3">
-<h4 id="_how_symbol_navigation_works">19.2.1. How Symbol Navigation Works</h4>
-<div class="paragraph">
-<p>Symbol navigation (PUSH/NEXT/PREVIOUS/POP) merges references from <strong>two sources</strong>:</p>
-</div>
-<div class="olist arabic">
-<ol class="arabic">
-<li>
-<p><strong>Disk CXrefs Database</strong> - Reflects saved files on disk</p>
-</li>
-<li>
-<p><strong>In-Memory ReferenceableItem Table</strong> - Reflects current server state including preloaded editor buffers</p>
-</li>
-</ol>
-</div>
-<div class="paragraph">
-<p>When you PUSH on a symbol, the navigation menu creation (<code>createSelectionMenuForOperation</code>) does:</p>
-</div>
-<div class="olist arabic">
-<ol class="arabic">
-<li>
-<p><strong>Load from disk</strong> - Scans CXrefs files for the symbol (via <code>scanReferencesToCreateMenu</code>)</p>
-<div class="ulist">
-<ul>
-<li>
-<p>Creates menu items with disk-based line numbers</p>
-</li>
-</ul>
-</div>
-</li>
-<li>
-<p><strong>Merge from memory</strong> - Maps over the in-memory table (via <code>putOnLineLoadedReferences</code>)</p>
-<div class="ulist">
-<ul>
-<li>
-<p>Adds references from parsed/preloaded buffers with current line numbers</p>
-</li>
-<li>
-<p>Duplicate detection prevents the same reference appearing twice</p>
-</li>
-</ul>
-</div>
-</li>
-<li>
-<p><strong>Build session</strong> - Copies merged references to the navigation session</p>
-</li>
-</ol>
-</div>
-<div class="paragraph">
-<p>This dual-source approach allows navigation without full project parse while providing updated positions for modified files.</p>
-</div>
-<div class="admonitionblock note">
-<table>
-<tr>
-<td class="icon">
-<i class="fa icon-note" title="Note"></i>
-</td>
-<td class="content">
-Client preloading behavior and stale file detection are now documented in <a href="12-components.adoc">Chapter 12: Components</a> under Server (Entry-Point Reparse) and Editor Extension (Preloading).
-</td>
-</tr>
-</table>
-</div>
-<div class="admonitionblock note">
-<table>
-<tr>
-<td class="icon">
-<i class="fa icon-note" title="Note"></i>
-</td>
-<td class="content">
-Several sections describing pre-memory-as-truth behaviour have been moved to
-<a href="21-archive.adoc">Archive</a>:
-</td>
-</tr>
-</table>
-</div>
-<div class="ulist">
-<ul>
-<li>
-<p>"Architectural Invariants" and "RefactoryMode Internally Calls XrefMode" — the
-invariants described a model where the disk database was the source of truth.</p>
-</li>
-<li>
-<p>"The lastParsedMtime Optimization and Refactoring Conflict" — the workaround it
-describes is no longer needed; under server-side refactoring, <code>callXref()</code> is not
-in the refactoring path and entry refresh keeps both navigation and refactoring on
-the same in-memory table.</p>
-</li>
-<li>
-<p>"Stale File Refresh and Cross-File References" — describes
-<code>refreshStaleReferencesInSession()</code>, no longer in the source. Current refresh is
-lazy via <code>needsBrowsingStackRefresh</code> and <code>updateSessionReferencesForFile</code> (see
-<a href="08-algorithms.adoc">Chapter 8</a>). The dedup-key insight from that section is
-carried forward in <a href="21-archive.adoc#cu-reparse-header-staleness">a later investigation</a>.</p>
-</li>
-</ul>
-</div>
-<div class="paragraph">
-<p>As of 2026-03, the in-memory reference table is authoritative — see
-<a href="06-principles.adoc">Principles</a>.</p>
-</div>
-</div>
-</div>
-<div class="sect2">
-<h3 id="_unified_in_memory_table_discovery">19.3. Unified In-Memory Table Discovery</h3>
-<div class="paragraph">
-<p>Date: 2025-01-25</p>
-</div>
-<div class="paragraph">
-<p>Investigation revealed that <strong>both XrefMode and ServerMode use the same in-memory <code>ReferenceableItemTable</code></strong>. This is the key enabler for the incremental path to "Memory as Truth" (see <a href="10-roadmap.adoc">Chapter 10: Roadmap</a>).</p>
-</div>
-<div class="paragraph">
-<p><code>handleFoundSymbolReference()</code> in <code>cxref.c</code> handles references found during parsing. It calls <code>isMemberInReferenceableItemTable()</code> to check if a symbol exists; if not found, creates a new entry; if found, adds a reference to the existing entry. This same table is used by both modes — there is no separate "server table" vs "xref table".</p>
-</div>
-<div class="paragraph">
-<p>The disk scan operations (<code>ensureReferencesAreLoadedFor</code>, <code>scanReferencesToCreateMenu</code>, etc.) read from <code>.cx</code> files on disk and also call <code>isMemberInReferenceableItemTable()</code> to check/merge with existing entries. If parsing has already populated the table, these operations find data already present — making them effective no-ops once all files are parsed.</p>
-</div>
-</div>
-<div class="sect2">
-<h3 id="_editor_buffer_lifecycle_in_the_server">19.4. Editor Buffer Lifecycle in the Server</h3>
+<h3 id="_editor_buffer_lifecycle_in_the_server">19.2. Editor Buffer Lifecycle in the Server</h3>
 <div class="paragraph">
 <p>Date: 2026-03-17</p>
 </div>
@@ -11191,12 +11066,12 @@ carried forward in <a href="21-archive.adoc#cu-reparse-header-staleness">a later
 </div>
 </div>
 <div class="sect2">
-<h3 id="_freshness_is_make_for_the_goal">19.5. Freshness Is Make, for the Goal</h3>
+<h3 id="_freshness_is_make_for_the_goal">19.3. Freshness Is Make, for the Goal</h3>
 <div class="paragraph">
-<p>Date: 2026-10-12</p>
+<p>Date: 2026-10-12, updated 2026-11-03</p>
 </div>
 <div class="paragraph">
-<p>ADR-0032 and ADR-0033 make the entry refresh work like Make. The terms map like this:</p>
+<p>ADR-0032 and ADR-0035 make the entry refresh work like Make. The terms map like this:</p>
 </div>
 <table class="tableblock frame-all grid-all stretch">
 <colgroup>
@@ -11216,7 +11091,7 @@ carried forward in <a href="21-archive.adoc#cu-reparse-header-staleness">a later
 </tr>
 <tr>
 <td class="tableblock halign-left valign-top"><p class="tableblock">prerequisites</p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">the CU and its include closure (and, not yet, the project config)</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">the CU, its include closure and the project config</p></td>
 </tr>
 <tr>
 <td class="tableblock halign-left valign-top"><p class="tableblock">the target&#8217;s mtime</p></td>
@@ -11224,7 +11099,7 @@ carried forward in <a href="21-archive.adoc#cu-reparse-header-staleness">a later
 </tr>
 <tr>
 <td class="tableblock halign-left valign-top"><p class="tableblock">a prerequisite&#8217;s mtime</p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">the change time of the content the client sends for a file the editor holds, or the disk mtime</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">the change time of the content the server reads for a file: the held buffer&#8217;s, the disk mtime, or the moment the server stops reading a held buffer</p></td>
 </tr>
 <tr>
 <td class="tableblock halign-left valign-top"><p class="tableblock">the recipe</p></td>
@@ -11254,29 +11129,68 @@ After the entry refresh, no CU on the goal is out of date without that being kno
 The position the operation asks about is only looked at after that.</p>
 </div>
 <div class="paragraph">
-<p>Where it is not yet Make (items in <code>doc/backlog.md</code>):</p>
+<p>Make has no counterpart for one thing: several recipes write the same output.
+A header&#8217;s references are put in the table by every CU that includes it.
+ADR-0035 removes them when the header changes, so every includer is out of date and puts its part back when it is built.
+Until the last one has, the header is incomplete, and the CUs that are out of date say what is missing.
+Nothing has to be cleared afterwards.</p>
+</div>
+<div class="sect3">
+<h4 id="_the_shape_it_converges_to">19.3.1. The shape it converges to</h4>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-none hljs">remove = the references of every file whose content changed   (ADR-0035)
+goal   = reach(request file) or the whole project              (policy)
+build  = the out-of-date CUs in the goal, ask above the budget (one predicate)
+answer (a cursor parse only where it is needed)</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>Each step of the request should belong to one of these lines.
+The removal is a fact about a file, the goal is policy, and the build is the one predicate.
+A step that belongs to none of them is a workaround, usually for the removal.</p>
+</div>
+<div class="paragraph">
+<p>The goal must contain every CU whose references the answer reads.
+The removal is not limited to the goal, so a changed file outside it has its references missing until a request needs them.
+That is safe because the CUs reaching it are out of date, and the next goal that contains them builds them.
+A goal that is smaller than what the answer reads gives an answer that is incomplete without that being known (<code>request-target</code>).
+The shape was first written down on the Mac, session <code>4839a129</code>, with the removal last, as a sweep.</p>
+</div>
+</div>
+<div class="sect3">
+<h4 id="_where_it_is_not_yet_make">19.3.2. Where it is not yet Make</h4>
+<div class="paragraph">
+<p>Items in <code>doc/backlog.md</code>:</p>
 </div>
 <div class="ulist">
 <ul>
 <li>
+<p><strong>The removal on change is only done for headers</strong> (<code>remove-on-change</code>). A changed CU loses its references when it is built. A header let go does not yet change the headers that include it.</p>
+</li>
+<li>
+<p><strong>The cap</strong> (<code>cap-is-a-question</code>). At most 128 recipes run, and the rest stay out of date without a question. They are known, though. ADR-0032 makes it a question, and later a time budget (<code>time-budget</code>).</p>
+</li>
+<li>
 <p><strong>The goal is too small</strong> (<code>request-target</code>). We run <code>make request.o</code>, but the answer is linked from more objects than that.</p>
 </li>
 <li>
-<p><strong>The cap.</strong> At most 128 recipes run, and the rest stay out of date. They are known, though (<code>time-budget</code>, <code>header-not-half</code>).</p>
+<p><strong>The config is not a prerequisite</strong> (<code>out-of-date</code>). That is the classic Make pitfall where changing <code>CFLAGS</code> rebuilds nothing. <code>markAllCompilationUnitsStale()</code> covers it for now, but removes no references.</p>
 </li>
 <li>
-<p><strong>The config is not a prerequisite</strong> (<code>out-of-date</code>). That is the classic Make pitfall where changing <code>CFLAGS</code> rebuilds nothing. <code>markAllCompilationUnitsStale()</code> covers it for now.</p>
+<p><strong>A file changed on disk, outside the goal,</strong> is not seen, and keeps its old references (<code>behind-the-back</code>).</p>
 </li>
 <li>
-<p><strong>A header changed on disk, outside the goal,</strong> keeps its old references (<code>behind-the-back</code>).</p>
+<p><strong>A missing include edge</strong> (<code>include-edges</code>). A CU that reaches a changed header through an edge the table lacks is not out of date, so its part of the header is missing without that being known.</p>
 </li>
 <li>
-<p><strong>Several recipes write the same output.</strong> A header&#8217;s references are put in the table by every CU that includes it, which Make cannot express. Hence ADR-0032&#8217;s all or nothing for a header, and in the end the sweep with generations (ADR-0033, <code>sweep</code>).</p>
+<p><strong>A recipe that stops writing part of a shared output</strong> leaves that part (<code>variant-b</code>). Make writes its targets whole, so it never meets this.</p>
 </li>
 <li>
 <p><strong>The request&#8217;s own recipe runs as part of the operation</strong>, since the lexer finds the cursor during the parse. Reusing the knowledge when it is current is <code>cursor-parse-reuse</code>.</p>
 </li>
 </ul>
+</div>
 </div>
 </div>
 </div>
@@ -12593,12 +12507,135 @@ operation reads the in-memory table.</p>
 </ol>
 </div>
 </div>
+<div class="sect2">
+<h3 id="_navigation_architecture_and_preloading_historical">20.17. Navigation Architecture and Preloading (Historical)</h3>
+<div class="paragraph">
+<p>Date: 2025-12-22, updated 2026-02-21</p>
+</div>
+<div class="sect3">
+<h4 id="_how_symbol_navigation_works">20.17.1. How Symbol Navigation Works</h4>
+<div class="paragraph">
+<p>Symbol navigation (PUSH/NEXT/PREVIOUS/POP) merges references from <strong>two sources</strong>:</p>
+</div>
+<div class="olist arabic">
+<ol class="arabic">
+<li>
+<p><strong>Disk CXrefs Database</strong> - Reflects saved files on disk</p>
+</li>
+<li>
+<p><strong>In-Memory ReferenceableItem Table</strong> - Reflects current server state including preloaded editor buffers</p>
+</li>
+</ol>
+</div>
+<div class="paragraph">
+<p>When you PUSH on a symbol, the navigation menu creation (<code>createSelectionMenuForOperation</code>) does:</p>
+</div>
+<div class="olist arabic">
+<ol class="arabic">
+<li>
+<p><strong>Load from disk</strong> - Scans CXrefs files for the symbol (via <code>scanReferencesToCreateMenu</code>)</p>
+<div class="ulist">
+<ul>
+<li>
+<p>Creates menu items with disk-based line numbers</p>
+</li>
+</ul>
+</div>
+</li>
+<li>
+<p><strong>Merge from memory</strong> - Maps over the in-memory table (via <code>putOnLineLoadedReferences</code>)</p>
+<div class="ulist">
+<ul>
+<li>
+<p>Adds references from parsed/preloaded buffers with current line numbers</p>
+</li>
+<li>
+<p>Duplicate detection prevents the same reference appearing twice</p>
+</li>
+</ul>
+</div>
+</li>
+<li>
+<p><strong>Build session</strong> - Copies merged references to the navigation session</p>
+</li>
+</ol>
+</div>
+<div class="paragraph">
+<p>This dual-source approach allows navigation without full project parse while providing updated positions for modified files.</p>
+</div>
+<div class="admonitionblock note">
+<table>
+<tr>
+<td class="icon">
+<i class="fa icon-note" title="Note"></i>
+</td>
+<td class="content">
+Client preloading behavior and stale file detection are now documented in <a href="12-components.adoc">Chapter 12: Components</a> under Server (Entry-Point Reparse) and Editor Extension (Preloading).
+</td>
+</tr>
+</table>
+</div>
+<div class="admonitionblock note">
+<table>
+<tr>
+<td class="icon">
+<i class="fa icon-note" title="Note"></i>
+</td>
+<td class="content">
+Several sections describing pre-memory-as-truth behaviour have been moved to
+<a href="21-archive.adoc">Archive</a>:
+</td>
+</tr>
+</table>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p>"Architectural Invariants" and "RefactoryMode Internally Calls XrefMode" — the
+invariants described a model where the disk database was the source of truth.</p>
+</li>
+<li>
+<p>"The lastParsedMtime Optimization and Refactoring Conflict" — the workaround it
+describes is no longer needed; under server-side refactoring, <code>callXref()</code> is not
+in the refactoring path and entry refresh keeps both navigation and refactoring on
+the same in-memory table.</p>
+</li>
+<li>
+<p>"Stale File Refresh and Cross-File References" — describes
+<code>refreshStaleReferencesInSession()</code>, no longer in the source. Current refresh is
+lazy via <code>needsBrowsingStackRefresh</code> and <code>updateSessionReferencesForFile</code> (see
+<a href="08-algorithms.adoc">Chapter 8</a>). The dedup-key insight from that section is
+carried forward in <a href="21-archive.adoc#cu-reparse-header-staleness">a later investigation</a>.</p>
+</li>
+</ul>
+</div>
+<div class="paragraph">
+<p>As of 2026-03, the in-memory reference table is authoritative — see
+<a href="06-principles.adoc">Principles</a>.</p>
+</div>
+</div>
+</div>
+<div class="sect2">
+<h3 id="_unified_in_memory_table_discovery_historical">20.18. Unified In-Memory Table Discovery (Historical)</h3>
+<div class="paragraph">
+<p>Date: 2025-01-25</p>
+</div>
+<div class="paragraph">
+<p>Investigation revealed that <strong>both XrefMode and ServerMode use the same in-memory <code>ReferenceableItemTable</code></strong>. This is the key enabler for the incremental path to "Memory as Truth" (see <a href="10-roadmap.adoc">Chapter 10: Roadmap</a>).</p>
+</div>
+<div class="paragraph">
+<p><code>handleFoundSymbolReference()</code> in <code>cxref.c</code> handles references found during parsing. It calls <code>isMemberInReferenceableItemTable()</code> to check if a symbol exists; if not found, creates a new entry; if found, adds a reference to the existing entry. This same table is used by both modes — there is no separate "server table" vs "xref table".</p>
+</div>
+<div class="paragraph">
+<p>The disk scan operations (<code>ensureReferencesAreLoadedFor</code>, <code>scanReferencesToCreateMenu</code>, etc.) read from <code>.cx</code> files on disk and also call <code>isMemberInReferenceableItemTable()</code> to check/merge with existing entries. If parsing has already populated the table, these operations find data already present — making them effective no-ops once all files are parsed.</p>
+</div>
+</div>
 </div>
 </div>
 </div>
 <div id="footer">
 <div id="footer-text">
-Last updated 2026-11-03 08:06:07 UTC
+Last updated 2026-11-04 16:51:17 UTC
 </div>
 </div>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.18.3/highlight.min.js"></script>
