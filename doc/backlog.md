@@ -531,11 +531,8 @@ implementation, and are noted in `cu-inputs`, `out-of-date`, `time-budget` and
     ADR-0035. On a newer disk time, new content in a held buffer, or a held buffer let go,
     and that moment is the file's change time. Done for headers, and the mark is gone.
     Left: a config change removes every file's references, where
-    `markAllCompilationUnitsStale()` is called today. `stripChangedHeldHeaders()` with its
-    `fileNumberIsStale()` goes, which changes the goal, since it puts the includers of
-    every changed held header on it. A header let go does not yet change the headers that
-    include it. A changed CU still loses
-    its references only when it is built, since `collectCUsIncluding()` finds siblings
+    `markAllCompilationUnitsStale()` is called today. A changed CU still loses its
+    references only when it is built, since `collectCUsIncluding()` finds siblings
     through the include references in the table; once siblings are found through the
     include graph in `Inputs`, a CU follows the same rule.
     Goes with: out-of-date

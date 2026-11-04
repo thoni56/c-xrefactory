@@ -28,6 +28,7 @@ typedef struct fileItem {	/* to be renamed to constant pool item TODO: Why?*/
     FileTimestamp lastModified;
     FileTimestamp knowledgeTime;        // when the CU's knowledge was built (ADR-0032)
     FileTimestamp changeTime;           // the change the references in the table follow (ADR-0035)
+    FileTimestamp letGoTime;            // when a held buffer was let go, and the disk read again
     bool needsBrowsingStackRefresh : 1; // entry-point reparsed this file, stack needs update
     bool isDeleted : 1;                 // file no longer exists on disk
     struct fileItem *next;

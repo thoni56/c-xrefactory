@@ -273,23 +273,27 @@ Ensure(Rebuild, keeps_the_references_of_a_header_that_does_not_include_a_changed
     assert_that(fileTimestampsEqual(other.changeTime, seenTime));
 }
 
-Ensure(Rebuild, letting_go_of_a_held_header_removes_its_references) {
-    FileItem fileItem = {.name = "header.h"};
-    always_expect(getFileItemWithFileNumber, when(fileNumber, is_equal_to(42)), will_return(&fileItem));
-    expect(removeReferenceableItemsForFile, when(fileNumber, is_equal_to(42)));
-    always_expect(changeTimeNow, will_return(&newerTime));
-
-    letGoOfHeldHeader(42);
-}
-
-/* The disk is older than the knowledge built from the buffer, so the change is now */
-Ensure(Rebuild, letting_go_of_a_held_header_changes_it_now) {
+/* The removal pass removes, so that it also reaches the headers that include it */
+Ensure(Rebuild, letting_go_of_a_held_header_only_records_when) {
     FileItem fileItem = {.name = "header.h", .changeTime = seenTime};
     always_expect(getFileItemWithFileNumber, when(fileNumber, is_equal_to(42)), will_return(&fileItem));
-    always_expect(removeReferenceableItemsForFile);
+    never_expect(removeReferenceableItemsForFile);
     expect(changeTimeNow, will_return(&newerTime));
 
     letGoOfHeldHeader(42);
+
+    assert_that(fileTimestampsEqual(fileItem.letGoTime, newerTime));
+    assert_that(fileTimestampsEqual(fileItem.changeTime, seenTime));
+}
+
+/* The disk is older than the knowledge built from the buffer, so the change is
+ * when it was let go */
+Ensure(Rebuild, removes_the_references_of_a_header_let_go_after_its_change) {
+    FileItem fileItem = {.name = "header.h", .changeTime = seenTime, .letGoTime = newerTime};
+    expectOneHeaderInTheFileTable(&fileItem, &seenTime);
+    expect(removeReferenceableItemsForFile, when(fileNumber, is_equal_to(42)));
+
+    removeReferencesOfChangedFiles(NULL);
 
     assert_that(fileTimestampsEqual(fileItem.changeTime, newerTime));
 }

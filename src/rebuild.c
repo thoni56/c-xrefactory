@@ -193,6 +193,15 @@ static void removeReferencesOfIncludersOfChanged(Inputs *inputs, int headers[], 
     free(closure);
 }
 
+/* When the content the server reads last changed. A held buffer let go
+ * changed when it was let go, although the disk is older (ADR-0035) */
+static FileTimestamp contentTimeOf(FileItem *fileItem) {
+    FileTimestamp contentTime = editorFileModificationTime(fileItem->name);
+    if (fileTimestampIsLessThan(contentTime, fileItem->letGoTime))
+        return fileItem->letGoTime;
+    return contentTime;
+}
+
 /* A CU's own references are removed when it is built, and its include
  * references lead to its siblings until then, so only headers here. A header
  * seen for the first time has its change time recorded, and keeps what the
@@ -210,7 +219,7 @@ void removeReferencesOfChangedFiles(Inputs *inputs) {
             continue;
         headers[headerCount] = i;
         items[headerCount++] = fileItem;
-        FileTimestamp contentTime = editorFileModificationTime(fileItem->name);
+        FileTimestamp contentTime = contentTimeOf(fileItem);
         if (fileTimestampIsZero(fileItem->changeTime)) {
             fileItem->changeTime = contentTime;
         } else if (fileTimestampIsLessThan(fileItem->changeTime, contentTime)) {
@@ -232,10 +241,11 @@ void removeReferencesOfChangedFiles(Inputs *inputs) {
 }
 
 /* The server reads the disk again, so the content changes now, although the
- * file on disk is older than the knowledge built from the buffer (ADR-0035) */
+ * file on disk is older than the knowledge built from the buffer. The removal
+ * pass then removes its references, and those of the headers that include it
+ * (ADR-0035) */
 void letGoOfHeldHeader(int fileNumber) {
-    removeReferenceableItemsForFile(fileNumber);
-    getFileItemWithFileNumber(fileNumber)->changeTime = changeTimeNow();
+    getFileItemWithFileNumber(fileNumber)->letGoTime = changeTimeNow();
 }
 
 int buildListCount(BuildList *list) {
