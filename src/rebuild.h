@@ -16,7 +16,7 @@ extern bool addToBuildList(BuildList *list, int fileNumber);
 
 extern int collectCUsIncluding(int fileNumber, int cuFileNumbers[], int cuCount, int maxCUs);
 
-extern void collectOutOfDateHeldFiles(BuildList *list, Inputs *inputs);
+extern void collectOutOfDateHeldCUs(BuildList *list, Inputs *inputs);
 extern void collectSiblingCUs(BuildList *list, Inputs *inputs, int requestFileNumber);
 extern void buildKnowledgeOfAll(BuildList *list, ArgumentsVector baseArgs);
 extern void collectRequestCUForStripping(BuildList *list, Inputs *inputs, int requestFileNumber);

@@ -2203,7 +2203,6 @@ void forgetKnowledgeForHeldContent(void) {
         for (EditorBufferList *l = getEditorBufferListElementAt(i); l != NULL; l = l->next) {
             if (holdsAuthoritativeContent(l->buffer)) {
                 FileItem *fileItem = getFileItemWithFileNumber(l->buffer->fileNumber);
-                fileItem->lastParsedMtime = NULL_TIMESTAMP;
                 fileItem->knowledgeTime = NULL_TIMESTAMP;
             }
         }

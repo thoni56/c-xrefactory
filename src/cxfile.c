@@ -32,8 +32,7 @@
 #define C_XREF_FILE_FORMAT_VERSION "1.15.0"
 
 typedef enum {
-    CXFI_FILE_UMTIME           = 'p',     /* last update mtime for file item (seconds) */
-    CXFI_FILE_UMTIME_NSEC      = 'q',     /* last update mtime nanoseconds */
+    /* 'p' and 'q' were the last parsed time, written up to 1.15.0 */
     CXFI_FILE_KNOWLEDGE_TIME   = 'w',     /* when the CU's knowledge was built (seconds) */
     CXFI_FILE_KNOWLEDGE_TIME_NSEC = 'x',  /* knowledge time nanoseconds */
     CXFI_FILE_CHANGE_TIME      = 'y',     /* the change the references follow (seconds) */
@@ -71,8 +70,6 @@ typedef enum {
 
 /* Integer records only: the reader does not skip the text of a listed key */
 static CxFieldTag generatedFieldKeyList[] = {
-    CXFI_FILE_UMTIME,
-    CXFI_FILE_UMTIME_NSEC,
     CXFI_FILE_KNOWLEDGE_TIME,
     CXFI_FILE_KNOWLEDGE_TIME_NSEC,
     CXFI_FILE_CHANGE_TIME,
@@ -328,11 +325,9 @@ static void writeCxReference(Reference *reference) {
 static void writeFileNumberItem(FileItem *fileItem, int number) {
     if (fileItem->isDeleted)
         return;
-    // keys = fpqwxyz:
+    // keys = fwxyz:
     writeOptionalCompactRecord(CXFI_FILE_NUMBER, number, "\n");
-    writeOptionalCompactRecord(CXFI_FILE_UMTIME, fileTimestampSeconds(fileItem->lastParsedMtime), " ");
-    writeOptionalCompactRecord(CXFI_FILE_UMTIME_NSEC, fileTimestampNanoseconds(fileItem->lastParsedMtime), "");
-    writeOptionalCompactRecord(CXFI_FILE_KNOWLEDGE_TIME, fileTimestampSeconds(fileItem->knowledgeTime), "");
+    writeOptionalCompactRecord(CXFI_FILE_KNOWLEDGE_TIME, fileTimestampSeconds(fileItem->knowledgeTime), " ");
     writeOptionalCompactRecord(CXFI_FILE_KNOWLEDGE_TIME_NSEC, fileTimestampNanoseconds(fileItem->knowledgeTime), "");
     writeOptionalCompactRecord(CXFI_FILE_CHANGE_TIME, fileTimestampSeconds(fileItem->changeTime), "");
     writeOptionalCompactRecord(CXFI_FILE_CHANGE_TIME_NSEC, fileTimestampNanoseconds(fileItem->changeTime), "");
@@ -510,11 +505,9 @@ static void scanFunction_ReadFileName(int fileNameLength,
     char fileName[MAX_FILE_NAME_SIZE];
     FileItem *fileItem;
     int fileNumber;
-    FileTimestamp umtime, knowledgeTime, changeTime;
+    FileTimestamp knowledgeTime, changeTime;
 
     assert(key == CXFI_FILE_NAME);
-    umtime = makeFileTimestamp(lastIncomingData.data[CXFI_FILE_UMTIME],
-                               lastIncomingData.data[CXFI_FILE_UMTIME_NSEC]);
     knowledgeTime = makeFileTimestamp(lastIncomingData.data[CXFI_FILE_KNOWLEDGE_TIME],
                                       lastIncomingData.data[CXFI_FILE_KNOWLEDGE_TIME_NSEC]);
     changeTime = makeFileTimestamp(lastIncomingData.data[CXFI_FILE_CHANGE_TIME],
@@ -529,8 +522,6 @@ static void scanFunction_ReadFileName(int fileNameLength,
     if (!existsInFileTable(fileName)) {
         fileNumber = addFileNameToFileTable(fileName);
         fileItem = getFileItemWithFileNumber(fileNumber);
-        if (fileTimestampIsZero(fileItem->lastParsedMtime))
-            fileItem->lastParsedMtime=umtime;
         if (fileTimestampIsZero(fileItem->knowledgeTime))
             fileItem->knowledgeTime=knowledgeTime;
         if (fileTimestampIsZero(fileItem->changeTime))
@@ -538,8 +529,6 @@ static void scanFunction_ReadFileName(int fileNameLength,
     } else {
         fileNumber = getFileNumberFromFileName(fileName);
         fileItem = getFileItemWithFileNumber(fileNumber);
-        if (fileTimestampIsZero(fileItem->lastParsedMtime))
-            fileItem->lastParsedMtime=umtime;
         if (fileTimestampIsZero(fileItem->knowledgeTime))
             fileItem->knowledgeTime=knowledgeTime;
         if (fileTimestampIsZero(fileItem->changeTime))

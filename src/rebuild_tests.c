@@ -53,7 +53,6 @@ static void expectAFileOnDisk(FileItem *fileItem) {
     always_expect(getFileItemWithFileNumber, when(fileNumber, is_equal_to(42)), will_return(fileItem));
     expect(editorFileExists, when(path, is_equal_to_string(fileItem->name)), will_return(true));
     expect(removeReferenceableItemsForFile, when(fileNumber, is_equal_to(42)));
-    expect(editorFileModificationTime, will_return(&contentTime));
 }
 
 /* sideEffect, if not NULL, runs when the parse starts */
@@ -103,7 +102,6 @@ Ensure(Rebuild, removes_the_old_references_of_a_cu_before_it_is_parsed) {
     expect(removeReferenceableItemsForFile, when(fileNumber, is_equal_to(42)),
            with_side_effect(recordReferencesRemoved, NULL));
     expectAParseWithOptionalSideEffect("test.c", recordWhetherReferencesWereRemoved);
-    expect(editorFileModificationTime, will_return(&contentTime));
 
     BuildList *list = buildListOf(42);
     buildKnowledgeOfAll(list, baseArgs);
@@ -132,18 +130,6 @@ Ensure(Rebuild, a_built_cu_knows_it_was_built_from_what_it_had_when_the_parse_st
 
     assert_false(fileTimestampIsLessThan(fileItem.knowledgeTime, before));
     assert_false(fileTimestampIsLessThan(parseStart, fileItem.knowledgeTime));
-}
-
-Ensure(Rebuild, a_built_cu_records_the_modification_time_it_was_built_from) {
-    FileItem fileItem = {.name = "test.c"};
-    expectAFileOnDisk(&fileItem);
-    expectAParseWithOptionalSideEffect("test.c", NULL);
-
-    BuildList *list = buildListOf(42);
-    buildKnowledgeOfAll(list, baseArgs);
-    freeBuildList(list);
-
-    assert_that(fileTimestampsEqual(fileItem.lastParsedMtime, contentTime));
 }
 
 Ensure(Rebuild, a_cu_that_did_not_parse_has_no_knowledge) {

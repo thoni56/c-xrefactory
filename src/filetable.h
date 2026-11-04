@@ -26,7 +26,6 @@
 typedef struct fileItem {	/* to be renamed to constant pool item TODO: Why?*/
     char *name;
     FileTimestamp lastModified;
-    FileTimestamp lastParsedMtime;
     FileTimestamp knowledgeTime;        // when the CU's knowledge was built (ADR-0032)
     FileTimestamp changeTime;           // the change the references in the table follow (ADR-0035)
     bool needsBrowsingStackRefresh : 1; // entry-point reparsed this file, stack needs update

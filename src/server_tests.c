@@ -162,7 +162,6 @@ Ensure(Server, cursor_parse_for_an_operation_that_does_not_parse_leaves_the_file
     ArgumentsVector args = {.argc = 0, .argv = NULL};
     singlePass(args, args);
 
-    assert_true(fileTimestampIsZero(fileItem.lastParsedMtime));
     assert_true(fileTimestampIsZero(fileItem.knowledgeTime));
 }
 

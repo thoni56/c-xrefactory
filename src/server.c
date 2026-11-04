@@ -195,7 +195,6 @@ protected void singlePass(ArgumentsVector args, ArgumentsVector nargs) {
         FileTimestamp knowledgeTime = fileTimestampNow();
         parseInputFile();
         if (parses) {
-            fileItem->lastParsedMtime = editorFileModificationTime(inputFileName);
             fileItem->knowledgeTime = knowledgeTime;
         }
     }
@@ -358,7 +357,7 @@ void callServer(ArgumentsVector baseArgs, ArgumentsVector requestArgs) {
     /* Stale preloaded files are built before dispatching the operation, so all
      * operations see fresh in-memory references */
     if (projectWasOpen)
-        collectOutOfDateHeldFiles(buildList, inputs);
+        collectOutOfDateHeldCUs(buildList, inputs);
 
     if (hasInputFile && requiresProcessingInputFile(options.serverOperation)
         && operationParsesRequestFile(options.serverOperation))

@@ -164,7 +164,6 @@ void markAllCompilationUnitsStale(void) {
     for (int i = getNextExistingFileNumber(0); i != -1; i = getNextExistingFileNumber(i + 1)) {
         FileItem *fileItem = getFileItemWithFileNumber(i);
         if (isCompilationUnit(fileItem->name)) {
-            fileItem->lastParsedMtime = NULL_TIMESTAMP;
             fileItem->knowledgeTime = NULL_TIMESTAMP;
         }
     }
@@ -308,7 +307,7 @@ int collectCUsIncluding(int fileNumber, int cuFileNumbers[], int cuCount, int ma
     return cuCount;
 }
 
-/* Only what the client holds, as for a stale header */
+/* Only a CU whose content the client holds */
 static bool heldCUIsOutOfDate(Inputs *inputs, EditorBuffer *buffer) {
     if (!holdsAuthoritativeContent(buffer))
         return false;
@@ -317,7 +316,9 @@ static bool heldCUIsOutOfDate(Inputs *inputs, EditorBuffer *buffer) {
            && knowledgeIsOutOfDate(inputs, buffer->fileNumber);
 }
 
-static void collectOutOfDateHeldCUs(BuildList *list, Inputs *inputs) {
+/* Held CUs whose knowledge is out of date. They go first, so the cap never
+ * leaves one of them out. */
+void collectOutOfDateHeldCUs(BuildList *list, Inputs *inputs) {
     for (int i = 0; i != -1; i = getNextExistingEditorBufferIndex(i + 1)) {
         for (EditorBufferList *l = getEditorBufferListElementAt(i); l != NULL; l = l->next) {
             int fileNumber = l->buffer->fileNumber;
@@ -333,12 +334,6 @@ static void collectOutOfDateHeldCUs(BuildList *list, Inputs *inputs) {
             }
         }
     }
-}
-
-void collectOutOfDateHeldFiles(BuildList *list, Inputs *inputs) {
-    /* Held CUs whose knowledge is out of date. They go first, so the cap
-     * never leaves one of them out. */
-    collectOutOfDateHeldCUs(list, inputs);
 }
 
 /* Parse a file using the full initializeFileProcessing machinery (project
@@ -393,7 +388,6 @@ static void buildKnowledgeOfCU(int fileNumber, ArgumentsVector baseArgs) {
      * knowledge out of date. */
     FileTimestamp knowledgeTime = fileTimestampNow();
     bool parsed = parseFileWithFullInit(fileName, baseArgs);
-    fileItem->lastParsedMtime = editorFileModificationTime(fileName);
     if (parsed)
         fileItem->knowledgeTime = knowledgeTime;
 }
