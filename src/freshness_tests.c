@@ -165,46 +165,6 @@ Ensure(Freshness, compilation_unit_with_a_header_not_changed_since_its_knowledge
     assert_that(knowledgeIsOutOfDate(inputsWithGraph(NULL), A_C), is_false);
 }
 
-/* Its old references are still there, beside those of the includers built since */
-Ensure(Freshness, compilation_unit_with_a_header_that_owes_a_strip_is_out_of_date) {
-    FileTimestamp cuChangeTime = makeFileTimestamp(1000, 0);
-    expectACUWithKnowledgeAt(makeFileTimestamp(2000, 0), &cuChangeTime);
-
-    int closure[] = {A_H};
-    expect(collectIncludeClosure, when(fileNumber, is_equal_to(A_C)),
-           will_set_contents_of_parameter(fileNumbers, closure, sizeof(closure)),
-           will_return(1));
-    FileItem headerItem = {.name = "a.h", .isLeftBehind = true};
-    FileTimestamp headerChangeTime = makeFileTimestamp(1000, 0);
-    always_expect(getFileItemWithFileNumber, when(fileNumber, is_equal_to(A_H)),
-                  will_return(&headerItem));
-    always_expect(editorFileModificationTime, when(path, is_equal_to_string("a.h")),
-                  will_return(&headerChangeTime));
-
-    assert_that(knowledgeIsOutOfDate(inputsWithGraph(NULL), A_C));
-}
-
-Ensure(Freshness, compilation_unit_with_a_header_that_owes_a_strip_is_out_of_date_since_the_header_was_left_behind) {
-    FileTimestamp cuChangeTime = makeFileTimestamp(1000, 0);
-    expectACUWithKnowledgeAt(makeFileTimestamp(2000, 0), &cuChangeTime);
-
-    int closure[] = {A_H};
-    expect(collectIncludeClosure, when(fileNumber, is_equal_to(A_C)),
-           will_set_contents_of_parameter(fileNumbers, closure, sizeof(closure)),
-           will_return(1));
-    FileItem headerItem = {.name = "a.h", .isLeftBehind = true};
-    FileTimestamp headerChangeTime = makeFileTimestamp(1000, 0);
-    always_expect(getFileItemWithFileNumber, when(fileNumber, is_equal_to(A_H)),
-                  will_return(&headerItem));
-    always_expect(editorFileModificationTime, when(path, is_equal_to_string("a.h")),
-                  will_return(&headerChangeTime));
-
-    OutOfDate outOfDate = whyKnowledgeIsOutOfDate(inputsWithGraph(NULL), A_C);
-
-    assert_that(outOfDate.reason, is_equal_to(INPUT_LEFT_BEHIND));
-    assert_that(outOfDate.fileNumber, is_equal_to(A_H));
-}
-
 static void expectAHeaderInTheClosureOfTheCU(FileItem *headerItem, FileTimestamp *contentTime) {
     static int closure[] = {A_H}; /* Read when the mock is called */
     expect(collectIncludeClosure, when(fileNumber, is_equal_to(A_C)),
@@ -297,7 +257,7 @@ Ensure(Freshness, a_header_two_compilation_units_include_is_asked_for_its_change
     FileItem headerItem = {.name = "a.h"};
     FileTimestamp headerChangeTime = makeFileTimestamp(1000, 0);
     expect(getFileItemWithFileNumber, when(fileNumber, is_equal_to(A_H)),
-           will_return(&headerItem), times(2));
+           will_return(&headerItem));
     expect(editorFileModificationTime, when(path, is_equal_to_string("a.h")),
            will_return(&headerChangeTime));
 
@@ -309,8 +269,6 @@ Ensure(Freshness, a_header_two_compilation_units_include_is_asked_for_its_change
     expect(collectIncludeClosure, when(fileNumber, is_equal_to(B_C)),
            will_set_contents_of_parameter(fileNumbers, closure, sizeof(closure)),
            will_return(1));
-    expect(getFileItemWithFileNumber, when(fileNumber, is_equal_to(A_H)),
-           will_return(&headerItem));
 
     Inputs *inputs = inputsWithGraph(NULL);
     assert_that(knowledgeIsOutOfDate(inputs, A_C), is_false);

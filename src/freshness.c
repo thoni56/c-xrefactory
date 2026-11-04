@@ -95,8 +95,6 @@ static OutOfDate whyOutOfDate(Inputs *inputs, int fileNumber, FileItem *fileItem
     if (count > MAX_INCLUDE_CLOSURE)
         return (OutOfDate){CLOSURE_TOO_LARGE, fileNumber};
     for (int i = 0; i < count; i++) {
-        if (getFileItemWithFileNumber(closure[i])->isLeftBehind)
-            return (OutOfDate){INPUT_LEFT_BEHIND, closure[i]};
         if (inputChangedAfter(changeTimeOf(inputs, closure[i]), fileItem->knowledgeTime))
             return (OutOfDate){INPUT_CHANGED, closure[i]};
     }
@@ -119,10 +117,6 @@ static void logOutOfDate(char *name, OutOfDate outOfDate) {
         break;
     case INPUT_CHANGED:
         log_info("'%s' is out of date: '%s' changed", name,
-                 getFileItemWithFileNumber(outOfDate.fileNumber)->name);
-        break;
-    case INPUT_LEFT_BEHIND:
-        log_info("'%s' is out of date: '%s' is left behind", name,
                  getFileItemWithFileNumber(outOfDate.fileNumber)->name);
         break;
     case CLOSURE_TOO_LARGE:

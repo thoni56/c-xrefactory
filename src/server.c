@@ -288,7 +288,6 @@ static void analyseAllOutOfDateCUs(ArgumentsVector baseArgs, Inputs *inputs) {
         sprintf(msg, "%d of %d files need analysing. Analyse all before %s?", outOfDateCUs,
                 countCompilationUnits(), parseAllPromptFor(options.serverOperation));
         if (!needsConfirmationToAnalyse(outOfDateCUs) || ppcWaitConfirmation(msg)) {
-            stripHeadersWhoseIncludersAreAllBuilt(list);
             buildKnowledgeOfAll(list, baseArgs);
         }
     }
@@ -376,7 +375,6 @@ void callServer(ArgumentsVector baseArgs, ArgumentsVector requestArgs) {
 
     stripRequestCU(buildList, requestFileNumber);
 
-    markHeadersLeftBehind(buildList, inputs);
     buildKnowledgeOfAll(buildList, baseArgs);
 
     /* Completeness for name-based operations: if CUs are out of date, ask user

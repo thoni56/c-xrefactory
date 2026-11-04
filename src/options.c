@@ -974,7 +974,6 @@ static bool processEOption(int *argi, ArgumentsVector args) {
         options.errors = true;
     } else if (strcmp(args.argv[i], "-exit")==0) {
         forgetKnowledgeForHeldContent();
-        forgetKnowledgeOfHeadersLeftBehind();
         saveReferences();
         log_debug("Exiting");
         exit(EXIT_SUCCESS);

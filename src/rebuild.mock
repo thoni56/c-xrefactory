@@ -27,14 +27,6 @@ void collectSiblingCUs(BuildList *list, Inputs *inputs, int requestFileNumber) {
     mock(list, inputs, requestFileNumber);
 }
 
-void markHeadersLeftBehind(BuildList *list, Inputs *inputs) {
-    mock(list, inputs);
-}
-
-void forgetKnowledgeOfHeadersLeftBehind(void) {
-    mock();
-}
-
 void buildKnowledgeOfAll(BuildList *list, ArgumentsVector baseArgs_) {
     ArgumentsVector *baseArgs = &baseArgs_;
     mock(list, baseArgs);
@@ -56,9 +48,6 @@ void collectOutOfDateCUs(BuildList *list, Inputs *inputs) {
     mock(list, inputs);
 }
 
-void stripHeadersWhoseIncludersAreAllBuilt(BuildList *list) {
-    mock(list);
-}
 
 void removeReferencesOfChangedFiles(Inputs *inputs) {
     mock(inputs);

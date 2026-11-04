@@ -15,7 +15,6 @@ typedef enum {
     KNOWLEDGE_MISSING,
     CU_CHANGED,
     INPUT_CHANGED,
-    INPUT_LEFT_BEHIND,
     CLOSURE_TOO_LARGE,
 } OutOfDateReason;
 

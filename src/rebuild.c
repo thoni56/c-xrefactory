@@ -71,21 +71,6 @@ static void setupProgress(BuildList *list) {
     initProgress(progressFormat);
 }
 
-/* A stripped header owes nothing any more (#80) */
-static void stripHeader(int fileNumber) {
-    removeReferenceableItemsForFile(fileNumber);
-    getFileItemWithFileNumber(fileNumber)->isLeftBehind = false;
-}
-
-static bool everyIncluderIsBuilt(int includers[], int includerCount, bool rebuilt[]) {
-    for (int i = 0; i < includerCount; i++) {
-        if (!rebuilt[includers[i]])
-            return false;
-    }
-
-    return includerCount > 0;
-}
-
 /* The request is parsed by the operation itself, not here */
 void collectRequestCUForStripping(BuildList *list, Inputs *inputs, int requestFileNumber) {
     if (isCompilationUnit(getFileItemWithFileNumber(requestFileNumber)->name)
@@ -156,13 +141,6 @@ void collectSiblingCUs(BuildList *list, Inputs *inputs, int requestFileNumber) {
             if (addToBuildList(list, siblingFileNum))
                 log_debug("Sibling CU '%s' shares header with request file", siblingItem->name);
         }
-
-        /* The references in a header are all or nothing (ADR-0032): strip them
-         * only when every CU that includes it is built again, before any is */
-        if (everyIncluderIsBuilt(siblingCUs, siblingCount, list->built)) {
-            log_debug("Every includer of '%s' is built again, stripping it", headerFileItem->name);
-            stripHeader(headerIndex);
-        }
     }
 
     free(siblingCUs);
@@ -182,49 +160,6 @@ void collectOutOfDateCUs(BuildList *list, Inputs *inputs) {
     }
 }
 
-/* The references in a header are all or nothing (ADR-0032): strip them only when
- * every CU that includes it is on the list, before any is built */
-void stripHeadersWhoseIncludersAreAllBuilt(BuildList *list) {
-    int *includers = malloc(MAX_FILES * sizeof(int));
-    for (int i = getNextExistingFileNumber(0); i != -1; i = getNextExistingFileNumber(i + 1)) {
-        if (isCompilationUnit(getFileItemWithFileNumber(i)->name))
-            continue;
-        int includerCount = collectCUsIncluding(i, includers, 0, MAX_FILES);
-        if (everyIncluderIsBuilt(includers, includerCount, list->built))
-            stripHeader(i);
-    }
-    free(includers);
-}
-
-/* A header that some of its includers are built into, while others that it
- * changed after are not, keeps its old references beside the new ones. Mark it,
- * so that every includer is out of date until it is stripped (#80) */
-void markHeadersLeftBehind(BuildList *list, Inputs *inputs) {
-    int *closure = malloc(MAX_FILES * sizeof(int));
-    int *includers = malloc(MAX_FILES * sizeof(int));
-    for (int i = 0; i < list->count; i++) {
-        int closureCount = collectIncludeClosureOf(inputs, list->fileNumbers[i], closure, MAX_FILES);
-        for (int h = 0; h < closureCount && h < MAX_FILES; h++) {
-            FileItem *header = getFileItemWithFileNumber(closure[h]);
-            if (isCompilationUnit(header->name) || header->isLeftBehind)
-                continue;
-            int includerCount = collectCUsIncluding(closure[h], includers, 0, MAX_FILES);
-            for (int j = 0; j < includerCount; j++) {
-                if (!list->built[includers[j]]
-                    && !getFileItemWithFileNumber(includers[j])->isDeleted
-                    && changedAfterKnowledgeOf(inputs, closure[h], includers[j])) {
-                    log_debug("'%s' is left behind by '%s', marking it", header->name,
-                              getFileItemWithFileNumber(includers[j])->name);
-                    header->isLeftBehind = true;
-                    break;
-                }
-            }
-        }
-    }
-    free(includers);
-    free(closure);
-}
-
 void markAllCompilationUnitsStale(void) {
     for (int i = getNextExistingFileNumber(0); i != -1; i = getNextExistingFileNumber(i + 1)) {
         FileItem *fileItem = getFileItemWithFileNumber(i);
@@ -233,20 +168,6 @@ void markAllCompilationUnitsStale(void) {
             fileItem->knowledgeTime = NULL_TIMESTAMP;
         }
     }
-}
-
-/* The mark is not in the snapshot, so the includers of a marked header are
- * saved without knowledge, and are out of date in the next session (#80) */
-void forgetKnowledgeOfHeadersLeftBehind(void) {
-    int *includers = malloc(MAX_FILES * sizeof(int));
-    for (int i = getNextExistingFileNumber(0); i != -1; i = getNextExistingFileNumber(i + 1)) {
-        if (!getFileItemWithFileNumber(i)->isLeftBehind)
-            continue;
-        int includerCount = collectCUsIncluding(i, includers, 0, MAX_FILES);
-        for (int j = 0; j < includerCount; j++)
-            getFileItemWithFileNumber(includers[j])->knowledgeTime = NULL_TIMESTAMP;
-    }
-    free(includers);
 }
 
 /* A header that includes a changed one changes with it, since what it emits
@@ -407,7 +328,7 @@ static void stripChangedHeldHeaders(BuildList *list) {
                     }
                     /* The stale header's own references go now; building the CUs
                      * above re-emits them. */
-                    stripHeader(fileNumber);
+                    removeReferenceableItemsForFile(fileNumber);
                     EditorBuffer *buffer = getOpenedAndLoadedEditorBuffer(fileItem->name);
                     if (buffer != NULL)
                         fileItem->lastParsedMtime = buffer->modificationTime;

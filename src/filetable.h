@@ -31,7 +31,6 @@ typedef struct fileItem {	/* to be renamed to constant pool item TODO: Why?*/
     FileTimestamp changeTime;           // the change the references in the table follow (ADR-0035)
     bool needsBrowsingStackRefresh : 1; // entry-point reparsed this file, stack needs update
     bool isDeleted : 1;                 // file no longer exists on disk
-    bool isLeftBehind : 1;              // includers were built without stripping it (#80)
     struct fileItem *next;
 } FileItem;
 

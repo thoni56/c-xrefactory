@@ -18,14 +18,11 @@ extern int collectCUsIncluding(int fileNumber, int cuFileNumbers[], int cuCount,
 
 extern void collectOutOfDateHeldFiles(BuildList *list, Inputs *inputs);
 extern void collectSiblingCUs(BuildList *list, Inputs *inputs, int requestFileNumber);
-extern void markHeadersLeftBehind(BuildList *list, Inputs *inputs);
 extern void buildKnowledgeOfAll(BuildList *list, ArgumentsVector baseArgs);
-extern void forgetKnowledgeOfHeadersLeftBehind(void);
 extern void collectRequestCUForStripping(BuildList *list, Inputs *inputs, int requestFileNumber);
 extern void collectRequestCUToBuild(BuildList *list, Inputs *inputs, int requestFileNumber);
 extern void stripRequestCU(BuildList *list, int requestFileNumber);
 extern void collectOutOfDateCUs(BuildList *list, Inputs *inputs);
-extern void stripHeadersWhoseIncludersAreAllBuilt(BuildList *list);
 extern int buildListCount(BuildList *list);
 
 /* A file's references are removed when its content changes (ADR-0035) */
