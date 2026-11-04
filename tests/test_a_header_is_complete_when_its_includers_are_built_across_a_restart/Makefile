@@ -1,6 +1,6 @@
 include ../Makefile.server
 
-# A header left behind by a build is still stripped after a restart
+# A header is complete when its includers are built on each side of a restart
 #
 # Given a.c and b.c both include h.h, and the editor holds a.c
 # When h.h gets a line at the top on disk, a -getproject builds the held a.c

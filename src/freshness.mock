@@ -8,10 +8,6 @@ bool knowledgeIsOutOfDate(Inputs *inputs, int fileNumber) {
     return (bool)mock(inputs, fileNumber);
 }
 
-bool changedAfterKnowledgeOf(Inputs *inputs, int fileNumber, int cuFileNumber) {
-    return (bool)mock(inputs, fileNumber, cuFileNumber);
-}
-
 FileTimestamp changeTimeNow(void) {
     FileTimestamp *fileTimestampP = (FileTimestamp *)mock();
     return *fileTimestampP;

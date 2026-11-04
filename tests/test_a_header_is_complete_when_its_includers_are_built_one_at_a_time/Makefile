@@ -1,4 +1,4 @@
-# A header is stripped even when its includers are built one request at a time
+# A header is complete when its includers are built one request at a time
 #
 # Given a.c and b.c both include h.h, and the editor holds a.c
 # When h.h gets a line at the top on disk, a -getproject builds the held a.c
