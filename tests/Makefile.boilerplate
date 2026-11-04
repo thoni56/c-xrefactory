@@ -80,7 +80,7 @@ run:
 	fi
 
 clean:
-	@-rm -rf CXrefs .c-xref .c-xrefrc out* log *.log .cov/* input.lsp
+	@-rm -rf CXrefs .c-xref .c-xrefrc out output* log *.log .cov/* input.lsp
 
 coverage:
 	cd ../../src ; make clean-coverage
