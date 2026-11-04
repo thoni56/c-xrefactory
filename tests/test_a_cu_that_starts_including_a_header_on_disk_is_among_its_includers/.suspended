@@ -1,0 +1,12 @@
+Missing: a CU that starts including a header on disk is not found from the header
+
+a.c is rewritten on disk to include h.h and call f. A push on f in h.h then
+lists only h.h and b.c. The siblings of h.h are found through the include
+references in the table, and a.c has none for h.h: the scan ran on the first
+request only, when a.c had no include, and a.c was never parsed.
+
+The likely fix is that a changed file is rescanned for its includes as part of
+the removal, and that the edges get a reference type that the removal leaves
+alone. Decide first what the parse writes and which writer wins (include-edges,
+#42). See doc/docs/20-insights.adoc, "The include edges are inputs, not
+knowledge".

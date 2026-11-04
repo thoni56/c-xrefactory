@@ -136,3 +136,43 @@ Items in `doc/backlog.md`:
 * *A missing include edge* (`include-edges`). A CU that reaches a changed header through an edge the table lacks is not out of date, so its part of the header is missing without that being known.
 * *A recipe that stops writing part of a shared output* leaves that part (`variant-b`). Make writes its targets whole, so it never meets this.
 * *The request's own recipe runs as part of the operation*, since the lexer finds the cursor during the parse. Reusing the knowledge when it is current is `cursor-parse-reuse`.
+
+=== The include edges are inputs, not knowledge
+
+Date: 2026-11-04, WSL session `d25255b8`
+
+A `TypeCppInclude` reference plays two roles.
+It is knowledge, the position of an `#include` line, which browsing and Rename Module use.
+It is also an edge in the include graph, from which freshness and the siblings are found.
+`collectCUsIncluding()` walks them in the table, and `buildIncludeGraph()` copies them at the start of a request.
+
+When a file changes, the two roles pull apart.
+The knowledge should be removed (ADR-0035), but the edges are needed to find the goal.
+Removing a CU's references would also remove its edges, so a request in a header would no longer find that CU.
+That is why a changed CU still loses its references only when it is built (`remove-on-change`).
+
+Make only asks the forward question: is this target out of date?
+For that the edges from the previous build are enough, since a new edge only appears through a change in the target itself.
+We also ask the reverse question, which CUs reach this file, because that is how the goal is found.
+For that the previous build's edges are not enough.
+A CU that starts including a header is not found from the header until it is parsed.
+
+`tests/test_a_cu_that_starts_including_a_header_on_disk_is_among_its_includers` shows it (suspended).
+`a.c` is rewritten on disk to include `h.h` and call `f`, and a push on `f` in `h.h` does not list that call.
+The trace has `b.c` as the only sibling of `h.h`.
+The scan ran on the first request only, when `a.c` had no include, and `a.c` was never parsed.
+A held CU does not have the gap, since a held CU that is out of date is always built.
+
+The idea is that a changed file gets its edges from its current content, by the lightweight scan.
+So a change does two things: it removes the file's references, and it rescans the file's includes.
+Both are facts about the file, so both belong on the remove line of the shape.
+The removal then has to leave the edges alone, e.g. by giving them a reference type of their own that is never removed.
+That keeps the table the only store.
+And it is one more reason for the remove line to come before the goal.
+
+Open questions:
+
+* What the parse writes, the edge type or today's `TypeCppInclude`, and which writer wins (`include-edges`).
+* The scan reads the disk, not held buffers. That should be fine, since a held CU that is out of date is built, and the parse writes its edges.
+* The scan misses `<...>` includes, and takes includes that an `#ifdef` leaves out. An extra edge only costs a rebuild, but a missing one leaves a part missing without that being known.
+* `collectInputs()` builds the graph before the removal pass, so either the rescan comes before it or the graph is built after the pass.
