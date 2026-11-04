@@ -88,6 +88,7 @@ flowchart BT
   compile_commands["§5 · 30 · Read `-I` and `-D` from `compile_commands.json`"]
   yydebug_to_log["§6 · 61 · The `-yydebug` parse trace goes to the log"]
   remove_on_change["§7 · 106 · A file's references are removed when its content changes"]
+  session_refresh_time["§7 · 109 · A session refreshes a file by a time, not a flag"]
   cap_is_a_question["§7 · 107 · The cap becomes a question for every request"]
   cu_inputs["§7 · 35 · A CU's inputs"]
   out_of_date["§7 · 36 · The config as an input of `knowledgeIsOutOfDate()`"]
@@ -234,6 +235,7 @@ flowchart BT
   class compile_commands ready
   class yydebug_to_log ready
   class remove_on_change ready
+  class session_refresh_time ready
   class cap_is_a_question ready
   class cu_inputs ready
   class out_of_date ready
