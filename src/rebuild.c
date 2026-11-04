@@ -249,6 +249,26 @@ void forgetKnowledgeOfHeadersLeftBehind(void) {
     free(includers);
 }
 
+/* A CU's own references are removed when it is built, and its include
+ * references lead to its siblings until then, so only headers here. A header
+ * seen for the first time has its change time recorded, and keeps what the
+ * table has. */
+void removeReferencesOfChangedFiles(void) {
+    for (int i = getNextExistingFileNumber(0); i != -1; i = getNextExistingFileNumber(i + 1)) {
+        FileItem *fileItem = getFileItemWithFileNumber(i);
+        if (isCompilationUnit(fileItem->name))
+            continue;
+        FileTimestamp contentTime = editorFileModificationTime(fileItem->name);
+        if (fileTimestampIsZero(fileItem->changeTime)) {
+            fileItem->changeTime = contentTime;
+        } else if (fileTimestampIsLessThan(fileItem->changeTime, contentTime)) {
+            log_debug("'%s' changed, removing its references", fileItem->name);
+            removeReferenceableItemsForFile(i);
+            fileItem->changeTime = contentTime;
+        }
+    }
+}
+
 int buildListCount(BuildList *list) {
     return list->count;
 }

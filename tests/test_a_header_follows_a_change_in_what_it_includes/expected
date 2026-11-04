@@ -1,0 +1,13 @@
+%%%i:leaf.h
+    @leaf.h:1:0
+    @mid.h:1:0
+%%%i:mid.h
+    @a.c:1:0
+    @mid.h:1:0
+OTHER
+    @leaf.h:1:8
+always_there
+    @a.c:4:11
+    @mid.h:5:4
+main
+    @a.c:3:4

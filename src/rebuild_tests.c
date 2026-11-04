@@ -205,3 +205,43 @@ Ensure(Rebuild, a_built_cu_has_its_browsing_stack_refreshed) {
 
     assert_that(fileItem.needsBrowsingStackRefresh);
 }
+
+static FileTimestamp seenTime = {.tv_sec = 1000, .tv_nsec = 0};
+static FileTimestamp newerTime = {.tv_sec = 2000, .tv_nsec = 0};
+
+static void expectOneHeaderInTheFileTable(FileItem *fileItem, FileTimestamp *contentTime) {
+    expect(getNextExistingFileNumber, will_return(42));
+    expect(getNextExistingFileNumber, will_return(-1));
+    always_expect(getFileItemWithFileNumber, when(fileNumber, is_equal_to(42)), will_return(fileItem));
+    always_expect(isCompilationUnit, will_return(false));
+    expect(editorFileModificationTime, when(path, is_equal_to_string(fileItem->name)),
+           will_return(contentTime));
+}
+
+Ensure(Rebuild, removes_the_references_of_a_header_whose_content_changed) {
+    FileItem fileItem = {.name = "header.h", .changeTime = seenTime};
+    expectOneHeaderInTheFileTable(&fileItem, &newerTime);
+    expect(removeReferenceableItemsForFile, when(fileNumber, is_equal_to(42)));
+
+    removeReferencesOfChangedFiles();
+
+    assert_that(fileTimestampsEqual(fileItem.changeTime, newerTime));
+}
+
+Ensure(Rebuild, keeps_the_references_of_a_header_whose_content_did_not_change) {
+    FileItem fileItem = {.name = "header.h", .changeTime = seenTime};
+    expectOneHeaderInTheFileTable(&fileItem, &seenTime);
+    never_expect(removeReferenceableItemsForFile);
+
+    removeReferencesOfChangedFiles();
+}
+
+Ensure(Rebuild, records_the_change_time_of_a_header_seen_for_the_first_time_and_keeps_its_references) {
+    FileItem fileItem = {.name = "header.h"};
+    expectOneHeaderInTheFileTable(&fileItem, &seenTime);
+    never_expect(removeReferenceableItemsForFile);
+
+    removeReferencesOfChangedFiles();
+
+    assert_that(fileTimestampsEqual(fileItem.changeTime, seenTime));
+}

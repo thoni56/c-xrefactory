@@ -1,0 +1,9 @@
+CXREF -server
+-getproject CURDIR/a.c
+<sync>
+-browse-push -cursor=48 CURDIR/a.c
+<sync>
+!cp CURDIR/leaf.h.without_feature CURDIR/leaf.h
+-browse-push -cursor=48 CURDIR/a.c
+<sync>
+<exit>

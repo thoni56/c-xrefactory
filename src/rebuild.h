@@ -28,6 +28,9 @@ extern void collectOutOfDateCUs(BuildList *list, Inputs *inputs);
 extern void stripHeadersWhoseIncludersAreAllBuilt(BuildList *list);
 extern int buildListCount(BuildList *list);
 
+/* A file's references are removed when its content changes (ADR-0035) */
+extern void removeReferencesOfChangedFiles(void);
+
 /* Mark every compilation unit unparsed so the next entry refresh reparses it.
  * Called after a project-config change, which can invalidate any file's parse
  * (defines flip #ifdefs, -I re-resolves includes) with no cheap way to know

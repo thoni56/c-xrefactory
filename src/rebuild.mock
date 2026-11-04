@@ -60,6 +60,10 @@ void stripHeadersWhoseIncludersAreAllBuilt(BuildList *list) {
     mock(list);
 }
 
+void removeReferencesOfChangedFiles(void) {
+    mock();
+}
+
 int buildListCount(BuildList *list) {
     return (int)mock(list);
 }

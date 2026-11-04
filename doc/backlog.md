@@ -540,7 +540,10 @@ implementation, and are noted in `cu-inputs`, `out-of-date`, `time-budget` and
     `test_ghosts_stay_when_one_includer_is_parsed_alone` changes what it pins. A change of
     a file is a change of every file that includes it (ADR-0035, amended): write a test
     where `a.c` includes `mid.h`, `mid.h` includes `leaf.h` and an `#ifdef FEATURE` in
-    `mid.h` stops being taken when `leaf.h` stops defining it. A snapshot
+    `mid.h` stops being taken when `leaf.h` stops defining it. A changed CU still loses
+    its references only when it is built, since `collectCUsIncluding()` finds siblings
+    through the include references in the table; once siblings are found through the
+    include graph in `Inputs`, a CU follows the same rule. A snapshot
     written before this can hold ghosts that no change removes; decide whether a snapshot
     version bump discards them.
     Goes with: out-of-date
