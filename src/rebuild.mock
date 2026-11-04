@@ -60,8 +60,8 @@ void stripHeadersWhoseIncludersAreAllBuilt(BuildList *list) {
     mock(list);
 }
 
-void removeReferencesOfChangedFiles(void) {
-    mock();
+void removeReferencesOfChangedFiles(Inputs *inputs) {
+    mock(inputs);
 }
 
 void letGoOfHeldHeader(int fileNumber) {

@@ -1,2 +1,2 @@
-#include "upper.h"
+#include "outer.h"
 int a(void) { return inner; }

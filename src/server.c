@@ -354,7 +354,7 @@ void callServer(ArgumentsVector baseArgs, ArgumentsVector requestArgs) {
 
     /* After the include graph is collected, since a header's references
      * include its own include references */
-    removeReferencesOfChangedFiles();
+    removeReferencesOfChangedFiles(inputs);
 
     /* Stale preloaded files are built before dispatching the operation, so all
      * operations see fresh in-memory references */

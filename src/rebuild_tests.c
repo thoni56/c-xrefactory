@@ -223,7 +223,7 @@ Ensure(Rebuild, removes_the_references_of_a_header_whose_content_changed) {
     expectOneHeaderInTheFileTable(&fileItem, &newerTime);
     expect(removeReferenceableItemsForFile, when(fileNumber, is_equal_to(42)));
 
-    removeReferencesOfChangedFiles();
+    removeReferencesOfChangedFiles(NULL);
 
     assert_that(fileTimestampsEqual(fileItem.changeTime, newerTime));
 }
@@ -233,7 +233,7 @@ Ensure(Rebuild, keeps_the_references_of_a_header_whose_content_did_not_change) {
     expectOneHeaderInTheFileTable(&fileItem, &seenTime);
     never_expect(removeReferenceableItemsForFile);
 
-    removeReferencesOfChangedFiles();
+    removeReferencesOfChangedFiles(NULL);
 }
 
 Ensure(Rebuild, records_the_change_time_of_a_header_seen_for_the_first_time_and_keeps_its_references) {
@@ -241,9 +241,50 @@ Ensure(Rebuild, records_the_change_time_of_a_header_seen_for_the_first_time_and_
     expectOneHeaderInTheFileTable(&fileItem, &seenTime);
     never_expect(removeReferenceableItemsForFile);
 
-    removeReferencesOfChangedFiles();
+    removeReferencesOfChangedFiles(NULL);
 
     assert_that(fileTimestampsEqual(fileItem.changeTime, seenTime));
+}
+
+static void expectTwoHeadersInTheFileTable(FileItem *leaf, FileTimestamp *leafTime,
+                                           FileItem *other, FileTimestamp *otherTime) {
+    expect(getNextExistingFileNumber, will_return(42));
+    expect(getNextExistingFileNumber, will_return(43));
+    expect(getNextExistingFileNumber, will_return(-1));
+    expect(getFileItemWithFileNumber, when(fileNumber, is_equal_to(42)), will_return(leaf));
+    expect(getFileItemWithFileNumber, when(fileNumber, is_equal_to(43)), will_return(other));
+    always_expect(isCompilationUnit, will_return(false));
+    expect(editorFileModificationTime, will_return(leafTime));
+    expect(editorFileModificationTime, will_return(otherTime));
+}
+
+/* What a header emits depends on what it includes (ADR-0035) */
+Ensure(Rebuild, removes_the_references_of_a_header_that_includes_a_changed_one) {
+    FileItem leaf = {.name = "leaf.h", .changeTime = seenTime};
+    FileItem mid = {.name = "mid.h", .changeTime = seenTime};
+    expectTwoHeadersInTheFileTable(&leaf, &newerTime, &mid, &seenTime);
+    static int closureOfMid[] = {42};
+    expect(collectIncludeClosureOf, when(fileNumber, is_equal_to(43)),
+           will_set_contents_of_parameter(fileNumbers, closureOfMid, sizeof(closureOfMid)),
+           will_return(1));
+    expect(removeReferenceableItemsForFile, when(fileNumber, is_equal_to(42)));
+    expect(removeReferenceableItemsForFile, when(fileNumber, is_equal_to(43)));
+
+    removeReferencesOfChangedFiles(NULL);
+
+    assert_that(fileTimestampsEqual(mid.changeTime, newerTime));
+}
+
+Ensure(Rebuild, keeps_the_references_of_a_header_that_does_not_include_a_changed_one) {
+    FileItem leaf = {.name = "leaf.h", .changeTime = seenTime};
+    FileItem other = {.name = "other.h", .changeTime = seenTime};
+    expectTwoHeadersInTheFileTable(&leaf, &newerTime, &other, &seenTime);
+    expect(collectIncludeClosureOf, when(fileNumber, is_equal_to(43)), will_return(0));
+    expect(removeReferenceableItemsForFile, when(fileNumber, is_equal_to(42)));
+
+    removeReferencesOfChangedFiles(NULL);
+
+    assert_that(fileTimestampsEqual(other.changeTime, seenTime));
 }
 
 Ensure(Rebuild, letting_go_of_a_held_header_removes_its_references) {

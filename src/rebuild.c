@@ -249,15 +249,47 @@ void forgetKnowledgeOfHeadersLeftBehind(void) {
     free(includers);
 }
 
+/* A header that includes a changed one changes with it, since what it emits
+ * depends on what it includes. Every CU that reaches it also reaches the
+ * changed one, so no other CU becomes out of date (ADR-0035). The graph was
+ * collected before anything was removed. */
+static void removeReferencesOfIncludersOfChanged(Inputs *inputs, int headers[], FileItem *items[],
+                                                 int headerCount, FileTimestamp changedAt[]) {
+    int *closure = malloc(MAX_FILES * sizeof(int));
+    for (int h = 0; h < headerCount; h++) {
+        if (!fileTimestampIsZero(changedAt[headers[h]]))
+            continue;
+        int closureCount = collectIncludeClosureOf(inputs, headers[h], closure, MAX_FILES);
+        for (int c = 0; c < closureCount && c < MAX_FILES; c++) {
+            if (!fileTimestampIsZero(changedAt[closure[c]])) {
+                log_debug("'%s' includes a changed header, removing its references", items[h]->name);
+                removeReferenceableItemsForFile(headers[h]);
+                if (fileTimestampIsLessThan(items[h]->changeTime, changedAt[closure[c]]))
+                    items[h]->changeTime = changedAt[closure[c]];
+                break;
+            }
+        }
+    }
+    free(closure);
+}
+
 /* A CU's own references are removed when it is built, and its include
  * references lead to its siblings until then, so only headers here. A header
  * seen for the first time has its change time recorded, and keeps what the
  * table has. */
-void removeReferencesOfChangedFiles(void) {
+void removeReferencesOfChangedFiles(Inputs *inputs) {
+    int *headers = malloc(MAX_FILES * sizeof(int));
+    FileItem **items = malloc(MAX_FILES * sizeof(FileItem *));
+    FileTimestamp *changedAt = calloc(MAX_FILES, sizeof(FileTimestamp)); /* Zero if not */
+    int headerCount = 0;
+    bool anyChanged = false;
+
     for (int i = getNextExistingFileNumber(0); i != -1; i = getNextExistingFileNumber(i + 1)) {
         FileItem *fileItem = getFileItemWithFileNumber(i);
         if (isCompilationUnit(fileItem->name))
             continue;
+        headers[headerCount] = i;
+        items[headerCount++] = fileItem;
         FileTimestamp contentTime = editorFileModificationTime(fileItem->name);
         if (fileTimestampIsZero(fileItem->changeTime)) {
             fileItem->changeTime = contentTime;
@@ -265,8 +297,17 @@ void removeReferencesOfChangedFiles(void) {
             log_debug("'%s' changed, removing its references", fileItem->name);
             removeReferenceableItemsForFile(i);
             fileItem->changeTime = contentTime;
+            changedAt[i] = contentTime;
+            anyChanged = true;
         }
     }
+
+    if (anyChanged)
+        removeReferencesOfIncludersOfChanged(inputs, headers, items, headerCount, changedAt);
+
+    free(changedAt);
+    free(items);
+    free(headers);
 }
 
 /* The server reads the disk again, so the content changes now, although the

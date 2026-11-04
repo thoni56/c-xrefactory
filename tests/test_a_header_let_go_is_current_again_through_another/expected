@@ -1,8 +1,7 @@
-'CURDIR/a.c' is out of date: 'CURDIR/inner.h' changed in the editor
-'CURDIR/a.c' is out of date: there is no knowledge of it
-'CURDIR/b.c' is out of date: 'CURDIR/inner.h' changed in the editor
-Siblings: 2 to build, 0 skipped (current), 0 skipped (cap 128)
-'CURDIR/a.c' is out of date: 'CURDIR/inner.h' changed
-'CURDIR/b.c' is out of date: 'CURDIR/inner.h' changed
+'CURDIR/a.c' is out of date
+'CURDIR/b.c' is out of date
+Siblings: 1 to build, 0 skipped (current), 0 skipped (cap 128)
+'CURDIR/a.c' is out of date
+'CURDIR/b.c' is out of date
 Siblings: 1 to build, 0 skipped (current), 0 skipped (cap 128)
 Siblings: 0 to build, 1 skipped (current), 0 skipped (cap 128)
