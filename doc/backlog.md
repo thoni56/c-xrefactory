@@ -539,6 +539,13 @@ implementation, and are noted in `cu-inputs`, `out-of-date`, `time-budget` and
     through the include references in the table; once siblings are found through the
     include graph in `Inputs`, a CU follows the same rule.
     Goes with: out-of-date
+- (#109) <a id="session-refresh-time"></a>**A session refreshes a file by a time, not a flag** —
+    a file's references get a time they last changed, never cleared, and a session
+    refreshes its copy of a file when that is later than the copy. Replaces
+    `needsBrowsingStackRefresh`, which is set in only some of the places that change the
+    table and is cleared by the first session that reads it (stale-POP).
+    `index-based-sessions` removes it again.
+    Goes with: index-based-sessions
 - (#107) <a id="cap-is-a-question"></a>**The cap becomes a question for every request** —
     ADR-0032, amended 2026-11-03. `MAX_CUS_TO_REPARSE` stops capping the sibling list and
     is where the question is asked, as `analyseAllOutOfDateCUs()` does, and the two build
