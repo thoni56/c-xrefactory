@@ -132,8 +132,10 @@ its unresolved includes, and a new file could be matched against them.
 
 - **Cost per request.** `removeReferencesOfChangedFiles()` checks the time of every
   non-CU file the server knows, system headers included, on every request. Each changed
-  file costs a walk over the whole table, which is heavy after a `git checkout`. Both
-  want measuring on ffmpeg before anything is built on top.
+  file costs a walk over the whole table, which is heavy after a `git checkout`. And a
+  held CU is built once more on the request after each edit, since the client writes the
+  preload just before the request, so the build lands within the coarse clock's 10 ms
+  (`changedAfter()`). All of them want measuring on ffmpeg before anything is built on top.
 - **Known only helps if it is said.** The server knows a header is incomplete, but a
   browse does not tell the user. With the removal honest, the goal being too small
   (`request-target`) is the largest correctness gap: the answer reads references from
