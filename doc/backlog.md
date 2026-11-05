@@ -535,6 +535,7 @@ implementation, and are noted in `cu-inputs`, `out-of-date`, `time-budget` and
     references only when it is built, since its include references in the table are
     also the include graph: `collectCUsIncluding()` and `buildIncludeGraph()` both read
     them. A CU follows the same rule once the include graph outlives the removal.
+    After: include-edges
     Goes with: out-of-date
 - (#109) <a id="session-refresh-time"></a>**A session refreshes a file by a time, not a flag** —
     a file's references get a time they last changed, never cleared, and a session
@@ -574,14 +575,13 @@ implementation, and are noted in `cu-inputs`, `out-of-date`, `time-budget` and
 - (#42) <a id="include-edges"></a>**Who writes include edges** — the parse and the lightweight
     scan both do. The parse records the `#include`s the preprocessor took, quoted and
     `<...>`, at their real lines. The scan records every quoted `#include`, `#ifdef` or
-    not, no `<...>`, all at line 1, column 0 of the includer. A "defined" reference at
-    line 1 of a file marks the file itself and is not an edge. Today the scan wins after a
-    restart: it adds its edges to CUs that already have knowledge, so an include is listed
-    twice, once on line 1 (`tests/test_restart_keeps_includes_as_parsed`). Decide who may
-    write an edge and which writer wins. Removal on change finds what is missing through
-    the edges, so an edge the graph lacks leaves a part missing that is not known to be
-    (ADR-0035).
-    After: cap-is-a-question
+    not, no `<...>`, all at line 1, column 0 of the includer. Today the scan wins after a
+    restart, so an include is listed twice (`tests/test_restart_keeps_includes_as_parsed`).
+    Decided: the scan's edges become a fact on the file, no longer references, and the
+    include graph is those facts together with the parse's include references
+    (`doc/freshness-after-adr-0035.md`). Then a changed file's includes are rescanned on
+    the remove line, by a scan time
+    (`tests/test_a_cu_that_starts_including_a_header_on_disk_is_among_its_includers`).
 - (#37) <a id="request-target"></a>**What a request needs** — the CUs that reach the request
     file's closure, and the whole project for an operation on a name. Left: the scan does
     not record `<...>`
