@@ -87,6 +87,35 @@ It is derived from the files every session, as the change times are.
   new CU that nothing includes and no request names is found at the next restart or
   config change, as today.
 
+### The edges' own up-to-date rule
+
+WSL, session `d25255b8`, 2026-11-05.
+
+A file's own edges, the includes it names, depend only on its content and the search
+path. So they are out of date exactly when its change time moves, or the config changes.
+That is the set the remove line already finds.
+
+The rule is the one used everywhere else, a time and not a flag:
+
+- each file records when its edges were scanned,
+- its edges are current if its change time is not later than that,
+- an incremental scan rescans every file whose edges are not current.
+
+That is make again. The edges are a target, the file's content and the config are its
+prerequisites, and the scan is the recipe. A capped round, an exit or a restart cannot
+lose a rescan, as for the removal.
+
+The edges cannot be lazy, since the goal is found from them. They have to be current
+before the goal, so the rescan belongs on the remove line. The scan is cheap, so doing it
+for every changed file should be fine. The whole scan stays as today, on the first
+request and on a config change.
+
+Not covered: which file an include resolves to also depends on which files exist on the
+search path. A header created later that an unchanged file already includes gets no edge,
+and a new header earlier on the search path is not seen to shadow the old one. Make has the
+same pitfall, since `gcc -MD` only records what it found. If it matters, a file could keep
+its unresolved includes, and a new file could be matched against them.
+
 ### What the scan has to get right, as the only source
 
 1. **`<...>` includes.** `scanFileForIncludes()` (`src/projectstructure.c`) matches only
