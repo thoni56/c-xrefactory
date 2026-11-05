@@ -104,7 +104,6 @@ workspace "C-xrefactory" "A C/Yacc refactoring browser" {
 	    autolayout lr
 		}
 		
-		theme default
 
 		styles {
 	    element Editor {
