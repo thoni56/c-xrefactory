@@ -5,7 +5,7 @@
 <meta http-equiv="X-UA-Compatible" content="IE=edge">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <meta name="generator" content="Asciidoctor 2.0.26">
-<meta name="author" content="v{VERSION} - Generated 2026-11-04">
+<meta name="author" content="v{VERSION} - Generated 2026-11-05">
 <title>C-xrefactory - a C/Yacc refactoring and code browsing tool - Design Documentation</title>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Open+Sans:300,300italic,400,400italic,600,600italic%7CNoto+Serif:400,400italic,700,700italic%7CDroid+Sans+Mono:400,700">
 <style>
@@ -441,7 +441,7 @@ body.book #toc,body.book #preamble,body.book h1.sect0,body.book .sect1>h2{page-b
 <div id="header">
 <h1>C-xrefactory - a C/Yacc refactoring and code browsing tool - Design Documentation</h1>
 <div class="details">
-<span id="author" class="author">v{VERSION} - Generated 2026-11-04</span><br>
+<span id="author" class="author">v{VERSION} - Generated 2026-11-05</span><br>
 </div>
 <div id="toc" class="toc2">
 <div id="toctitle">Table of Contents</div>
@@ -630,6 +630,7 @@ body.book #toc,body.book #preamble,body.book h1.sect0,body.book .sect1>h2{page-b
 <li><a href="#_yacc_semantic_data">19.1. Yacc semantic data</a></li>
 <li><a href="#_editor_buffer_lifecycle_in_the_server">19.2. Editor Buffer Lifecycle in the Server</a></li>
 <li><a href="#_freshness_is_make_for_the_goal">19.3. Freshness Is Make, for the Goal</a></li>
+<li><a href="#_the_include_edges_are_inputs_not_knowledge">19.4. The include edges are inputs, not knowledge</a></li>
 </ul>
 </li>
 <li><a href="#_archive">20. Archive</a>
@@ -11193,6 +11194,65 @@ The shape was first written down on the Mac, session <code>4839a129</code>, with
 </div>
 </div>
 </div>
+<div class="sect2">
+<h3 id="_the_include_edges_are_inputs_not_knowledge">19.4. The include edges are inputs, not knowledge</h3>
+<div class="paragraph">
+<p>Date: 2026-11-04, WSL session <code>d25255b8</code></p>
+</div>
+<div class="paragraph">
+<p>A <code>TypeCppInclude</code> reference plays two roles.
+It is knowledge, the position of an <code>#include</code> line, which browsing and Rename Module use.
+It is also an edge in the include graph, from which freshness and the siblings are found.
+<code>collectCUsIncluding()</code> walks them in the table, and <code>buildIncludeGraph()</code> copies them at the start of a request.</p>
+</div>
+<div class="paragraph">
+<p>When a file changes, the two roles pull apart.
+The knowledge should be removed (ADR-0035), but the edges are needed to find the goal.
+Removing a CU&#8217;s references would also remove its edges, so a request in a header would no longer find that CU.
+That is why a changed CU still loses its references only when it is built (<code>remove-on-change</code>).</p>
+</div>
+<div class="paragraph">
+<p>Make only asks the forward question: is this target out of date?
+For that the edges from the previous build are enough, since a new edge only appears through a change in the target itself.
+We also ask the reverse question, which CUs reach this file, because that is how the goal is found.
+For that the previous build&#8217;s edges are not enough.
+A CU that starts including a header is not found from the header until it is parsed.</p>
+</div>
+<div class="paragraph">
+<p><code>tests/test_a_cu_that_starts_including_a_header_on_disk_is_among_its_includers</code> shows it (suspended).
+<code>a.c</code> is rewritten on disk to include <code>h.h</code> and call <code>f</code>, and a push on <code>f</code> in <code>h.h</code> does not list that call.
+The trace has <code>b.c</code> as the only sibling of <code>h.h</code>.
+The scan ran on the first request only, when <code>a.c</code> had no include, and <code>a.c</code> was never parsed.
+A held CU does not have the gap, since a held CU that is out of date is always built.</p>
+</div>
+<div class="paragraph">
+<p>The idea is that a changed file gets its edges from its current content, by the lightweight scan.
+So a change does two things: it removes the file&#8217;s references, and it rescans the file&#8217;s includes.
+Both are facts about the file, so both belong on the remove line of the shape.
+The removal then has to leave the edges alone, e.g. by giving them a reference type of their own that is never removed.
+That keeps the table the only store.
+And it is one more reason for the remove line to come before the goal.</p>
+</div>
+<div class="paragraph">
+<p>Open questions:</p>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p>What the parse writes, the edge type or today&#8217;s <code>TypeCppInclude</code>, and which writer wins (<code>include-edges</code>).</p>
+</li>
+<li>
+<p>The scan reads the disk, not held buffers. That should be fine, since a held CU that is out of date is built, and the parse writes its edges.</p>
+</li>
+<li>
+<p>The scan misses <code>&lt;&#8230;&#8203;&gt;</code> includes, and takes includes that an <code>#ifdef</code> leaves out. An extra edge only costs a rebuild, but a missing one leaves a part missing without that being known.</p>
+</li>
+<li>
+<p><code>collectInputs()</code> builds the graph before the removal pass, so either the rescan comes before it or the graph is built after the pass.</p>
+</li>
+</ul>
+</div>
+</div>
 </div>
 </div>
 <div class="sect1">
@@ -12635,7 +12695,7 @@ carried forward in <a href="21-archive.adoc#cu-reparse-header-staleness">a later
 </div>
 <div id="footer">
 <div id="footer-text">
-Last updated 2026-11-04 18:36:53 UTC
+Last updated 2026-11-05 21:45:13 UTC
 </div>
 </div>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.18.3/highlight.min.js"></script>

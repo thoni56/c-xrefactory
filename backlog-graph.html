@@ -158,9 +158,9 @@ flowchart BT
   move_includes -.-&gt; move_header_for_callers
   project_extent -.-&gt; local_config_fragments
   local_config_fragments -.-&gt; compile_commands
+  include_edges -.-&gt; remove_on_change
   remove_on_change -.-&gt; cap_is_a_question
   cu_inputs -.-&gt; out_of_date
-  cap_is_a_question -.-&gt; include_edges
   request_through_includers -.-&gt; cursor_parse_reuse
   cap_is_a_question -.-&gt; time_budget
   remove_on_change -.-&gt; variant_b
