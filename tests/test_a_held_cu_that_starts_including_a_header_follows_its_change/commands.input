@@ -1,0 +1,15 @@
+CXREF -server
+-getproject CURDIR/b.c
+<sync>
+-browse-push -cursor=4 -preload CURDIR/a.c CURDIR/a.c.held CURDIR/h.h
+<sync>
+!sleep 0.1
+-browse-push -cursor=4 -preload CURDIR/a.c CURDIR/a.c.held CURDIR/h.h
+<sync>
+!cp CURDIR/h.h.after CURDIR/h.h
+!sleep 0.1
+-browse-push -cursor=4 -preload CURDIR/a.c CURDIR/a.c.held CURDIR/h.h
+<sync>
+-filter=0 -cursor=0 -preload CURDIR/a.c CURDIR/a.c.held nil
+<sync>
+<exit>
