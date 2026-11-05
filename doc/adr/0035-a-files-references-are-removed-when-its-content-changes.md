@@ -97,7 +97,7 @@ _disregarding the fact that_
   the CUs not yet built. ADR-0033 chose ghosts over that, because a lost reference was
   lost silently. Here the loss is not silent, since the CUs it waits for are out of date,
   but a browse in that state shows fewer references than there are. Measured on `src/`
-  (`doc/freshness-make-model-assessment.md`), about 89% of a header's references are
+  (`doc/freshness-after-adr-0035.md`), about 89% of a header's references are
   emitted by every includer, so one CU built puts most of them back. The rest are almost
   all macro expansions, at positions in the macro body, and wait for the CUs that expand
   the macro,

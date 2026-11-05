@@ -618,7 +618,7 @@ implementation, and are noted in `cu-inputs`, `out-of-date`, `time-budget` and
     preprocessor state on the way in changes: the CU itself, or a header included before
     it but not by it, e.g. one that stops defining `FEATURE` (ADR-0035). Nothing about the header
     changed, so nothing removes them. In `src/` what differs between includers is mostly
-    macro expansions (`doc/freshness-make-model-assessment.md`). Generations are one
+    macro expansions (`doc/freshness-after-adr-0035.md`). Generations are one
     option, and would need an ADR. `test_preprocess_edit_removes_ifdef_define` stays
     suspended, and its `.suspended` still names ADR-0033's sweep.
     After: remove-on-change
