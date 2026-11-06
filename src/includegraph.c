@@ -13,16 +13,16 @@ typedef struct {
     int *fileNumbers;
     int  maxFileNumbers;
     int  count;
-} IncludedFiles;
+} CollectedFiles;
 
 
-static int storedCount(IncludedFiles *included) {
-    return included->count < included->maxFileNumbers ? included->count : included->maxFileNumbers;
+static int storedCount(CollectedFiles *files) {
+    return files->count < files->maxFileNumbers ? files->count : files->maxFileNumbers;
 }
 
-static bool isCollected(IncludedFiles *included, int fileNumber) {
-    for (int i = 0; i < storedCount(included); i++)
-        if (included->fileNumbers[i] == fileNumber)
+static bool isCollected(CollectedFiles *files, int fileNumber) {
+    for (int i = 0; i < storedCount(files); i++)
+        if (files->fileNumbers[i] == fileNumber)
             return true;
     return false;
 }
@@ -109,28 +109,28 @@ static int firstEdgeOf(IncludeGraph *graph, int includer) {
     return low;
 }
 
-static void collectIncludedBy(IncludeGraph *graph, IncludedFiles *included) {
-    for (int i = firstEdgeOf(graph, included->includerFileNumber);
-         i < graph->count && graph->edges[i].includer == included->includerFileNumber; i++) {
+static void collectIncludedBy(IncludeGraph *graph, CollectedFiles *files) {
+    for (int i = firstEdgeOf(graph, files->includerFileNumber);
+         i < graph->count && graph->edges[i].includer == files->includerFileNumber; i++) {
         IncludeEdge *edge = &graph->edges[i];
-        if (!isCollected(included, edge->included)) {
-            if (included->count < included->maxFileNumbers)
-                included->fileNumbers[included->count] = edge->included;
-            included->count++;
+        if (!isCollected(files, edge->included)) {
+            if (files->count < files->maxFileNumbers)
+                files->fileNumbers[files->count] = edge->included;
+            files->count++;
         }
     }
 }
 
 int collectIncludeClosure(IncludeGraph *graph, int fileNumber, int fileNumbers[],
                           int maxFileNumbers) {
-    IncludedFiles included = {.includerFileNumber = fileNumber, .fileNumbers = fileNumbers,
+    CollectedFiles files = {.includerFileNumber = fileNumber, .fileNumbers = fileNumbers,
                               .maxFileNumbers = maxFileNumbers};
-    collectIncludedBy(graph, &included);
-    for (int i = 0; i < storedCount(&included); i++) {
-        included.includerFileNumber = fileNumbers[i];
-        collectIncludedBy(graph, &included);
+    collectIncludedBy(graph, &files);
+    for (int i = 0; i < storedCount(&files); i++) {
+        files.includerFileNumber = fileNumbers[i];
+        collectIncludedBy(graph, &files);
     }
-    return included.count;
+    return files.count;
 }
 
 static int firstEdgeIncluding(IncludeGraph *graph, int included) {
@@ -145,23 +145,23 @@ static int firstEdgeIncluding(IncludeGraph *graph, int included) {
     return low;
 }
 
-static void collectIncludersOf(IncludeGraph *graph, int fileNumber, IncludedFiles *includers) {
+static void collectIncludersOf(IncludeGraph *graph, int fileNumber, CollectedFiles *files) {
     for (int i = firstEdgeIncluding(graph, fileNumber);
          i < graph->count && graph->edgesByIncluded[i].included == fileNumber; i++) {
         IncludeEdge *edge = &graph->edgesByIncluded[i];
-        if (!isCollected(includers, edge->includer)) {
-            if (includers->count < includers->maxFileNumbers)
-                includers->fileNumbers[includers->count] = edge->includer;
-            includers->count++;
+        if (!isCollected(files, edge->includer)) {
+            if (files->count < files->maxFileNumbers)
+                files->fileNumbers[files->count] = edge->includer;
+            files->count++;
         }
     }
 }
 
 int collectIncluderClosure(IncludeGraph *graph, int fileNumber, int fileNumbers[],
                            int maxFileNumbers) {
-    IncludedFiles includers = {.fileNumbers = fileNumbers, .maxFileNumbers = maxFileNumbers};
-    collectIncludersOf(graph, fileNumber, &includers);
-    for (int i = 0; i < storedCount(&includers); i++)
-        collectIncludersOf(graph, fileNumbers[i], &includers);
-    return includers.count;
+    CollectedFiles files = {.fileNumbers = fileNumbers, .maxFileNumbers = maxFileNumbers};
+    collectIncludersOf(graph, fileNumber, &files);
+    for (int i = 0; i < storedCount(&files); i++)
+        collectIncludersOf(graph, fileNumbers[i], &files);
+    return files.count;
 }
