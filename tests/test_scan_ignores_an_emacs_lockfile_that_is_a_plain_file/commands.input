@@ -1,0 +1,8 @@
+CXREF -server
+-getproject CURDIR/a.c
+<sync>
+-browse-push -cursor=17 CURDIR/a.c
+<sync>
+-dump=knowledge
+<sync>
+<exit>
