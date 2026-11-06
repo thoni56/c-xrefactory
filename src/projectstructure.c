@@ -73,6 +73,7 @@ static StringList *scanFileForIncludes(const char *filePath, int includerFileNum
                     bool alreadyKnown = existsInFileTable(resolvedPath);
                     int includedFileNumber = addFileNameToFileTable(resolvedPath);
                     addIncludeReference(includedFileNumber, includerPosition);
+                    addScannedInclude(includerFileNumber, includedFileNumber);
                     if (!alreadyKnown)
                         discovered = newStringList(strdup(resolvedPath), discovered);
                 }

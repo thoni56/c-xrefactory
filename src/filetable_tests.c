@@ -71,6 +71,18 @@ Ensure(FileTable, can_get_fileitem) {
     assert_that(gotten, is_equal_to(&item));
 }
 
+Ensure(FileTable, records_the_includes_the_scan_found_on_the_includer) {
+    FileItem includer = {"includer.c"};
+    int includerNumber = addFileItemToFileTable(&includer);
+
+    addScannedInclude(includerNumber, 7);
+    addScannedInclude(includerNumber, 9);
+
+    assert_that(includer.scannedIncludeCount, is_equal_to(2));
+    assert_that(includer.scannedIncludes[0], is_equal_to(7));
+    assert_that(includer.scannedIncludes[1], is_equal_to(9));
+}
+
 Ensure(FileTable, can_return_next_existing_file_index) {
     FileItem item  = {"item.c"};
     int      index = addFileItemToFileTable(&item);

@@ -31,6 +31,8 @@ typedef struct fileItem {	/* to be renamed to constant pool item TODO: Why?*/
     FileTimestamp letGoTime;            // when a held buffer was let go, and the disk read again
     bool needsBrowsingStackRefresh : 1; // entry-point reparsed this file, stack needs update
     bool isDeleted : 1;                 // file no longer exists on disk
+    int *scannedIncludes;               // the files the lightweight scan found it including
+    int scannedIncludeCount;
     struct fileItem *next;
 } FileItem;
 
@@ -60,6 +62,7 @@ extern void mapOverFileTableWithPointer(void (*fun)(FileItem *, void *), void *p
 
 
 extern void markFileAsDeleted(int fileNumber);
+extern void addScannedInclude(int includerFileNumber, int includedFileNumber);
 
 extern void fileTableMemoryStatistics(void);
 

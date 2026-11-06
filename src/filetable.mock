@@ -38,6 +38,10 @@ void markFileAsDeleted(int fileNumber) {
     mock(fileNumber);
 }
 
+void addScannedInclude(int includerFileNumber, int includedFileNumber) {
+    mock(includerFileNumber, includedFileNumber);
+}
+
 int getNextExistingFileNumber(int fileNumber) {
     return (int)mock(fileNumber);
 }

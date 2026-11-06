@@ -70,6 +70,8 @@ static void given_include_resolves(char *includeName, char *dir, char *resolvedP
     expect(addFileNameToFileTable, when(fileName, is_equal_to_string(resolvedPath)),
            will_return(includedFileNum));
     expect(addIncludeReference, when(includedFileNumber, is_equal_to(includedFileNum)));
+    expect(addScannedInclude, when(includerFileNumber, is_equal_to(includerFileNum)),
+           when(includedFileNumber, is_equal_to(includedFileNum)));
 }
 
 
@@ -310,6 +312,8 @@ Ensure(ProjectStructure, lightweight_scan_skips_already_known_header_in_transiti
     expect(addFileNameToFileTable, when(fileName, is_equal_to_string("/project/shared.h")),
            will_return(4));
     expect(addIncludeReference, when(includedFileNumber, is_equal_to(4)));
+    expect(addScannedInclude, when(includerFileNumber, is_equal_to(2)),
+           when(includedFileNumber, is_equal_to(4)));
 
     scanProjectForFilesAndIncludes("/project", NULL, NULL);
 }
@@ -363,6 +367,8 @@ Ensure(ProjectStructure, lightweight_scan_handles_circular_includes_without_infi
     expect(addFileNameToFileTable, when(fileName, is_equal_to_string("/project/a.h")),
            will_return(2));
     expect(addIncludeReference, when(includedFileNumber, is_equal_to(2)));
+    expect(addScannedInclude, when(includerFileNumber, is_equal_to(3)),
+           when(includedFileNumber, is_equal_to(2)));
     /* No further scanning — worklist is empty */
 
     scanProjectForFilesAndIncludes("/project", NULL, NULL);
@@ -411,6 +417,8 @@ Ensure(ProjectStructure, lightweight_scan_prefers_includer_dir_over_includeDirs)
     expect(addFileNameToFileTable, when(fileName, is_equal_to_string("/project/util.h")),
            will_return(2));
     expect(addIncludeReference, when(includedFileNumber, is_equal_to(2)));
+    expect(addScannedInclude, when(includerFileNumber, is_equal_to(1)),
+           when(includedFileNumber, is_equal_to(2)));
 
     /* Phase 2: transitive scan of the discovered header */
     expect(addFileNameToFileTable, when(fileName, is_equal_to_string("/project/util.h")),
@@ -457,6 +465,8 @@ Ensure(ProjectStructure, lightweight_scan_resolves_include_via_includeDirs_when_
     expect(addFileNameToFileTable, when(fileName, is_equal_to_string("/project/lib/util.h")),
            will_return(2));
     expect(addIncludeReference, when(includedFileNumber, is_equal_to(2)));
+    expect(addScannedInclude, when(includerFileNumber, is_equal_to(1)),
+           when(includedFileNumber, is_equal_to(2)));
 
     /* Phase 2: transitive scan of the discovered header */
     expect(addFileNameToFileTable, when(fileName, is_equal_to_string("/project/lib/util.h")),

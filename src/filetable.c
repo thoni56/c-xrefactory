@@ -75,6 +75,13 @@ void markFileAsDeleted(int fileNumber) {
     removeReferenceableItemsForFile(fileNumber);
 }
 
+void addScannedInclude(int includerFileNumber, int includedFileNumber) {
+    FileItem *includer = getFileItemWithFileNumber(includerFileNumber);
+    includer->scannedIncludes = realloc(includer->scannedIncludes,
+                                        (includer->scannedIncludeCount + 1) * sizeof(int));
+    includer->scannedIncludes[includer->scannedIncludeCount++] = includedFileNumber;
+}
+
 int getNextExistingFileNumber(int index) {
     for (int i=index; i < fileTable.size; i++)
         if (fileTable.tab[i] != NULL)
