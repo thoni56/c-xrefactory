@@ -2,6 +2,7 @@
 
 #include <stdio.h>
 #include <stdlib.h>
+#include "filetable.h"
 #include "referenceableitemtable.h"
 #include "type.h"
 
@@ -52,6 +53,11 @@ static void addEdgesOf(ReferenceableItem *item, void *graphP) {
             addEdge(graphP, r->position.file, item->includeFileNumber);
 }
 
+static void addScannedEdgesOf(FileItem *fileItem, int fileNumber, IncludeGraph *graph) {
+    for (int i = 0; i < fileItem->scannedIncludeCount; i++)
+        addEdge(graph, fileNumber, fileItem->scannedIncludes[i]);
+}
+
 static int compareByIncluder(const void *a, const void *b) {
     const IncludeEdge *edgeA = a, *edgeB = b;
     if (edgeA->includer != edgeB->includer)
@@ -59,11 +65,14 @@ static int compareByIncluder(const void *a, const void *b) {
     return 0;
 }
 
-/* One pass over the table, so a closure can be walked without one. Sorted by
- * includer, so what a file includes is one run of edges */
+/* One pass over the include references and one over the includes the scan
+ * found, so a closure can be walked without either. Sorted by includer, so
+ * what a file includes is one run of edges */
 IncludeGraph *buildIncludeGraph(void) {
     IncludeGraph *graph = calloc(1, sizeof(IncludeGraph));
     mapOverReferenceableItemTableWithPointer(addEdgesOf, graph);
+    for (int i = getNextExistingFileNumber(0); i != -1; i = getNextExistingFileNumber(i + 1))
+        addScannedEdgesOf(getFileItemWithFileNumber(i), i, graph);
     if (graph->count > 0)
         qsort(graph->edges, graph->count, sizeof(IncludeEdge), compareByIncluder);
     return graph;

@@ -2,13 +2,15 @@
 
 #include "includegraph.h"
 
+#include "filetable.h"
 #include "head.h"
 #include "log.h"
 #include "memory.h"
 #include "referenceableitemtable.h"
 
 #include "commons.mock"
-#include "filetable.mock"
+#include "editor.mock"
+#include "globals.mock"
 
 
 Describe(IncludeGraph);
@@ -16,6 +18,7 @@ BeforeEach(IncludeGraph) {
     log_set_level(LOG_ERROR);
     initCxMemory(10000);
     initReferenceableItemTable(100);
+    initFileTable(100);
 }
 AfterEach(IncludeGraph) {}
 
@@ -158,4 +161,18 @@ Ensure(IncludeGraph, closure_is_taken_from_the_graph_as_it_was_built) {
 
     assert_that(count, is_equal_to(1));
     assert_that(closure[0], is_equal_to(A_H));
+}
+
+Ensure(IncludeGraph, gives_a_file_the_includes_the_scan_found_on_it) {
+    FileItem compilationUnit = {"a.c"};
+    FileItem header = {"a.h"};
+    int compilationUnitNumber = addFileItemToFileTable(&compilationUnit);
+    int headerNumber = addFileItemToFileTable(&header);
+    addScannedInclude(compilationUnitNumber, headerNumber);
+
+    int closure[10];
+    int count = closureOf(compilationUnitNumber, closure, 10);
+
+    assert_that(count, is_equal_to(1));
+    assert_that(closure[0], is_equal_to(headerNumber));
 }
