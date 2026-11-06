@@ -541,14 +541,13 @@ implementation, and are noted in `cu-inputs`, `out-of-date`, `time-budget` and
     and that moment is the file's change time. Done for headers, and the mark is gone.
     Left: a config change removes every file's references, where
     `markAllCompilationUnitsStale()` is called today. A changed CU still loses its
-    references only when it is built, since its include references in the table are
-    also the include graph: `collectCUsIncluding()` and `buildIncludeGraph()` both read
-    them. A CU follows the same rule once the include graph outlives the removal.
+    references only when it is built. The include graph a request takes no longer
+    depends on them, since the scan's edges are facts on each file, so a CU can follow
+    the same rule as a header.
     A CU's own time is read from disk in `whyOutOfDate()`, not through `changeTimeOf()`,
     so a held CU that is let go is not seen as changed there. It goes onto the build list
     instead (`closeEditorBuffersNoLongerHeld()`). Read through `changeTimeOf()`, it is out
     of date by the same rule as a header, and that special case can go.
-    After: include-edges
     Goes with: out-of-date
 - (#109) <a id="session-refresh-time"></a>**A session refreshes a file by a time, not a flag** —
     a file's references get a time they last changed, never cleared, and a session
@@ -585,16 +584,6 @@ implementation, and are noted in `cu-inputs`, `out-of-date`, `time-budget` and
     proportion to what changed.
     Goes with: local-config-fragments
     After: cu-inputs
-- (#42) <a id="include-edges"></a>**Who writes include edges** — the parse and the lightweight
-    scan both do. The parse records the `#include`s the preprocessor took, quoted and
-    `<...>`, at their real lines. The scan records every quoted `#include`, `#ifdef` or
-    not, no `<...>`, all at line 1, column 0 of the includer. Today the scan wins after a
-    restart, so an include is listed twice (`tests/test_restart_keeps_includes_as_parsed`).
-    Decided: the scan's edges become a fact on the file, no longer references, and the
-    include graph is those facts together with the parse's include references
-    (`doc/freshness-after-adr-0035.md`). Then a changed file's includes are rescanned on
-    the remove line, by a scan time
-    (`tests/test_a_cu_that_starts_including_a_header_on_disk_is_among_its_includers`).
 - (#37) <a id="request-target"></a>**What a request needs** — the CUs that reach the request
     file's closure, and the whole project for an operation on a name. Left: the scan does
     not record `<...>`
@@ -657,7 +646,7 @@ implementation, and are noted in `cu-inputs`, `out-of-date`, `time-budget` and
     `06-principles.adoc:84`, `:340`-`:343`, `:358`, `08-algorithms.adoc:204` and
     `15-development-environment.adoc:118` stale.
     The include graph that a request takes now answers both directions, from the scan's
-    edges and the parse's include references (`include-edges`). That makes
+    edges and the parse's include references. That makes
     `20-insights.adoc:147`, `08-algorithms.adoc:222`-`:227` and
     `12-components.adoc:129` stale, since they describe a walk over `TypeCppInclude`
     references in the table.
