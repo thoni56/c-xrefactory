@@ -656,6 +656,11 @@ implementation, and are noted in `cu-inputs`, `out-of-date`, `time-budget` and
     Make, for the Goal" in `20-insights` is a start for its rewrite. ADR-0035 makes
     `06-principles.adoc:84`, `:340`-`:343`, `:358`, `08-algorithms.adoc:204` and
     `15-development-environment.adoc:118` stale.
+    The include graph that a request takes now answers both directions, from the scan's
+    edges and the parse's include references (`include-edges`). That makes
+    `20-insights.adoc:147`, `08-algorithms.adoc:222`-`:227` and
+    `12-components.adoc:129` stale, since they describe a walk over `TypeCppInclude`
+    references in the table.
     After: remove-on-change
 
 ## 8. Real users: installing and being found
