@@ -1,0 +1,11 @@
+CXREF -server
+-getproject CURDIR/definer.c
+<sync>
+-browse-push -cursor=24 CURDIR/definer.c
+<sync>
+!rm CURDIR/header.h
+-browse-push -cursor=24 CURDIR/definer.c
+<sync>
+-filter=0 -cursor=0 nil
+<sync>
+<exit>

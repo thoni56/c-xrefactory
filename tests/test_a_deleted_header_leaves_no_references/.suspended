@@ -1,0 +1,23 @@
+Bug: a header deleted on disk keeps its references and its include edges
+
+A header deleted between requests is never seen to change. In
+removeReferencesOfChangedFiles() (src/rebuild.c) the test is
+changeTime < contentTime, and a vanished file's content time reads as zero, so
+its references stay. rescanChangedFiles() (src/projectstructure.c) has the same
+blind spot, changedAfter(0, scanTime) is false, so its edges stay in the graph.
+markMissingFilesAsDeleted() only looks at CUs, and only on the first request or a
+config change. The includers are out of date (inputChangedAfter() counts zero as
+a change) and are built, but their #include fails and nothing removes what is
+already in header.h. It is not marked deleted, so the snapshot saves it again.
+
+Likely fix: a vanished file is a change, for headers and CUs alike. It is
+rescanned to no edges, its references are removed and it is marked deleted.
+That is the "changed" line of the shape in doc/docs/20-insights.adoc, which
+should include files that appeared or vanished. Files that appear are the other
+half of the gap: nothing finds them between requests today, and
+doc/docs/12-components.adoc ("Design boundary") accepts that. Directory
+modification times, which move when an entry is added, removed or renamed, are
+one way to find both.
+
+Found by reading the code, confirmed by this test (Mac, session 4839a129,
+2026-11-06).
