@@ -4,7 +4,7 @@ include ../Makefile.server
 #
 # Given a.c and b.c both include f.h, and b.c defines g and calls f
 # When the client asks for the project of a.c, and the server exits
-# Then the snapshot holds the files and their includes from the scan
+# Then the snapshot holds the files from the scan
 # And nothing that only a parse would find, like g or the call of f in b.c
 
 $(TEST): .c-xrefrc

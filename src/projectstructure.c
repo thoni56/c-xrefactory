@@ -41,7 +41,6 @@ static StringList *scanFileForIncludes(const char *filePath, int includerFileNum
     FILE *file = openFile((char *)filePath, "r");
     if (file == NULL)
         return NULL;
-    Position includerPosition = makePosition(includerFileNumber, 1, 0);
     char buf[SCAN_BUFFER_SIZE];
     size_t leftover = 0;
     size_t bytesRead;
@@ -72,7 +71,6 @@ static StringList *scanFileForIncludes(const char *filePath, int includerFileNum
                     strcpy(resolvedPath, resolved);
                     bool alreadyKnown = existsInFileTable(resolvedPath);
                     int includedFileNumber = addFileNameToFileTable(resolvedPath);
-                    addIncludeReference(includedFileNumber, includerPosition);
                     addScannedInclude(includerFileNumber, includedFileNumber);
                     if (!alreadyKnown)
                         discovered = newStringList(strdup(resolvedPath), discovered);

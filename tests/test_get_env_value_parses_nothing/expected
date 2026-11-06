@@ -12,6 +12,3 @@ end-of-options
 -exit
 end-of-options
 
-%%%i:f.h
-    @a.c:1:0
-    @b.c:1:0
