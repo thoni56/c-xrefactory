@@ -5,5 +5,6 @@
 
 extern StringList *scanProjectForFilesAndIncludes(const char *projectDir, StringList *includeDirs, StringList *prunePaths);
 extern void markMissingFilesAsDeleted(StringList *discoveredFiles);
+extern void rescanChangedFiles(StringList *includeDirs);
 
 #endif

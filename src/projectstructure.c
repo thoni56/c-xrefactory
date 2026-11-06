@@ -5,6 +5,8 @@
 #include "commons.h"
 #include "fileio.h"
 #include "filetable.h"
+#include "freshness.h"
+#include "log.h"
 #include "misc.h"
 #include "stringlist.h"
 #include "timestamp.h"
@@ -164,4 +166,21 @@ void markMissingFilesAsDeleted(StringList *discoveredFiles) {
         }
         fileNumber = getNextExistingFileNumber(fileNumber + 1);
     }
+}
+
+/* A file the scan has read is read again when it changed on disk after that,
+ * with the headers it now includes for the first time. Before the include
+ * graph is collected, since the goal is found from it. */
+void rescanChangedFiles(StringList *includeDirs) {
+    StringList *worklist = NULL;
+    for (int i = getNextExistingFileNumber(0); i != -1; i = getNextExistingFileNumber(i + 1)) {
+        FileItem *fileItem = getFileItemWithFileNumber(i);
+        if (fileTimestampIsZero(fileItem->scanTime))
+            continue;
+        if (!changedAfter(fileModificationTime(fileItem->name), fileItem->scanTime))
+            continue;
+        log_debug("'%s' changed after it was scanned, scanning it again", fileItem->name);
+        prependAllHeadersToWorklist(&worklist, scanFileForIncludes(fileItem->name, i, includeDirs));
+    }
+    scanDiscoveredHeaders(worklist, includeDirs);
 }

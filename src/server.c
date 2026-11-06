@@ -348,6 +348,9 @@ void callServer(ArgumentsVector baseArgs, ArgumentsVector requestArgs) {
         if (!scanDone || configChanged) {
             scanProjectStructure();
             scanDone = true;
+        } else {
+            /* The include graph is collected from what the scan found */
+            rescanChangedFiles(options.includeDirs);
         }
     }
 

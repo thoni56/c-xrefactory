@@ -9,3 +9,7 @@ StringList *scanProjectForFilesAndIncludes(const char *projectDir, StringList *i
 void markMissingFilesAsDeleted(StringList *discoveredFiles) {
     mock(discoveredFiles);
 }
+
+void rescanChangedFiles(StringList *includeDirs) {
+    mock(includeDirs);
+}

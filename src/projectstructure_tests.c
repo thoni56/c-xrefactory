@@ -10,6 +10,7 @@
 #include "commons.mock"
 #include "fileio.mock"
 #include "filetable.mock"
+#include "freshness.mock"
 #include "misc.mock"
 #include "yylex.mock"
 
@@ -627,4 +628,71 @@ Ensure(ProjectStructure, does_not_mark_header_as_deleted) {
     expect(getNextExistingFileNumber, will_return(-1));
 
     markMissingFilesAsDeleted(NULL);
+}
+
+
+static FileTimestamp scanTime = {.tv_sec = 1000, .tv_nsec = 0};
+static FileTimestamp diskTime = {.tv_sec = 2000, .tv_nsec = 0};
+
+static void given_one_file_in_the_table(FileItem *fileItem) {
+    expect(getNextExistingFileNumber, when(fileNumber, is_equal_to(0)), will_return(1));
+    always_expect(getFileItemWithFileNumber, when(fileNumber, is_equal_to(1)),
+                  will_return(fileItem));
+    expect(getNextExistingFileNumber, when(fileNumber, is_equal_to(2)), will_return(-1));
+}
+
+Ensure(ProjectStructure, rescans_a_file_that_changed_after_it_was_scanned) {
+    FileItem fileItem = {.name = "/project/a.c", .scanTime = scanTime};
+    given_one_file_in_the_table(&fileItem);
+    expect(fileModificationTime, when(path, is_equal_to_string("/project/a.c")),
+           will_return(&diskTime));
+    expect(changedAfter, will_return(true));
+    expect(openFile, when(fileName, is_equal_to_string("/project/a.c")),
+           will_return((FILE *)1));
+    expect(startScanOf, when(fileNumber, is_equal_to(1)));
+    expect(readFile, will_return(0));
+    expect(closeFile);
+
+    rescanChangedFiles(NULL);
+}
+
+Ensure(ProjectStructure, does_not_rescan_a_file_that_did_not_change_after_it_was_scanned) {
+    FileItem fileItem = {.name = "/project/a.c", .scanTime = scanTime};
+    given_one_file_in_the_table(&fileItem);
+    expect(fileModificationTime, will_return(&scanTime));
+    expect(changedAfter, will_return(false));
+    never_expect(openFile);
+
+    rescanChangedFiles(NULL);
+}
+
+/* Such as a system header, which only a parse has found */
+Ensure(ProjectStructure, does_not_scan_a_file_the_scan_never_read) {
+    FileItem fileItem = {.name = "/usr/include/stdio.h"};
+    given_one_file_in_the_table(&fileItem);
+    never_expect(fileModificationTime);
+    never_expect(openFile);
+
+    rescanChangedFiles(NULL);
+}
+
+Ensure(ProjectStructure, also_scans_a_header_a_rescanned_file_now_includes_for_the_first_time) {
+    FileItem fileItem = {.name = "/project/a.c", .scanTime = scanTime};
+    given_one_file_in_the_table(&fileItem);
+    expect(fileModificationTime, will_return(&diskTime));
+    expect(changedAfter, will_return(true));
+    char *content = "#include \"h.h\"\n";
+    expect(openFile, when(fileName, is_equal_to_string("/project/a.c")),
+           will_return((FILE *)1));
+    expect(startScanOf, when(fileNumber, is_equal_to(1)));
+    expect(readFile, will_set_contents_of_parameter(buffer, content, strlen(content)),
+           will_return(strlen(content)));
+    expect(readFile, will_return(0));
+    expect(closeFile);
+    given_include_resolves("h.h", "/project", "/project/h.h", 2, 1);
+    expect(addFileNameToFileTable, when(fileName, is_equal_to_string("/project/h.h")),
+           will_return(2));
+    given_header_with_content("/project/h.h", "/* no includes */\n");
+
+    rescanChangedFiles(NULL);
 }

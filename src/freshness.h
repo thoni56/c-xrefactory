@@ -26,6 +26,9 @@ typedef struct {
 /* The change time of a change the server makes itself, now (ADR-0035) */
 extern FileTimestamp changeTimeNow(void);
 
+/* Whether a file changed after its content was read, with the coarse clock's doubt */
+extern bool changedAfter(FileTimestamp changeTime, FileTimestamp readTime);
+
 extern Prerequisites *collectPrerequisites(void);
 extern void freePrerequisites(Prerequisites *prerequisites);
 

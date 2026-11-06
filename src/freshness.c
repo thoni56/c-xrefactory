@@ -63,8 +63,8 @@ FileTimestamp changeTimeNow(void) {
     return fileTimestampMinus(fileTimestampNow(), COARSE_CLOCK_GAP_IN_NANOSECONDS);
 }
 
-static bool changedAfter(FileTimestamp changeTime, FileTimestamp knowledgeTime) {
-    return fileTimestampIsLessThan(fileTimestampMinus(knowledgeTime, COARSE_CLOCK_GAP_IN_NANOSECONDS),
+bool changedAfter(FileTimestamp changeTime, FileTimestamp readTime) {
+    return fileTimestampIsLessThan(fileTimestampMinus(readTime, COARSE_CLOCK_GAP_IN_NANOSECONDS),
                                    changeTime);
 }
 
