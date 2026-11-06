@@ -597,10 +597,18 @@ watch-for-unittests:
 # Same as unit, and keeps the output in unittests.log so the result of the last
 # watcher run can be read by someone who was not watching the terminal.
 # pipefail makes the status the make's, not tee's, which is what execnotify reports on.
+# The unit tests wait for a system test run, since both write the coverage data in
+# .objects, and the unit tests clear the data in every test's .cov as well. The run
+# is known by its shell's PID, so a sentinel left by a killed run does not block.
+SYSTEM_TESTS_RUNNING = [ -f .systemtests.running ] && kill -0 $$(cat .systemtests.running) 2>/dev/null
+
 .PHONY: unit-logged
 unit-logged: SHELL := /bin/bash
 unit-logged:
-	@date "+Started %F %T" > unittests.log; \
+	@if $(SYSTEM_TESTS_RUNNING); then echo "Waiting for the system tests to finish" > unittests.log; \
+	else : > unittests.log; fi; \
+	while $(SYSTEM_TESTS_RUNNING); do sleep 1; done; \
+	date "+Started %F %T" >> unittests.log; \
 	set -o pipefail; $(MAKE) -j$(JOBS) unit 2>&1 | tee -a unittests.log; \
 	status=$$?; date "+Finished %F %T" | tee -a unittests.log; exit $$status
 
@@ -626,7 +634,8 @@ watch-for-systemtests:
 .PHONY: system-tests-logged
 system-tests-logged: SHELL := /bin/bash
 system-tests-logged:
-	@date "+Started %F %T" > systemtests.log; \
+	@echo $$$$ > .systemtests.running; trap 'rm -f .systemtests.running' EXIT; \
+	date "+Started %F %T" > systemtests.log; \
 	set -o pipefail; $(MAKE) -j$(JOBS) system-tests 2>&1 | tee -a systemtests.log; \
 	status=$$?; date "+Finished %F %T" | tee -a systemtests.log; exit $$status
 
