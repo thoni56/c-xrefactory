@@ -161,9 +161,10 @@ traced back to the man page.
 
 ## Check a fix against the shape
 
-A change to how a request finds, removes, builds or answers from knowledge is checked against the
-shape in `doc/docs/20-insights.adoc`, "The shape it converges to": remove, goal, build, answer, and
-the rule that the goal contains every CU whose references the answer reads.
+A change to how a request finds, scans, removes, builds or answers from knowledge is checked against
+the shape in `doc/docs/20-insights.adoc`, "The shape it converges to": its lines, and the rule that
+the goal contains every CU whose references the answer reads. The lines are not listed here, so that
+this cannot go stale.
 
 Say which line of the shape the fix belongs to. If it belongs to none, or moves away from it, say so
 before doing anything. A step that fits no line is a workaround, usually for the removal.

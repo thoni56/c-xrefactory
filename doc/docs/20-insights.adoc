@@ -157,7 +157,8 @@ Items in `doc/backlog.md`:
 * *The goal is too small* (`request-target`). We run `make request.o`, but the answer is linked from more objects than that.
 * *The config is not a prerequisite* (`out-of-date`). That is the classic Make pitfall where changing `CFLAGS` rebuilds nothing. `markAllCompilationUnitsStale()` covers it for now, but removes no references.
 * *A file changed on disk, outside the goal,* is not seen, and keeps its old references (`behind-the-back`).
-* *A missing include edge* (`include-edges`). A CU that reaches a changed header through an edge the table lacks is not out of date, so its part of the header is missing without that being known.
+* *A missing include edge* (`scan-angle-includes`). The scan's edges are facts about each file now, but it records no `<...>` includes. A CU that reaches a changed header through such an include alone is not out of date, so its part of the header is missing without that being known.
+* *Files that appear or vanish between requests* are not seen (`files-appear-vanish`). The prerequisites of a known file are checked, but a new file is not known, and a vanished header is not seen to change.
 * *A recipe that stops writing part of a shared output* leaves that part (`variant-b`). Make writes its targets whole, so it never meets this.
 * *The request's own recipe runs as part of the operation*, since the lexer finds the cursor during the parse. Reusing the knowledge when it is current is `cursor-parse-reuse`.
 
