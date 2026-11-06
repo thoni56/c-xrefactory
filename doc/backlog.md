@@ -344,6 +344,12 @@ Roadmap → Optimization has the baseline: a cold-start PUSH on ffmpeg, measured
 - (#17) <a id="scan-angle-includes"></a>**Extend the lightweight scan to `<...>` includes** — blocked on header-filtered
     sibling parsing, or ubiquitous system headers drag in nearly every CU. Also removes
     the cold-start double progress bar.
+    Measured on WSL, session `d25255b8`, 2026-11-06: in `tests/test_systemd`, 29 of about
+    7000 include lines name the project's own headers with `<...>`, 20 of them
+    `<libudev.h>`. `tests/test_ffmpeg` includes its own headers quoted. cgreen's own
+    sources are the large case, `<cgreen/...>` throughout. Resolving `<...>` against the
+    `-I` directories only, not the compiler's, might leave the system headers out and
+    lift the block.
     Waits for: header-filtered-siblings
     Goes with: project-extent
 - (#18) <a id="lexing-cache"></a>**Lexing cache re-introduction** — present in the original codebase, lost in
