@@ -535,6 +535,10 @@ implementation, and are noted in `cu-inputs`, `out-of-date`, `time-budget` and
     references only when it is built, since its include references in the table are
     also the include graph: `collectCUsIncluding()` and `buildIncludeGraph()` both read
     them. A CU follows the same rule once the include graph outlives the removal.
+    A CU's own time is read from disk in `whyOutOfDate()`, not through `changeTimeOf()`,
+    so a held CU that is let go is not seen as changed there. It goes onto the build list
+    instead (`closeEditorBuffersNoLongerHeld()`). Read through `changeTimeOf()`, it is out
+    of date by the same rule as a header, and that special case can go.
     After: include-edges
     Goes with: out-of-date
 - (#109) <a id="session-refresh-time"></a>**A session refreshes a file by a time, not a flag** —
