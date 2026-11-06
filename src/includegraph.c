@@ -2,6 +2,7 @@
 
 #include <stdio.h>
 #include <stdlib.h>
+#include <string.h>
 #include "filetable.h"
 #include "referenceableitemtable.h"
 #include "type.h"
@@ -32,7 +33,8 @@ typedef struct {
 } IncludeEdge;
 
 struct includeGraph {
-    IncludeEdge *edges;
+    IncludeEdge *edges;             /* Sorted by includer */
+    IncludeEdge *edgesByIncluded;   /* The same edges, sorted by included */
     int count;
     int allocated;
 };
@@ -65,21 +67,33 @@ static int compareByIncluder(const void *a, const void *b) {
     return 0;
 }
 
+static int compareByIncluded(const void *a, const void *b) {
+    const IncludeEdge *edgeA = a, *edgeB = b;
+    if (edgeA->included != edgeB->included)
+        return edgeA->included < edgeB->included ? -1 : 1;
+    return 0;
+}
+
 /* One pass over the include references and one over the includes the scan
- * found, so a closure can be walked without either. Sorted by includer, so
- * what a file includes is one run of edges */
+ * found, so a closure can be walked without either. Sorted both ways, so what
+ * a file includes, and what includes it, are each one run of edges */
 IncludeGraph *buildIncludeGraph(void) {
     IncludeGraph *graph = calloc(1, sizeof(IncludeGraph));
     mapOverReferenceableItemTableWithPointer(addEdgesOf, graph);
     for (int i = getNextExistingFileNumber(0); i != -1; i = getNextExistingFileNumber(i + 1))
         addScannedEdgesOf(getFileItemWithFileNumber(i), i, graph);
-    if (graph->count > 0)
+    if (graph->count > 0) {
         qsort(graph->edges, graph->count, sizeof(IncludeEdge), compareByIncluder);
+        graph->edgesByIncluded = malloc(graph->count * sizeof(IncludeEdge));
+        memcpy(graph->edgesByIncluded, graph->edges, graph->count * sizeof(IncludeEdge));
+        qsort(graph->edgesByIncluded, graph->count, sizeof(IncludeEdge), compareByIncluded);
+    }
     return graph;
 }
 
 void freeIncludeGraph(IncludeGraph *graph) {
     free(graph->edges);
+    free(graph->edgesByIncluded);
     free(graph);
 }
 
@@ -119,10 +133,23 @@ int collectIncludeClosure(IncludeGraph *graph, int fileNumber, int fileNumbers[]
     return included.count;
 }
 
+static int firstEdgeIncluding(IncludeGraph *graph, int included) {
+    int low = 0, high = graph->count;
+    while (low < high) {
+        int middle = low + (high - low) / 2;
+        if (graph->edgesByIncluded[middle].included < included)
+            low = middle + 1;
+        else
+            high = middle;
+    }
+    return low;
+}
+
 static void collectIncludersOf(IncludeGraph *graph, int fileNumber, IncludedFiles *includers) {
-    for (int i = 0; i < graph->count; i++) {
-        IncludeEdge *edge = &graph->edges[i];
-        if (edge->included == fileNumber && !isCollected(includers, edge->includer)) {
+    for (int i = firstEdgeIncluding(graph, fileNumber);
+         i < graph->count && graph->edgesByIncluded[i].included == fileNumber; i++) {
+        IncludeEdge *edge = &graph->edgesByIncluded[i];
+        if (!isCollected(includers, edge->includer)) {
             if (includers->count < includers->maxFileNumbers)
                 includers->fileNumbers[includers->count] = edge->includer;
             includers->count++;
