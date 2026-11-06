@@ -7,7 +7,6 @@
 #include "filetable.h"
 #include "misc.h"
 #include "stringlist.h"
-#include "yylex.h"
 
 
 #define SCAN_BUFFER_SIZE 4096
@@ -27,9 +26,9 @@ static char *resolveIncludePath(const char *includedFile, const char *includerPa
             return resolved;
     }
 
-    /* Not found anywhere — let the caller decide. Returning a phantom
+    /* Not found anywhere - let the caller decide. Returning a phantom
      * includer-relative path here would add a non-existent file to the
-     * file table and pollute the include graph in the reference table. */
+     * file table and pollute the include graph. */
     return NULL;
 }
 
@@ -55,7 +54,7 @@ static StringList *scanFileForIncludes(const char *filePath, int includerFileNum
             if (eol != NULL)
                 *eol = '\0';
             else {
-                /* Incomplete line — carry over to next read */
+                /* Incomplete line - carry over to next read */
                 leftover = buf + total - line;
                 memmove(buf, line, leftover);
                 break;

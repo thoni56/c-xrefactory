@@ -23,11 +23,11 @@ static void given_project_files(StringList *files) {
 }
 
 /* Single-level lister contract (Option A): describe one directory level.
- * Ordered expects — cgreen matches each mocked function's calls FIFO — so the
+ * Ordered expects - cgreen matches each mocked function's calls FIFO - so the
  * given_directory / given_is_directory calls in a test must be declared in the
  * order the walker visits (depth-first, listing order, prune-check first). A
  * pruned dir is expressed by simply NOT declaring it: any descent into it then
- * surfaces as an unexpected listFilesInDirectory call. Pure filesystem — knows
+ * surfaces as an unexpected listFilesInDirectory call. Pure filesystem - knows
  * nothing about prune policy; that arrives via the prunePaths argument. */
 static void given_directory(char *dir, StringList *entries) {
     expect(listFilesInDirectory, when(dirPath, is_equal_to_string(dir)),
@@ -99,7 +99,7 @@ AfterEach(ProjectStructure) {}
 Ensure(ProjectStructure, lightweight_scan_adds_nothing_for_empty_project_directory) {
     given_project_files(NULL);
     never_expect(addFileNameToFileTable);
-    never_expect(addIncludeReference);
+    never_expect(addScannedInclude);
 
     scanProjectForFilesAndIncludes("/empty/dir", NULL, NULL);
 }
@@ -107,12 +107,12 @@ Ensure(ProjectStructure, lightweight_scan_adds_nothing_for_empty_project_directo
 Ensure(ProjectStructure, lightweight_scan_adds_only_file_for_cu_without_includes) {
     given_project_files(newStringList("/project/source.c", NULL));
     given_cu_without_includes("/project/source.c");
-    never_expect(addIncludeReference);
+    never_expect(addScannedInclude);
 
     scanProjectForFilesAndIncludes("/project", NULL, NULL);
 }
 
-Ensure(ProjectStructure, lightweight_scan_adds_file_and_reference_for_single_include) {
+Ensure(ProjectStructure, lightweight_scan_adds_scanned_include_for_single_include) {
     given_project_files(newStringList("/project/source.c", NULL));
     given_cu_with_content("/project/source.c", 1, "#include \"header.h\"\n");
     given_include_resolves("header.h", "/project", "/project/header.h", 2, 1);
@@ -123,7 +123,7 @@ Ensure(ProjectStructure, lightweight_scan_adds_file_and_reference_for_single_inc
     scanProjectForFilesAndIncludes("/project", NULL, NULL);
 }
 
-Ensure(ProjectStructure, lightweight_scan_adds_references_for_multiple_includes) {
+Ensure(ProjectStructure, lightweight_scan_adds_scanned_includes_for_multiple_includes) {
     given_project_files(newStringList("/project/source.c", NULL));
     given_cu_with_content("/project/source.c", 1,
                           "#include \"alpha.h\"\n#include \"beta.h\"\n#include \"gamma.h\"\n");
@@ -189,7 +189,7 @@ Ensure(ProjectStructure, lightweight_scan_handles_include_split_across_buffer_bo
 Ensure(ProjectStructure, lightweight_scan_ignores_angle_bracket_includes) {
     given_project_files(newStringList("/project/source.c", NULL));
     given_cu_with_content("/project/source.c", 1, "#include <stdio.h>\n");
-    never_expect(addIncludeReference);
+    never_expect(addScannedInclude);
 
     scanProjectForFilesAndIncludes("/project", NULL, NULL);
 }
@@ -319,22 +319,24 @@ Ensure(ProjectStructure, lightweight_scan_skips_already_known_header_in_transiti
 Ensure(ProjectStructure, lightweight_scan_does_not_record_unresolved_include) {
     /* source.c → missing.h, but missing.h doesn't exist on disk.
      * The scan should attempt resolution, see fileExists fail, and
-     * skip entirely — no file-table entry, no include reference, no
+     * skip entirely - no file-table entry, no scanned include, no
      * later scan attempt. Phantom entries would pollute the snapshot
      * with non-existent files (the "doubled-path" pattern we saw in
      * ffmpeg). */
     given_project_files(newStringList("/project/source.c", NULL));
     given_cu_with_content("/project/source.c", 1, "#include \"missing.h\"\n");
 
-    /* Include resolution: try includer's dir — not found, no includeDirs */
+    /* Include resolution: try includer's dir - not found, no includeDirs */
     expect(directoryName_static, will_return("/project"));
     expect(normalizeFileName_static, when(name, is_equal_to_string("missing.h")),
            will_return("/project/missing.h"));
     expect(fileExists, when(fullPath, is_equal_to_string("/project/missing.h")),
            will_return(false));
 
-    /* No fallback, no addFileNameToFileTable, no addIncludeReference,
-     * no Phase 2 attempt — resolver returns NULL, caller skips. */
+    never_expect(addFileNameToFileTable);
+    never_expect(addScannedInclude);
+
+    /* The resolver returns NULL, so the caller skips the include */
 
     scanProjectForFilesAndIncludes("/project", NULL, NULL);
 }
@@ -351,7 +353,7 @@ Ensure(ProjectStructure, lightweight_scan_handles_circular_includes_without_infi
     given_header_with_content("/project/a.h", "#include \"b.h\"\n");
     given_include_resolves("b.h", "/project", "/project/b.h", 3, 2);
 
-    /* Phase 2: b.h includes a.h, but a.h is already known — cycle broken */
+    /* Phase 2: b.h includes a.h, but a.h is already known - cycle broken */
     expect(addFileNameToFileTable, when(fileName, is_equal_to_string("/project/b.h")),
            will_return(3));
     given_header_with_content("/project/b.h", "#include \"a.h\"\n");
@@ -366,13 +368,13 @@ Ensure(ProjectStructure, lightweight_scan_handles_circular_includes_without_infi
            will_return(2));
     expect(addScannedInclude, when(includerFileNumber, is_equal_to(3)),
            when(includedFileNumber, is_equal_to(2)));
-    /* No further scanning — worklist is empty */
+    /* No further scanning - worklist is empty */
 
     scanProjectForFilesAndIncludes("/project", NULL, NULL);
 }
 
 Ensure(ProjectStructure, lightweight_scan_follows_includes_regardless_of_file_extension) {
-    /* source.c → table.tc → table.th — scanner follows any quoted include */
+    /* source.c → table.tc → table.th - scanner follows any quoted include */
     given_project_files(newStringList("/project/source.c", NULL));
     given_cu_with_content("/project/source.c", 1, "#include \"table.tc\"\n");
     given_include_resolves("table.tc", "/project", "/project/table.tc", 2, 1);
@@ -395,13 +397,13 @@ Ensure(ProjectStructure, lightweight_scan_follows_includes_regardless_of_file_ex
 
 Ensure(ProjectStructure, lightweight_scan_prefers_includer_dir_over_includeDirs) {
     /* source.c includes "util.h", found in both /project/ and /project/lib/
-       — includer's directory should win */
+       - includer's directory should win */
     StringList *includeDirs = newStringList("/project/lib", NULL);
 
     given_project_files(newStringList("/project/source.c", NULL));
     given_cu_with_content("/project/source.c", 1, "#include \"util.h\"\n");
 
-    /* Include resolution: try includer's dir first — found */
+    /* Include resolution: try includer's dir first - found */
     expect(directoryName_static, will_return("/project"));
     expect(normalizeFileName_static, when(name, is_equal_to_string("util.h")),
            will_return("/project/util.h"));
@@ -442,14 +444,14 @@ Ensure(ProjectStructure, lightweight_scan_resolves_include_via_includeDirs_when_
     expect(readFile, will_return(0));
     expect(closeFile);
 
-    /* Include resolution: try includer's dir first — not found */
+    /* Include resolution: try includer's dir first - not found */
     expect(directoryName_static, will_return("/project"));
     expect(normalizeFileName_static, when(name, is_equal_to_string("util.h")),
            will_return("/project/util.h"));
     expect(fileExists, when(fullPath, is_equal_to_string("/project/util.h")),
            will_return(false));
 
-    /* Try first includeDirs entry — found */
+    /* Try first includeDirs entry - found */
     expect(normalizeFileName_static, when(name, is_equal_to_string("util.h")),
            will_return("/project/lib/util.h"));
     expect(fileExists, when(fullPath, is_equal_to_string("/project/lib/util.h")),
@@ -517,7 +519,7 @@ Ensure(ProjectStructure, lightweight_scan_prunes_directories) {
      *   /project/pruned/ pruned.c   <- must never be listed or descended
      *
      * Mocks are ordered (cgreen FIFO per function): declared below in the
-     * walker's call order — depth-first, listing order, prune-check first. */
+     * walker's call order - depth-first, listing order, prune-check first. */
     given_directory("/project",
                     newStringList("/project/main.c",
                     newStringList("/project/sub",
