@@ -78,7 +78,7 @@ extern bool completionStringServed;
 extern Usage olstringUsage;
 extern char *completionStringInMacroBody;
 
-/* Server session project lock — see definitions in globals.c. */
+/* Server session project lock - see definitions in globals.c. */
 extern char *lockedProject;
 
 #endif

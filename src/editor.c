@@ -376,7 +376,7 @@ EditorMarkerList *convertReferencesToEditorMarkers(Reference *references) {
                     if (*text == '\n') {
                         if (reference != NULL && file == reference->position.file
                             && line == reference->position.line) {
-                            /* col unreachable on this line — clamp marker to
+                            /* col unreachable on this line - clamp marker to
                              * current (end-of-line) position and advance to
                              * the next reference. Mirrors the past-EOF
                              * fallback below, but caught at line scope to

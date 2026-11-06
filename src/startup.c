@@ -424,7 +424,7 @@ static void loadProjectSettings(ArgumentsVector baseArgs, ArgumentsVector reques
     log_debug("initializeFileProcessing - if-branch, cleanCheckpoint.saved=%d", cleanCheckpoint.saved);
 
     initCwd();
-    initOptions();  /* TODO: should be initProjectOptions() — only PROJECT fields need
+    initOptions();  /* TODO: should be initProjectOptions() - only PROJECT fields need
                      * resetting here. Resetting SESSION/REQUEST fields forces callers to
                      * save/restore them (see startup loop in server.c). */
 
@@ -496,7 +496,7 @@ static void loadProjectSettings(ArgumentsVector baseArgs, ArgumentsVector reques
 }
 
 /* Pure predicate: has the .c-xrefrc file been modified since we last read it?
- * No side effects — only stats the file and compares mtime. */
+ * No side effects - only stats the file and compares mtime. */
 bool isProjectConfigChanged(void) {
     if (previousProjectConfigurationFile[0] == '\0')
         return false;

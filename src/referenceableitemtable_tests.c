@@ -42,7 +42,7 @@ Ensure(ReferenceableItemTable, can_retrieve_item_using_index) {
 Ensure(ReferenceableItemTable, removes_references_from_chained_items) {
     int SOME_FILE = 42;
 
-    /* Use table size 1 to force hash collision — both items land in bucket 0 */
+    /* Use table size 1 to force hash collision - both items land in bucket 0 */
     initReferenceableItemTable(1);
 
     Reference ref1 = {.position = {.file = SOME_FILE, .line = 10, .col = 1}, .usage = UsageDefined};

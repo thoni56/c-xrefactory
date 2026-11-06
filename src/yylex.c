@@ -742,7 +742,7 @@ static void processInclude2(Position includePosition, char includeType, char *in
 
     sprintf(tmpBuff, "PragmaOnce-%s", includedName);
     if (findMacroSymbol(tmpBuff) != NULL) {
-        /* File already included — skip content but still create the include
+        /* File already included - skip content but still create the include
          * reference so PUSH navigation works on this #include line. */
         int fileNumber = resolveIncludeFileNumber(includeType, includedName);
         if (fileNumber != -1)

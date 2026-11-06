@@ -1828,7 +1828,7 @@ static void handleProject() {
                      * next-request init gate doesn't re-detect a different
                      * project root from a file in another tree. Snapshot is
                      * already loaded by server.c's initializeProjectContext
-                     * path that ran earlier in this request — don't load again
+                     * path that ran earlier in this request - don't load again
                      * (tripwire snapshotLoadComplete forbids it). */
                     deepCopyOptionsFromTo(&options, &savedOptions);
                     markProjectContextInitialized();

@@ -54,7 +54,7 @@ Ensure(Fileio, lists_entries_of_directory_without_recursing_into_subdirectories)
     /* ... a subdirectory is returned as an entry (so the walker above can
      * decide whether to descend) ... */
     assert_that(listContains(entries, FILEIO_TMP "/sub"), is_true);
-    /* ... but files inside a subdirectory are NOT — no recursion. */
+    /* ... but files inside a subdirectory are NOT - no recursion. */
     assert_that(listContains(entries, FILEIO_TMP "/sub/nested.c"), is_false);
 
     freeStringList(entries);

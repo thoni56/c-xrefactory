@@ -4,7 +4,7 @@
 #include <string.h>
 
 
-/* Allocates with malloc — use for temporary lists, tests, etc. */
+/* Allocates with malloc - use for temporary lists, tests, etc. */
 StringList *newStringList(char *string, StringList *next) {
     StringList *new = (StringList *)malloc(sizeof(StringList));
     new->string = strdup(string);

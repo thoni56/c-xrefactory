@@ -122,7 +122,7 @@ static FILE *cxFile = NULL;
 static FILE *currentCxFile;
 
 /* Tripwire: once the initial snapshot load has completed, no further
- * disk reads should occur — memory is truth. Any scanCxFile call after
+ * disk reads should occur - memory is truth. Any scanCxFile call after
  * this flag flips trips an assert. See ideas_disk_read_tripwire. */
 static bool snapshotLoadComplete = false;
 
@@ -700,7 +700,7 @@ static void scanCxFileUsing(CxFileScanDispatchEntry *scanDispatchTable) {
 
 /* suffix contains '/' at the beginning !!! */
 static bool scanCxFile(char *cxFileLocation, CxFileScanDispatchEntry *scanDispatchTable) {
-    assert(!snapshotLoadComplete && "post-startup disk read — see Principles: Memory As Truth");
+    assert(!snapshotLoadComplete && "post-startup disk read - see Principles: Memory As Truth");
 
     log_trace(":scanning file %s", cxFileLocation);
     currentCxFile = openFile(cxFileLocation, "r");

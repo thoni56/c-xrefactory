@@ -560,7 +560,7 @@ static EditorMarker *adjustMarkerForInclude(EditorMarker *marker) {
     EditorBuffer *buffer    = getOpenedAndLoadedEditorBuffer(marker->buffer->fileName);
     EditorMarker *newMarker = newEditorMarker(buffer, marker->offset);
 
-    /* Skip markers that aren't on #include directives — identity references
+    /* Skip markers that aren't on #include directives - identity references
      * for intermediate headers in the include chain point to #ifndef, not #include */
     if (buffer->allocation.text[newMarker->offset] != '#') {
         freeEditorMarker(newMarker);
@@ -834,7 +834,7 @@ static void renameAtInclude(EditorMarker *point) {
 
     /* Skip the multiple-occurrences safety check for include/module rename.
      * Identity references (UsageDefined at offset 0 of headers in the include
-     * chain) cause false positives — they're not #include directives.
+     * chain) cause false positives - they're not #include directives.
      *
      * NOTE: If we ever support renaming macro-based includes (#include MACRO),
      * the -pass feature could produce legitimate multiple symbols at the same
@@ -1205,7 +1205,7 @@ static void applyParameterManipulationToFunction(char *functionName, EditorMarke
     int progress, count;
 
     /* Pass 1: validate every occurrence resolves to the expected function name.
-     * A mismatch means the reference position is stale or composed — refactoring
+     * A mismatch means the reference position is stale or composed - refactoring
      * any subset would leave the program in a partially-edited state. Abort early
      * so no undo records get queued. */
     for (EditorMarkerList *l = occurrences; l != NULL; l = l->next) {
@@ -1297,7 +1297,7 @@ void serverPerformRefactoring(void) {
 
     refactoringStartingPoint = editorUndo;
 
-    /* Server is already initialized — no mainTaskEntryInitialisations needed */
+    /* Server is already initialized - no mainTaskEntryInitialisations needed */
 
     progressFactor = 1;
 

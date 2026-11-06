@@ -23,7 +23,7 @@
  * This means NEXT walks: definition → usages in filename order.
  *
  * Initial positioning (PUSH): a linear scan finds the reference nearest the
- * cursor in the caller's file — no dependency on sort order.
+ * cursor in the caller's file - no dependency on sort order.
  *
  * After entry refresh: restore to nearest match of the saved position,
  * then advance (NEXT) or retreat (PREVIOUS) in list order. This avoids
@@ -126,7 +126,7 @@ void setCurrentReferenceToNextOrFirst(SessionStackEntry *sessionEntry, Reference
  *
  * 2. Browsing stack update (here): NEXT/PREVIOUS check the flag and update the
  *    browsing stack's reference list from the refreshed reference table. This is
- *    a stack update only — no reparsing happens here.
+ *    a stack update only - no reparsing happens here.
  */
 
 /* TODO: Technical Debt from extracting `navigation` */

@@ -107,7 +107,7 @@ void recursivelyDeleteDirectory(char *dirName) {
 }
 
 /* List a single directory level: every reasonable entry (files and
- * subdirectories alike) as a full path. This is a pure fileio primitive — it
+ * subdirectories alike) as a full path. This is a pure fileio primitive - it
  * does NOT recurse, and applies no project policy (no -prune). The recursive,
  * prune-aware walk lives in the layer above (projectstructure), which stats
  * each returned entry and decides whether to descend. */

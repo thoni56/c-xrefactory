@@ -111,16 +111,16 @@ Ensure(Extract, recognizes_implicit_function_shadow_link_name) {
      * `extern int pos()` symbol. This is what we want to detect. */
     assert_that(isImplicitFunctionShadowLinkName(" extern !int! !pos!()!27c-9-13-7"), is_true);
 
-    /* Local variable declaration (`int pos = 0;`) — same name, but storage
+    /* Local variable declaration (`int pos = 0;`) - same name, but storage
      * auto and no function-type marker. Must not be matched. */
     assert_that(isImplicitFunctionShadowLinkName(" !int! !pos!!27c-5-8-4"), is_false);
 
-    /* Local function-pointer (`int (*f)() = ...;`) — has `()` from function
+    /* Local function-pointer (`int (*f)() = ...;`) - has `()` from function
      * type but storage auto; the prefix `" extern !int! !"` rules it out. */
     assert_that(isImplicitFunctionShadowLinkName(" !int! (* !f! )()!27c-5-8-4"), is_false);
 
     /* Explicit extern function-pointer declared inside the region
-     * (`extern int (*f)();`) — storage extern and `()` present, but the
+     * (`extern int (*f)();`) - storage extern and `()` present, but the
      * parenthesis disturbs the prefix (position 14 is `(`, not `!`). */
     assert_that(isImplicitFunctionShadowLinkName(" extern !int! (* !f! )()!27c-5-8-4"), is_false);
 }

@@ -1566,7 +1566,7 @@ int addRequestFileToFileTable(StringList *operands) {
 
 /* Apply convention-based database path for auto-detected projects.
  * Called after options processing to set cxFileLocation to <projectRoot>/.c-xref/db.
- * Any -refs from .c-xrefrc is ignored — the snapshot location is a convention,
+ * Any -refs from .c-xrefrc is ignored - the snapshot location is a convention,
  * not a configuration option.
  */
 void applyConventionBasedDatabasePath(void) {

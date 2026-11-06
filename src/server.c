@@ -37,7 +37,7 @@ const char *operationNamesTable[] = {
  * has been fully initialized (savedOptions synced, snapshot loaded).
  * Promoted from function-local static to module scope so cxref.c's
  * handleProject can mark it true after locking via the GetProject path
- * — otherwise the next request's gate would re-detect from a different
+ * - otherwise the next request's gate would re-detect from a different
  * file and clobber the lock. See markProjectContextInitialized() below. */
 static bool projectContextInitialized = false;
 
@@ -305,7 +305,7 @@ void callServer(ArgumentsVector baseArgs, ArgumentsVector requestArgs) {
 
     BuildList *buildList = newBuildList(MAX_CUS_TO_REPARSE);
 
-    /* Close preloaded buffers that the client no longer sends — the user has saved
+    /* Close preloaded buffers that the client no longer sends - the user has saved
      * and/or closed the file in the editor. Without this, the server would keep parsing
      * from preloaded content the client has dropped. */
     closeEditorBuffersNoLongerHeld(buildList);
@@ -324,7 +324,7 @@ void callServer(ArgumentsVector baseArgs, ArgumentsVector requestArgs) {
             loadSnapshotFromStore();
             projectContextInitialized = true;
         } else {
-            /* No project configuration found — c-xrefactory cannot operate.
+            /* No project configuration found - c-xrefactory cannot operate.
              * OP_GET_PROJECT answers that itself; other operations need an
              * explicit message. */
             if (options.serverOperation != OP_GET_PROJECT)

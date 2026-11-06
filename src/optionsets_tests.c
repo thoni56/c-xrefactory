@@ -104,7 +104,7 @@ Ensure(OptionSets, readPassOptions_merges_sections_with_same_pass_number) {
 
     readOptionSets(NULL, &d);
 
-    assert_that(d.set[1], is_non_null);        // both defines live here — membership, not order
+    assert_that(d.set[1], is_non_null);        // both defines live here - membership, not order
     /* assert delta[1] contains -DPASS1 AND -DPASS2 (walk the list, order-agnostic) */
     assert_that(stringListContains(d.set[1], "-DPASS1"));
     assert_that(stringListContains(d.set[1], "-DPASS2"));

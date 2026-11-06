@@ -50,7 +50,7 @@ Ensure(LspAdapter, findDefinition_returns_null_when_no_referenceable_at_position
 
     expect(getFileNumberFromFileName, will_return(1));
 
-    /* No testItem set — mapOver yields nothing */
+    /* No testItem set - mapOver yields nothing */
 
     cJSON *result = findDefinition(uri, position);
 
