@@ -68,6 +68,7 @@ flowchart BT
   rename_partial_in_broken_code["§5 · 97 · Rename in code that does not parse leaves occurrences behind"]
   remove_references_stopgap["§5 · 20 · Take the client's #quot;Remove References and Restart Server#quot; back out"]
   index_based_sessions["§5 · 22 · Index-based sessions"]
+  rename_leaves_sessions["§5 · 110 · A rename leaves its safety-check sessions on the browsing stack"]
   retry_creating_request["§5 · 24 · Retry the request that created the project"]
   lsp_tiers["§5 · 25 · LSP tiers 1–2"]
   move_function_next["§5 · 26 · Move Function next steps"]
@@ -92,7 +93,6 @@ flowchart BT
   cap_is_a_question["§7 · 107 · The cap becomes a question for every request"]
   cu_inputs["§7 · 35 · A CU's inputs"]
   out_of_date["§7 · 36 · The config as an input of `knowledgeIsOutOfDate()`"]
-  include_edges["§7 · 42 · Who writes include edges"]
   request_target["§7 · 37 · What a request needs"]
   request_through_includers["§7 · 54 · A request in a header is parsed through its includers"]
   cursor_parse_reuse["§7 · 1 · The request CU is parsed for the cursor, also when its knowledge is current"]
@@ -158,7 +158,6 @@ flowchart BT
   move_includes -.-&gt; move_header_for_callers
   project_extent -.-&gt; local_config_fragments
   local_config_fragments -.-&gt; compile_commands
-  include_edges -.-&gt; remove_on_change
   remove_on_change -.-&gt; cap_is_a_question
   cu_inputs -.-&gt; out_of_date
   request_through_includers -.-&gt; cursor_parse_reuse
@@ -215,6 +214,7 @@ flowchart BT
   class rename_partial_in_broken_code ready
   class remove_references_stopgap blocked
   class index_based_sessions ready
+  class rename_leaves_sessions ready
   class retry_creating_request ready
   class lsp_tiers ready
   class move_function_next ready
@@ -239,7 +239,6 @@ flowchart BT
   class cap_is_a_question ready
   class cu_inputs ready
   class out_of_date ready
-  class include_edges ready
   class request_target ready
   class request_through_includers ready
   class cursor_parse_reuse ready
