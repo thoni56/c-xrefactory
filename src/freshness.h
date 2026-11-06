@@ -3,22 +3,21 @@
 
 #include <stdbool.h>
 
-#include "includegraph.h"
 #include "timestamp.h"
 
 
-/* What the knowledge of a CU is built from, collected once per request */
-typedef struct inputs Inputs;
+/* Which files the knowledge of a CU depends on, and when they changed, as a request sees them */
+typedef struct prerequisites Prerequisites;
 
 typedef enum {
     KNOWLEDGE_CURRENT,
     KNOWLEDGE_MISSING,
     CU_CHANGED,
-    INPUT_CHANGED,
+    PREREQUISITE_CHANGED,
     CLOSURE_TOO_LARGE,
 } OutOfDateReason;
 
-/* Why the knowledge of a CU is out of date, and the input that made it so */
+/* Why the knowledge of a CU is out of date, and the prerequisite that made it so */
 typedef struct {
     OutOfDateReason reason;
     int             fileNumber;
@@ -27,12 +26,12 @@ typedef struct {
 /* The change time of a change the server makes itself, now (ADR-0035) */
 extern FileTimestamp changeTimeNow(void);
 
-extern Inputs *collectInputs(void);
-extern void freeInputs(Inputs *inputs);
+extern Prerequisites *collectPrerequisites(void);
+extern void freePrerequisites(Prerequisites *prerequisites);
 
-extern OutOfDate whyKnowledgeIsOutOfDate(Inputs *inputs, int fileNumber);
-extern bool knowledgeIsOutOfDate(Inputs *inputs, int fileNumber);
-extern int collectIncludeClosureOf(Inputs *inputs, int fileNumber, int fileNumbers[],
+extern OutOfDate whyKnowledgeIsOutOfDate(Prerequisites *prerequisites, int fileNumber);
+extern bool knowledgeIsOutOfDate(Prerequisites *prerequisites, int fileNumber);
+extern int collectIncludeClosureOf(Prerequisites *prerequisites, int fileNumber, int fileNumbers[],
                                    int maxFileNumbers);
 
 #endif

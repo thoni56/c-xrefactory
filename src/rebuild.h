@@ -16,17 +16,17 @@ extern bool addToBuildList(BuildList *list, int fileNumber);
 
 extern int collectCUsIncluding(int fileNumber, int cuFileNumbers[], int cuCount, int maxCUs);
 
-extern void collectOutOfDateHeldCUs(BuildList *list, Inputs *inputs);
-extern void collectSiblingCUs(BuildList *list, Inputs *inputs, int requestFileNumber);
+extern void collectOutOfDateHeldCUs(BuildList *list, Prerequisites *prerequisites);
+extern void collectSiblingCUs(BuildList *list, Prerequisites *prerequisites, int requestFileNumber);
 extern void buildKnowledgeOfAll(BuildList *list, ArgumentsVector baseArgs);
-extern void collectRequestCUForStripping(BuildList *list, Inputs *inputs, int requestFileNumber);
-extern void collectRequestCUToBuild(BuildList *list, Inputs *inputs, int requestFileNumber);
+extern void collectRequestCUForStripping(BuildList *list, Prerequisites *prerequisites, int requestFileNumber);
+extern void collectRequestCUToBuild(BuildList *list, Prerequisites *prerequisites, int requestFileNumber);
 extern void stripRequestCU(BuildList *list, int requestFileNumber);
-extern void collectOutOfDateCUs(BuildList *list, Inputs *inputs);
+extern void collectOutOfDateCUs(BuildList *list, Prerequisites *prerequisites);
 extern int buildListCount(BuildList *list);
 
 /* A file's references are removed when its content changes (ADR-0035) */
-extern void removeReferencesOfChangedFiles(Inputs *inputs);
+extern void removeReferencesOfChangedFiles(Prerequisites *prerequisites);
 extern void letGoOfHeldHeader(int fileNumber);
 
 /* Mark every compilation unit unparsed so the next entry refresh reparses it.

@@ -15,29 +15,29 @@ typedef struct {
     FileTimestamp time;
 } ChangeTime;
 
-struct inputs {
+struct prerequisites {
     IncludeGraph *includeGraph;
     ChangeTime   *changeTimes;   /* By file number, each asked for once per request */
 };
 
-Inputs *collectInputs(void) {
-    Inputs *inputs = malloc(sizeof(Inputs));
-    inputs->includeGraph = buildIncludeGraph();
-    inputs->changeTimes = calloc(MAX_FILES, sizeof(ChangeTime));
-    return inputs;
+Prerequisites *collectPrerequisites(void) {
+    Prerequisites *prerequisites = malloc(sizeof(Prerequisites));
+    prerequisites->includeGraph = buildIncludeGraph();
+    prerequisites->changeTimes = calloc(MAX_FILES, sizeof(ChangeTime));
+    return prerequisites;
 }
 
-void freeInputs(Inputs *inputs) {
-    freeIncludeGraph(inputs->includeGraph);
-    free(inputs->changeTimes);
-    free(inputs);
+void freePrerequisites(Prerequisites *prerequisites) {
+    freeIncludeGraph(prerequisites->includeGraph);
+    free(prerequisites->changeTimes);
+    free(prerequisites);
 }
 
 /* A file that no longer exists has a zero time, which is remembered like any
  * other. A held file let go changed when it was let go, which is later than its
  * time on disk (ADR-0035). */
-static FileTimestamp changeTimeOf(Inputs *inputs, int fileNumber) {
-    ChangeTime *changeTime = &inputs->changeTimes[fileNumber];
+static FileTimestamp changeTimeOf(Prerequisites *prerequisites, int fileNumber) {
+    ChangeTime *changeTime = &prerequisites->changeTimes[fileNumber];
     if (!changeTime->known) {
         FileItem *fileItem = getFileItemWithFileNumber(fileNumber);
         changeTime->time = editorFileModificationTime(fileItem->name);
@@ -68,36 +68,36 @@ static bool changedAfter(FileTimestamp changeTime, FileTimestamp knowledgeTime) 
                                    changeTime);
 }
 
-/* An input that no longer exists has no modification time, and the knowledge
- * of it is out of date as well */
-static bool inputChangedAfter(FileTimestamp changeTime, FileTimestamp knowledgeTime) {
+/* A prerequisite that no longer exists has no modification time, and knowledge built
+ * from it is out of date as well */
+static bool prerequisiteChangedAfter(FileTimestamp changeTime, FileTimestamp knowledgeTime) {
     return fileTimestampIsZero(changeTime) || changedAfter(changeTime, knowledgeTime);
 }
 
-int collectIncludeClosureOf(Inputs *inputs, int fileNumber, int fileNumbers[],
+int collectIncludeClosureOf(Prerequisites *prerequisites, int fileNumber, int fileNumbers[],
                             int maxFileNumbers) {
-    return collectIncludeClosure(inputs->includeGraph, fileNumber, fileNumbers, maxFileNumbers);
+    return collectIncludeClosure(prerequisites->includeGraph, fileNumber, fileNumbers, maxFileNumbers);
 }
 
-static OutOfDate whyOutOfDate(Inputs *inputs, int fileNumber, FileItem *fileItem) {
+static OutOfDate whyOutOfDate(Prerequisites *prerequisites, int fileNumber, FileItem *fileItem) {
     if (fileTimestampIsZero(fileItem->knowledgeTime))
         return (OutOfDate){KNOWLEDGE_MISSING, fileNumber};
-    if (inputChangedAfter(editorFileModificationTime(fileItem->name), fileItem->knowledgeTime))
+    if (prerequisiteChangedAfter(editorFileModificationTime(fileItem->name), fileItem->knowledgeTime))
         return (OutOfDate){CU_CHANGED, fileNumber};
 
     int closure[MAX_INCLUDE_CLOSURE];
-    int count = collectIncludeClosure(inputs->includeGraph, fileNumber, closure, MAX_INCLUDE_CLOSURE);
+    int count = collectIncludeClosure(prerequisites->includeGraph, fileNumber, closure, MAX_INCLUDE_CLOSURE);
     if (count > MAX_INCLUDE_CLOSURE)
         return (OutOfDate){CLOSURE_TOO_LARGE, fileNumber};
     for (int i = 0; i < count; i++) {
-        if (inputChangedAfter(changeTimeOf(inputs, closure[i]), fileItem->knowledgeTime))
-            return (OutOfDate){INPUT_CHANGED, closure[i]};
+        if (prerequisiteChangedAfter(changeTimeOf(prerequisites, closure[i]), fileItem->knowledgeTime))
+            return (OutOfDate){PREREQUISITE_CHANGED, closure[i]};
     }
     return (OutOfDate){KNOWLEDGE_CURRENT, fileNumber};
 }
 
-OutOfDate whyKnowledgeIsOutOfDate(Inputs *inputs, int fileNumber) {
-    return whyOutOfDate(inputs, fileNumber, getFileItemWithFileNumber(fileNumber));
+OutOfDate whyKnowledgeIsOutOfDate(Prerequisites *prerequisites, int fileNumber) {
+    return whyOutOfDate(prerequisites, fileNumber, getFileItemWithFileNumber(fileNumber));
 }
 
 static void logOutOfDate(char *name, OutOfDate outOfDate) {
@@ -110,7 +110,7 @@ static void logOutOfDate(char *name, OutOfDate outOfDate) {
     case CU_CHANGED:
         log_info("'%s' is out of date: it changed", name);
         break;
-    case INPUT_CHANGED:
+    case PREREQUISITE_CHANGED:
         log_info("'%s' is out of date: '%s' changed", name,
                  getFileItemWithFileNumber(outOfDate.fileNumber)->name);
         break;
@@ -120,9 +120,9 @@ static void logOutOfDate(char *name, OutOfDate outOfDate) {
     }
 }
 
-bool knowledgeIsOutOfDate(Inputs *inputs, int fileNumber) {
+bool knowledgeIsOutOfDate(Prerequisites *prerequisites, int fileNumber) {
     FileItem *fileItem = getFileItemWithFileNumber(fileNumber);
-    OutOfDate outOfDate = whyOutOfDate(inputs, fileNumber, fileItem);
+    OutOfDate outOfDate = whyOutOfDate(prerequisites, fileNumber, fileItem);
     logOutOfDate(fileItem->name, outOfDate);
     return outOfDate.reason != KNOWLEDGE_CURRENT;
 }

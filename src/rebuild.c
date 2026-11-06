@@ -72,18 +72,18 @@ static void setupProgress(BuildList *list) {
 }
 
 /* The request is parsed by the operation itself, not here */
-void collectRequestCUForStripping(BuildList *list, Inputs *inputs, int requestFileNumber) {
+void collectRequestCUForStripping(BuildList *list, Prerequisites *prerequisites, int requestFileNumber) {
     if (isCompilationUnit(getFileItemWithFileNumber(requestFileNumber)->name)
-        && knowledgeIsOutOfDate(inputs, requestFileNumber)) {
+        && knowledgeIsOutOfDate(prerequisites, requestFileNumber)) {
         list->built[requestFileNumber] = true;
         list->stripRequest = true;
     }
 }
 
 /* An operation that parses nothing has its request built like any other CU (#91) */
-void collectRequestCUToBuild(BuildList *list, Inputs *inputs, int requestFileNumber) {
+void collectRequestCUToBuild(BuildList *list, Prerequisites *prerequisites, int requestFileNumber) {
     if (isCompilationUnit(getFileItemWithFileNumber(requestFileNumber)->name)
-        && knowledgeIsOutOfDate(inputs, requestFileNumber))
+        && knowledgeIsOutOfDate(prerequisites, requestFileNumber))
         addToBuildList(list, requestFileNumber);
 }
 
@@ -101,7 +101,7 @@ void stripRequestCU(BuildList *list, int requestFileNumber) {
 /* The siblings of the request: the CUs that reach the request file or a header it
  * includes, at any depth, also through a file that is not a CU, such as a mock or
  * another header. Those out of date go on the build list. */
-void collectSiblingCUs(BuildList *list, Inputs *inputs, int requestFileNumber) {
+void collectSiblingCUs(BuildList *list, Prerequisites *prerequisites, int requestFileNumber) {
     log_info("Siblings of '%s' (fileNumber=%d)",
              getFileItemWithFileNumber(requestFileNumber)->name, requestFileNumber);
 
@@ -111,7 +111,7 @@ void collectSiblingCUs(BuildList *list, Inputs *inputs, int requestFileNumber) {
      * headers it includes */
     int *headers = malloc((MAX_FILES + 1) * sizeof(int));
     headers[0] = requestFileNumber;
-    int headerCount = 1 + collectIncludeClosureOf(inputs, requestFileNumber, &headers[1], MAX_FILES);
+    int headerCount = 1 + collectIncludeClosureOf(prerequisites, requestFileNumber, &headers[1], MAX_FILES);
     int skippedCurrent = 0;
 
     int *siblingCUs = malloc(MAX_FILES * sizeof(int));
@@ -133,7 +133,7 @@ void collectSiblingCUs(BuildList *list, Inputs *inputs, int requestFileNumber) {
             asked[siblingFileNum] = true;
             if (list->built[siblingFileNum])
                 continue; /* Held, and on the list already */
-            if (!knowledgeIsOutOfDate(inputs, siblingFileNum)) {
+            if (!knowledgeIsOutOfDate(prerequisites, siblingFileNum)) {
                 skippedCurrent++;
                 continue;
             }
@@ -152,10 +152,10 @@ void collectSiblingCUs(BuildList *list, Inputs *inputs, int requestFileNumber) {
 }
 
 /* For an operation on a name: every CU in the project that is out of date */
-void collectOutOfDateCUs(BuildList *list, Inputs *inputs) {
+void collectOutOfDateCUs(BuildList *list, Prerequisites *prerequisites) {
     for (int i = getNextExistingFileNumber(0); i != -1; i = getNextExistingFileNumber(i + 1)) {
         FileItem *fileItem = getFileItemWithFileNumber(i);
-        if (isCompilationUnit(fileItem->name) && !fileItem->isDeleted && knowledgeIsOutOfDate(inputs, i))
+        if (isCompilationUnit(fileItem->name) && !fileItem->isDeleted && knowledgeIsOutOfDate(prerequisites, i))
             addToBuildList(list, i);
     }
 }
@@ -173,13 +173,13 @@ void markAllCompilationUnitsStale(void) {
  * depends on what it includes. Every CU that reaches it also reaches the
  * changed one, so no other CU becomes out of date (ADR-0035). The graph was
  * collected before anything was removed. */
-static void removeReferencesOfIncludersOfChanged(Inputs *inputs, int headers[], FileItem *items[],
+static void removeReferencesOfIncludersOfChanged(Prerequisites *prerequisites, int headers[], FileItem *items[],
                                                  int headerCount, FileTimestamp changedAt[]) {
     int *closure = malloc(MAX_FILES * sizeof(int));
     for (int h = 0; h < headerCount; h++) {
         if (!fileTimestampIsZero(changedAt[headers[h]]))
             continue;
-        int closureCount = collectIncludeClosureOf(inputs, headers[h], closure, MAX_FILES);
+        int closureCount = collectIncludeClosureOf(prerequisites, headers[h], closure, MAX_FILES);
         for (int c = 0; c < closureCount && c < MAX_FILES; c++) {
             if (!fileTimestampIsZero(changedAt[closure[c]])) {
                 log_debug("'%s' includes a changed header, removing its references", items[h]->name);
@@ -206,7 +206,7 @@ static FileTimestamp contentTimeOf(FileItem *fileItem) {
  * references lead to its siblings until then, so only headers here. A header
  * seen for the first time has its change time recorded, and keeps what the
  * table has. */
-void removeReferencesOfChangedFiles(Inputs *inputs) {
+void removeReferencesOfChangedFiles(Prerequisites *prerequisites) {
     int *headers = malloc(MAX_FILES * sizeof(int));
     FileItem **items = malloc(MAX_FILES * sizeof(FileItem *));
     FileTimestamp *changedAt = calloc(MAX_FILES, sizeof(FileTimestamp)); /* Zero if not */
@@ -233,7 +233,7 @@ void removeReferencesOfChangedFiles(Inputs *inputs) {
     }
 
     if (anyChanged)
-        removeReferencesOfIncludersOfChanged(inputs, headers, items, headerCount, changedAt);
+        removeReferencesOfIncludersOfChanged(prerequisites, headers, items, headerCount, changedAt);
 
     free(changedAt);
     free(items);
@@ -318,22 +318,22 @@ int collectCUsIncluding(int fileNumber, int cuFileNumbers[], int cuCount, int ma
 }
 
 /* Only a CU whose content the client holds */
-static bool heldCUIsOutOfDate(Inputs *inputs, EditorBuffer *buffer) {
+static bool heldCUIsOutOfDate(Prerequisites *prerequisites, EditorBuffer *buffer) {
     if (!holdsAuthoritativeContent(buffer))
         return false;
     FileItem *fileItem = getFileItemWithFileNumber(buffer->fileNumber);
     return !fileItem->isDeleted && isCompilationUnit(fileItem->name)
-           && knowledgeIsOutOfDate(inputs, buffer->fileNumber);
+           && knowledgeIsOutOfDate(prerequisites, buffer->fileNumber);
 }
 
 /* Held CUs whose knowledge is out of date. They go first, so the cap never
  * leaves one of them out. */
-void collectOutOfDateHeldCUs(BuildList *list, Inputs *inputs) {
+void collectOutOfDateHeldCUs(BuildList *list, Prerequisites *prerequisites) {
     for (int i = 0; i != -1; i = getNextExistingEditorBufferIndex(i + 1)) {
         for (EditorBufferList *l = getEditorBufferListElementAt(i); l != NULL; l = l->next) {
             int fileNumber = l->buffer->fileNumber;
             FileItem *fileItem = getFileItemWithFileNumber(fileNumber);
-            if (heldCUIsOutOfDate(inputs, l->buffer)) {
+            if (heldCUIsOutOfDate(prerequisites, l->buffer)) {
                 if (!editorFileExists(fileItem->name)) {
                     log_debug("Out-of-date CU '%s' no longer exists, marking as deleted",
                               fileItem->name);

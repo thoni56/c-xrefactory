@@ -19,12 +19,12 @@ bool addToBuildList(BuildList *list, int fileNumber) {
     return (bool)mock(list, fileNumber);
 }
 
-void collectOutOfDateHeldCUs(BuildList *list, Inputs *inputs) {
-    mock(list, inputs);
+void collectOutOfDateHeldCUs(BuildList *list, Prerequisites *prerequisites) {
+    mock(list, prerequisites);
 }
 
-void collectSiblingCUs(BuildList *list, Inputs *inputs, int requestFileNumber) {
-    mock(list, inputs, requestFileNumber);
+void collectSiblingCUs(BuildList *list, Prerequisites *prerequisites, int requestFileNumber) {
+    mock(list, prerequisites, requestFileNumber);
 }
 
 void buildKnowledgeOfAll(BuildList *list, ArgumentsVector baseArgs_) {
@@ -32,25 +32,25 @@ void buildKnowledgeOfAll(BuildList *list, ArgumentsVector baseArgs_) {
     mock(list, baseArgs);
 }
 
-void collectRequestCUForStripping(BuildList *list, Inputs *inputs, int requestFileNumber) {
-    mock(list, inputs, requestFileNumber);
+void collectRequestCUForStripping(BuildList *list, Prerequisites *prerequisites, int requestFileNumber) {
+    mock(list, prerequisites, requestFileNumber);
 }
 
-void collectRequestCUToBuild(BuildList *list, Inputs *inputs, int requestFileNumber) {
-    mock(list, inputs, requestFileNumber);
+void collectRequestCUToBuild(BuildList *list, Prerequisites *prerequisites, int requestFileNumber) {
+    mock(list, prerequisites, requestFileNumber);
 }
 
 void stripRequestCU(BuildList *list, int requestFileNumber) {
     mock(list, requestFileNumber);
 }
 
-void collectOutOfDateCUs(BuildList *list, Inputs *inputs) {
-    mock(list, inputs);
+void collectOutOfDateCUs(BuildList *list, Prerequisites *prerequisites) {
+    mock(list, prerequisites);
 }
 
 
-void removeReferencesOfChangedFiles(Inputs *inputs) {
-    mock(inputs);
+void removeReferencesOfChangedFiles(Prerequisites *prerequisites) {
+    mock(prerequisites);
 }
 
 void letGoOfHeldHeader(int fileNumber) {

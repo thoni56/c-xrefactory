@@ -4,8 +4,8 @@
 #include <cgreen/mocks.h>
 
 
-bool knowledgeIsOutOfDate(Inputs *inputs, int fileNumber) {
-    return (bool)mock(inputs, fileNumber);
+bool knowledgeIsOutOfDate(Prerequisites *prerequisites, int fileNumber) {
+    return (bool)mock(prerequisites, fileNumber);
 }
 
 FileTimestamp changeTimeNow(void) {
@@ -13,15 +13,15 @@ FileTimestamp changeTimeNow(void) {
     return *fileTimestampP;
 }
 
-Inputs *collectInputs(void) {
-    return (Inputs *)mock();
+Prerequisites *collectPrerequisites(void) {
+    return (Prerequisites *)mock();
 }
 
-void freeInputs(Inputs *inputs) {
-    mock(inputs);
+void freePrerequisites(Prerequisites *prerequisites) {
+    mock(prerequisites);
 }
 
-int collectIncludeClosureOf(Inputs *inputs, int fileNumber, int fileNumbers[],
+int collectIncludeClosureOf(Prerequisites *prerequisites, int fileNumber, int fileNumbers[],
                             int maxFileNumbers) {
-    return (int)mock(inputs, fileNumber, fileNumbers, maxFileNumbers);
+    return (int)mock(prerequisites, fileNumber, fileNumbers, maxFileNumbers);
 }

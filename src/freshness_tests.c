@@ -32,9 +32,9 @@ static void expectACUWithKnowledgeAt(FileTimestamp knowledgeTime, FileTimestamp 
            will_return(changeTime));
 }
 
-static Inputs *inputsWithGraph(IncludeGraph *graph) {
+static Prerequisites *prerequisitesFromGraph(IncludeGraph *graph) {
     expect(buildIncludeGraph, will_return(graph));
-    return collectInputs();
+    return collectPrerequisites();
 }
 
 Ensure(Freshness, compilation_unit_without_knowledge_is_out_of_date) {
@@ -78,10 +78,10 @@ Ensure(Freshness, compilation_unit_not_changed_since_its_knowledge_is_not_out_of
     expectACUWithKnowledgeAt(makeFileTimestamp(2000, 0), &changeTime);
     expect(collectIncludeClosure, when(fileNumber, is_equal_to(A_C)), will_return(0));
 
-    assert_that(knowledgeIsOutOfDate(inputsWithGraph(NULL), A_C), is_false);
+    assert_that(knowledgeIsOutOfDate(prerequisitesFromGraph(NULL), A_C), is_false);
 }
 
-Ensure(Freshness, the_include_closure_is_taken_from_the_inputs_it_is_given) {
+Ensure(Freshness, the_include_closure_is_taken_from_the_prerequisites_it_is_given) {
     FileTimestamp changeTime = makeFileTimestamp(1000, 0);
     expectACUWithKnowledgeAt(makeFileTimestamp(2000, 0), &changeTime);
     static int aGraph;
@@ -89,7 +89,7 @@ Ensure(Freshness, the_include_closure_is_taken_from_the_inputs_it_is_given) {
     expect(collectIncludeClosure, when(graph, is_equal_to(graph)),
            when(fileNumber, is_equal_to(A_C)), will_return(0));
 
-    assert_that(knowledgeIsOutOfDate(inputsWithGraph(graph), A_C), is_false);
+    assert_that(knowledgeIsOutOfDate(prerequisitesFromGraph(graph), A_C), is_false);
 }
 
 /* The filesystem stamps modification times from a coarse clock, so a write just
@@ -123,7 +123,7 @@ Ensure(Freshness, compilation_unit_with_a_header_changed_after_its_knowledge_is_
     expect(editorFileModificationTime, when(path, is_equal_to_string("a.h")),
            will_return(&headerChangeTime));
 
-    assert_that(knowledgeIsOutOfDate(inputsWithGraph(NULL), A_C));
+    assert_that(knowledgeIsOutOfDate(prerequisitesFromGraph(NULL), A_C));
 }
 
 Ensure(Freshness, compilation_unit_with_a_header_changed_after_its_knowledge_is_out_of_date_since_the_header_changed) {
@@ -141,9 +141,9 @@ Ensure(Freshness, compilation_unit_with_a_header_changed_after_its_knowledge_is_
     expect(editorFileModificationTime, when(path, is_equal_to_string("a.h")),
            will_return(&headerChangeTime));
 
-    OutOfDate outOfDate = whyKnowledgeIsOutOfDate(inputsWithGraph(NULL), A_C);
+    OutOfDate outOfDate = whyKnowledgeIsOutOfDate(prerequisitesFromGraph(NULL), A_C);
 
-    assert_that(outOfDate.reason, is_equal_to(INPUT_CHANGED));
+    assert_that(outOfDate.reason, is_equal_to(PREREQUISITE_CHANGED));
     assert_that(outOfDate.fileNumber, is_equal_to(A_H));
 }
 
@@ -162,7 +162,7 @@ Ensure(Freshness, compilation_unit_with_a_header_not_changed_since_its_knowledge
     expect(editorFileModificationTime, when(path, is_equal_to_string("a.h")),
            will_return(&headerChangeTime));
 
-    assert_that(knowledgeIsOutOfDate(inputsWithGraph(NULL), A_C), is_false);
+    assert_that(knowledgeIsOutOfDate(prerequisitesFromGraph(NULL), A_C), is_false);
 }
 
 static void expectAHeaderInTheClosureOfTheCU(FileItem *headerItem, FileTimestamp *contentTime) {
@@ -184,9 +184,9 @@ Ensure(Freshness, compilation_unit_with_a_header_let_go_after_its_knowledge_is_o
     FileTimestamp diskTime = makeFileTimestamp(1000, 0);
     expectAHeaderInTheClosureOfTheCU(&headerItem, &diskTime);
 
-    OutOfDate outOfDate = whyKnowledgeIsOutOfDate(inputsWithGraph(NULL), A_C);
+    OutOfDate outOfDate = whyKnowledgeIsOutOfDate(prerequisitesFromGraph(NULL), A_C);
 
-    assert_that(outOfDate.reason, is_equal_to(INPUT_CHANGED));
+    assert_that(outOfDate.reason, is_equal_to(PREREQUISITE_CHANGED));
     assert_that(outOfDate.fileNumber, is_equal_to(A_H));
 }
 
@@ -197,7 +197,7 @@ Ensure(Freshness, compilation_unit_with_a_header_let_go_and_then_removed_is_out_
     FileTimestamp noContentTime = NULL_TIMESTAMP;
     expectAHeaderInTheClosureOfTheCU(&headerItem, &noContentTime);
 
-    assert_that(knowledgeIsOutOfDate(inputsWithGraph(NULL), A_C));
+    assert_that(knowledgeIsOutOfDate(prerequisitesFromGraph(NULL), A_C));
 }
 
 /* A change the server makes itself is not stamped by the coarse clock, so
@@ -209,7 +209,7 @@ Ensure(Freshness, compilation_unit_built_right_after_a_change_the_server_made_is
     FileTimestamp diskTime = makeFileTimestamp(1000, 0);
     expectAHeaderInTheClosureOfTheCU(&headerItem, &diskTime);
 
-    assert_that(knowledgeIsOutOfDate(inputsWithGraph(NULL), A_C), is_false);
+    assert_that(knowledgeIsOutOfDate(prerequisitesFromGraph(NULL), A_C), is_false);
 }
 
 /* The closure counts what it found, also beyond what fits; what did not fit
@@ -221,7 +221,7 @@ Ensure(Freshness, compilation_unit_whose_include_closure_did_not_fit_is_out_of_d
     expect(collectIncludeClosure, when(fileNumber, is_equal_to(A_C)),
            will_return(1000000));
 
-    assert_that(knowledgeIsOutOfDate(inputsWithGraph(NULL), A_C));
+    assert_that(knowledgeIsOutOfDate(prerequisitesFromGraph(NULL), A_C));
 }
 
 Ensure(Freshness, compilation_unit_whose_include_closure_did_not_fit_is_out_of_date_since_it_is_too_large) {
@@ -231,7 +231,7 @@ Ensure(Freshness, compilation_unit_whose_include_closure_did_not_fit_is_out_of_d
     expect(collectIncludeClosure, when(fileNumber, is_equal_to(A_C)),
            will_return(1000000));
 
-    OutOfDate outOfDate = whyKnowledgeIsOutOfDate(inputsWithGraph(NULL), A_C);
+    OutOfDate outOfDate = whyKnowledgeIsOutOfDate(prerequisitesFromGraph(NULL), A_C);
 
     assert_that(outOfDate.reason, is_equal_to(CLOSURE_TOO_LARGE));
     assert_that(outOfDate.fileNumber, is_equal_to(A_C));
@@ -270,7 +270,7 @@ Ensure(Freshness, a_header_two_compilation_units_include_is_asked_for_its_change
            will_set_contents_of_parameter(fileNumbers, closure, sizeof(closure)),
            will_return(1));
 
-    Inputs *inputs = inputsWithGraph(NULL);
-    assert_that(knowledgeIsOutOfDate(inputs, A_C), is_false);
-    assert_that(knowledgeIsOutOfDate(inputs, B_C), is_false);
+    Prerequisites *prerequisites = prerequisitesFromGraph(NULL);
+    assert_that(knowledgeIsOutOfDate(prerequisites, A_C), is_false);
+    assert_that(knowledgeIsOutOfDate(prerequisites, B_C), is_false);
 }

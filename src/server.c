@@ -278,9 +278,9 @@ static int countCompilationUnits(void) {
     return count;
 }
 
-static void analyseAllOutOfDateCUs(ArgumentsVector baseArgs, Inputs *inputs) {
+static void analyseAllOutOfDateCUs(ArgumentsVector baseArgs, Prerequisites *prerequisites) {
     BuildList *list = newBuildList(MAX_FILES);
-    collectOutOfDateCUs(list, inputs);
+    collectOutOfDateCUs(list, prerequisites);
     int outOfDateCUs = buildListCount(list);
     if (outOfDateCUs > 0) {
         char msg[TMP_STRING_SIZE];
@@ -348,29 +348,29 @@ void callServer(ArgumentsVector baseArgs, ArgumentsVector requestArgs) {
         }
     }
 
-    Inputs *inputs = collectInputs();
+    Prerequisites *prerequisites = collectPrerequisites();
 
     /* After the include graph is collected, since a header's references
      * include its own include references */
-    removeReferencesOfChangedFiles(inputs);
+    removeReferencesOfChangedFiles(prerequisites);
 
     /* Stale preloaded files are built before dispatching the operation, so all
      * operations see fresh in-memory references */
     if (projectWasOpen)
-        collectOutOfDateHeldCUs(buildList, inputs);
+        collectOutOfDateHeldCUs(buildList, prerequisites);
 
     if (hasInputFile && requiresProcessingInputFile(options.serverOperation)
         && operationParsesRequestFile(options.serverOperation))
-        collectRequestCUForStripping(buildList, inputs, requestFileNumber);
+        collectRequestCUForStripping(buildList, prerequisites, requestFileNumber);
 
     if (hasInputFile && !requiresProcessingInputFile(options.serverOperation)
         && !answeredWithoutReferences(options.serverOperation))
-        collectRequestCUToBuild(buildList, inputs, requestFileNumber);
+        collectRequestCUToBuild(buildList, prerequisites, requestFileNumber);
 
     /* Sibling CUs that share headers with the request file but are out of date,
      * e.g. on a cold start */
     if (projectContextInitialized && hasInputFile && !answeredWithoutReferences(options.serverOperation))
-        collectSiblingCUs(buildList, inputs, requestFileNumber);
+        collectSiblingCUs(buildList, prerequisites, requestFileNumber);
 
     stripRequestCU(buildList, requestFileNumber);
 
@@ -379,7 +379,7 @@ void callServer(ArgumentsVector baseArgs, ArgumentsVector requestArgs) {
     /* Completeness for name-based operations: if CUs are out of date, ask user
      * before proceeding */
     if (projectContextInitialized && needsWholeProjectParsed(options.serverOperation))
-        analyseAllOutOfDateCUs(baseArgs, inputs);
+        analyseAllOutOfDateCUs(baseArgs, prerequisites);
 
     if (opensBrowsingSession(options.serverOperation))
         pushEmptySession(&browsingStack);
@@ -398,7 +398,7 @@ void callServer(ArgumentsVector baseArgs, ArgumentsVector requestArgs) {
             inputFileName = options.serverOperation == OP_GET_ENV_VALUE ? requestFile->name : NULL;
         }
     }
-    freeInputs(inputs);
+    freePrerequisites(prerequisites);
 
 done:
     freeBuildList(buildList);
