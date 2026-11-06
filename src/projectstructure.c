@@ -88,6 +88,16 @@ static StringList *scanFileForIncludes(const char *filePath, int includerFileNum
 
 static bool isInList(const char *name, StringList *list);
 
+static void prependAllHeadersToWorklist(StringList **worklist, StringList *newHeaders) {
+    if (newHeaders != NULL) {
+        StringList *tail = newHeaders;
+        while (tail->next != NULL)
+            tail = tail->next;
+        tail->next = *worklist;
+        *worklist = newHeaders;
+    }
+}
+
 /* Recursively walk a directory tree, one level at a time via the fileio
  * primitive listFilesInDirectory(). Compilation units are added to
  * *discoveredCUs and the headers they include to *worklist. A directory whose
@@ -106,17 +116,23 @@ static void walkForCompilationUnits(const char *dir, StringList *includeDirs,
             int cuFileNumber = addFileNameToFileTable(e->string);
             *discoveredCUs = newStringList(e->string, *discoveredCUs);
             StringList *newHeaders = scanFileForIncludes(e->string, cuFileNumber, includeDirs);
-            /* Prepend discovered headers to the worklist */
-            if (newHeaders != NULL) {
-                StringList *tail = newHeaders;
-                while (tail->next != NULL)
-                    tail = tail->next;
-                tail->next = *worklist;
-                *worklist = newHeaders;
-            }
+            prependAllHeadersToWorklist(worklist, newHeaders);
         }
     }
     freeStringList(entries);
+}
+
+static void scanDiscoveredHeaders(StringList *worklist, StringList *includeDirs) {
+    while (worklist != NULL) {
+        StringList *current = worklist;
+        worklist = worklist->next;
+        current->next = NULL;
+
+        int headerFileNumber = addFileNameToFileTable(current->string);
+        StringList *newHeaders = scanFileForIncludes(current->string, headerFileNumber, includeDirs);
+        prependAllHeadersToWorklist(&worklist, newHeaders);
+        freeStringList(current);
+    }
 }
 
 StringList *scanProjectForFilesAndIncludes(const char *projectDir, StringList *includeDirs, StringList *prunePaths) {
@@ -127,22 +143,7 @@ StringList *scanProjectForFilesAndIncludes(const char *projectDir, StringList *i
     walkForCompilationUnits(projectDir, includeDirs, prunePaths, &discoveredCUs, &worklist);
 
     /* Phase 2: transitively scan discovered headers */
-    while (worklist != NULL) {
-        StringList *current = worklist;
-        worklist = worklist->next;
-        current->next = NULL;
-
-        int headerFileNumber = addFileNameToFileTable(current->string);
-        StringList *newHeaders = scanFileForIncludes(current->string, headerFileNumber, includeDirs);
-        if (newHeaders != NULL) {
-            StringList *tail = newHeaders;
-            while (tail->next != NULL)
-                tail = tail->next;
-            tail->next = worklist;
-            worklist = newHeaders;
-        }
-        freeStringList(current);
-    }
+    scanDiscoveredHeaders(worklist, includeDirs);
     return discoveredCUs;
 }
 
