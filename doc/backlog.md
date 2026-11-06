@@ -214,6 +214,22 @@ every push, `After` dashed and `Goes with` not at all, linked at the end of this
     file, change first, as `out-of-date` and `time-budget` already need for the estimate.
     After: remove-on-change
     Goes with: out-of-date
+- (#111) <a id="files-appear-vanish"></a>**Files that appear or vanish between requests are not seen** —
+    an accepted gap, `doc/docs/12-components.adoc` ("Design boundary"), to be looked at
+    again. Files are found only by the walk on the first request and on a config change,
+    by a request naming one, and by an include a scan or parse resolves. So a new CU that
+    nothing includes and no request names is missing until a restart, also from an
+    operation on a name, and nothing says so. Deletion is seen for CUs only:
+    `markMissingFilesAsDeleted()` at the walk, or when a CU is about to be built. A
+    deleted header keeps its references and edges, also in the snapshot
+    (`test_a_deleted_header_leaves_no_references`, suspended). Once setup moves into
+    `-openproject` the request loop sees only changes to files it knows, so "until a
+    restart" becomes "until the next open". One way to see both: a directory's
+    modification time moves when an entry is added, removed or renamed, so stamp the
+    directories the walk visits and list again those whose time moved; a vanished file is
+    a change. `06-principles` (New files and deleted files) and `08-algorithms` (Deletion
+    Detection) describe more than the code does (Mac, session `4839a129`, 2026-11-06).
+    Goes with: behind-the-back, setup-into-openproject
 - (#94) <a id="inserted-text-loses-non-ascii"></a>**Investigate: which refactorings insert text copied from the server's buffer** —
     *no repo home yet.* A loaded buffer has each multibyte character replaced by a space
     (`convertUtf8()`, `src/encoding.c`), so that byte offsets are character offsets. Text the
