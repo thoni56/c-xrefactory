@@ -408,6 +408,15 @@ Roadmap → Optimization has the baseline: a cold-start PUSH on ffmpeg, measured
     work. Roadmap → Memory as Truth → Remaining. Depends only on entry refresh, which is
     done.
     Waits for: entry-refresh
+- (#110) <a id="rename-leaves-sessions"></a>**A rename leaves its safety-check sessions on the browsing stack** —
+    seen on WSL, session `d25255b8`, 2026-11-06, build 1.10.0-105-g86971. Push on a
+    symbol, Next to a parameter, Rename it, then Pop: it says "Conflicting References",
+    then "No reference". Popping again gives the renamed parameter's session, and once
+    more the session you started in. `makeSafetyCheckAndUndo()` (`src/refactory.c`)
+    pushes the "Conflicting References" session and `safetyCheck()` the symbol's own,
+    and a rename without conflicts pops neither. Write the test first: a rename from
+    inside a session, then a Pop that lands in that session.
+    Goes with: index-based-sessions
 - (#24) <a id="retry-creating-request"></a>**Retry the request that created the project** — small, and it becomes first contact
     with every new project once auto-discovery is the only way in.
 - (#25) <a id="lsp-tiers"></a>**LSP tiers 1–2** — code actions and `workspace/executeCommand` for extract, move
