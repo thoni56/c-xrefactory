@@ -79,6 +79,11 @@ int collectIncludeClosureOf(Prerequisites *prerequisites, int fileNumber, int fi
     return collectIncludeClosure(prerequisites->includeGraph, fileNumber, fileNumbers, maxFileNumbers);
 }
 
+int collectIncluderClosureOf(Prerequisites *prerequisites, int fileNumber, int fileNumbers[],
+                             int maxFileNumbers) {
+    return collectIncluderClosure(prerequisites->includeGraph, fileNumber, fileNumbers, maxFileNumbers);
+}
+
 static OutOfDate whyOutOfDate(Prerequisites *prerequisites, int fileNumber, FileItem *fileItem) {
     if (fileTimestampIsZero(fileItem->knowledgeTime))
         return (OutOfDate){KNOWLEDGE_MISSING, fileNumber};

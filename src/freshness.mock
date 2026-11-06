@@ -21,6 +21,11 @@ void freePrerequisites(Prerequisites *prerequisites) {
     mock(prerequisites);
 }
 
+int collectIncluderClosureOf(Prerequisites *prerequisites, int fileNumber, int fileNumbers[],
+                             int maxFileNumbers) {
+    return (int)mock(prerequisites, fileNumber, fileNumbers, maxFileNumbers);
+}
+
 int collectIncludeClosureOf(Prerequisites *prerequisites, int fileNumber, int fileNumbers[],
                             int maxFileNumbers) {
     return (int)mock(prerequisites, fileNumber, fileNumbers, maxFileNumbers);

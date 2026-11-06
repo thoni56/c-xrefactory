@@ -58,7 +58,7 @@ AfterEach(Server) {}
 /* Protected */
 extern bool prepareInputFileForRequest(void);
 extern void setRequestFileArgument(int fileNumber);
-extern void singlePass(ArgumentsVector args, ArgumentsVector nargs);
+extern void singlePass(ArgumentsVector args, ArgumentsVector nargs, Prerequisites *prerequisites);
 extern bool needsConfirmationToAnalyse(int outOfDateCUs);
 
 Ensure(Server, has_a_none_operation) {
@@ -117,7 +117,7 @@ Ensure(Server, cursor_parse_of_a_compilation_unit_records_when_it_built_the_know
 
     ArgumentsVector args = {.argc = 0, .argv = NULL};
     FileTimestamp before = fileTimestampNow();
-    singlePass(args, args);
+    singlePass(args, args, NULL);
     FileTimestamp after = fileTimestampNow();
 
     assert_false(fileTimestampIsLessThan(fileItem.knowledgeTime, before));
@@ -138,7 +138,7 @@ Ensure(Server, cursor_parse_takes_the_knowledge_time_before_parsing) {
     expectACursorParseOf(&fileItem, &contentTime, recordParseStart);
 
     ArgumentsVector args = {.argc = 0, .argv = NULL};
-    singlePass(args, args);
+    singlePass(args, args, NULL);
 
     assert_false(fileTimestampIsLessThan(parseStart, fileItem.knowledgeTime));
 }
@@ -160,7 +160,7 @@ Ensure(Server, cursor_parse_for_an_operation_that_does_not_parse_leaves_the_file
     never_expect(callParser);
 
     ArgumentsVector args = {.argc = 0, .argv = NULL};
-    singlePass(args, args);
+    singlePass(args, args, NULL);
 
     assert_true(fileTimestampIsZero(fileItem.knowledgeTime));
 }

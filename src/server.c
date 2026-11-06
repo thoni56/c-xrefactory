@@ -115,8 +115,9 @@ static bool toleratesMissingInputFile(ServerOperation operation) {
  * expands the macro. A CU can only expand it if it includes the file defining
  * it, so the includers of the request file bound the candidates - and the
  * include graph knows them without parsing anything (ADR-0027). */
-static int collectCompilationUnitsExpandingTheMacro(int cuFileNumbers[], int maxCUs) {
-    int cuCount = collectCUsIncluding(requestFileNumber, cuFileNumbers, 0, maxCUs);
+static int collectCompilationUnitsExpandingTheMacro(Prerequisites *prerequisites, int cuFileNumbers[],
+                                                    int maxCUs) {
+    int cuCount = collectCUsIncluding(prerequisites, requestFileNumber, cuFileNumbers, 0, maxCUs);
 
     if (cuCount == 0)
         log_debug(":no compilation unit includes '%s', so nothing expands the macro",
@@ -180,7 +181,7 @@ void initServer(ArgumentsVector args) {
 }
 
 
-protected void singlePass(ArgumentsVector args, ArgumentsVector nargs) {
+protected void singlePass(ArgumentsVector args, ArgumentsVector nargs, Prerequisites *prerequisites) {
     bool inputOpened = false;
 
     inputOpened = initializeFileProcessing(args, nargs);
@@ -212,7 +213,8 @@ protected void singlePass(ArgumentsVector args, ArgumentsVector nargs) {
          * meaning the identifier has becomes a referent of its own and the answer is
          * the whole set (ADR-0027) - one of them is a goto, several are the menu. */
         int cuFileNumbers[MAX_CUS_TO_REPARSE];
-        int cuCount = collectCompilationUnitsExpandingTheMacro(cuFileNumbers, MAX_CUS_TO_REPARSE);
+        int cuCount = collectCompilationUnitsExpandingTheMacro(prerequisites, cuFileNumbers,
+                                                               MAX_CUS_TO_REPARSE);
         for (int i = 0; i < cuCount; i++) {
             log_debug(":parsing '%s' to expand the macro",
                       getFileItemWithFileNumber(cuFileNumbers[i])->name);
@@ -225,14 +227,15 @@ protected void singlePass(ArgumentsVector args, ArgumentsVector nargs) {
     }
 }
 
-static void processFile(ArgumentsVector baseArgs, ArgumentsVector requestArgs) {
+static void processFile(ArgumentsVector baseArgs, ArgumentsVector requestArgs,
+                        Prerequisites *prerequisites) {
     FileItem *fileItem = getFileItemWithFileNumber(requestFileNumber);
 
     maxPasses = 1;
     for (currentPass=1; currentPass<=maxPasses; currentPass++) {
         inputFileName = fileItem->name;
         assert(inputFileName!=NULL);
-        singlePass(baseArgs, requestArgs);
+        singlePass(baseArgs, requestArgs, prerequisites);
         if (options.serverOperation==OP_INTERNAL_PARSE_TO_EXTRACT || (completionStringServed && !opensBrowsingSession(options.serverOperation)))
             break;
     }
@@ -386,7 +389,7 @@ void callServer(ArgumentsVector baseArgs, ArgumentsVector requestArgs) {
 
     if (requiresProcessingInputFile(options.serverOperation)) {
         if (hasInputFile) {
-            processFile(baseArgs, requestArgs);
+            processFile(baseArgs, requestArgs, prerequisites);
             projectContextInitialized = true;
         } else if (!toleratesMissingInputFile(options.serverOperation)) {
             errorMessage(ERR_ST, "No input file");

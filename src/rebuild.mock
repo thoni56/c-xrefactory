@@ -3,8 +3,9 @@
 #include <cgreen/cgreen.h>
 
 
-int collectCUsIncluding(int fileNumber, int cuFileNumbers[], int cuCount, int maxCUs) {
-    return (int)mock(fileNumber, cuFileNumbers, cuCount, maxCUs);
+int collectCUsIncluding(Prerequisites *prerequisites, int fileNumber, int cuFileNumbers[], int cuCount,
+                        int maxCUs) {
+    return (int)mock(prerequisites, fileNumber, cuFileNumbers, cuCount, maxCUs);
 }
 
 BuildList *newBuildList(int capacity) {

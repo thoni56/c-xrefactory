@@ -121,7 +121,7 @@ void collectSiblingCUs(BuildList *list, Prerequisites *prerequisites, int reques
         if (isCompilationUnit(headerFileItem->name))
             continue; /* Skip CUs, only look at headers */
 
-        int siblingCount = collectCUsIncluding(headerIndex, siblingCUs, 0, MAX_FILES);
+        int siblingCount = collectCUsIncluding(prerequisites, headerIndex, siblingCUs, 0, MAX_FILES);
         for (int j = 0; j < siblingCount; j++) {
             int siblingFileNum = siblingCUs[j];
             if (siblingFileNum == requestFileNumber)
@@ -253,60 +253,35 @@ int buildListCount(BuildList *list) {
 }
 
 #define MAX_INCLUDE_WALK_FILES 256
-/* Walk the reverse-include graph from a file up to compilation units,
- * using TypeCppInclude references in the reference table (recorded by parsing
- * or by the lightweight scan). Collect CU file numbers into the provided
- * array, deduplicating against entries already present. */
-int collectCUsIncluding(int fileNumber, int cuFileNumbers[], int cuCount, int maxCUs) {
+/* The CUs that reach a file, at any depth, in the include graph the request took
+ * before anything was removed. Collect CU file numbers into the provided array,
+ * deduplicating against entries already present. */
+int collectCUsIncluding(Prerequisites *prerequisites, int fileNumber, int cuFileNumbers[], int cuCount,
+                        int maxCUs) {
     FileItem *fileItem = getFileItemWithFileNumber(fileNumber);
     log_debug("Looking for CUs that include '%s'", fileItem->name);
 
-    /* Walk reverse-include graph transitively: starting from the file,
-     * find all files that include it, then files that include those, etc.
-     * Collect any CUs encountered along the way. */
-    int filesToWalk[MAX_INCLUDE_WALK_FILES];
-    int walkCount = 1;
-    filesToWalk[0] = fileNumber;
+    int includers[MAX_INCLUDE_WALK_FILES];
+    int includerCount = collectIncluderClosureOf(prerequisites, fileNumber, includers,
+                                                 MAX_INCLUDE_WALK_FILES);
+    if (includerCount > MAX_INCLUDE_WALK_FILES)
+        includerCount = MAX_INCLUDE_WALK_FILES;
 
-    for (int i = 0; i < walkCount; i++) {
-        ReferenceableItem searchItem = makeReferenceableItem(
-            LINK_NAME_INCLUDE_REFS, TypeCppInclude, StorageExtern, VisibilityGlobal, filesToWalk[i]);
-
-        ReferenceableItem *found;
-        if (!isMemberInReferenceableItemTable(&searchItem, NULL, &found))
-            continue;
-
-        for (Reference *r = found->references; r != NULL; r = r->next) {
-            int includerFileNum = r->position.file;
-
-            /* Already in our walk list? */
-            bool alreadySeen = false;
-            for (int j = 0; j < walkCount; j++) {
-                if (filesToWalk[j] == includerFileNum) {
-                    alreadySeen = true;
+    for (int i = 0; i < includerCount; i++) {
+        int includerFileNum = includers[i];
+        FileItem *includer = getFileItemWithFileNumber(includerFileNum);
+        if (isCompilationUnit(includer->name)) {
+            /* Deduplicate against CUs already collected (from other files) */
+            bool alreadyCollected = false;
+            for (int j = 0; j < cuCount; j++) {
+                if (cuFileNumbers[j] == includerFileNum) {
+                    alreadyCollected = true;
                     break;
                 }
             }
-            if (alreadySeen)
-                continue;
-
-            if (walkCount < MAX_INCLUDE_WALK_FILES)
-                filesToWalk[walkCount++] = includerFileNum;
-
-            FileItem *includer = getFileItemWithFileNumber(includerFileNum);
-            if (isCompilationUnit(includer->name)) {
-                /* Deduplicate against CUs already collected (from other files) */
-                bool alreadyCollected = false;
-                for (int j = 0; j < cuCount; j++) {
-                    if (cuFileNumbers[j] == includerFileNum) {
-                        alreadyCollected = true;
-                        break;
-                    }
-                }
-                if (!alreadyCollected && cuCount < maxCUs) {
-                    cuFileNumbers[cuCount++] = includerFileNum;
-                    log_debug("CU '%s' (transitively) includes '%s'", includer->name, fileItem->name);
-                }
+            if (!alreadyCollected && cuCount < maxCUs) {
+                cuFileNumbers[cuCount++] = includerFileNum;
+                log_debug("CU '%s' (transitively) includes '%s'", includer->name, fileItem->name);
             }
         }
     }

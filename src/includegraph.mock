@@ -14,3 +14,8 @@ IncludeGraph *buildIncludeGraph(void) {
 void freeIncludeGraph(IncludeGraph *graph) {
     mock(graph);
 }
+
+int collectIncluderClosure(IncludeGraph *graph, int fileNumber, int fileNumbers[],
+                           int maxFileNumbers) {
+    return (int)mock(graph, fileNumber, fileNumbers, maxFileNumbers);
+}

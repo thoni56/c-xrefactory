@@ -1,0 +1,3 @@
+#include "leaf.h"
+int g(void);
+#define CALL f

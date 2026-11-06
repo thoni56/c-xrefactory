@@ -31,6 +31,8 @@ extern void freePrerequisites(Prerequisites *prerequisites);
 
 extern OutOfDate whyKnowledgeIsOutOfDate(Prerequisites *prerequisites, int fileNumber);
 extern bool knowledgeIsOutOfDate(Prerequisites *prerequisites, int fileNumber);
+extern int collectIncluderClosureOf(Prerequisites *prerequisites, int fileNumber, int fileNumbers[],
+                                    int maxFileNumbers);
 extern int collectIncludeClosureOf(Prerequisites *prerequisites, int fileNumber, int fileNumbers[],
                                    int maxFileNumbers);
 
