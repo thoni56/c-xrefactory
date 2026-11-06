@@ -44,6 +44,7 @@ static void given_cu_with_content(char *path, int fileNum, char *content) {
            will_return(fileNum));
     expect(openFile, when(fileName, is_equal_to_string(path)),
            will_return((FILE *)1));
+    expect(startScanOf, when(fileNumber, is_equal_to(fileNum)));
     expect(readFile, will_set_contents_of_parameter(buffer, content, strlen(content)),
            will_return(strlen(content)));
     expect(readFile, will_return(0));
@@ -54,6 +55,7 @@ static void given_cu_without_includes(char *path) {
     expect(isCompilationUnit, will_return(true));
     expect(addFileNameToFileTable, when(fileName, is_equal_to_string(path)));
     expect(openFile, will_return((FILE *)1));
+    expect(startScanOf);
     expect(readFile, will_return(0));
     expect(closeFile);
 }
@@ -77,6 +79,7 @@ static void given_include_resolves(char *includeName, char *dir, char *resolvedP
 static void given_header_with_content(char *path, char *content) {
     expect(openFile, when(fileName, is_equal_to_string(path)),
            will_return((FILE *)1));
+    expect(startScanOf);
     expect(readFile, will_set_contents_of_parameter(buffer, content, strlen(content)),
            will_return(strlen(content)));
     expect(readFile, will_return(0));
@@ -86,6 +89,7 @@ static void given_header_with_content(char *path, char *content) {
 static void given_header_without_includes(char *path) {
     (void)path; /* order of header scanning is not guaranteed */
     expect(openFile, will_return((FILE *)1));
+    expect(startScanOf);
     expect(readFile, will_return(0));
     expect(closeFile);
 }
@@ -172,6 +176,7 @@ Ensure(ProjectStructure, lightweight_scan_handles_include_split_across_buffer_bo
     expect(addFileNameToFileTable, when(fileName, is_equal_to_string("/project/source.c")),
            will_return(1));
     expect(openFile, will_return((FILE *)1));
+    expect(startScanOf, when(fileNumber, is_equal_to(1)));
     expect(readFile, will_set_contents_of_parameter(buffer, chunk1, strlen(chunk1)),
            will_return(strlen(chunk1)));
     expect(readFile, will_set_contents_of_parameter(buffer, chunk2, strlen(chunk2)),
@@ -438,6 +443,7 @@ Ensure(ProjectStructure, lightweight_scan_resolves_include_via_includeDirs_when_
            will_return(1));
     expect(openFile, when(fileName, is_equal_to_string("/project/source.c")),
            will_return((FILE *)1));
+    expect(startScanOf, when(fileNumber, is_equal_to(1)));
     char *content = "#include \"util.h\"\n";
     expect(readFile, will_set_contents_of_parameter(buffer, content, strlen(content)),
            will_return(strlen(content)));

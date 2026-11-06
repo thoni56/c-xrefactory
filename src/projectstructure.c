@@ -7,6 +7,7 @@
 #include "filetable.h"
 #include "misc.h"
 #include "stringlist.h"
+#include "timestamp.h"
 
 
 #define SCAN_BUFFER_SIZE 4096
@@ -40,6 +41,8 @@ static StringList *scanFileForIncludes(const char *filePath, int includerFileNum
     FILE *file = openFile((char *)filePath, "r");
     if (file == NULL)
         return NULL;
+    /* Taken before the content is read, so a change while reading is seen later */
+    startScanOf(includerFileNumber, fileTimestampNow());
     char buf[SCAN_BUFFER_SIZE];
     size_t leftover = 0;
     size_t bytesRead;

@@ -82,6 +82,13 @@ void addScannedInclude(int includerFileNumber, int includedFileNumber) {
     includer->scannedIncludes[includer->scannedIncludeCount++] = includedFileNumber;
 }
 
+/* What the scan finds replaces what it found before */
+void startScanOf(int fileNumber, FileTimestamp scanTime) {
+    FileItem *fileItem = getFileItemWithFileNumber(fileNumber);
+    fileItem->scannedIncludeCount = 0;
+    fileItem->scanTime = scanTime;
+}
+
 int getNextExistingFileNumber(int index) {
     for (int i=index; i < fileTable.size; i++)
         if (fileTable.tab[i] != NULL)

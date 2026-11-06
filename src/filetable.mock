@@ -42,6 +42,10 @@ void addScannedInclude(int includerFileNumber, int includedFileNumber) {
     mock(includerFileNumber, includedFileNumber);
 }
 
+void startScanOf(int fileNumber, FileTimestamp scanTime) {
+    mock(fileNumber);
+}
+
 int getNextExistingFileNumber(int fileNumber) {
     return (int)mock(fileNumber);
 }
