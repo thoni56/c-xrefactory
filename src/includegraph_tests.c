@@ -176,3 +176,32 @@ Ensure(IncludeGraph, gives_a_file_the_includes_the_scan_found_on_it) {
     assert_that(count, is_equal_to(1));
     assert_that(closure[0], is_equal_to(headerNumber));
 }
+
+static int includerClosureOf(int fileNumber, int fileNumbers[], int maxFileNumbers) {
+    IncludeGraph *graph = buildIncludeGraph();
+    int count = collectIncluderClosure(graph, fileNumber, fileNumbers, maxFileNumbers);
+    freeIncludeGraph(graph);
+    return count;
+}
+
+Ensure(IncludeGraph, gives_a_header_the_file_that_includes_it) {
+    recordInclude(A_C, A_H);
+
+    int includers[10];
+    int count = includerClosureOf(A_H, includers, 10);
+
+    assert_that(count, is_equal_to(1));
+    assert_that(includers[0], is_equal_to(A_C));
+}
+
+Ensure(IncludeGraph, gives_a_header_also_the_files_that_include_its_includers) {
+    recordInclude(A_C, A_H);
+    recordInclude(A_H, DECL_H);
+
+    int includers[10];
+    int count = includerClosureOf(DECL_H, includers, 10);
+
+    assert_that(count, is_equal_to(2));
+    assert_true(contains(includers, count, A_H));
+    assert_true(contains(includers, count, A_C));
+}

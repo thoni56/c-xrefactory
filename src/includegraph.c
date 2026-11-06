@@ -118,3 +118,23 @@ int collectIncludeClosure(IncludeGraph *graph, int fileNumber, int fileNumbers[]
     }
     return included.count;
 }
+
+static void collectIncludersOf(IncludeGraph *graph, int fileNumber, IncludedFiles *includers) {
+    for (int i = 0; i < graph->count; i++) {
+        IncludeEdge *edge = &graph->edges[i];
+        if (edge->included == fileNumber && !isCollected(includers, edge->includer)) {
+            if (includers->count < includers->maxFileNumbers)
+                includers->fileNumbers[includers->count] = edge->includer;
+            includers->count++;
+        }
+    }
+}
+
+int collectIncluderClosure(IncludeGraph *graph, int fileNumber, int fileNumbers[],
+                           int maxFileNumbers) {
+    IncludedFiles includers = {.fileNumbers = fileNumbers, .maxFileNumbers = maxFileNumbers};
+    collectIncludersOf(graph, fileNumber, &includers);
+    for (int i = 0; i < storedCount(&includers); i++)
+        collectIncludersOf(graph, fileNumbers[i], &includers);
+    return includers.count;
+}

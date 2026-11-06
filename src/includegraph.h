@@ -7,5 +7,7 @@ extern IncludeGraph *buildIncludeGraph(void);
 extern void freeIncludeGraph(IncludeGraph *graph);
 extern int collectIncludeClosure(IncludeGraph *graph, int fileNumber, int fileNumbers[],
                                  int maxFileNumbers);
+extern int collectIncluderClosure(IncludeGraph *graph, int fileNumber, int fileNumbers[],
+                                  int maxFileNumbers);
 
 #endif
