@@ -32,6 +32,16 @@ Examples: removing features, changing parsing architecture, accepting performanc
 - Small refactorings without architectural impact
 - Decisions that can be easily reversed
 
+## One Concept per ADR
+
+Let an ADR decide one concept: what a word means, or one rule. When a decision needs an
+algorithm or data structures to be understood, the concept still goes in the ADR, and the
+algorithm in the docs or in an ADR of its own that refers to it.
+
+ADR-0036 decides only what *changed* means, and was easier to follow than the ADRs before
+it, which decided a concept together with the algorithm that used it. When a draft names
+several things it decides, consider splitting it.
+
 ## ADR Status Lifecycle
 
 Each ADR has a status indicating its current state:

@@ -544,7 +544,7 @@ Roadmap → Optimization has the baseline: a cold-start PUSH on ffmpeg, measured
     stream, so a client stops with `SYNCHRO PROBLEM`. It works only with the server driver
     or from a shell. The trace gives states, not rule names; byacc's `-v` listing maps them.
 
-## 7. Freshness as make (ADR-0032, ADR-0035)
+## 7. Freshness as make (ADR-0032, ADR-0035, ADR-0036)
 
 The order is roughly as listed. Next is `remove-on-change`. "Freshness Is Make, for the
 Goal" in `20-insights` has the shape the request converges to.
@@ -571,6 +571,18 @@ implementation, and are noted in `cu-inputs`, `out-of-date`, `time-budget` and
     instead (`closeEditorBuffersNoLongerHeld()`). Read through `changeTimeOf()`, it is out
     of date by the same rule as a header, and that special case can go.
     Goes with: out-of-date
+- (#112) <a id="change-is-difference"></a>**A change is a difference, ordered by the server's own counter** —
+    ADR-0036 (Proposed). One reading of *changed*, used by the scan and the removal: a
+    content token, modification time and size or the client's version of a held buffer,
+    not the same as when last seen, with git's rule for racy tokens. A vanished file and
+    a new one have changed, which fixes the deleted header
+    (`test_a_deleted_header_leaves_no_references`, and the vanishing half of
+    `files-appear-vanish`). The build orders noticed changes and knowledge by a counter
+    kept in the snapshot, not by times, so `letGoTime`, the zero special cases and the
+    10 ms gap go, with the extra build of a held CU after each edit. `-preload` carries
+    the client's version (Mac, session `4839a129`, 2026-11-06).
+    Waits for: adr-0036
+    Goes with: remove-on-change, files-appear-vanish
 - (#109) <a id="session-refresh-time"></a>**A session refreshes a file by a time, not a flag** —
     a file's references get a time they last changed, never cleared, and a session
     refreshes its copy of a file when that is later than the copy. Replaces
@@ -746,6 +758,7 @@ was done.
 - <a id="adr-0031"></a>**ADR-0031: what files a project consists of**
 - <a id="adr-0032"></a>**ADR-0032: knowledge is rebuilt like `make` rebuilds targets**
 - <a id="adr-0035"></a>**ADR-0035: a file's references are removed when its content changes**
+- <a id="adr-0036"></a>**ADR-0036: a change is a difference, and the server orders what it saw** (Proposed)
 
 ## Open questions that would reorder this
 
