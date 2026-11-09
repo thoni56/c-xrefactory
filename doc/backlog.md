@@ -571,14 +571,14 @@ implementation, and are noted in `cu-inputs`, `out-of-date`, `time-budget` and
     instead (`closeEditorBuffersNoLongerHeld()`). Read through `changeTimeOf()`, it is out
     of date by the same rule as a header, and that special case can go.
     Goes with: out-of-date
-- (#112) <a id="change-is-difference"></a>**A change is a difference, ordered by the server's own counter** —
+- (#112) <a id="change-is-difference"></a>**A change is a difference, ordered by the server's own clock** —
     ADR-0036 (Proposed). One reading of *changed*, used by the scan and the removal: a
     content token, modification time and size or the client's version of a held buffer,
     not the same as when last seen, with git's rule for racy tokens. A vanished file and
     a new one have changed, which fixes the deleted header
     (`test_a_deleted_header_leaves_no_references`, and the vanishing half of
-    `files-appear-vanish`). The build orders noticed changes and knowledge by a counter
-    kept in the snapshot, not by times, so `letGoTime`, the zero special cases and the
+    `files-appear-vanish`). The build orders noticed changes and knowledge by the
+    server's own clock, not by file times, so `letGoTime`, the zero special cases and the
     10 ms gap go, with the extra build of a held CU after each edit. `-preload` carries
     the client's version (Mac, session `4839a129`, 2026-11-06).
     Waits for: adr-0036

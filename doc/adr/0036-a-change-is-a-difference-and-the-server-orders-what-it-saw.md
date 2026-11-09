@@ -8,8 +8,6 @@ Proposed
 
 Refines [ADR-0032](0032-knowledge-is-rebuilt-like-make-rebuilds-targets.md) and
 [ADR-0035](0035-a-files-references-are-removed-when-its-content-changes.md)
-Takes the per-CU half of the generations in
-[ADR-0033](0033-references-are-removed-when-every-cu-reaching-their-file-is-parsed-again.md)
 
 ## Deciders
 
@@ -25,9 +23,7 @@ Used beside those of ADR-0032 and ADR-0035.
 - **Seen token**: the content token recorded when the server last looked at the file.
 - **Changed** (of a file): its content token is not the same as its seen token, or it has
   none of either. A file the server has not seen before has changed.
-- **Order**: a counter the server increments when it notices a change and when it takes
-  knowledge. It is the server's own, kept in the snapshot, and is not a time.
-- **Noticed** (of a change): the order at which the server found a file changed.
+- **Noticed** (of a change): when the server found a file changed, by its own clock.
 - **Racy** (of a seen token): recorded so soon after the file's modification time that an
   edit in the same tick of the filesystem clock would leave the time as it is. The term
   is git's.
@@ -66,8 +62,6 @@ _facing the fact that_
 - the build compares a file's time, from the filesystem's coarse clock, with a knowledge
   time from the system clock, which needs a gap of 10 ms. A preload written just before
   the request lands inside it, so a held CU is built once more after each edit,
-- a file time and a clock time are both moved by the system clock being set back, by NTP
-  or a suspend, which can make a change look older than knowledge built before it,
 
 _we propose to_
 - **find a change by difference**: a file has changed when its content token is not the
@@ -80,10 +74,10 @@ _we propose to_
 - **let the client send its version of a held buffer** with `-preload`, e.g. Emacs's
   `buffer-modified-tick`, which it already keeps to decide whether to write the preload,
   so that no file time is involved for held content,
-- **order what the server saw with a counter of its own**: noticing a change and taking
-  knowledge each take the next value. A CU is out of date when a prerequisite was noticed
-  changed after its knowledge was taken. The counter's highest value, each file's noticed
-  change and each CU's knowledge are kept in the snapshot,
+- **order what the server saw by its own clock**: a change is stamped when it is noticed,
+  and knowledge when it is taken. A CU is out of date when a prerequisite was noticed
+  changed after its knowledge was taken. The noticed changes and the knowledge are kept
+  in the snapshot,
 - **keep the scan's seen token per session**, since the edges are not in the snapshot, and
   the removal's in the snapshot. In a new session every known file is changed for the
   scan and none for the removal,
@@ -104,22 +98,17 @@ _because_
 - a difference sees a vanished file, a restored older file and a buffer let go with the
   same comparison, so `letGoTime` and the zero special cases go,
 - the token stands for the content, as a checksum would, without reading the file,
-- once a change time is "when the server noticed", every value the build orders is the
-  server's own. A counter orders them exactly, needs no gap, and is not moved by the
-  system clock,
-- the counter is the per-CU half of ADR-0033's generations, the knowledge generation. The
-  per-reference half, the mark, the refresh and the sweep, was a removal mechanism, which
-  ADR-0035 replaced. If the Variant-B gap is closed with generations, as ADR-0035 leaves
-  open, it uses this counter.
+- once a change time is "when the server noticed", every time the build orders is read
+  from the server's own clock, and two readings of one clock need no gap.
 
 ## Decision Outcome
 
 A file has changed when its content token, its modification time and size or the
 client's version of a held buffer, is not the same as when the server last saw it. A
-vanished file and a new one have changed. The server orders what it saw with a counter
-of its own, kept in the snapshot: a CU is out of date when a prerequisite was noticed
-changed after its knowledge was taken. "Newer" is no longer used to find a change, and
-no file time is compared with a clock.
+vanished file and a new one have changed. The server orders what it saw by its own clock:
+a CU is out of date when a prerequisite was noticed changed after its knowledge was
+taken. "Newer" is no longer used to find a change, and no file time is compared with a
+clock.
 
 ## Consequences and Risks
 
@@ -131,30 +120,35 @@ no file time is compared with a clock.
 - `letGoTime` goes: a buffer let go is read from the disk, whose token is not the
   buffer's, so it has changed.
 - The coarse clock gap goes, with the extra build of a held CU after each edit.
-- The order survives a restart exactly, also when the system clock moved.
 
 **Risks:**
-- *A new snapshot format.* The seen tokens, the noticed changes, the knowledge values and
-  the counter's highest value are kept. An older snapshot is ignored, as for 1.15.0.
+- *A new snapshot format.* The seen tokens and the noticed changes are kept. An older
+  snapshot is ignored, as for 1.15.0.
 - *The racy rule depends on the filesystem's tick.* Too narrow and an edit is missed, too
   wide and files are scanned again needlessly. The first errs towards a missed change,
   so it should err wide.
 - *The client's version is a protocol change.* Until the client sends it, a held buffer's
   token is the preload file's modification time and size, which is racy as described.
+- *The system clock set back.* A change noticed soon after the clock was set back can
+  look older than knowledge taken before it. That CU then looks current and lacks its
+  part of the changed file, until it or a file it includes changes again. It is rare, so
+  it is accepted. If it is seen, the server can stamp no time lower than the highest it
+  has stamped, i.e. `max(now, highest)`, taking the highest from the snapshot's times
+  after a restart. That needs no new value in the snapshot.
 - *An unknown filesystem behaviour.* A filesystem that reports different times for an
   unchanged file makes every request rebuild. It costs builds, not correctness.
 
 ## Considered Options
 
-- **A difference of modification time and size, and the server's own order** — proposed.
+- **A difference of modification time and size, ordered by the server's clock** — proposed.
 - **Newer, as today.** Misses vanished and restored files, needs `letGoTime` and the clock
   gap, and is read three ways.
 - **A difference of modification time alone.** Misses same-tick edits of equal times
   more often, for no saving: the size comes from the same `stat`.
 - **A checksum of the content.** Exact, but every file is read on every request. Possible
   later for racy files only.
-- **Times for the order, the noticed time from the system clock.** Works, but is moved by
-  the clock being set back, and keeps the comparison between two clocks for held buffers.
+- **A counter of the server's own for the order.** Exact, also when the clock is set
+  back, but one more value to keep and save, for a case that is rare.
 
 ## Origin
 
@@ -164,3 +158,5 @@ Discussed on the Mac, session `4839a129`, 2026-11-06, while refining the shape's
 the scan with the removal. Thomas noted that the token stands in for the content, as the
 checksum once considered would, and that the make analogy had put "newer" both into the
 code and into how we thought about it. The racy rule is git's ("racily clean" files).
+The counter first proposed for the order was dropped on WSL, session `d25255b8`,
+2026-11-09, since a clock set back is rare.
