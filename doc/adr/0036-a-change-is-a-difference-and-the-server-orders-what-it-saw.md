@@ -81,11 +81,15 @@ _we propose to_
   and writes it only before a request,
 - **order what the server saw by its own clock**: a change is stamped when it is noticed,
   and knowledge when it is taken. A CU is out of date when a prerequisite was noticed
-  changed after its knowledge was taken. The noticed changes and the knowledge are kept
-  in the snapshot,
+  changed after its knowledge was taken. A change is stamped at the `stat` that finds
+  it, not when the file is used, so a file first reached by a parse, e.g. through an
+  include the scan does not record, is stamped after the knowledge being built, and costs
+  one build more rather than a change missed. The noticed changes and the knowledge are
+  kept in the snapshot,
 - **keep the scan's seen token per session**, since the edges are not in the snapshot, and
   the removal's in the snapshot. In a new session every known file is changed for the
-  scan, and for the removal only those that were held,
+  scan, and for the removal those whose token differs from the snapshot's, which
+  includes every file that was held,
 - **save a held file without a seen token**, so that it has changed after a restart,
   whatever the snapshot holds of it. That is so also for the snapshot written during a
   long build. Its references are saved as they are, and the restarted server removes
