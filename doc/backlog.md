@@ -758,7 +758,10 @@ was done.
 - <a id="adr-0031"></a>**ADR-0031: what files a project consists of**
 - <a id="adr-0032"></a>**ADR-0032: knowledge is rebuilt like `make` rebuilds targets**
 - <a id="adr-0035"></a>**ADR-0035: a file's references are removed when its content changes**
-- <a id="adr-0036"></a>**ADR-0036: a change is a difference, and the server orders what it saw** (Proposed)
+- <a id="adr-0036"></a>**ADR-0036: a change is a difference, and the server orders what it saw** (Proposed) —
+    when it is accepted, go over the Terminology in `06-principles`: *Change time* goes,
+    the terms marked "proposed" lose the mark, and *Saving / persisting* says what the
+    snapshot keeps of a held file (WSL, session `d25255b8`, 2026-11-10).
 
 ## Open questions that would reorder this
 
