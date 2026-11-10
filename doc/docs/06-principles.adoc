@@ -294,8 +294,8 @@ Completeness question::
 
 Content token::
   What stands for the content the server would read now, without reading it. For a file
-  on disk its modification time and size, for a held buffer the client's version of it. A
-  file that does not exist has none (ADR-0036, proposed).
+  on disk its modification time and size, for a held buffer those of its preload. A file
+  that does not exist has none (ADR-0036, proposed).
 
 Entry refresh::
   The per-request mechanism that ensures the reference table is up-to-date before executing

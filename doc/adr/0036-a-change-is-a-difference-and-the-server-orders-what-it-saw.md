@@ -18,8 +18,8 @@ Thomas Nilefalk (maintainer)
 Used beside those of ADR-0032 and ADR-0035.
 
 - **Content token** (of a file): what stands for the content the server would read now.
-  For a file on disk its modification time and size. For a held buffer the client's
-  version of it. A file that does not exist has none.
+  For a file on disk its modification time and size. For a held buffer those of its
+  preload. A file that does not exist has none.
 - **Seen token**: the content token recorded when the server last looked at the file.
 - **Changed** (of a file): its content token is not the same as its seen token. Having
   none is a token of its own, so a file that vanished, or that the server has not seen
@@ -72,9 +72,9 @@ _we propose to_
   so that most edits within one tick of the filesystem clock are seen,
 - **treat a racy seen token as unknown**, so that the file counts as changed on the next
   request, as git does for a file whose time is too close to when its index was written,
-- **let the client send its version of a held buffer** with `-preload`, e.g. Emacs's
-  `buffer-modified-tick`, which it already keeps to decide whether to write the preload,
-  so that no file time is involved for held content,
+- **let the client backdate a preload it writes**, e.g. by a second, so that its token
+  is not racy when the server records it. The client is the only writer of a preload,
+  and writes it only before a request,
 - **order what the server saw by its own clock**: a change is stamped when it is noticed,
   and knowledge when it is taken. A CU is out of date when a prerequisite was noticed
   changed after its knowledge was taken. The noticed changes and the knowledge are kept
@@ -104,8 +104,8 @@ _because_
 
 ## Decision Outcome
 
-A file has changed when its content token, its modification time and size or the
-client's version of a held buffer, is not the same as when the server last saw it. A
+A file has changed when its content token, its modification time and size or those of
+a held buffer's preload, is not the same as when the server last saw it. A
 vanished file and a new one have changed. The server orders what it saw by its own clock:
 a CU is out of date when a prerequisite was noticed changed after its knowledge was
 taken. "Newer" is no longer used to find a change. A file time is compared with the
@@ -131,8 +131,8 @@ clock only to tell a racy seen token, and a racy token is only distrusted.
   recorded. A clock that jumps forward, or a filesystem whose times come from another
   clock, e.g. `/mnt/c` or a network mount, can make a racy token look safe, so a
   same-tick edit is missed.
-- *The client's version is a protocol change.* Until the client sends it, a held buffer's
-  token is the preload file's modification time and size, which is racy as described.
+- *A client that does not backdate.* Its preload's token is racy, so a held CU is built
+  once more after each edit. It costs builds, not correctness.
 - *The system clock set back.* A change noticed soon after the clock was set back can
   look older than knowledge taken before it. That CU then looks current and lacks its
   part of the changed file, until it or a file it includes changes again. It is rare, so
@@ -151,6 +151,9 @@ clock only to tell a racy seen token, and a racy token is only distrusted.
   more often, for no saving: the size comes from the same `stat`.
 - **A checksum of the content.** Exact, but every file is read on every request. Possible
   later for racy files only.
+- **The client's version sent with `-preload`**, e.g. Emacs's `buffer-modified-tick`,
+  which it already keeps to decide whether to write the preload. Takes file times out of
+  held content altogether, but changes the protocol on both sides.
 - **A counter of the server's own for the order.** Exact, also when the clock is set
   back, but one more value to keep and save, for a case that is rare.
 
