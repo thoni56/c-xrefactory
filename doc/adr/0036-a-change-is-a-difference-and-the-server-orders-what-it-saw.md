@@ -56,6 +56,9 @@ _facing the fact that_
 - "newer" does not see a file that vanished, whose time reads as zero. A header deleted
   on disk keeps its references and its edges (`tests/test_a_deleted_header_leaves_no_references`,
   suspended),
+- a header held at an exit keeps the buffer's references after a restart, since
+  `forgetKnowledgeForHeldContent()` clears only knowledge times, which the removal does
+  not read (`tests/test_a_header_held_at_an_exit_is_changed_after_a_restart`, suspended),
 - "newer" does not see a file restored with an older time, by `cp -p`, `tar` or a
   checkout. ADR-0032 accepted that, since `make` has the same deficiency,
 - a held buffer let go is read from a disk file older than the knowledge built from the
@@ -81,7 +84,11 @@ _we propose to_
   in the snapshot,
 - **keep the scan's seen token per session**, since the edges are not in the snapshot, and
   the removal's in the snapshot. In a new session every known file is changed for the
-  scan and none for the removal,
+  scan, and for the removal only those that were held,
+- **save a held file without a seen token**, so that it has changed after a restart,
+  whatever the snapshot holds of it. That is so also for the snapshot written during a
+  long build. Its references are saved as they are, and the restarted server removes
+  them,
 
 _disregarding the fact that_
 - a token that changes without the content changing, e.g. after `touch` or a checkout that
@@ -106,7 +113,8 @@ _because_
 
 A file has changed when its content token, its modification time and size or those of
 a held buffer's preload, is not the same as when the server last saw it. A
-vanished file and a new one have changed. The server orders what it saw by its own clock:
+vanished file and a new one have changed. A held file is saved without a seen token.
+The server orders what it saw by its own clock:
 a CU is out of date when a prerequisite was noticed changed after its knowledge was
 taken. "Newer" is no longer used to find a change. A file time is compared with the
 clock only to tell a racy seen token, and a racy token is only distrusted.
@@ -118,6 +126,9 @@ clock only to tell a racy seen token, and a racy token is only distrusted.
 - A deleted header is seen, and `test_a_deleted_header_leaves_no_references` has its fix
   in the comparison.
 - A restored older file is seen. ADR-0032's accepted deficiency goes.
+- A held file has changed after a restart, header or CU alike, and
+  `test_a_header_held_at_an_exit_is_changed_after_a_restart` has its fix.
+  `forgetKnowledgeForHeldContent()` goes.
 - `letGoTime` goes: a buffer let go is read from the disk, whose token is not the
   buffer's, so it has changed.
 - The coarse clock gap goes, with the extra build of a held CU after each edit.
