@@ -25,9 +25,6 @@ Used beside those of ADR-0032 and ADR-0035.
   none is a token of its own, so a file that vanished, or that the server has not seen
   before, has changed, and one that is still missing has not.
 - **Noticed** (of a change): when the server found a file changed, by its own clock.
-- **Racy** (of a seen token): recorded so soon after the file's modification time that an
-  edit in the same tick of the filesystem clock would leave the time as it is. The term
-  is git's.
 
 ## Where it fits
 
@@ -74,11 +71,6 @@ _we propose to_
 - **make the content token the modification time and the size**, from the same `stat`,
   so that most edits within one tick of the filesystem clock are seen. The `stat` comes
   before the content is read, so that a write in between is seen on the next request,
-- **treat a racy seen token as unknown**, so that the file counts as changed on the next
-  request, as git does for a file whose time is too close to when its index was written,
-- **let the client backdate a preload it writes**, e.g. by a second, so that its token
-  is not racy when the server records it. The client is the only writer of a preload,
-  and writes it only before a request,
 - **order what the server saw by its own clock**: a change is stamped when it is noticed,
   and knowledge when it is taken. A CU is out of date when a prerequisite was noticed
   changed after its knowledge was taken. A change is stamped at the `stat` that finds
@@ -90,17 +82,24 @@ _we propose to_
   the removal's in the snapshot. In a new session every known file is changed for the
   scan, and for the removal those whose token differs from the snapshot's, which
   includes every file that was held,
-- **save a held file without a seen token**, so that it has changed after a restart,
-  whatever the snapshot holds of it. That is so also for the snapshot written during a
-  long build. Its references are saved as they are, and the restarted server removes
-  them,
+- **save a held file with its preload's token**. After a restart the server reads the
+  disk, or finds the file missing, and neither has the preload's token, so the file has
+  changed, as when a buffer is let go during a session. That is so also for the snapshot
+  written during a long build. Its references are saved as they are, and the restarted
+  server removes them,
 
 _disregarding the fact that_
 - a token that changes without the content changing, e.g. after `touch` or a checkout that
   rewrites a file as it was, costs a build. "Newer" costs the same,
-- content changed twice within one tick, with the same size, is not seen. A checksum would
-  see it, at the cost of reading every file each request. The racy rule covers the case
-  where the server has just read the file,
+- content written, `stat`ed by the server and written again within one tick of the
+  filesystem clock, with the same size, is not seen until the file changes again. The
+  tick is about 4 ms on Linux, where modification times come from the kernel's coarse
+  clock. Emacs writes a preload only before a request, and a save is a command, so a
+  human needs two requests within the tick. Only a tool rewriting a file twice while a
+  request runs can meet it, e.g. a generator or a formatter, and only at the same size,
+- on a filesystem with a tick of a second or more, e.g. HFS+, FAT or some network
+  mounts, a human can meet it too: an edit, a request and an edit of the same size
+  within the tick,
 - a filesystem whose times differ between two `stat`s of an unchanged file would make
   every request see it changed. Not known to happen. WSL's `/mnt/c` is the one to check,
 
@@ -118,11 +117,11 @@ _because_
 
 A file has changed when its content token, its modification time and size or those of
 a held buffer's preload, is not the same as when the server last saw it. A
-vanished file and a new one have changed. A held file is saved without a seen token.
+vanished file and a new one have changed. A held file is saved with its preload's token.
 The server orders what it saw by its own clock:
 a CU is out of date when a prerequisite was noticed changed after its knowledge was
-taken. "Newer" is no longer used to find a change. A file time is compared with the
-clock only to tell a racy seen token, and a racy token is only distrusted.
+taken. "Newer" is no longer used to find a change, and no file time is compared with
+the clock.
 
 ## Consequences and Risks
 
@@ -141,14 +140,6 @@ clock only to tell a racy seen token, and a racy token is only distrusted.
 **Risks:**
 - *A new snapshot format.* The seen tokens and the noticed changes are kept. An older
   snapshot is ignored, as for 1.15.0.
-- *The racy rule depends on the filesystem's tick.* Too narrow and an edit is missed, too
-  wide and files are scanned again needlessly. The first errs towards a missed change,
-  so it should err wide. It also reads the system clock, for when the token was
-  recorded. A clock that jumps forward, or a filesystem whose times come from another
-  clock, e.g. `/mnt/c` or a network mount, can make a racy token look safe, so a
-  same-tick edit is missed.
-- *A client that does not backdate.* Its preload's token is racy, so a held CU is built
-  once more after each edit. It costs builds, not correctness.
 - *The system clock set back.* A change noticed soon after the clock was set back can
   look older than knowledge taken before it. That CU then looks current and lacks its
   part of the changed file, until it or a file it includes changes again. It is rare, so
@@ -165,8 +156,12 @@ clock only to tell a racy seen token, and a racy token is only distrusted.
   gap, and is read three ways.
 - **A difference of modification time alone.** Misses same-tick edits of equal times
   more often, for no saving: the size comes from the same `stat`.
-- **A checksum of the content.** Exact, but every file is read on every request. Possible
-  later for racy files only.
+- **A checksum of the content.** Exact, but every file is read on every request.
+- **Git's rule for racy tokens**, a token recorded within a tick of the file's time
+  counting as unknown, with the client backdating its preloads. Closes the same-tick
+  window, but needs a third state beside a token and none, which unlike none is not
+  the same as itself, and compares a file time with the clock again, for a window that
+  human edits do not reach.
 - **The client's version sent with `-preload`**, e.g. Emacs's `buffer-modified-tick`,
   which it already keeps to decide whether to write the preload. Takes file times out of
   held content altogether, but changes the protocol on both sides.
@@ -180,6 +175,8 @@ Discussed on the Mac, session `4839a129`, 2026-11-06, while refining the shape's
 `files-appear-vanish`). That the code reads "changed" three ways was found by comparing
 the scan with the removal. Thomas noted that the token stands in for the content, as the
 checksum once considered would, and that the make analogy had put "newer" both into the
-code and into how we thought about it. The racy rule is git's ("racily clean" files).
+code and into how we thought about it.
 The counter first proposed for the order was dropped on WSL, session `d25255b8`,
-2026-11-09, since a clock set back is rare.
+2026-11-09, since a clock set back is rare. The racy rule, the backdating and saving
+a held file without a token were dropped on the Mac, session `4839a129`, 2026-11-10,
+since they needed a third state for a window that human edits do not reach.
