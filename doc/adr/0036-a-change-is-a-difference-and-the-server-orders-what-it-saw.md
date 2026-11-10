@@ -21,8 +21,9 @@ Used beside those of ADR-0032 and ADR-0035.
   For a file on disk its modification time and size. For a held buffer the client's
   version of it. A file that does not exist has none.
 - **Seen token**: the content token recorded when the server last looked at the file.
-- **Changed** (of a file): its content token is not the same as its seen token, or it has
-  none of either. A file the server has not seen before has changed.
+- **Changed** (of a file): its content token is not the same as its seen token. Having
+  none is a token of its own, so a file that vanished, or that the server has not seen
+  before, has changed, and one that is still missing has not.
 - **Noticed** (of a change): when the server found a file changed, by its own clock.
 - **Racy** (of a seen token): recorded so soon after the file's modification time that an
   edit in the same tick of the filesystem clock would leave the time as it is. The term
