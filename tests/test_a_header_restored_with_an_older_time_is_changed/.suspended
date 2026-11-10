@@ -1,0 +1,17 @@
+Missing: a header restored with an older time keeps its old references
+
+header.h is replaced by an older version, with its older time, as `cp -p`,
+`tar` or a checkout can do. Its time is now older than the change time the
+server recorded, and removeReferencesOfChangedFiles() (src/rebuild.c) only
+sees a change when the content time is newer. So header.h's references are
+not removed, and its includers are not out of date. The request CU is parsed
+for the cursor anyway (cursor-parse-reuse) and adds f on line 1, but the
+declaration on line 2, which the restored file no longer has, stays.
+
+ADR-0032 accepted this, since make has the same deficiency, so it is Missing
+rather than Bug. ADR-0036 (backlog change-is-difference) fixes it: a file has
+changed when its modification time and size are not the same as when last
+seen, whichever way the time moved. No fix within today's "newer" is wanted.
+
+Written on the Mac, session 4839a129, 2026-11-10, so that each fix ADR-0036
+claims has a test waiting for it.
