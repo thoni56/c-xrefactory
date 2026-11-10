@@ -763,8 +763,9 @@ was done.
     when it is accepted, go over the Terminology in `06-principles`: *Change time* goes,
     the terms marked "proposed" lose the mark, and *Saving / persisting* says what the
     snapshot keeps of a held file. The client's part, backdating a preload it writes,
-    goes into "Editor Extension" in `12-components` (WSL, session `d25255b8`,
-    2026-11-10).
+    goes into "Editor Extension" in `12-components`. The shape's *changed* line in
+    `20-insights` says "newer than when last seen" and becomes "not the same as" (WSL,
+    session `d25255b8`, 2026-11-10).
 
 ## Open questions that would reorder this
 

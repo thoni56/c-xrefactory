@@ -72,7 +72,8 @@ _we propose to_
   same as its seen token. That is one reading, once per request, used by the scan and the
   removal, each with its own seen token,
 - **make the content token the modification time and the size**, from the same `stat`,
-  so that most edits within one tick of the filesystem clock are seen,
+  so that most edits within one tick of the filesystem clock are seen. The `stat` comes
+  before the content is read, so that a write in between is seen on the next request,
 - **treat a racy seen token as unknown**, so that the file counts as changed on the next
   request, as git does for a file whose time is too close to when its index was written,
 - **let the client backdate a preload it writes**, e.g. by a second, so that its token
