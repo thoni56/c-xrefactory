@@ -91,6 +91,9 @@ _we propose to_
 _disregarding the fact that_
 - a token that changes without the content changing, e.g. after `touch` or a checkout that
   rewrites a file as it was, costs a build. "Newer" costs the same,
+- saving a held buffer costs a build: the server lets go of it and reads the disk, whose
+  token is never the preload's, although the content is the same. `letGoTime` costs the
+  same today,
 - content written, `stat`ed by the server and written again within one tick of the
   filesystem clock, with the same size, is not seen until the file changes again. The
   tick is about 4 ms on Linux, where modification times come from the kernel's coarse
