@@ -108,8 +108,8 @@ A file has changed when its content token, its modification time and size or the
 client's version of a held buffer, is not the same as when the server last saw it. A
 vanished file and a new one have changed. The server orders what it saw by its own clock:
 a CU is out of date when a prerequisite was noticed changed after its knowledge was
-taken. "Newer" is no longer used to find a change, and no file time is compared with a
-clock.
+taken. "Newer" is no longer used to find a change. A file time is compared with the
+clock only to tell a racy seen token, and a racy token is only distrusted.
 
 ## Consequences and Risks
 
@@ -127,7 +127,10 @@ clock.
   snapshot is ignored, as for 1.15.0.
 - *The racy rule depends on the filesystem's tick.* Too narrow and an edit is missed, too
   wide and files are scanned again needlessly. The first errs towards a missed change,
-  so it should err wide.
+  so it should err wide. It also reads the system clock, for when the token was
+  recorded. A clock that jumps forward, or a filesystem whose times come from another
+  clock, e.g. `/mnt/c` or a network mount, can make a racy token look safe, so a
+  same-tick edit is missed.
 - *The client's version is a protocol change.* Until the client sends it, a held buffer's
   token is the preload file's modification time and size, which is racy as described.
 - *The system clock set back.* A change noticed soon after the clock was set back can
