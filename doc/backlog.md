@@ -574,14 +574,14 @@ implementation, and are noted in `cu-inputs`, `out-of-date`, `time-budget` and
 - (#112) <a id="change-is-difference"></a>**A change is a difference, ordered by the server's own clock** —
     ADR-0036 (Proposed). One reading of *changed*, used by the scan and the removal: a
     content token, modification time and size, of its preload for a held buffer,
-    not the same as when last seen, with git's rule for racy tokens. A vanished file and
+    not the same as when last seen. A vanished file and
     a new one have changed, which fixes the deleted header
     (`test_a_deleted_header_leaves_no_references`, and the vanishing half of
     `files-appear-vanish`). The build orders noticed changes and knowledge by the
     server's own clock, not by file times, so `letGoTime`, the zero special cases and the
-    10 ms gap go, with the extra build of a held CU after each edit. The client
-    backdates a preload it writes, so its token is not racy (Mac, session `4839a129`,
-    2026-11-06).
+    10 ms gap go, with the extra build of a held CU after each edit. A held file is
+    saved with its preload's token, so it has changed after a restart (Mac, session
+    `4839a129`, 2026-11-06, the racy rule dropped 2026-11-10).
     Waits for: adr-0036
     Goes with: remove-on-change, files-appear-vanish
 - (#109) <a id="session-refresh-time"></a>**A session refreshes a file by a time, not a flag** —
@@ -762,8 +762,7 @@ was done.
 - <a id="adr-0036"></a>**ADR-0036: a change is a difference, and the server orders what it saw** (Proposed) —
     when it is accepted, go over the Terminology in `06-principles`: *Change time* goes,
     the terms marked "proposed" lose the mark, and *Saving / persisting* says what the
-    snapshot keeps of a held file. The client's part, backdating a preload it writes,
-    goes into "Editor Extension" in `12-components`. The shape's *changed* line in
+    snapshot keeps of a held file. The shape's *changed* line in
     `20-insights` says "newer than when last seen" and becomes "not the same as" (WSL,
     session `d25255b8`, 2026-11-10).
 

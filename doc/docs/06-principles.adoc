@@ -389,12 +389,6 @@ Project root::
   transitively through `#include` directives. On auto-detection, the project root is
   found by walking upward from the request file.
 
-Racy::
-  Of a seen token, recorded so soon after the file's modification time that an edit in the
-  same tick of the filesystem clock would leave the time as it is. A racy token counts as
-  unknown, so the file has changed on the next request. The term is git's (ADR-0036,
-  proposed).
-
 Reach::
   The CUs whose knowledge can reference a symbol. For a `static` that is its own CU, for a
   global the CUs that include its declaring header, directly or through other headers.
