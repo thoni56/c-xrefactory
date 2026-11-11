@@ -74,3 +74,20 @@ Ensure(ContentToken, a_file_has_the_time_and_size_of_one_stat) {
 
     assert_that(contentTokensAreSame(token, makeContentToken(makeFileTimestamp(1000, 500), 42)), is_true);
 }
+
+/* The value is kept in the snapshot, so it must not change between runs,
+ * builds or platforms */
+Ensure(ContentToken, a_known_token_has_a_known_value) {
+    ContentToken token = makeContentToken(makeFileTimestamp(1000, 500), 42);
+    assert_that(contentTokenAsInt(token), is_equal_to(1426731049));
+}
+
+Ensure(ContentToken, missing_is_kept_as_zero) {
+    assert_that(contentTokenAsInt(missingContentToken()), is_equal_to(0));
+    assert_that(contentTokenIsMissing(contentTokenFromInt(0)), is_true);
+}
+
+Ensure(ContentToken, a_token_read_back_is_the_same) {
+    ContentToken token = makeContentToken(makeFileTimestamp(1000, 500), 42);
+    assert_that(contentTokensAreSame(contentTokenFromInt(contentTokenAsInt(token)), token), is_true);
+}

@@ -20,12 +20,13 @@ static uint32_t hashInto(uint32_t hash, int64_t value) {
 }
 
 /* Unlike a hash table's, two tokens with the same hash are never compared
- * further, so a collision is a change not seen, about once in 2^32 */
+ * further, so a collision is a change not seen, about once in 2^31. 31 bits,
+ * since the snapshot reads only non-negative ints */
 ContentToken makeContentToken(FileTimestamp modificationTime, long size) {
     uint32_t hash = FNV_OFFSET_BASIS;
     hash = hashInto(hash, fileTimestampSeconds(modificationTime));
     hash = hashInto(hash, fileTimestampNanoseconds(modificationTime));
-    hash = hashInto(hash, size);
+    hash = hashInto(hash, size) & 0x7fffffff;
     if (hash == MISSING_HASH)
         hash = 1;
     return (ContentToken){.hash = hash};
@@ -53,4 +54,12 @@ bool contentTokensAreSame(ContentToken a, ContentToken b) {
 
 bool contentTokenIsMissing(ContentToken token) {
     return token.hash == MISSING_HASH;
+}
+
+int contentTokenAsInt(ContentToken token) {
+    return (int)token.hash;
+}
+
+ContentToken contentTokenFromInt(int value) {
+    return (ContentToken){.hash = (uint32_t)value};
 }

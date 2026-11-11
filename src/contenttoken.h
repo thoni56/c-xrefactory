@@ -20,4 +20,8 @@ extern ContentToken contentTokenOf(char *path);
 extern bool contentTokensAreSame(ContentToken a, ContentToken b);
 extern bool contentTokenIsMissing(ContentToken token);
 
+/* For the snapshot, which keeps a token as a non-negative int */
+extern int contentTokenAsInt(ContentToken token);
+extern ContentToken contentTokenFromInt(int value);
+
 #endif
