@@ -49,6 +49,15 @@ FileTimestamp editorFileModificationTime(char *path) {
     return fileModificationTime(path);
 }
 
+/* A held buffer stands for its preload, which the client writes only when
+ * the buffer changed. A buffer the server read itself is the disk's (ADR-0036) */
+ContentToken editorContentTokenOf(char *path) {
+    EditorBuffer *buffer = getEditorBufferForFile(path);
+    if (buffer != NULL && buffer->preLoadedFromFile != NULL)
+        return makeContentToken(buffer->modificationTime, buffer->size);
+    return contentTokenOf(path);
+}
+
 bool editorFileExists(char *path) {
     EditorBuffer *buffer;
 
@@ -541,18 +550,15 @@ void closeEditorBuffersNoLongerHeld(BuildList *list) {
             freeEditorBuffer(buffer);
 
             /* The editor's view is no longer authoritative. A CU is
-             * built again from disk. A header changes now, so its
-             * includers are out of date and put it back, since on its
-             * own it has no preprocessor context. A file that is not on
-             * disk is gone, e.g. one a refactoring created and the
-             * client undid. */
+             * built again from disk. A header has the disk's token now,
+             * not the preload's, so the removal sees it changed, and its
+             * includers put it back, since on its own it has no
+             * preprocessor context. A file that is not on disk is gone,
+             * e.g. one a refactoring created and the client undid. */
             FileItem *fileItem = getFileItemWithFileNumber(fileNumber);
             if (fileExists(fileItem->name)) {
-                if (isCompilationUnit(fileItem->name)) {
+                if (isCompilationUnit(fileItem->name))
                     addToBuildList(list, fileNumber);
-                } else {
-                    letGoOfHeldHeader(fileNumber);
-                }
             } else
                 markFileAsDeleted(fileNumber);
         }

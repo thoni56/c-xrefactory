@@ -6,6 +6,7 @@
 #include "head.h"
 #include "argumentsvector.h"
 #include "completion.h"
+#include "contenttoken.h"
 #include "editorbuffer.h"
 #include "editormarker.h"
 #include "proto.h"
@@ -19,6 +20,7 @@ extern void editorInit(void);
 extern bool   editorFileExists(char *path);
 extern size_t editorFileSize(char *path);
 extern FileTimestamp editorFileModificationTime(char *path);
+extern ContentToken editorContentTokenOf(char *path);
 
 extern void replaceStringInEditorBuffer(EditorBuffer *buff, int position, int delsize, char *str,
                                         int strlength, EditorUndo **undo);

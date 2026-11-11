@@ -18,6 +18,7 @@
 #include "editorbuffer.mock"
 #include "editorbuffertable.mock"
 #include "filedescriptor.mock"
+#include "fileio.mock"
 #include "filetable.mock"
 #include "freshness.mock"
 #include "globals.mock"
@@ -192,63 +193,107 @@ Ensure(Rebuild, a_built_cu_has_its_browsing_stack_refreshed) {
     assert_that(fileItem.needsBrowsingStackRefresh);
 }
 
-static FileTimestamp seenTime = {.tv_sec = 1000, .tv_nsec = 0};
-static FileTimestamp newerTime = {.tv_sec = 2000, .tv_nsec = 0};
+static FileTimestamp noticedTime = {.tv_sec = 3000, .tv_nsec = 0};
 
-static void expectOneHeaderInTheFileTable(FileItem *fileItem, FileTimestamp *contentTime) {
+static ContentToken tokenSeen(void) {
+    return makeContentToken(makeFileTimestamp(1000, 0), 10);
+}
+
+static ContentToken tokenOfAnEdit(void) {
+    return makeContentToken(makeFileTimestamp(2000, 0), 12);
+}
+
+static void expectOneHeaderInTheFileTable(FileItem *fileItem, ContentToken *contentToken) {
     expect(getNextExistingFileNumber, will_return(42));
     expect(getNextExistingFileNumber, will_return(-1));
     always_expect(getFileItemWithFileNumber, when(fileNumber, is_equal_to(42)), will_return(fileItem));
     always_expect(isCompilationUnit, will_return(false));
-    expect(editorFileModificationTime, when(path, is_equal_to_string(fileItem->name)),
-           will_return(contentTime));
+    expect(editorContentTokenOf, when(path, is_equal_to_string(fileItem->name)), will_return(contentToken));
 }
 
+/* A change is a difference, stamped when the server notices it (ADR-0036) */
 Ensure(Rebuild, removes_the_references_of_a_header_whose_content_changed) {
-    FileItem fileItem = {.name = "header.h", .changeTime = seenTime};
-    expectOneHeaderInTheFileTable(&fileItem, &newerTime);
+    FileItem fileItem = {.name = "header.h", .seenToken = tokenSeen()};
+    ContentToken now = tokenOfAnEdit();
+    expectOneHeaderInTheFileTable(&fileItem, &now);
     expect(removeReferenceableItemsForFile, when(fileNumber, is_equal_to(42)));
+    expect(changeTimeNow, will_return(&noticedTime));
 
     removeReferencesOfChangedFiles(NULL);
 
-    assert_that(fileTimestampsEqual(fileItem.changeTime, newerTime));
+    assert_that(fileTimestampsEqual(fileItem.changeTime, noticedTime));
+    assert_that(contentTokensAreSame(fileItem.seenToken, now));
 }
 
 Ensure(Rebuild, keeps_the_references_of_a_header_whose_content_did_not_change) {
-    FileItem fileItem = {.name = "header.h", .changeTime = seenTime};
-    expectOneHeaderInTheFileTable(&fileItem, &seenTime);
+    FileItem fileItem = {.name = "header.h", .seenToken = tokenSeen()};
+    ContentToken now = tokenSeen();
+    expectOneHeaderInTheFileTable(&fileItem, &now);
     never_expect(removeReferenceableItemsForFile);
+
+    removeReferencesOfChangedFiles(NULL);
+
+    assert_that(fileTimestampIsZero(fileItem.changeTime));
+}
+
+/* Older is a difference too, e.g. after `cp -p` or a checkout */
+Ensure(Rebuild, removes_the_references_of_a_header_restored_with_an_older_time) {
+    FileItem fileItem = {.name = "header.h", .seenToken = tokenOfAnEdit()};
+    ContentToken now = tokenSeen();
+    expectOneHeaderInTheFileTable(&fileItem, &now);
+    expect(removeReferenceableItemsForFile, when(fileNumber, is_equal_to(42)));
+    expect(changeTimeNow, will_return(&noticedTime));
 
     removeReferencesOfChangedFiles(NULL);
 }
 
-Ensure(Rebuild, records_the_change_time_of_a_header_seen_for_the_first_time_and_keeps_its_references) {
+Ensure(Rebuild, removes_the_references_of_a_header_that_vanished) {
+    FileItem fileItem = {.name = "header.h", .seenToken = tokenSeen()};
+    ContentToken now = missingContentToken();
+    expectOneHeaderInTheFileTable(&fileItem, &now);
+    expect(removeReferenceableItemsForFile, when(fileNumber, is_equal_to(42)));
+    expect(changeTimeNow, will_return(&noticedTime));
+
+    removeReferencesOfChangedFiles(NULL);
+
+    assert_that(contentTokenIsMissing(fileItem.seenToken));
+}
+
+/* A header the removal has not seen, or saw missing, has no references of its
+ * own to remove. What a parse put there before the removal looked is kept,
+ * and its includers are out of date by its time on disk */
+Ensure(Rebuild, records_the_token_of_a_header_seen_for_the_first_time_and_keeps_its_references) {
     FileItem fileItem = {.name = "header.h"};
-    expectOneHeaderInTheFileTable(&fileItem, &seenTime);
+    ContentToken now = tokenSeen();
+    expectOneHeaderInTheFileTable(&fileItem, &now);
     never_expect(removeReferenceableItemsForFile);
 
     removeReferencesOfChangedFiles(NULL);
 
-    assert_that(fileTimestampsEqual(fileItem.changeTime, seenTime));
+    assert_that(contentTokensAreSame(fileItem.seenToken, now));
+    assert_that(fileTimestampIsZero(fileItem.changeTime));
 }
 
-static void expectTwoHeadersInTheFileTable(FileItem *leaf, FileTimestamp *leafTime,
-                                           FileItem *other, FileTimestamp *otherTime) {
+static void expectTwoHeadersInTheFileTable(FileItem *leaf, ContentToken *leafToken,
+                                           FileItem *other, ContentToken *otherToken) {
     expect(getNextExistingFileNumber, will_return(42));
     expect(getNextExistingFileNumber, will_return(43));
     expect(getNextExistingFileNumber, will_return(-1));
     expect(getFileItemWithFileNumber, when(fileNumber, is_equal_to(42)), will_return(leaf));
     expect(getFileItemWithFileNumber, when(fileNumber, is_equal_to(43)), will_return(other));
     always_expect(isCompilationUnit, will_return(false));
-    expect(editorFileModificationTime, will_return(leafTime));
-    expect(editorFileModificationTime, will_return(otherTime));
+    expect(editorContentTokenOf, will_return(leafToken));
+    expect(editorContentTokenOf, will_return(otherToken));
 }
 
 /* What a header emits depends on what it includes (ADR-0035) */
 Ensure(Rebuild, removes_the_references_of_a_header_that_includes_a_changed_one) {
-    FileItem leaf = {.name = "leaf.h", .changeTime = seenTime};
-    FileItem mid = {.name = "mid.h", .changeTime = seenTime};
-    expectTwoHeadersInTheFileTable(&leaf, &newerTime, &mid, &seenTime);
+    FileItem leaf = {.name = "leaf.h", .seenToken = tokenSeen()};
+    FileItem mid = {.name = "mid.h", .seenToken = tokenSeen()};
+    ContentToken leafNow = tokenOfAnEdit();
+    ContentToken midNow = tokenSeen();
+    expectTwoHeadersInTheFileTable(&leaf, &leafNow, &mid, &midNow);
+    expect(changeTimeNow, will_return(&noticedTime));
     static int closureOfMid[] = {42};
     expect(collectIncludeClosureOf, when(fileNumber, is_equal_to(43)),
            will_set_contents_of_parameter(fileNumbers, closureOfMid, sizeof(closureOfMid)),
@@ -258,42 +303,20 @@ Ensure(Rebuild, removes_the_references_of_a_header_that_includes_a_changed_one) 
 
     removeReferencesOfChangedFiles(NULL);
 
-    assert_that(fileTimestampsEqual(mid.changeTime, newerTime));
+    assert_that(fileTimestampsEqual(mid.changeTime, noticedTime));
 }
 
 Ensure(Rebuild, keeps_the_references_of_a_header_that_does_not_include_a_changed_one) {
-    FileItem leaf = {.name = "leaf.h", .changeTime = seenTime};
-    FileItem other = {.name = "other.h", .changeTime = seenTime};
-    expectTwoHeadersInTheFileTable(&leaf, &newerTime, &other, &seenTime);
+    FileItem leaf = {.name = "leaf.h", .seenToken = tokenSeen()};
+    FileItem other = {.name = "other.h", .seenToken = tokenSeen()};
+    ContentToken leafNow = tokenOfAnEdit();
+    ContentToken otherNow = tokenSeen();
+    expectTwoHeadersInTheFileTable(&leaf, &leafNow, &other, &otherNow);
+    expect(changeTimeNow, will_return(&noticedTime));
     expect(collectIncludeClosureOf, when(fileNumber, is_equal_to(43)), will_return(0));
     expect(removeReferenceableItemsForFile, when(fileNumber, is_equal_to(42)));
 
     removeReferencesOfChangedFiles(NULL);
 
-    assert_that(fileTimestampsEqual(other.changeTime, seenTime));
-}
-
-/* The removal pass removes, so that it also reaches the headers that include it */
-Ensure(Rebuild, letting_go_of_a_held_header_only_records_when) {
-    FileItem fileItem = {.name = "header.h", .changeTime = seenTime};
-    always_expect(getFileItemWithFileNumber, when(fileNumber, is_equal_to(42)), will_return(&fileItem));
-    never_expect(removeReferenceableItemsForFile);
-    expect(changeTimeNow, will_return(&newerTime));
-
-    letGoOfHeldHeader(42);
-
-    assert_that(fileTimestampsEqual(fileItem.letGoTime, newerTime));
-    assert_that(fileTimestampsEqual(fileItem.changeTime, seenTime));
-}
-
-/* The disk is older than the knowledge built from the buffer, so the change is
- * when it was let go */
-Ensure(Rebuild, removes_the_references_of_a_header_let_go_after_its_change) {
-    FileItem fileItem = {.name = "header.h", .changeTime = seenTime, .letGoTime = newerTime};
-    expectOneHeaderInTheFileTable(&fileItem, &seenTime);
-    expect(removeReferenceableItemsForFile, when(fileNumber, is_equal_to(42)));
-
-    removeReferencesOfChangedFiles(NULL);
-
-    assert_that(fileTimestampsEqual(fileItem.changeTime, newerTime));
+    assert_that(fileTimestampIsZero(other.changeTime));
 }

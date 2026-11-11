@@ -14,6 +14,11 @@ bool editorFileExists(char *path) {
     return (bool)mock(path);
 }
 
+ContentToken editorContentTokenOf(char *path) {
+    ContentToken *tokenP = (ContentToken *)mock(path);
+    return *tokenP;
+}
+
 FileTimestamp editorFileModificationTime(char *path) {
     FileTimestamp *fileTimestampP = (FileTimestamp *)mock(path);
     return *fileTimestampP;

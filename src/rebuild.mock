@@ -54,10 +54,6 @@ void removeReferencesOfChangedFiles(Prerequisites *prerequisites) {
     mock(prerequisites);
 }
 
-void letGoOfHeldHeader(int fileNumber) {
-    mock(fileNumber);
-}
-
 int buildListCount(BuildList *list) {
     return (int)mock(list);
 }

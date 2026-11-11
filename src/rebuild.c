@@ -193,19 +193,12 @@ static void removeReferencesOfIncludersOfChanged(Prerequisites *prerequisites, i
     free(closure);
 }
 
-/* When the content the server reads last changed. A held buffer let go
- * changed when it was let go, although the disk is older (ADR-0035) */
-static FileTimestamp contentTimeOf(FileItem *fileItem) {
-    FileTimestamp contentTime = editorFileModificationTime(fileItem->name);
-    if (fileTimestampIsLessThan(contentTime, fileItem->letGoTime))
-        return fileItem->letGoTime;
-    return contentTime;
-}
-
 /* A CU's own references are removed when it is built, and its include
  * references lead to its siblings until then, so only headers here. A header
- * seen for the first time has its change time recorded, and keeps what the
- * table has. */
+ * has changed when its content token is not the one last seen, and the change
+ * is stamped when it is noticed (ADR-0036). A header not seen before, or seen
+ * missing, has no references of its own to remove, and keeps what a parse put
+ * there. */
 void removeReferencesOfChangedFiles(Prerequisites *prerequisites) {
     int *headers = malloc(MAX_FILES * sizeof(int));
     FileItem **items = malloc(MAX_FILES * sizeof(FileItem *));
@@ -219,15 +212,16 @@ void removeReferencesOfChangedFiles(Prerequisites *prerequisites) {
             continue;
         headers[headerCount] = i;
         items[headerCount++] = fileItem;
-        FileTimestamp contentTime = contentTimeOf(fileItem);
-        if (fileTimestampIsZero(fileItem->changeTime)) {
-            fileItem->changeTime = contentTime;
-        } else if (fileTimestampIsLessThan(fileItem->changeTime, contentTime)) {
+        ContentToken contentToken = editorContentTokenOf(fileItem->name);
+        if (contentTokenIsMissing(fileItem->seenToken)) {
+            fileItem->seenToken = contentToken;
+        } else if (!contentTokensAreSame(fileItem->seenToken, contentToken)) {
             log_debug("'%s' changed, removing its references", fileItem->name);
             removeReferenceableItemsForFile(i);
             fileItem->needsBrowsingStackRefresh = true;
-            fileItem->changeTime = contentTime;
-            changedAt[i] = contentTime;
+            fileItem->seenToken = contentToken;
+            fileItem->changeTime = changeTimeNow();
+            changedAt[i] = fileItem->changeTime;
             anyChanged = true;
         }
     }
@@ -238,14 +232,6 @@ void removeReferencesOfChangedFiles(Prerequisites *prerequisites) {
     free(changedAt);
     free(items);
     free(headers);
-}
-
-/* The server reads the disk again, so the content changes now, although the
- * file on disk is older than the knowledge built from the buffer. The removal
- * pass then removes its references, and those of the headers that include it
- * (ADR-0035) */
-void letGoOfHeldHeader(int fileNumber) {
-    getFileItemWithFileNumber(fileNumber)->letGoTime = changeTimeNow();
 }
 
 int buildListCount(BuildList *list) {
