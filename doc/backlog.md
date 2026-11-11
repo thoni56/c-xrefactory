@@ -207,11 +207,12 @@ every push, `After` dashed and `Goes with` not at all, linked at the end of this
     reading the code (Mac, session `05984816`, 2026-10-06), not tested.
     Goes with: behind-the-back
     After: remove-on-change
-- (#11) <a id="behind-the-back"></a>**A file changed on disk outside the goal is not seen** —
-    the server reads the change times of the goal's files only, so a header changed on
-    disk that no request reaches keeps its old references, and a browse from elsewhere
-    shows them (ADR-0035, "Seeing a change"). Seeing it means a `stat` of every known
-    file, change first, as `out-of-date` and `time-budget` already need for the estimate.
+- (#11) <a id="behind-the-back"></a>**A CU changed on disk outside the goal keeps its references** —
+    every known header is `stat`ed on each request and loses its references when it
+    changed (`removeReferencesOfChangedFiles()`, `src/rebuild.c`), but a CU loses its own
+    only when it is built, so a CU changed on disk that no request reaches keeps its old
+    references, and a browse from elsewhere shows them (ADR-0035, "Seeing a change").
+    It goes when a CU follows the header's rule (`remove-on-change`).
     After: remove-on-change
     Goes with: out-of-date
 - (#111) <a id="files-appear-vanish"></a>**Files that appear or vanish between requests are not seen** —
@@ -553,9 +554,9 @@ Performance, from reading the code (Mac, session `05984816`, 2026-10-08): at equ
 correctness the design costs the same or less. Parsing dominates, and what is parsed
 follows the request rather than triggers: an edited header no longer parses up to the cap's
 worth of includers at once, only the goal's. More is parsed only where the old answer was
-incomplete (deeper reach, disk changes). The bookkeeping added — a `stat` per input, a
+incomplete (deeper reach, disk changes). The bookkeeping added — a `stat` per prerequisite, a
 walk of the table per changed file — is small beside what goes. The risks are in the
-implementation, and are noted in `cu-inputs`, `out-of-date`, `time-budget` and
+implementation, and are noted in `cu-prerequisites`, `out-of-date`, `time-budget` and
 `removal-cost`.
 
 - (#106) <a id="remove-on-change"></a>**A file's references are removed when its content changes** —
@@ -600,12 +601,10 @@ implementation, and are noted in `cu-inputs`, `out-of-date`, `time-budget` and
     limits move together. Fixes "A refactoring can see a truncated reference set" in
     `18-known-bugs.adoc`, 13 of 25 occurrences on ffmpeg.
     After: remove-on-change
-- (#35) <a id="cu-inputs"></a>**A CU's inputs** — the CU, its include closure and the project
-    config, put together where `out-of-date` uses them, the CU first. `Inputs`
+- (#35) <a id="cu-prerequisites"></a>**A CU's prerequisites** — the CU, its include closure and the project
+    config, put together where `out-of-date` uses them, the CU first. `Prerequisites`
     (`src/freshness.c`) holds them for one request: the include graph and each file's
-    change time, asked for once. Left: the config's change time (`out-of-date`). The
-    closure can hold the scan's includes beside the parse's, which for the predicate only
-    costs a parse.
+    change time, asked for once. Left: the config's change time (`out-of-date`).
 - (#36) <a id="out-of-date"></a>**The config as an input of `knowledgeIsOutOfDate()`** — it
     replaces `markAllCompilationUnitsStale()`, and the zero sentinel goes. The removal on a
     config change is `remove-on-change`'s. The config is the
@@ -618,7 +617,7 @@ implementation, and are noted in `cu-inputs`, `out-of-date`, `time-budget` and
     and walk the reverse include graph to the CUs whose knowledge is older, costs in
     proportion to what changed.
     Goes with: local-config-fragments
-    After: cu-inputs
+    After: cu-prerequisites
 - (#37) <a id="request-target"></a>**What a request needs** — the CUs that reach the request
     file's closure, and the whole project for an operation on a name. Left: the scan does
     not record `<...>`
@@ -667,7 +666,7 @@ implementation, and are noted in `cu-inputs`, `out-of-date`, `time-budget` and
     (`cxAlloc`), so every build leaves its CU's old references behind as dead memory.
     For information: the table only answers exact identity, so other lookups walk all
     of it. By file, the strip above. By kind, `buildIncludeGraph()` looking for the
-    include items, about 38 ms on a fully parsed ffmpeg, twice per request. By name
+    include items, about 38 ms on a fully parsed ffmpeg, once per request. By name
     only, `navigation.c` once per menu item. Per request on ffmpeg, 1376 `stat`s took
     about 5 ms and 2434 include closures about 50 ms (WSL, session `d25255b8`,
     2026-10-11).
@@ -677,9 +676,7 @@ implementation, and are noted in `cu-inputs`, `out-of-date`, `time-budget` and
     `06-principles`, and `08-algorithms` loses "Dual Semantics". In `06-principles`, the
     part on why reparsing only a subset is safe also describes strip-then-reparse.
     `08-algorithms` still describes the entry refresh as Pass 1, 2 and 3; "Freshness Is
-    Make, for the Goal" in `20-insights` is a start for its rewrite. ADR-0035 makes
-    `06-principles.adoc:84`, `:340`-`:343`, `:358`, `08-algorithms.adoc:204` and
-    `15-development-environment.adoc:118` stale.
+    Make, for the Goal" in `20-insights` is a start for its rewrite.
     The include graph that a request takes now answers both directions, from the scan's
     edges and the parse's include references. That makes
     `20-insights.adoc:147`, `08-algorithms.adoc:222`-`:227` and
