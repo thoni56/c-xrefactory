@@ -135,16 +135,12 @@ def unpack_xfiles(lines):
             if len(segments) > 0 and segments[0] != '':
                 if segments[0][-1] == 'f':
                     try:
-                        if segments[1] != '' and segments[1][-1] == 'o':
-                            # Only two segments, second is Java source index(?)
-                            pass  # for now
-                        else:
-                            # Remove trailing 'f' and turn fileid into an int
-                            filename = file_name_in(line)
-                            filerefs.append(FileReference(int(segments[0][:-1]),
-                                                          segments[1],
-                                                          segments[2],
-                                                          filename))
+                        # Remove trailing 'f' and turn fileid into an int
+                        filename = file_name_in(line)
+                        filerefs.append(FileReference(int(segments[0][:-1]),
+                                                      segments[1],
+                                                      segments[2],
+                                                      filename))
                     except IndexError:
                         eprint("Error in XFiles line %d: '%s'" % (linenumber+6, line))
                 else:
@@ -158,16 +154,12 @@ def unpack_file_lines(lines):
             segments = line.split(' ')
             if len(segments) > 0 and segments[0] != '':
                 if segments[0][-1] == 'f':
-                    if segments[1] != '' and segments[1][-1] == 'o':
-                        # Only two segments, second is Java source index(?)
-                        pass  # for now
-                    else:
-                        # Remove trailing 'f' and turn fileid into an int
-                        filename = file_name_in(line)
-                        filerefs.append(FileReference(int(segments[0][:-1]),
-                                                      segments[1],
-                                                      segments[2],
-                                                      filename))
+                    # Remove trailing 'f' and turn fileid into an int
+                    filename = file_name_in(line)
+                    filerefs.append(FileReference(int(segments[0][:-1]),
+                                                  segments[1],
+                                                  segments[2],
+                                                  filename))
                 else:
                     return (filerefs, lines[index:])
     return (filerefs, [])
