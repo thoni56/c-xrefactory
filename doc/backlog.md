@@ -222,8 +222,9 @@ every push, `After` dashed and `Goes with` not at all, linked at the end of this
     nothing includes and no request names is missing until a restart, also from an
     operation on a name, and nothing says so. Deletion is seen for CUs only:
     `markMissingFilesAsDeleted()` at the walk, or when a CU is about to be built. A
-    deleted header keeps its references and edges, also in the snapshot
-    (`test_a_deleted_header_leaves_no_references`, suspended). Once setup moves into
+    deleted header loses its references (`change-is-difference`), but is not marked
+    deleted, so it stays in the file table and is saved in the snapshot, a file that does
+    not exist and has no references. Its includers' scan edges to it stay. Once setup moves into
     `-openproject` the request loop sees only changes to files it knows, so "until a
     restart" becomes "until the next open". One way to see both: a directory's
     modification time moves when an entry is added, removed or renamed, so stamp the
@@ -571,6 +572,18 @@ implementation, and are noted in `cu-prerequisites`, `out-of-date`, `time-budget
     10 ms gap go, with the extra build of a held CU after each edit. A held file is
     saved with its preload's token, so it has changed after a restart (Mac, session
     `4839a129`, 2026-11-06, the racy rule dropped 2026-11-10).
+    Done: the `contenttoken` module, the seen token in the snapshot (1.16.0), and the
+    removal of a header by tokens, which took the deleted, restored and held-at-exit
+    header tests off suspension; `letGoTime` is gone.
+    Next, the build: `changeTimeOf()` (`src/freshness.c`) still takes the content's
+    modification time, with the 10 ms gap, and counts a missing file as changed. A
+    trace (Mac, session `4839a129`, 2026-11-11) shows the cost: after a header is
+    deleted, its includers are out of date again on every request and the siblings
+    rebuilt, since the scan's edges keep it in their closures. Comparing only the
+    noticed change time ends that; check it again by a one-shot trace. Left after that:
+    the scan by tokens (`rescanChangedFiles()`, a seen token per session), a CU's own
+    change by tokens, `forgetKnowledgeForHeldContent()`, and a header not yet seen
+    counting as changed.
     Waits for: adr-0036
     Goes with: remove-on-change, files-appear-vanish
 - (#106) <a id="remove-on-change"></a>**A file's references are removed when its content changes** —
