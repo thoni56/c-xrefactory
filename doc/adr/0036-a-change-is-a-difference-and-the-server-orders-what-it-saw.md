@@ -105,6 +105,9 @@ _disregarding the fact that_
 - on a filesystem with a tick of a second or more, e.g. HFS+, FAT or some network
   mounts, a human can meet it too: an edit, a request and an edit of the same size
   within the tick,
+- the token is kept as a 31-bit hash of the time and the size, so a change whose new
+  token hashes to the old one is not seen until the file changes again. That is about
+  once in 2^31 changes,
 - a filesystem whose times differ between two `stat`s of an unchanged file would make
   every request see it changed. Not known to happen. WSL's `/mnt/c` is the one to check,
 
