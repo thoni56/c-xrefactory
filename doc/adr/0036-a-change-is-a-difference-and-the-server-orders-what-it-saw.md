@@ -57,7 +57,9 @@ _facing the fact that_
   `forgetKnowledgeForHeldContent()` clears only knowledge times, which the removal does
   not read (`tests/test_a_header_held_at_an_exit_is_changed_after_a_restart`, suspended),
 - "newer" does not see a file restored with an older time, by `cp -p`, `tar` or a
-  checkout. ADR-0032 accepted that, since `make` has the same deficiency,
+  checkout, and its old references stay. ADR-0032 accepted that, since `make` has the
+  same deficiency (`tests/test_a_header_restored_with_an_older_time_is_changed`,
+  suspended),
 - a held buffer let go is read from a disk file older than the knowledge built from the
   buffer, so it needed a time of its own, `letGoTime`,
 - the build compares a file's time, from the filesystem's coarse clock, with a knowledge
