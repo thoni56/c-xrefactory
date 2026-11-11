@@ -184,8 +184,8 @@ static void removeReferencesOfIncludersOfChanged(Prerequisites *prerequisites, i
             if (!fileTimestampIsZero(changedAt[closure[c]])) {
                 log_debug("'%s' includes a changed header, removing its references", items[h]->name);
                 removeReferenceableItemsForFile(headers[h]);
-                if (fileTimestampIsLessThan(items[h]->changeTime, changedAt[closure[c]]))
-                    items[h]->changeTime = changedAt[closure[c]];
+                if (fileTimestampIsLessThan(items[h]->noticeTime, changedAt[closure[c]]))
+                    items[h]->noticeTime = changedAt[closure[c]];
                 break;
             }
         }
@@ -220,8 +220,8 @@ void removeReferencesOfChangedFiles(Prerequisites *prerequisites) {
             removeReferenceableItemsForFile(i);
             fileItem->needsBrowsingStackRefresh = true;
             fileItem->seenToken = contentToken;
-            fileItem->changeTime = changeTimeNow();
-            changedAt[i] = fileItem->changeTime;
+            fileItem->noticeTime = changeTimeNow();
+            changedAt[i] = fileItem->noticeTime;
             anyChanged = true;
         }
     }

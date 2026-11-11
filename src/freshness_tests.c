@@ -180,7 +180,7 @@ static void expectAHeaderInTheClosureOfTheCU(FileItem *headerItem, FileTimestamp
 Ensure(Freshness, compilation_unit_with_a_header_let_go_after_its_knowledge_is_out_of_date) {
     FileTimestamp cuChangeTime = makeFileTimestamp(1000, 0);
     expectACUWithKnowledgeAt(makeFileTimestamp(2000, 0), &cuChangeTime);
-    FileItem headerItem = {.name = "a.h", .changeTime = makeFileTimestamp(3000, 0)};
+    FileItem headerItem = {.name = "a.h", .noticeTime = makeFileTimestamp(3000, 0)};
     FileTimestamp diskTime = makeFileTimestamp(1000, 0);
     expectAHeaderInTheClosureOfTheCU(&headerItem, &diskTime);
 
@@ -193,7 +193,7 @@ Ensure(Freshness, compilation_unit_with_a_header_let_go_after_its_knowledge_is_o
 Ensure(Freshness, compilation_unit_with_a_header_let_go_and_then_removed_is_out_of_date) {
     FileTimestamp cuChangeTime = makeFileTimestamp(1000, 0);
     expectACUWithKnowledgeAt(makeFileTimestamp(4000, 0), &cuChangeTime);
-    FileItem headerItem = {.name = "a.h", .changeTime = makeFileTimestamp(3000, 0)};
+    FileItem headerItem = {.name = "a.h", .noticeTime = makeFileTimestamp(3000, 0)};
     FileTimestamp noContentTime = NULL_TIMESTAMP;
     expectAHeaderInTheClosureOfTheCU(&headerItem, &noContentTime);
 
@@ -203,7 +203,7 @@ Ensure(Freshness, compilation_unit_with_a_header_let_go_and_then_removed_is_out_
 /* A change the server makes itself is not stamped by the coarse clock, so
  * knowledge built right after it must still be current */
 Ensure(Freshness, compilation_unit_built_right_after_a_change_the_server_made_is_not_out_of_date) {
-    FileItem headerItem = {.name = "a.h", .changeTime = changeTimeNow()};
+    FileItem headerItem = {.name = "a.h", .noticeTime = changeTimeNow()};
     FileTimestamp cuChangeTime = makeFileTimestamp(1000, 0);
     expectACUWithKnowledgeAt(fileTimestampNow(), &cuChangeTime);
     FileTimestamp diskTime = makeFileTimestamp(1000, 0);

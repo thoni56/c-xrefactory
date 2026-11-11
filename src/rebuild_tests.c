@@ -221,7 +221,7 @@ Ensure(Rebuild, removes_the_references_of_a_header_whose_content_changed) {
 
     removeReferencesOfChangedFiles(NULL);
 
-    assert_that(fileTimestampsEqual(fileItem.changeTime, noticedTime));
+    assert_that(fileTimestampsEqual(fileItem.noticeTime, noticedTime));
     assert_that(contentTokensAreSame(fileItem.seenToken, now));
 }
 
@@ -233,7 +233,7 @@ Ensure(Rebuild, keeps_the_references_of_a_header_whose_content_did_not_change) {
 
     removeReferencesOfChangedFiles(NULL);
 
-    assert_that(fileTimestampIsZero(fileItem.changeTime));
+    assert_that(fileTimestampIsZero(fileItem.noticeTime));
 }
 
 /* Older is a difference too, e.g. after `cp -p` or a checkout */
@@ -271,7 +271,7 @@ Ensure(Rebuild, records_the_token_of_a_header_seen_for_the_first_time_and_keeps_
     removeReferencesOfChangedFiles(NULL);
 
     assert_that(contentTokensAreSame(fileItem.seenToken, now));
-    assert_that(fileTimestampIsZero(fileItem.changeTime));
+    assert_that(fileTimestampIsZero(fileItem.noticeTime));
 }
 
 static void expectTwoHeadersInTheFileTable(FileItem *leaf, ContentToken *leafToken,
@@ -303,7 +303,7 @@ Ensure(Rebuild, removes_the_references_of_a_header_that_includes_a_changed_one) 
 
     removeReferencesOfChangedFiles(NULL);
 
-    assert_that(fileTimestampsEqual(mid.changeTime, noticedTime));
+    assert_that(fileTimestampsEqual(mid.noticeTime, noticedTime));
 }
 
 Ensure(Rebuild, keeps_the_references_of_a_header_that_does_not_include_a_changed_one) {
@@ -318,5 +318,5 @@ Ensure(Rebuild, keeps_the_references_of_a_header_that_does_not_include_a_changed
 
     removeReferencesOfChangedFiles(NULL);
 
-    assert_that(fileTimestampIsZero(other.changeTime));
+    assert_that(fileTimestampIsZero(other.noticeTime));
 }

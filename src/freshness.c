@@ -42,8 +42,8 @@ static FileTimestamp changeTimeOf(Prerequisites *prerequisites, int fileNumber) 
         FileItem *fileItem = getFileItemWithFileNumber(fileNumber);
         changeTime->time = editorFileModificationTime(fileItem->name);
         if (!fileTimestampIsZero(changeTime->time)
-            && fileTimestampIsLessThan(changeTime->time, fileItem->changeTime))
-            changeTime->time = fileItem->changeTime;
+            && fileTimestampIsLessThan(changeTime->time, fileItem->noticeTime))
+            changeTime->time = fileItem->noticeTime;
         changeTime->known = true;
     }
     return changeTime->time;

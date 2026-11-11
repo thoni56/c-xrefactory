@@ -331,8 +331,8 @@ static void writeFileNumberItem(FileItem *fileItem, int number) {
     writeOptionalCompactRecord(CXFI_FILE_NUMBER, number, "\n");
     writeOptionalCompactRecord(CXFI_FILE_KNOWLEDGE_TIME, fileTimestampSeconds(fileItem->knowledgeTime), " ");
     writeOptionalCompactRecord(CXFI_FILE_KNOWLEDGE_TIME_NSEC, fileTimestampNanoseconds(fileItem->knowledgeTime), "");
-    writeOptionalCompactRecord(CXFI_FILE_CHANGE_TIME, fileTimestampSeconds(fileItem->changeTime), "");
-    writeOptionalCompactRecord(CXFI_FILE_CHANGE_TIME_NSEC, fileTimestampNanoseconds(fileItem->changeTime), "");
+    writeOptionalCompactRecord(CXFI_FILE_CHANGE_TIME, fileTimestampSeconds(fileItem->noticeTime), "");
+    writeOptionalCompactRecord(CXFI_FILE_CHANGE_TIME_NSEC, fileTimestampNanoseconds(fileItem->noticeTime), "");
     writeOptionalCompactRecord(CXFI_FILE_CONTENT_TOKEN, contentTokenAsInt(fileItem->seenToken), "");
     writeStringRecord(CXFI_FILE_NAME, fileItem->name, " ");
 }
@@ -529,8 +529,8 @@ static void scanFunction_ReadFileName(int fileNameLength,
         fileItem = getFileItemWithFileNumber(fileNumber);
         if (fileTimestampIsZero(fileItem->knowledgeTime))
             fileItem->knowledgeTime=knowledgeTime;
-        if (fileTimestampIsZero(fileItem->changeTime))
-            fileItem->changeTime=changeTime;
+        if (fileTimestampIsZero(fileItem->noticeTime))
+            fileItem->noticeTime=changeTime;
         if (contentTokenIsMissing(fileItem->seenToken))
             fileItem->seenToken=seenToken;
     } else {
@@ -538,8 +538,8 @@ static void scanFunction_ReadFileName(int fileNameLength,
         fileItem = getFileItemWithFileNumber(fileNumber);
         if (fileTimestampIsZero(fileItem->knowledgeTime))
             fileItem->knowledgeTime=knowledgeTime;
-        if (fileTimestampIsZero(fileItem->changeTime))
-            fileItem->changeTime=changeTime;
+        if (fileTimestampIsZero(fileItem->noticeTime))
+            fileItem->noticeTime=changeTime;
         if (contentTokenIsMissing(fileItem->seenToken))
             fileItem->seenToken=seenToken;
     }
