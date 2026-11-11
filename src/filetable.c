@@ -135,14 +135,6 @@ bool existsInFileTable(char *fileName) {
     return fileTableLookup(&fileTable, fileName) != -1;
 }
 
-void updateFileModificationTracking(int fileNumber) {
-    FileItem *fileItem = getFileItemWithFileNumber(fileNumber);
-
-    if (editorFileExists(fileItem->name)) {
-        fileItem->lastModified = editorFileModificationTime(fileItem->name);
-    }
-}
-
 int addFileNameToFileTable(char *fileName) {
     int fileNumber;
     char *normalizedFileName;
@@ -162,7 +154,6 @@ int addFileNameToFileTable(char *fileName) {
     createdFileItem = newFileItem(normalizedFileName);
 
     fileNumber = fileTableAdd(&fileTable, createdFileItem);
-    updateFileModificationTracking(fileNumber); // Initialize file tracking
 
     return fileNumber;
 }

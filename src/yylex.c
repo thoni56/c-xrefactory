@@ -222,7 +222,6 @@ static void setCurrentFileInfoFor(char *fileName) {
         number = addFileNameToFileTable(fileName);
         FileItem *fileItem = getFileItemWithFileNumber(number);
         name = fileItem->name;
-        updateFileModificationTracking(number);
     }
     currentFile.characterBuffer.fileNumber = number;
     currentFile.fileName = name;

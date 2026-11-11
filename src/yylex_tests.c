@@ -142,9 +142,6 @@ Ensure(Yylex, can_process_include_directive) {
     /* ... so open it directly */
     expect(openFile, when(fileName, is_equal_to_string("some/path/include.h")), will_return(&file));
 
-    /* Always  */
-    always_expect(updateFileModificationTracking);
-
     /* Finally ensure that the include file is added as a reference */
     expect(handleFoundSymbolReference, when(symbol_name, is_equal_to_string(LINK_NAME_INCLUDE_REFS)),
            times(2)); /* Don't know why two times... */
@@ -201,9 +198,6 @@ Ensure(Yylex, can_process_include_directive_with_include_paths_match_in_second) 
     /* Yet another normalization in addFileTableItem()... */
     expect(normalizeFileName_static, when(name, is_equal_to_string("path2/include.h")), will_return("path2/include.h"));
 
-    /* Always  */
-    always_expect(updateFileModificationTracking);
-
     /* Finally ensure that the include file is added as a reference */
     expect(handleFoundSymbolReference, when(symbol_name, is_equal_to_string(LINK_NAME_INCLUDE_REFS)),
            times(2)); /* Don't know why two times... */
@@ -257,9 +251,6 @@ Ensure(Yylex, can_process_include_next_directive_and_find_next_with_same_name) {
     /* Yet another normalization in addFileTableItem()... */
     expect(normalizeFileName_static, when(name, is_equal_to_string("path3/include.h")), will_return("path3/include.h"));
 
-    /* Always  */
-    always_expect(updateFileModificationTracking);
-
     /* Finally ensure that the include file is added as a reference */
     expect(handleFoundSymbolReference, when(symbol_name, is_equal_to_string(LINK_NAME_INCLUDE_REFS)),
            times(2)); /* Don't know why two times... */
@@ -296,7 +287,6 @@ static void which_has_already_been_included() {
 static void and_is_already_in_the_filetable() {
     /* The file is already in the file table (was included earlier) */
     always_expect(normalizeFileName_static, will_return("some/path/already_included.h"));
-    always_expect(updateFileModificationTracking);
     addFileNameToFileTable("already_included.h");
 }
 

@@ -286,8 +286,6 @@ void moveBlockInEditorBuffer(EditorMarker *sourceMarker, EditorMarker *destinati
 static void quasiSaveEditorBuffer(EditorBuffer *buffer) {
     buffer->modifiedSinceLastQuasiSave = false;
     buffer->modificationTime = fileTimestampNow();
-    FileItem *fileItem = getFileItemWithFileNumber(buffer->fileNumber);
-    fileItem->lastModified = buffer->modificationTime;
 }
 
 void quasiSaveModifiedEditorBuffers(void) {
