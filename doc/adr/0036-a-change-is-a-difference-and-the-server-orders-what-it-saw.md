@@ -4,7 +4,7 @@ Date: 2026-11-06
 
 ## Status
 
-Proposed
+Accepted (2026-11-11)
 
 Refines [ADR-0032](0032-knowledge-is-rebuilt-like-make-rebuilds-targets.md) and
 [ADR-0035](0035-a-files-references-are-removed-when-its-content-changes.md)
@@ -143,8 +143,11 @@ the clock.
 - The coarse clock gap goes, with the extra build of a held CU after each edit.
 
 **Risks:**
-- *A new snapshot format.* The seen tokens and the noticed changes are kept. An older
-  snapshot is ignored, as for 1.15.0.
+- *A new snapshot format.* Each file gets its seen token, modification time and size,
+  and the change time becomes the noticed time, from the server's clock. An old snapshot
+  would be read with file times where the server's are expected, so the format version
+  is raised from 1.15.0 and an old snapshot is ignored. The first start after the
+  upgrade is cold.
 - *The system clock set back.* A change noticed soon after the clock was set back can
   look older than knowledge taken before it. That CU then looks current and lacks its
   part of the changed file, until it or a file it includes changes again. It is rare, so
