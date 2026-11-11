@@ -547,7 +547,8 @@ Roadmap → Optimization has the baseline: a cold-start PUSH on ffmpeg, measured
 
 ## 7. Freshness as make (ADR-0032, ADR-0035, ADR-0036)
 
-The order is roughly as listed. Next is `remove-on-change`. "Freshness Is Make, for the
+The order is roughly as listed. Next is `change-is-difference`, then the rest of
+`remove-on-change`, whose config part can come first. "Freshness Is Make, for the
 Goal" in `20-insights` has the shape the request converges to.
 
 Performance, from reading the code (Mac, session `05984816`, 2026-10-08): at equal
@@ -559,21 +560,8 @@ walk of the table per changed file — is small beside what goes. The risks are 
 implementation, and are noted in `cu-prerequisites`, `out-of-date`, `time-budget` and
 `removal-cost`.
 
-- (#106) <a id="remove-on-change"></a>**A file's references are removed when its content changes** —
-    ADR-0035. On a newer disk time, new content in a held buffer, or a held buffer let go,
-    and that moment is the file's change time. Done for headers, and the mark is gone.
-    Left: a config change removes every file's references, where
-    `markAllCompilationUnitsStale()` is called today. A changed CU still loses its
-    references only when it is built. The include graph a request takes no longer
-    depends on them, since the scan's edges are facts on each file, so a CU can follow
-    the same rule as a header.
-    A CU's own time is read from disk in `whyOutOfDate()`, not through `changeTimeOf()`,
-    so a held CU that is let go is not seen as changed there. It goes onto the build list
-    instead (`closeEditorBuffersNoLongerHeld()`). Read through `changeTimeOf()`, it is out
-    of date by the same rule as a header, and that special case can go.
-    Goes with: out-of-date
 - (#112) <a id="change-is-difference"></a>**A change is a difference, ordered by the server's own clock** —
-    ADR-0036 (Proposed). One reading of *changed*, used by the scan and the removal: a
+    ADR-0036. One reading of *changed*, used by the scan and the removal: a
     content token, modification time and size, of its preload for a held buffer,
     not the same as when last seen. A vanished file and
     a new one have changed, which fixes the deleted header
@@ -585,6 +573,18 @@ implementation, and are noted in `cu-prerequisites`, `out-of-date`, `time-budget
     `4839a129`, 2026-11-06, the racy rule dropped 2026-11-10).
     Waits for: adr-0036
     Goes with: remove-on-change, files-appear-vanish
+- (#106) <a id="remove-on-change"></a>**A file's references are removed when its content changes** —
+    ADR-0035. On a newer disk time, new content in a held buffer, or a held buffer let go,
+    and that moment is the file's change time. Done for headers, and the mark is gone.
+    Left: a config change removes every file's references, where
+    `markAllCompilationUnitsStale()` is called today. A changed CU still loses its
+    references only when it is built. The include graph a request takes no longer
+    depends on them, since the scan's edges are facts on each file, so a CU can follow
+    the same rule as a header, asking ADR-0036's *changed*. A held CU let go needs no
+    case of its own then, since its token is the disk's, not the preload's. The config
+    part does not depend on how a change is found.
+    Goes with: out-of-date
+    After: change-is-difference
 - (#109) <a id="session-refresh-time"></a>**A session refreshes a file by a time, not a flag** —
     a file's references get a time they last changed, never cleared, and a session
     refreshes its copy of a file when that is later than the copy. Replaces
@@ -677,6 +677,10 @@ implementation, and are noted in `cu-prerequisites`, `out-of-date`, `time-budget
     part on why reparsing only a subset is safe also describes strip-then-reparse.
     `08-algorithms` still describes the entry refresh as Pass 1, 2 and 3; "Freshness Is
     Make, for the Goal" in `20-insights` is a start for its rewrite.
+    ADR-0036 (accepted 2026-11-11): in `06-principles` *Change time* goes, the terms marked
+    "proposed" lose the mark, and *Saving / persisting* says what the snapshot keeps of a
+    held file. The shape's *changed* line in `20-insights` says "newer than when last
+    seen" and becomes "not the same as" (WSL, session `d25255b8`, 2026-11-10).
     The include graph that a request takes now answers both directions, from the scan's
     edges and the parse's include references. That makes
     `20-insights.adoc:147`, `08-algorithms.adoc:222`-`:227` and
@@ -756,12 +760,7 @@ was done.
 - <a id="adr-0031"></a>**ADR-0031: what files a project consists of**
 - <a id="adr-0032"></a>**ADR-0032: knowledge is rebuilt like `make` rebuilds targets**
 - <a id="adr-0035"></a>**ADR-0035: a file's references are removed when its content changes**
-- <a id="adr-0036"></a>**ADR-0036: a change is a difference, and the server orders what it saw** (Proposed) —
-    when it is accepted, go over the Terminology in `06-principles`: *Change time* goes,
-    the terms marked "proposed" lose the mark, and *Saving / persisting* says what the
-    snapshot keeps of a held file. The shape's *changed* line in
-    `20-insights` says "newer than when last seen" and becomes "not the same as" (WSL,
-    session `d25255b8`, 2026-11-10).
+- <a id="adr-0036"></a>**ADR-0036: a change is a difference, and the server orders what it saw**
 
 ## Open questions that would reorder this
 
