@@ -109,7 +109,7 @@ Nothing has to be cleared afterwards.
 [source]
 ----
 discover = walk the project for its files                     (first request, config change)
-changed  = the files whose content is newer than when last seen
+changed  = the files whose content is not the same as when last seen (ADR-0036)
 scan     = rescan the changed files' includes, giving the include graph
 remove   = the references of the changed files, and of the files including them (ADR-0035)
 goal     = reach(request file) or the whole project              (policy)

@@ -677,10 +677,9 @@ implementation, and are noted in `cu-prerequisites`, `out-of-date`, `time-budget
     part on why reparsing only a subset is safe also describes strip-then-reparse.
     `08-algorithms` still describes the entry refresh as Pass 1, 2 and 3; "Freshness Is
     Make, for the Goal" in `20-insights` is a start for its rewrite.
-    ADR-0036 (accepted 2026-11-11): in `06-principles` *Change time* goes, the terms marked
-    "proposed" lose the mark, and *Saving / persisting* says what the snapshot keeps of a
-    held file. The shape's *changed* line in `20-insights` says "newer than when last
-    seen" and becomes "not the same as" (WSL, session `d25255b8`, 2026-11-10).
+    ADR-0036 (accepted 2026-11-11): in `06-principles` *Change time* goes, and *Saving /
+    persisting* says what the snapshot keeps of a held file (WSL, session `d25255b8`,
+    2026-11-10).
     The include graph that a request takes now answers both directions, from the scan's
     edges and the parse's include references. That makes
     `20-insights.adoc:147`, `08-algorithms.adoc:222`-`:227` and

@@ -276,7 +276,7 @@ Change time::
 Changed::
   Of a file, when its content token is not the same as its seen token. Having none is a
   token of its own, so a file that vanished, or that the server has not seen before, has
-  changed, and one that is still missing has not (ADR-0036, proposed).
+  changed, and one that is still missing has not (ADR-0036).
 
 Cold start::
   Server startup with no persisted snapshot available. All compilation units must be
@@ -295,7 +295,7 @@ Completeness question::
 Content token::
   What stands for the content the server would read now, without reading it. For a file
   on disk its modification time and size, for a held buffer those of its preload. A file
-  that does not exist has none (ADR-0036, proposed).
+  that does not exist has none (ADR-0036).
 
 Entry refresh::
   The per-request mechanism that ensures the reference table is up-to-date before executing
@@ -346,8 +346,7 @@ Lightweight scan::
 
 Noticed::
   Of a change, when the server found the file changed, by its own clock. A CU is out of
-  date when a prerequisite was noticed changed after its knowledge time (ADR-0036,
-  proposed).
+  date when a prerequisite was noticed changed after its knowledge time (ADR-0036).
 
 Operation on a position / on a name::
   Whether a request starts from a cursor position or from a symbol name.
@@ -424,7 +423,7 @@ Saving / persisting::
 
 Seen token::
   The content token recorded when the server last looked at a file. The scan keeps one per
-  session, and the removal one in the snapshot (ADR-0036, proposed).
+  session, and the removal one in the snapshot (ADR-0036).
 
 Staleness::
   A file is stale when its content has changed since it was last parsed. Detected by
