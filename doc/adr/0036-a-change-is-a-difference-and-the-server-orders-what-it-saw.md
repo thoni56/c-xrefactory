@@ -96,8 +96,8 @@ _disregarding the fact that_
   same today,
 - content written, `stat`ed by the server and written again within one tick of the
   filesystem clock, with the same size, is not seen until the file changes again. The
-  tick is about 4 ms on Linux, where modification times come from the kernel's coarse
-  clock. Emacs writes a preload only before a request, and a save is a command, so a
+  tick is a few milliseconds on Linux, where modification times come from the kernel's
+  coarse clock. Emacs writes a preload only before a request, and a save is a command, so a
   human needs two requests within the tick. Only a tool rewriting a file twice while a
   request runs can meet it, e.g. a generator or a formatter, and only at the same size,
 - on a filesystem with a tick of a second or more, e.g. HFS+, FAT or some network

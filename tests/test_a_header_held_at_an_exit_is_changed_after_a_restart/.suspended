@@ -11,10 +11,10 @@ i.e. the preload's time, which is later than the disk's, and it is saved. After
 the restart the disk is not newer, so the header is not seen to change, nothing
 is built, and shared is found on line 2 where the buffer had it.
 
-Likely fix: ADR-0036 (#112). A held file's seen token is dropped when the
-snapshot is written, so it counts as changed after a restart, header or CU
-alike, and forgetKnowledgeForHeldContent() goes. A quicker fix within today's
-times would be to zero changeTime for held files at -exit as well.
+Likely fix: ADR-0036 (#112). A held file is saved with its preload's token,
+so the disk's token differs after a restart and the file has changed, header
+or CU alike, and forgetKnowledgeForHeldContent() goes. A quicker fix within
+today's times would be to zero changeTime for held files at -exit as well.
 
 The snapshot is also written every 100 CUs during a build (src/rebuild.c),
 without forgetKnowledgeForHeldContent(), so a crash after such a save may leave
