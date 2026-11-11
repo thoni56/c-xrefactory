@@ -1,5 +1,5 @@
 MODULES = browsingmenu c_parser.tab cppexp_parser.tab characterreader commandlogger	\
-commons complete counters cxfile cxref dump editor editorbuffer editorbuffertable	\
+commons complete contenttoken counters cxfile cxref dump editor editorbuffer editorbuffertable	\
 editormarker encoding extract filedescriptor fileio filetable freshness globals hash id	\
 includegraph init lexemstream json_utils lexem lexembuffer lexer log lsp lsp_adapter	\
 lsp_dispatcher lsp_handler lsp_utils lsp_sender macroargumenttable main match memory	\
