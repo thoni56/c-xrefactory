@@ -266,11 +266,6 @@ every push, `After` dashed and `Goes with` not at all, linked at the end of this
       names resolve under the root. Resolving the config's relative paths against the
       config's directory, not `cwd`, fixes both (Mac, session `05984816`, 2026-10-14).
       After: adr-0031
-   e. <a id="warm-start-fatal"></a>**A warm start trips `FATAL cxref.c:1494: 'browsingStack.top' is not true`** —
-      *no repo home yet*. Running `tests/test_browsing_pop_needs_refresh` a second time
-      from the first run's `.c-xref` snapshot dies on the assert, so the same requests
-      crash a server in the editor. Seen on WSL, 2026-09-25. Tests start cold now, so the
-      warm start has to be built inside a test; see that test's `.suspended`.
    g. <a id="unused-yacc-statics"></a>**GlobalUnused gives a false positive for statics in `.y` files** —
       `18-known-bugs.adoc`.
    h. <a id="push-by-name"></a>**Push by name when a name has several bindings** —
