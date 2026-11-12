@@ -1284,13 +1284,14 @@ void serverPerformRefactoring(void) {
     loadAllOpenedEditorBuffers();
     quasiSaveModifiedEditorBuffers();
 
-    if (inputFileName == NULL) {
+    if (requestFileNumber == NO_FILE_NUMBER) {
         errorMessage(ERR_ST, "No input file for refactoring");
         LEAVE();
         return;
     }
 
-    EditorBuffer *buf = findOrCreateAndLoadEditorBufferForFile(inputFileName);
+    /* Read before the nested server calls below, which set their own request file */
+    EditorBuffer *buf = findOrCreateAndLoadEditorBufferForFile(getFileItemWithFileNumber(requestFileNumber)->name);
 
     EditorMarker *point = getPointFromOptions(buf);
     EditorMarker *mark  = getMarkFromOptions(buf);

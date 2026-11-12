@@ -63,8 +63,6 @@ extern int tokenNameLengthsTable[];
 extern int requestFileNumber;
 
 
-extern char *inputFileName;
-
 extern int currentPass;
 extern int maxPasses;
 

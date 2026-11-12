@@ -26,7 +26,6 @@ int yyIdBufferIndex = 0;
 TypeModifier *structMemberCompletionType;
 TypeModifier *upLevelFunctionCompletionType;
 
-char *inputFileName="";
 Completions collectedCompletions;
 
 /* **************** cached symbols ********************** */

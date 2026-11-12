@@ -30,12 +30,8 @@ every push, `After` dashed and `Goes with` not at all, linked at the end of this
 - (#3) <a id="partition-options"></a>**Partition `options` by lifetime, in this sequence** — Session / Project / Request,
    one owner each, and a pure `parseCommandLine()`. `doc/docs/17-major-codebase-improvements.adoc` §17.4.
    The roadmap's Setup Ladder says it gates the rows below it.
-   a. <a id="request-file-name"></a>**`inputFileName` is two things** — the request file (`processFile`, `-get`,
-      `refactory.c`) and the file a CU build or a macro expansion parses (`parseFileWithFullInit`,
-      `singlePass`). The second becomes a parameter to `initializeFileProcessing()`.
    b. <a id="pass-count-as-data"></a>**The number of passes comes from `ProjectConfig.optionSets`** — not from
       `maxPasses` set to 1 and raised by a config read. §17.4 step 2.a.
-      After: request-file-name
    c. <a id="config-without-pass"></a>**The config is read without a pass** — base only, per-pass options through
       `applyOptionSet()`, so a change of pass no longer forces a full reload. Takes
       `test_cold_start_interrogates_compiler_once` off suspension. A first attempt also changed

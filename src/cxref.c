@@ -1518,7 +1518,9 @@ static void getEnvValue(void) {
     if (value != NULL) {
         // O.K. this is a special case, if input file is given
         // then make additional 'predefined' replacements
-        ppcGenRecord(PPC_SET_INFO, expandPredefinedSpecialVariables_static(value, inputFileName));
+        char *requestFileName = requestFileNumber == NO_FILE_NUMBER
+            ? NULL : getFileItemWithFileNumber(requestFileNumber)->name;
+        ppcGenRecord(PPC_SET_INFO, expandPredefinedSpecialVariables_static(value, requestFileName));
     } else {
         char tmpBuff[TMP_BUFF_SIZE];
         sprintf(tmpBuff,"No \"-set %s <command>\" option specified for active project", name);
@@ -1797,7 +1799,7 @@ static void handleProject() {
             ppcGenRecord(PPC_ERROR, "No source file to identify project");
         } else {
             char *fileName = getFileItemWithFileNumber(requestFileNumber)->name;
-            log_debug("inputFileName = %s", fileName);
+            log_debug("fileName = %s", fileName);
 
             if (lockedProject != NULL) {
                 /* Server is locked - the file is in scope if it is under the project

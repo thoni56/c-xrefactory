@@ -10,7 +10,7 @@
 #include "editorbuffertable.h"
 #include "filedescriptor.h"  /* currentFile */
 #include "filetable.h"
-#include "globals.h"         /* inputFileName, currentPass, maxPasses */
+#include "globals.h"         /* currentPass, maxPasses */
 #include "log.h"
 #include "misc.h"
 #include "navigation.h"
@@ -321,14 +321,13 @@ static bool parseFileWithFullInit(char *fileName, ArgumentsVector baseArgs) {
      * REQUEST option is reset here too. */
     char *savedDumpSelection = options.dumpSelection != NULL ? strdup(options.dumpSelection) : NULL;
 
-    inputFileName = fileName;
     ArgumentsVector emptyArgs = {.argc = 0, .argv = NULL};
     maxPasses = 1;
     silenceMessages();
     for (currentPass = 1; currentPass <= maxPasses; currentPass++) {
-        if (initializeFileProcessing(baseArgs, emptyArgs)) {
+        if (initializeFileProcessing(baseArgs, emptyArgs, fileName)) {
             options.cursorOffset = NO_CURSOR_OFFSET;
-            parseToCreateReferences(inputFileName);
+            parseToCreateReferences(fileName);
             parsed = true;
             closeCharacterBuffer(&currentFile.characterBuffer);
             currentFile.characterBuffer.file = stdin;

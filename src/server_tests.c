@@ -58,7 +58,7 @@ AfterEach(Server) {}
 /* Protected */
 extern bool prepareInputFileForRequest(void);
 extern void setRequestFileArgument(int fileNumber);
-extern void singlePass(ArgumentsVector args, ArgumentsVector nargs, Prerequisites *prerequisites);
+extern void singlePass(ArgumentsVector args, ArgumentsVector nargs, Prerequisites *prerequisites, char *fileName);
 extern bool needsConfirmationToAnalyse(int outOfDateCUs);
 
 Ensure(Server, has_a_none_operation) {
@@ -96,7 +96,6 @@ static void expectACursorParseOf(FileItem *fileItem, FileTimestamp *contentTime,
                                  void (*sideEffect)(void *)) {
     currentFile.characterBuffer.fileNumber = 42;
     currentFile.characterBuffer.file = stdin;
-    inputFileName = fileItem->name;
     options.serverOperation = OP_BROWSE_PUSH;
     options.cursorOffset = 1;
 
@@ -117,7 +116,7 @@ Ensure(Server, cursor_parse_of_a_compilation_unit_records_when_it_built_the_know
 
     ArgumentsVector args = {.argc = 0, .argv = NULL};
     FileTimestamp before = fileTimestampNow();
-    singlePass(args, args, NULL);
+    singlePass(args, args, NULL, fileItem.name);
     FileTimestamp after = fileTimestampNow();
 
     assert_false(fileTimestampIsLessThan(fileItem.knowledgeTime, before));
@@ -138,7 +137,7 @@ Ensure(Server, cursor_parse_takes_the_knowledge_time_before_parsing) {
     expectACursorParseOf(&fileItem, &contentTime, recordParseStart);
 
     ArgumentsVector args = {.argc = 0, .argv = NULL};
-    singlePass(args, args, NULL);
+    singlePass(args, args, NULL, fileItem.name);
 
     assert_false(fileTimestampIsLessThan(parseStart, fileItem.knowledgeTime));
 }
@@ -148,7 +147,6 @@ Ensure(Server, cursor_parse_for_an_operation_that_does_not_parse_leaves_the_file
     FileTimestamp contentTime = {.tv_sec = 1234, .tv_nsec = 5678};
     currentFile.characterBuffer.fileNumber = 42;
     currentFile.characterBuffer.file = stdin;
-    inputFileName = fileItem.name;
     options.serverOperation = OP_SEARCH;
     options.cursorOffset = 1;
 
@@ -160,7 +158,7 @@ Ensure(Server, cursor_parse_for_an_operation_that_does_not_parse_leaves_the_file
     never_expect(callParser);
 
     ArgumentsVector args = {.argc = 0, .argv = NULL};
-    singlePass(args, args, NULL);
+    singlePass(args, args, NULL, fileItem.name);
 
     assert_true(fileTimestampIsZero(fileItem.knowledgeTime));
 }

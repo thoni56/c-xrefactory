@@ -506,7 +506,7 @@ bool isProjectConfigChanged(void) {
 
 /* Re-read project config after detecting a change. Updates options.includeDirs
  * and savedOptions so subsequent requests and reparsing see the new settings.
- * Safe to call mid-request: file table, requestFileNumber, inputFileName, and
+ * Safe to call mid-request: file table, requestFileNumber, and
  * detectedProjectRoot are not affected by loadProjectSettings(). */
 void reloadProjectConfig(ArgumentsVector baseArgs, ArgumentsVector requestArgs) {
     log_info("Config file '%s' changed, reloading project settings", previousProjectConfigurationFile);
@@ -561,10 +561,9 @@ static void applyCurrentPassOptions(void) {
  * 4. Memory checkpointing - cache expensive discoveries for same-project files
  * 5. Input setup - finally calls computeAndOpenInputFile() -> initInput()
  */
-bool initializeFileProcessing(ArgumentsVector baseArgs, ArgumentsVector requestArgs) {
+bool initializeFileProcessing(ArgumentsVector baseArgs, ArgumentsVector requestArgs, char *fileName) {
     char projectConfigFileName[MAX_FILE_NAME_SIZE];
     FileTimestamp modifiedTime;
-    char *fileName = NULL;
     bool inputOpened;
 
     ENTER();
@@ -572,7 +571,6 @@ bool initializeFileProcessing(ArgumentsVector baseArgs, ArgumentsVector requestA
     /* === PHASE 1: Project Discovery === */
     /* TODO: Duplicated in `intializeProjectContext` */
     /* Find which .c-xrefrc file applies to this file */
-    fileName = inputFileName;
     if (lockedProject != NULL) {
         /* Project is already locked from a prior request (set by handleProject
          * during -getproject). Reuse the cached config rather than
@@ -608,7 +606,7 @@ bool initializeFileProcessing(ArgumentsVector baseArgs, ArgumentsVector requestA
         applyCurrentPassOptions();
 
         /* === PHASE 5: Input Setup === */
-        inputOpened = computeAndOpenInputFile(inputFileName);  /* Finally calls initInput() */
+        inputOpened = computeAndOpenInputFile(fileName);  /* Finally calls initInput() */
 
         /* Save these values as previous */
         strcpy(previousProjectConfigurationFile,projectConfigFileName);
@@ -624,7 +622,7 @@ bool initializeFileProcessing(ArgumentsVector baseArgs, ArgumentsVector requestA
         deepCopyOptionsFromTo(&savedOptions, &options);
         processOptions(requestArgs, NULL); /* no include or define options */
         applyCurrentPassOptions();
-        inputOpened = computeAndOpenInputFile(inputFileName); /* Phase 5 only */
+        inputOpened = computeAndOpenInputFile(fileName); /* Phase 5 only */
     }
 
     initializationsPerInvocation();

@@ -24,7 +24,7 @@ extern void totalTaskEntryInitialisations(void);
 extern void mainTaskEntryInitialisations(ArgumentsVector args, StringList **operands);
 
 extern bool initializeProjectContext(char *fileName, ArgumentsVector baseArgs, ArgumentsVector requestArgs);
-extern bool initializeFileProcessing(ArgumentsVector args, ArgumentsVector nargs);
+extern bool initializeFileProcessing(ArgumentsVector args, ArgumentsVector nargs, char *fileName);
 
 /* Config-change detection: re-run scan when .c-xrefrc is edited mid-session */
 extern bool isProjectConfigChanged(void);

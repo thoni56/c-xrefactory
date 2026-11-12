@@ -181,10 +181,10 @@ void initServer(ArgumentsVector args) {
 }
 
 
-protected void singlePass(ArgumentsVector args, ArgumentsVector nargs, Prerequisites *prerequisites) {
+protected void singlePass(ArgumentsVector args, ArgumentsVector nargs, Prerequisites *prerequisites, char *fileName) {
     bool inputOpened = false;
 
-    inputOpened = initializeFileProcessing(args, nargs);
+    inputOpened = initializeFileProcessing(args, nargs, fileName);
 
     parsingConfig.fileNumber = currentFile.characterBuffer.fileNumber;
 
@@ -218,8 +218,8 @@ protected void singlePass(ArgumentsVector args, ArgumentsVector nargs, Prerequis
         for (int i = 0; i < cuCount; i++) {
             log_debug(":parsing '%s' to expand the macro",
                       getFileItemWithFileNumber(cuFileNumbers[i])->name);
-            inputFileName = getFileItemWithFileNumber(cuFileNumbers[i])->name;
-            inputOpened = initializeFileProcessing(args, nargs);
+            inputOpened = initializeFileProcessing(args, nargs,
+                                                   getFileItemWithFileNumber(cuFileNumbers[i])->name);
             if (inputOpened) {
                 parseInputFile();
             }
@@ -233,9 +233,8 @@ static void processFile(ArgumentsVector baseArgs, ArgumentsVector requestArgs,
 
     maxPasses = 1;
     for (currentPass=1; currentPass<=maxPasses; currentPass++) {
-        inputFileName = fileItem->name;
-        assert(inputFileName!=NULL);
-        singlePass(baseArgs, requestArgs, prerequisites);
+        assert(fileItem->name!=NULL);
+        singlePass(baseArgs, requestArgs, prerequisites, fileItem->name);
         if (options.serverOperation==OP_INTERNAL_PARSE_TO_EXTRACT || (completionStringServed && !opensBrowsingSession(options.serverOperation)))
             break;
     }
@@ -396,12 +395,6 @@ void callServer(ArgumentsVector baseArgs, ArgumentsVector requestArgs) {
             projectContextInitialized = true;
         } else if (!toleratesMissingInputFile(options.serverOperation)) {
             errorMessage(ERR_ST, "No input file");
-        }
-    } else {
-        if (hasInputFile) {
-            FileItem *requestFile = getFileItemWithFileNumber(requestFileNumber);
-            /* -get expands ${__file} and its family from the name, it needs no parse */
-            inputFileName = options.serverOperation == OP_GET_ENV_VALUE ? requestFile->name : NULL;
         }
     }
     freePrerequisites(prerequisites);

@@ -54,8 +54,6 @@ Position parameterPosition;
 Position parameterBeginPosition;
 Position parameterEndPosition;
 
-char *inputFileName;
-
 char cwd[MAX_FILE_NAME_SIZE];
 
 ParsedInfo parsedInfo;
