@@ -10,43 +10,19 @@
 #include "timestamp.h"
 
 
-typedef struct {
-    bool          known;
-    FileTimestamp time;
-} ChangeTime;
-
 struct prerequisites {
     IncludeGraph *includeGraph;
-    ChangeTime   *changeTimes;   /* By file number, each asked for once per request */
 };
 
 Prerequisites *collectPrerequisites(void) {
     Prerequisites *prerequisites = malloc(sizeof(Prerequisites));
     prerequisites->includeGraph = buildIncludeGraph();
-    prerequisites->changeTimes = calloc(MAX_FILES, sizeof(ChangeTime));
     return prerequisites;
 }
 
 void freePrerequisites(Prerequisites *prerequisites) {
     freeIncludeGraph(prerequisites->includeGraph);
-    free(prerequisites->changeTimes);
     free(prerequisites);
-}
-
-/* A file that no longer exists has a zero time, which is remembered like any
- * other. A held file let go changed when it was let go, which is later than its
- * time on disk (ADR-0035). */
-static FileTimestamp changeTimeOf(Prerequisites *prerequisites, int fileNumber) {
-    ChangeTime *changeTime = &prerequisites->changeTimes[fileNumber];
-    if (!changeTime->known) {
-        FileItem *fileItem = getFileItemWithFileNumber(fileNumber);
-        changeTime->time = editorFileModificationTime(fileItem->name);
-        if (!fileTimestampIsZero(changeTime->time)
-            && fileTimestampIsLessThan(changeTime->time, fileItem->noticeTime))
-            changeTime->time = fileItem->noticeTime;
-        changeTime->known = true;
-    }
-    return changeTime->time;
 }
 
 /* The filesystem stamps modification times from a coarse clock that lags the
@@ -95,7 +71,7 @@ static OutOfDate whyOutOfDate(Prerequisites *prerequisites, int fileNumber, File
     if (count > MAX_INCLUDE_CLOSURE)
         return (OutOfDate){CLOSURE_TOO_LARGE, fileNumber};
     for (int i = 0; i < count; i++) {
-        if (prerequisiteChangedAfter(changeTimeOf(prerequisites, closure[i]), fileItem->knowledgeTime))
+        if (changedAfter(getFileItemWithFileNumber(closure[i])->noticeTime, fileItem->knowledgeTime))
             return (OutOfDate){PREREQUISITE_CHANGED, closure[i]};
     }
     return (OutOfDate){KNOWLEDGE_CURRENT, fileNumber};
