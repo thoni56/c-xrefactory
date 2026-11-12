@@ -35,8 +35,8 @@ typedef enum {
     /* 'p' and 'q' were the last parsed time, written up to 1.15.0 */
     CXFI_FILE_KNOWLEDGE_TIME   = 'w',     /* when the CU's knowledge was built (seconds) */
     CXFI_FILE_KNOWLEDGE_TIME_NSEC = 'x',  /* knowledge time nanoseconds */
-    CXFI_FILE_CHANGE_TIME      = 'y',     /* the change the references follow (seconds) */
-    CXFI_FILE_CHANGE_TIME_NSEC = 'z',     /* change time nanoseconds */
+    CXFI_FILE_NOTICE_TIME      = 'y',     /* when the change was noticed */
+    CXFI_FILE_NOTICE_TIME_NSEC = 'z',     /* notice time nanoseconds */
     CXFI_FILE_CONTENT_TOKEN    = 'o',     /* obsah, the content when last seen (ADR-0036) */
 
     CXFI_FILE_NUMBER           = 'f',
@@ -73,8 +73,8 @@ typedef enum {
 static CxFieldTag generatedFieldKeyList[] = {
     CXFI_FILE_KNOWLEDGE_TIME,
     CXFI_FILE_KNOWLEDGE_TIME_NSEC,
-    CXFI_FILE_CHANGE_TIME,
-    CXFI_FILE_CHANGE_TIME_NSEC,
+    CXFI_FILE_NOTICE_TIME,
+    CXFI_FILE_NOTICE_TIME_NSEC,
     CXFI_FILE_CONTENT_TOKEN,
     CXFI_FILE_NUMBER,
     CXFI_SYMBOL_TYPE,
@@ -331,8 +331,8 @@ static void writeFileNumberItem(FileItem *fileItem, int number) {
     writeOptionalCompactRecord(CXFI_FILE_NUMBER, number, "\n");
     writeOptionalCompactRecord(CXFI_FILE_KNOWLEDGE_TIME, fileTimestampSeconds(fileItem->knowledgeTime), " ");
     writeOptionalCompactRecord(CXFI_FILE_KNOWLEDGE_TIME_NSEC, fileTimestampNanoseconds(fileItem->knowledgeTime), "");
-    writeOptionalCompactRecord(CXFI_FILE_CHANGE_TIME, fileTimestampSeconds(fileItem->noticeTime), "");
-    writeOptionalCompactRecord(CXFI_FILE_CHANGE_TIME_NSEC, fileTimestampNanoseconds(fileItem->noticeTime), "");
+    writeOptionalCompactRecord(CXFI_FILE_NOTICE_TIME, fileTimestampSeconds(fileItem->noticeTime), "");
+    writeOptionalCompactRecord(CXFI_FILE_NOTICE_TIME_NSEC, fileTimestampNanoseconds(fileItem->noticeTime), "");
     writeOptionalCompactRecord(CXFI_FILE_CONTENT_TOKEN, contentTokenAsInt(fileItem->seenToken), "");
     writeStringRecord(CXFI_FILE_NAME, fileItem->name, " ");
 }
@@ -508,14 +508,14 @@ static void scanFunction_ReadFileName(int fileNameLength,
     char fileName[MAX_FILE_NAME_SIZE];
     FileItem *fileItem;
     int fileNumber;
-    FileTimestamp knowledgeTime, changeTime;
+    FileTimestamp knowledgeTime, noticeTime;
     ContentToken seenToken;
 
     assert(key == CXFI_FILE_NAME);
     knowledgeTime = makeFileTimestamp(lastIncomingData.data[CXFI_FILE_KNOWLEDGE_TIME],
                                       lastIncomingData.data[CXFI_FILE_KNOWLEDGE_TIME_NSEC]);
-    changeTime = makeFileTimestamp(lastIncomingData.data[CXFI_FILE_CHANGE_TIME],
-                                   lastIncomingData.data[CXFI_FILE_CHANGE_TIME_NSEC]);
+    noticeTime = makeFileTimestamp(lastIncomingData.data[CXFI_FILE_NOTICE_TIME],
+                                   lastIncomingData.data[CXFI_FILE_NOTICE_TIME_NSEC]);
     seenToken = contentTokenFromInt(lastIncomingData.data[CXFI_FILE_CONTENT_TOKEN]);
 
     assert(fileNameLength < MAX_FILE_NAME_SIZE);
@@ -530,7 +530,7 @@ static void scanFunction_ReadFileName(int fileNameLength,
         if (fileTimestampIsZero(fileItem->knowledgeTime))
             fileItem->knowledgeTime=knowledgeTime;
         if (fileTimestampIsZero(fileItem->noticeTime))
-            fileItem->noticeTime=changeTime;
+            fileItem->noticeTime=noticeTime;
         if (contentTokenIsMissing(fileItem->seenToken))
             fileItem->seenToken=seenToken;
     } else {
@@ -539,7 +539,7 @@ static void scanFunction_ReadFileName(int fileNameLength,
         if (fileTimestampIsZero(fileItem->knowledgeTime))
             fileItem->knowledgeTime=knowledgeTime;
         if (fileTimestampIsZero(fileItem->noticeTime))
-            fileItem->noticeTime=changeTime;
+            fileItem->noticeTime=noticeTime;
         if (contentTokenIsMissing(fileItem->seenToken))
             fileItem->seenToken=seenToken;
     }
