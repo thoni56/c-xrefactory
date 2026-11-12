@@ -563,18 +563,12 @@ implementation, and are noted in `cu-prerequisites`, `out-of-date`, `time-budget
     10 ms gap go, with the extra build of a held CU after each edit. A held file is
     saved with its preload's token, so it has changed after a restart (Mac, session
     `4839a129`, 2026-11-06, the racy rule dropped 2026-11-10).
-    Done: the `contenttoken` module, the seen token in the snapshot (1.16.0), and the
-    removal of a header by tokens, which took the deleted, restored and held-at-exit
-    header tests off suspension; `letGoTime` is gone.
-    Next, the build: `changeTimeOf()` (`src/freshness.c`) still takes the content's
-    modification time, with the 10 ms gap, and counts a missing file as changed. A
-    trace (Mac, session `4839a129`, 2026-11-11) shows the cost: after a header is
-    deleted, its includers are out of date again on every request and the siblings
-    rebuilt, since the scan's edges keep it in their closures. Comparing only the
-    noticed change time ends that; check it again by a one-shot trace. Left after that:
-    the scan by tokens (`rescanChangedFiles()`, a seen token per session), a CU's own
-    change by tokens, `forgetKnowledgeForHeldContent()`, and a header not yet seen
-    counting as changed.
+    Done: the `contenttoken` module, the seen token in the snapshot (1.16.0), the
+    removal of a header by tokens, and the build reading only a header's noticed change
+    time, so a deleted header costs its includers one build. Left: the scan by tokens
+    (`rescanChangedFiles()`, a seen token per session), a CU's own change by tokens,
+    which takes the 10 ms gap with it, `forgetKnowledgeForHeldContent()`, and a header
+    not yet seen counting as changed.
     Waits for: adr-0036
     Goes with: remove-on-change, files-appear-vanish
 - (#106) <a id="remove-on-change"></a>**A file's references are removed when its content changes** —
