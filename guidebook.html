@@ -5,7 +5,7 @@
 <meta http-equiv="X-UA-Compatible" content="IE=edge">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <meta name="generator" content="Asciidoctor 2.0.26">
-<meta name="author" content="v{VERSION} - Generated 2026-11-06">
+<meta name="author" content="v{VERSION} - Generated 2026-11-12">
 <title>C-xrefactory - a C/Yacc refactoring and code browsing tool - Design Documentation</title>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Open+Sans:300,300italic,400,400italic,600,600italic%7CNoto+Serif:400,400italic,700,700italic%7CDroid+Sans+Mono:400,700">
 <style>
@@ -441,7 +441,7 @@ body.book #toc,body.book #preamble,body.book h1.sect0,body.book .sect1>h2{page-b
 <div id="header">
 <h1>C-xrefactory - a C/Yacc refactoring and code browsing tool - Design Documentation</h1>
 <div class="details">
-<span id="author" class="author">v{VERSION} - Generated 2026-11-06</span><br>
+<span id="author" class="author">v{VERSION} - Generated 2026-11-12</span><br>
 </div>
 <div id="toc" class="toc2">
 <div id="toctitle">Table of Contents</div>
@@ -1462,6 +1462,12 @@ are listed alphabetically; terms to avoid are noted to reduce ambiguity.</p>
 modification time if the client holds one, otherwise the disk&#8217;s. When the server lets
 go of a held buffer, the content changes at that moment (ADR-0032, ADR-0035).</p>
 </dd>
+<dt class="hdlist1">Changed</dt>
+<dd>
+<p>Of a file, when its content token is not the same as its seen token. Having none is a
+token of its own, so a file that vanished, or that the server has not seen before, has
+changed, and one that is still missing has not (ADR-0036).</p>
+</dd>
 <dt class="hdlist1">Cold start</dt>
 <dd>
 <p>Server startup with no persisted snapshot available. All compilation units must be
@@ -1479,6 +1485,12 @@ and not compiled independently.</p>
 <p>The question asked when bringing a request&#8217;s goal up to date would take longer than
 the time budget (ADR-0032).</p>
 </dd>
+<dt class="hdlist1">Content token</dt>
+<dd>
+<p>What stands for the content the server would read now, without reading it. For a file
+on disk its modification time and size, for a held buffer those of its preload. A file
+that does not exist has none (ADR-0036).</p>
+</dd>
 <dt class="hdlist1">Entry refresh</dt>
 <dd>
 <p>The per-request mechanism that ensures the reference table is up-to-date before executing
@@ -1495,10 +1507,6 @@ A CU can only expand a macro if it includes the file that defines it, so the
 candidates are the includers of that file, found in the include graph without parsing
 anything (<code>collectCompilationUnitsExpandingTheMacro()</code>). Each one is parsed, and every
 meaning the identifier gets becomes a referent of its own (ADR-0027).</p>
-</dd>
-<dt class="hdlist1">Generation</dt>
-<dd>
-<p>The number of a CU parse, from a counter incremented once per parse (ADR-0033).</p>
 </dd>
 <dt class="hdlist1">Goal</dt>
 <dd>
@@ -1521,21 +1529,12 @@ snapshot.<br>
 Process start does none of it. The first request that names a file does all of it,
 whatever the request is. The direction is to move it into <code>-getproject</code>.</p>
 </dd>
-<dt class="hdlist1">Input</dt>
-<dd>
-<p>A file or setting that a CU&#8217;s knowledge depends on, i.e. the CU, every file in its
-include closure, and the project config (ADR-0032).</p>
-</dd>
 <dt class="hdlist1">Knowledge</dt>
 <dd>
 <p>The references that parsing one CU adds to referenceable items, wherever they are
 positioned, i.e. in the CU and in the headers it includes. They are not kept as a unit.
 Only the knowledge time is. A header is never parsed on its own, so it has no knowledge
 of its own (ADR-0032).</p>
-</dd>
-<dt class="hdlist1">Knowledge generation</dt>
-<dd>
-<p>The generation of a CU&#8217;s latest parse (ADR-0033).</p>
 </dd>
 <dt class="hdlist1">Knowledge time</dt>
 <dd>
@@ -1547,6 +1546,11 @@ of its own (ADR-0032).</p>
 <code>#include</code> lines, without full parsing. Populates the file table and include structure.
 Replaced <code>-create</code> and the <code>callXref()</code> pre-refactoring pattern (ADR 22).</p>
 </dd>
+<dt class="hdlist1">Noticed</dt>
+<dd>
+<p>Of a change, when the server found the file changed, by its own clock. A CU is out of
+date when a prerequisite was noticed changed after its knowledge time (ADR-0036).</p>
+</dd>
 <dt class="hdlist1">Operation on a position / on a name</dt>
 <dd>
 <p>Whether a request starts from a cursor position or from a symbol name.
@@ -1554,7 +1558,7 @@ Replaced <code>-create</code> and the <code>callXref()</code> pre-refactoring pa
 </dd>
 <dt class="hdlist1">Out of date</dt>
 <dd>
-<p>A CU&#8217;s knowledge, when there is none, or when an input changed after the knowledge time
+<p>A CU&#8217;s knowledge, when there is none, or when a prerequisite changed after the knowledge time
 (ADR-0032). It replaces <em>Staleness</em>.</p>
 </dd>
 <dt class="hdlist1">Persisted snapshot</dt>
@@ -1575,6 +1579,11 @@ requests; on each preload the server compares the new temp file&#8217;s mtime ag
 existing buffer&#8217;s to decide whether to reload content. Entry refresh then reparses
 any buffer whose mtime has advanced past <code>lastParsedMtime</code>. Unmodified files are not
 preloaded — the server reads disk directly.</p>
+</dd>
+<dt class="hdlist1">Prerequisite</dt>
+<dd>
+<p>A file or setting that a CU&#8217;s knowledge depends on, i.e. the CU, every file in its
+include closure, and the project config (ADR-0032).</p>
 </dd>
 <dt class="hdlist1">Project</dt>
 <dd>
@@ -1609,11 +1618,6 @@ by parsing, snapshot restoration, and lightweight scanning.<br>
 <em>Avoid "in-memory db", "memory db".</em> It is the live working set, not a database in
 the traditional sense.</p>
 </dd>
-<dt class="hdlist1">Refresh</dt>
-<dd>
-<p>A parse emits a reference that is already in the table, and the reference gets that
-parse&#8217;s generation (ADR-0033).</p>
-</dd>
 <dt class="hdlist1">Request file</dt>
 <dd>
 <p>The file a request names, usually the one the cursor is in. Most operations parse it.
@@ -1632,6 +1636,11 @@ mtime comparison determines which entries are fresh and which need reparsing.<br
 references are persisted; references from unsaved editor buffers are excluded so that
 mtime-based validation remains correct at next startup.<br>
 <em>Avoid "writing the database".</em></p>
+</dd>
+<dt class="hdlist1">Seen token</dt>
+<dd>
+<p>The content token recorded when the server last looked at a file. The scan keeps one per
+session, and the removal one in the snapshot (ADR-0036).</p>
 </dd>
 <dt class="hdlist1">Staleness</dt>
 <dd>
@@ -11140,16 +11149,43 @@ Nothing has to be cleared afterwards.</p>
 <h4 id="_the_shape_it_converges_to">19.3.1. The shape it converges to</h4>
 <div class="listingblock">
 <div class="content">
-<pre class="highlightjs highlight"><code class="language-none hljs">remove = the references of every file whose content changed   (ADR-0035)
-goal   = reach(request file) or the whole project              (policy)
-build  = the out-of-date CUs in the goal, ask above the budget (one predicate)
+<pre class="highlightjs highlight"><code class="language-none hljs">discover = walk the project for its files                     (first request, config change)
+changed  = the files whose content is not the same as when last seen (ADR-0036)
+scan     = rescan the changed files' includes, giving the include graph
+remove   = the references of the changed files, and of the files including them (ADR-0035)
+goal     = reach(request file) or the whole project              (policy)
+build    = the out-of-date CUs in the goal, ask above the budget (one predicate)
 answer (a cursor parse only where it is needed)</code></pre>
 </div>
 </div>
 <div class="paragraph">
 <p>Each step of the request should belong to one of these lines.
-The removal is a fact about a file, the goal is policy, and the build is the one predicate.
+The changed files are a fact about each file&#8217;s content, the goal is policy, and the build is the one predicate.
 A step that belongs to none of them is a workaround, usually for the removal.</p>
+</div>
+<div class="paragraph">
+<p><strong>Changed</strong> is found once, and the scan and the removal both use it.
+It is about a file&#8217;s content, the held buffer when there is one, and is not a CU&#8217;s knowledge time, which is the build&#8217;s.
+The scan and the removal each compare it with a stamp of their own.
+The scan&#8217;s is per session, since the edges are not in the snapshot, so in a new session every known file is scanned and nothing is removed.
+The removal&#8217;s change time is in the snapshot.
+A config change is a change of every file: everything is scanned again with the new search path, and every reference is removed.
+Discovery, walking the directories for files, is rarer than a scan of the files already known.</p>
+</div>
+<div class="paragraph">
+<p>The files that include a changed file are found in the new graph.
+Only the changed files' own edges differ from the old one, and those files are removed anyway.
+A rescan can also compare a file&#8217;s old edges with its new ones: an include that is gone means the file stopped including a header, and what it put there stays until something removes it (<code>variant-b</code>).
+Treating that header as changed removes it.
+An <code>#ifdef</code> that flips leaves the edge in place, since the scan over-approximates, so that part of <code>variant-b</code> stays open.</p>
+</div>
+<div class="paragraph">
+<p>Today the code finds <strong>changed</strong> twice, with two meanings.
+<code>rescanChangedFiles()</code> compares the disk&#8217;s modification time with the scan time and reads the disk.
+<code>removeReferencesOfChangedFiles()</code> uses <code>contentTimeOf()</code>, which also knows held buffers and buffers let go.
+So for a held file they can disagree, and the parse still adds include edges to the graph beside the scan&#8217;s.
+Once the scan reads what the parse reads, the graph has one writer.
+Refined on the Mac, session <code>4839a129</code>, 2026-11-06.</p>
 </div>
 <div class="paragraph">
 <p>The goal must contain every CU whose references the answer reads.
@@ -11182,7 +11218,10 @@ The shape was first written down on the Mac, session <code>4839a129</code>, with
 <p><strong>A file changed on disk, outside the goal,</strong> is not seen, and keeps its old references (<code>behind-the-back</code>).</p>
 </li>
 <li>
-<p><strong>A missing include edge</strong> (<code>include-edges</code>). A CU that reaches a changed header through an edge the table lacks is not out of date, so its part of the header is missing without that being known.</p>
+<p><strong>A missing include edge</strong> (<code>scan-angle-includes</code>). The scan&#8217;s edges are facts about each file now, but it records no <code>&lt;&#8230;&#8203;&gt;</code> includes. A CU that reaches a changed header through such an include alone is not out of date, so its part of the header is missing without that being known.</p>
+</li>
+<li>
+<p><strong>Files that appear or vanish between requests</strong> are not seen (<code>files-appear-vanish</code>). The prerequisites of a known file are checked, but a new file is not known, and a vanished header is not seen to change.</p>
 </li>
 <li>
 <p><strong>A recipe that stops writing part of a shared output</strong> leaves that part (<code>variant-b</code>). Make writes its targets whole, so it never meets this.</p>
@@ -12695,7 +12734,7 @@ carried forward in <a href="21-archive.adoc#cu-reparse-header-staleness">a later
 </div>
 <div id="footer">
 <div id="footer-text">
-Last updated 2026-11-06 13:23:17 UTC
+Last updated 2026-11-12 15:58:19 UTC
 </div>
 </div>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.18.3/highlight.min.js"></script>
