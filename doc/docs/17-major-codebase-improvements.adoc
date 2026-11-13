@@ -454,7 +454,7 @@ The order comes from reading the code and has not been tried. The first attempt 
 
 **4. Migrate refactoring to own its `Request`.** The coordinator (currently the refactoring call graph in `refactory.c`) holds a typed `RefactoringRequest` as first-class state. Sub-operations parse their own fresh requests. `refactoringOptions`, `deepCopyOptionsFromTo(&options, &refactoringOptions)`, and `beInteractive`'s `localSavedOptions` all die together.
 
-The `inputFileName` global (already flagged as a cleanup target) becomes a `Request` field naturally in step 3 — same disease, same cure.
+The `inputFileName` global is gone: the request file is `requestFileNumber`, and the file to parse a parameter of `initializeFileProcessing()`. `requestFileNumber` becomes a `Request` field in step 3.
 
 ==== Notes
 

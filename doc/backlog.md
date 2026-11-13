@@ -181,6 +181,8 @@ every push, `After` dashed and `Goes with` not at all, linked at the end of this
     written while the batch modes and the disk database were the truth. Each chapter is
     read against the code as it is, and what is stale is fixed or becomes a line here.
     `06-principles` first, e.g. the snapshot paragraph in "Reference Database and Parsing".
+    `14-code`'s server request flow, the dispatch tree with its line numbers, the Pass
+    1/2/3 entry refresh and `firstPass`, describes code that is gone.
     After: freshness-docs
 
 ## 3. Correctness, by (quiet × cheap)

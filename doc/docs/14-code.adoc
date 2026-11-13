@@ -124,15 +124,14 @@ The per-request dispatch still follows the legacy pattern:
 [source]
 ----
             └─> processFile(baseArgs, requestArgs, &firstPass) [server.c:199]
-                 ├─ SETS: inputFileName = fileItem->name [line 205]
                  │
                  └─> singlePass(args, nargs, &firstPass) [server.c:155]
                       │
                       ├─> initializeFileProcessing(args, nargs, &firstPass) [startup.c:490]
-                      │    ├─ READS: fileName = inputFileName [line 502]
+                      │    ├─ TAKES: the file to parse as a parameter
                       │    ├─ USES: parsingConfig.fileNumber = currentFile.characterBuffer.fileNumber [line 161]
                       │    │
-                      │    └─> computeAndOpenInputFile(inputFileName) [startup.c:112]
+                      │    └─> computeAndOpenInputFile(fileName) [startup.c:112]
                       │         ├─ Gets EditorBuffer or opens file
                       │         │
                       │         └─> initInput(inputFile, inputBuffer, "\n", fileName) [yylex.c]
@@ -145,7 +144,6 @@ The per-request dispatch still follows the legacy pattern:
                       │    └─> callParser(parsingConfig.fileNumber, parsingConfig.language) [line 140]
                       │
                       └─> SPECIAL CASE: Completion in macro body [lines 183-196]
-                           ├─ SETS: inputFileName = getFileItemWithFileNumber(...)->name [line 189]
                            ├─> initializeFileProcessing(args, nargs, &firstPass) [again]
                            └─> parseInputFile() [again]
 ----
@@ -168,23 +166,15 @@ parseToCreateReferences(fileName) [parsing.c:165]
 
 ==== Key Observations
 
-*_Assignments to `inputFileName`_*
-
-*Server Mode:* Set once per file processed
-
-* `processFile()` line 205 - sets the file for the current request
-* Special case: macro completion may parse a different file (line 189) to resolve symbols in unexpanded macro bodies
-
 *_`requestFileNumber` Only Used in Server Mode_*
 
 * Set in `prepareInputFileForRequest()` (lines 104, 121)
 * Used in `parseInputFile()` line 136: `setupParsingConfig(requestFileNumber)`
 
-*_Confusion: THREE Different File Number Globals!_*
+*_Confusion: Two Different File Number Globals!_*
 
 [source,c]
 ----
-inputFileName           // The file name being processed
 requestFileNumber       // Server: file number from scheduled file (server.c)
 currentFileNumber       // set when parsing starts (parsers.c)
 ----
@@ -216,7 +206,6 @@ target.
 
 *_Naming Inconsistency_*
 
-* `inputFileName` - set in different places depending on the operation
 * `requestFileNumber` - represents the file from the request
 * `currentFileNumber` - set when parsing starts, and changes while `#include` files are entered
 

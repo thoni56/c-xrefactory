@@ -408,7 +408,8 @@ Reference table::
 Request file::
   The file a request names, usually the one the cursor is in. Most operations parse it.
   A search or a push by name answers from the reference table and does not. +
-  _Avoid "input file"_, although the code still says it in places (`inputFileName`).
+  In the code it is `requestFileNumber`. +
+  _Avoid "input file"_.
 
 Restoring::
   Loading a persisted snapshot into the reference table at startup. After restoration,
