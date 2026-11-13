@@ -298,11 +298,9 @@ Content token::
   that does not exist has none (ADR-0036).
 
 Entry refresh::
-  The per-request mechanism that ensures the reference table is up-to-date before executing
-  an operation. Covers both _staleness_ (content was known but is now outdated) and
-  _unknown content_ (file discovered by scan but never parsed). Uses the include structure
-  to determine what needs reparsing. Runs on every request in `callServer()`. +
-  See Server Mode Flow in <<14-code.adoc#,Code>> for implementation details.
+  What a request does before it answers, so that the knowledge the answer reads is up to
+  date: the steps of the shape, from _discover_ to _build_, in
+  <<08-algorithms.adoc#the-shape,Algorithms>>. Runs on every request in `callServer()`.
 
 Expanding CU::
   A compilation unit that expands a given macro. Browsing from inside a macro body
@@ -334,7 +332,7 @@ Knowledge::
   The references that parsing one CU adds to referenceable items, wherever they are
   positioned, i.e. in the CU and in the headers it includes. They are not kept as a unit.
   Only the knowledge time is. A header is never parsed on its own, so it has no knowledge
-  of its own (ADR-0032).
+  of its own (ADR-0032). In short, knowledge is knowledge of references.
 
 Knowledge time::
   When the knowledge of a CU was recorded (ADR-0032).

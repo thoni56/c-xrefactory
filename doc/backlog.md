@@ -179,7 +179,8 @@ every push, `After` dashed and `Goes with` not at all, linked at the end of this
    divergent parse path. `-olexmacro` and `-olexvariable` only exist for it and go with it.
 - (#62) <a id="docs-audit"></a>**Audit the docs, chapter by chapter** — much of `doc/docs/` was
     written while the batch modes and the disk database were the truth. Each chapter is
-    read against the code as it is, and what is stale is fixed or becomes a line here.
+    read against the code as it is and against the shape, "The Shape It Converges To" in
+    `08-algorithms`, and what is stale is fixed or becomes a line here.
     `06-principles` first, e.g. the snapshot paragraph in "Reference Database and Parsing".
     `14-code`'s server request flow, the dispatch tree with its line numbers, the Pass
     1/2/3 entry refresh and `firstPass`, describes code that is gone.
@@ -543,7 +544,7 @@ Roadmap → Optimization has the baseline: a cold-start PUSH on ffmpeg, measured
 
 The order is roughly as listed. Next is `change-is-difference`, then the rest of
 `remove-on-change`, whose config part can come first. "Freshness Is Make, for the
-Goal" in `20-insights` has the shape the request converges to.
+Goal" in `08-algorithms` has the shape the request converges to.
 
 Performance, from reading the code (Mac, session `05984816`, 2026-10-08): at equal
 correctness the design costs the same or less. Parsing dominates, and what is parsed
@@ -676,14 +677,14 @@ implementation, and are noted in `cu-prerequisites`, `out-of-date`, `time-budget
     `06-principles`, and `08-algorithms` loses "Dual Semantics". In `06-principles`, the
     part on why reparsing only a subset is safe also describes strip-then-reparse.
     `08-algorithms` still describes the entry refresh as Pass 1, 2 and 3; "Freshness Is
-    Make, for the Goal" in `20-insights` is a start for its rewrite.
+    Make, for the Goal" in `08-algorithms` is a start for its rewrite.
     ADR-0036 (accepted 2026-11-11): in `06-principles` *Change time* goes, and *Saving /
     persisting* says what the snapshot keeps of a held file (WSL, session `d25255b8`,
     2026-11-10).
     The include graph that a request takes now answers both directions, from the scan's
     edges and the parse's include references. That makes
-    `20-insights.adoc:147`, `08-algorithms.adoc:222`-`:227` and
-    `12-components.adoc:129` stale, since they describe a walk over `TypeCppInclude`
+    `20-insights` ("The include edges are inputs, not knowledge"), Pass 2's
+    Discovery in `08-algorithms` and `12-components.adoc:129` stale, since they describe a walk over `TypeCppInclude`
     references in the table.
     After: remove-on-change
 

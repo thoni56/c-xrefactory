@@ -28,7 +28,7 @@ Used beside those of ADR-0032 and ADR-0035.
 
 ## Where it fits
 
-In the shape (`doc/docs/20-insights.adoc`, "The shape it converges to") this decides the
+In the shape (`doc/docs/08-algorithms.adoc`, "The Shape It Converges To") this decides the
 *changed* line, and what the *build* line compares. Discover, scan and remove use
 *changed* as it is defined here.
 

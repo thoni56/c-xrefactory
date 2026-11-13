@@ -162,7 +162,7 @@ traced back to the man page.
 ## Check a fix against the shape
 
 A change to how a request finds, scans, removes, builds or answers from knowledge is checked against
-the shape in `doc/docs/20-insights.adoc`, "The shape it converges to": its lines, and the rule that
+the shape in `doc/docs/08-algorithms.adoc`, "The Shape It Converges To": its lines, and the rule that
 the goal contains every CU whose references the answer reads. The lines are not listed here, so that
 this cannot go stale.
 
