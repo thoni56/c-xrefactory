@@ -49,11 +49,12 @@ FileTimestamp editorFileModificationTime(char *path) {
     return fileModificationTime(path);
 }
 
-/* A held buffer stands for its preload, which the client writes only when
- * the buffer changed. A buffer the server read itself is the disk's (ADR-0036) */
+/* A held buffer stands for its preload, which the client writes only when the
+ * buffer changed. A buffer the server read itself has the disk's time and size
+ * until a refactoring edits it and stamps it with the time (ADR-0036) */
 ContentToken editorContentTokenOf(char *path) {
     EditorBuffer *buffer = getEditorBufferForFile(path);
-    if (buffer != NULL && buffer->preLoadedFromFile != NULL)
+    if (buffer != NULL)
         return makeContentToken(buffer->modificationTime, buffer->size);
     return contentTokenOf(path);
 }

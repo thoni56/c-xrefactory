@@ -252,10 +252,15 @@ Ensure(Editor, a_file_not_held_has_the_token_of_the_disk) {
     assert_that(contentTokenIsMissing(editorContentTokenOf("gone.h")));
 }
 
-Ensure(Editor, a_buffer_the_server_read_from_disk_has_the_token_of_the_disk) {
-    EditorBuffer buffer = {.fileName = "header.h", .preLoadedFromFile = NULL};
+/* It is loaded with the disk's time and size, and a refactoring that edits it
+ * stamps it with the time (quasi-save), so a nested request sees the edit */
+Ensure(Editor, a_buffer_the_server_read_has_the_token_of_its_own_time_and_size) {
+    EditorBuffer buffer = {.fileName = "header.h", .preLoadedFromFile = NULL,
+                           .modificationTime = {.tv_sec = 3000}, .size = 17};
     expect(getEditorBufferForFile, when(fileName, is_equal_to_string("header.h")), will_return(&buffer));
-    expect(fileStatus, when(path, is_equal_to_string("header.h")), will_return(-1));
+    never_expect(fileStatus);
 
-    assert_that(contentTokenIsMissing(editorContentTokenOf("header.h")));
+    ContentToken token = editorContentTokenOf("header.h");
+
+    assert_that(contentTokensAreSame(token, makeContentToken(makeFileTimestamp(3000, 0), 17)));
 }
