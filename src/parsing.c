@@ -71,9 +71,6 @@ bool allowsDuplicateReferences(ParserOperation op) {
     return op == PARSE_TO_EXTRACT;
 }
 
-/* Bridge to existing implementation - temporarily uses external parseBufferUsingServer */
-extern void parseBufferUsingServer(char *project, EditorMarker *point, EditorMarker *mark,
-                                   char *pushOption, char *pushOption2);
 
 bool isValidMoveTarget(EditorMarker *target) {
     MoveTargetValidationResult result = {
@@ -99,17 +96,20 @@ bool isValidMoveTarget(EditorMarker *target) {
 }
 
 static void parseToGetDefinitionBoundaries(EditorMarker *marker) {
+    EditorBuffer *buffer = marker->buffer;
+
+    initInput(NULL, buffer, "\n", buffer->fileName);
+
     /* Set up parsing configuration */
-    syncParsingConfigFromOptions(options);
+    setupParsingConfig(buffer->fileNumber);
     parsingConfig.operation = PARSE_TO_GET_FUNCTION_BOUNDS;
-    parsingConfig.positionOfSelectedReference = makePositionFromEditorMarker(marker);
+    parsingConfig.cursorOffset = marker->offset;
 
     /* Clear previous results */
     for (int i = 0; i < IPP_MAX; i++)
         parsedPositions[i] = NO_POSITION;
 
-    /* Bridge: Still calls old infrastructure via magic string */
-    parseBufferUsingServer(options.project, marker, NULL, "-internal-get-function-bounds", NULL);
+    callParser(buffer->fileNumber, parsingConfig.language);
 }
 
 /* Extract results from global state */
