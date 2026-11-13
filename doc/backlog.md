@@ -174,13 +174,6 @@ every push, `After` dashed and `Goes with` not at all, linked at the end of this
     Test first: an `options_tests.c` case where a request-only option in the project
     context is refused (WSL, session `d25255b8`, 2026-10-25).
     Goes with: partition-options, startup-command-line
-- (#9) <a id="remove-bridge"></a>**Remove the `parseBufferUsingServer` bridge** — §17.3; 9 refactoring call sites
-   re-entering `callServer`. Independent of the rest of this section, but it is the last
-   divergent parse path. `-olexmacro` and `-olexvariable` only exist for it and go with it.
-   Each re-entry runs the entry refresh again, so one refactoring brings knowledge up to
-   date several times, and the knowledge can change between its steps. "The Shape It
-   Converges To" in `08-algorithms` has the steps once, then the answer, which for a
-   refactoring is to perform it (Mac, session `4839a129`, 2026-11-13).
 - (#62) <a id="docs-audit"></a>**Audit the docs, chapter by chapter** — much of `doc/docs/` was
     written while the batch modes and the disk database were the truth. Each chapter is
     read against the code as it is and against the shape, "The Shape It Converges To" in
@@ -590,6 +583,19 @@ implementation, and are noted in `cu-prerequisites`, `out-of-date`, `time-budget
     part does not depend on how a change is found.
     Goes with: out-of-date
     After: change-is-difference
+- (#9) <a id="remove-bridge"></a>**Remove the `parseBufferUsingServer` bridge** — §17.3; 9 refactoring call sites
+    re-entering `callServer`. It is the last divergent parse path. `-olexmacro` and
+    `-olexvariable` only exist for it and go with it.
+    Each re-entry runs the entry refresh again, so one refactoring brings knowledge up to
+    date several times, and the knowledge can change between its steps. "The Shape It
+    Converges To" in `08-algorithms` has the steps once, then the answer, which for a
+    refactoring is to perform it.
+    The re-entries are also why `quasiSaveModifiedEditorBuffers()` stamps edited buffers
+    with the time, and sleeps up to a second, so that a nested refresh sees the edits.
+    Under ADR-0036 the content token has to keep that working, and it goes with the
+    bridge. So this comes before the scan and a CU's own change move to tokens, which
+    then need not serve it (Mac, session `4839a129`, 2026-11-13).
+    Goes with: change-is-difference
 - (#109) <a id="session-refresh-time"></a>**A session refreshes a file by a time, not a flag** —
     a file's references get a time they last changed, never cleared, and a session
     refreshes its copy of a file when that is later than the copy. Replaces
