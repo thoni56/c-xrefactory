@@ -80,16 +80,17 @@ bool isValidMoveTarget(EditorMarker *target) {
         .valid = false
     };
 
+    initInput(NULL, target->buffer, "\n", target->buffer->fileName);
+
     /* Set up parsing configuration */
-    syncParsingConfigFromOptions(options);
+    setupParsingConfig(target->buffer->fileNumber);
     parsingConfig.operation = PARSE_TO_VALIDATE_MOVE_TARGET;
-    parsingConfig.positionOfSelectedReference = makePositionFromEditorMarker(target);
+    parsingConfig.cursorOffset = target->offset;
 
     /* Clear previous results */
     parsedInfo.moveTargetAccepted = false;
 
-    /* Bridge: Still calls old infrastructure via magic string */
-    parseBufferUsingServer(options.project, target, NULL, "-internal-parse-to-set-move-target", NULL);
+    callParser(target->buffer->fileNumber, parsingConfig.language);
 
     /* Extract result from global state */
     result.valid = parsedInfo.moveTargetAccepted;
