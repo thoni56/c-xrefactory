@@ -35,7 +35,6 @@ flowchart BT
   lsp_mode["§2 · 68 · An `LspMode`, and a sink for the messages"]
   startup_command_line["§2 · 7 · Decide, and enforce, what the startup command line may carry"]
   options_carry_scope["§2 · 78 · Each option carries its scope, and `processOptions` refuses one outside it"]
-  remove_bridge["§2 · 9 · Remove the `parseBufferUsingServer` bridge"]
   docs_audit["§2 · 62 · Audit the docs, chapter by chapter"]
   refactoring_refusals["§3 · 10 · What a refactoring refuses, spelled out and tested"]
   behind_the_back["§3 · 11 · A CU changed on disk outside the goal keeps its references"]
@@ -89,6 +88,7 @@ flowchart BT
   yydebug_to_log["§6 · 61 · The `-yydebug` parse trace goes to the log"]
   change_is_difference["§7 · 112 · A change is a difference, ordered by the server's own clock"]
   remove_on_change["§7 · 106 · A file's references are removed when its content changes"]
+  remove_bridge["§7 · 9 · Remove the `parseBufferUsingServer` bridge"]
   session_refresh_time["§7 · 109 · A session refreshes a file by a time, not a flag"]
   cap_is_a_question["§7 · 107 · The cap becomes a question for every request"]
   cu_prerequisites["§7 · 35 · A CU's prerequisites"]
@@ -183,7 +183,6 @@ flowchart BT
   class lsp_mode ready
   class startup_command_line ready
   class options_carry_scope ready
-  class remove_bridge ready
   class docs_audit ready
   class refactoring_refusals ready
   class behind_the_back ready
@@ -237,6 +236,7 @@ flowchart BT
   class yydebug_to_log ready
   class change_is_difference ready
   class remove_on_change ready
+  class remove_bridge ready
   class session_refresh_time ready
   class cap_is_a_question ready
   class cu_prerequisites ready

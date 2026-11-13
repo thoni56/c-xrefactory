@@ -5,7 +5,7 @@
 <meta http-equiv="X-UA-Compatible" content="IE=edge">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <meta name="generator" content="Asciidoctor 2.0.26">
-<meta name="author" content="v{VERSION} - Generated 2026-11-12">
+<meta name="author" content="v{VERSION} - Generated 2026-11-13">
 <title>C-xrefactory - a C/Yacc refactoring and code browsing tool - Design Documentation</title>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Open+Sans:300,300italic,400,400italic,600,600italic%7CNoto+Serif:400,400italic,700,700italic%7CDroid+Sans+Mono:400,700">
 <style>
@@ -441,7 +441,7 @@ body.book #toc,body.book #preamble,body.book h1.sect0,body.book .sect1>h2{page-b
 <div id="header">
 <h1>C-xrefactory - a C/Yacc refactoring and code browsing tool - Design Documentation</h1>
 <div class="details">
-<span id="author" class="author">v{VERSION} - Generated 2026-11-12</span><br>
+<span id="author" class="author">v{VERSION} - Generated 2026-11-13</span><br>
 </div>
 <div id="toc" class="toc2">
 <div id="toctitle">Table of Contents</div>
@@ -1493,11 +1493,9 @@ that does not exist has none (ADR-0036).</p>
 </dd>
 <dt class="hdlist1">Entry refresh</dt>
 <dd>
-<p>The per-request mechanism that ensures the reference table is up-to-date before executing
-an operation. Covers both <em>staleness</em> (content was known but is now outdated) and
-<em>unknown content</em> (file discovered by scan but never parsed). Uses the include structure
-to determine what needs reparsing. Runs on every request in <code>callServer()</code>.<br>
-See Server Mode Flow in <a href="14-code.html">Code</a> for implementation details.</p>
+<p>What a request does before it answers, so that the knowledge the answer reads is up to
+date: the steps of the shape, from <em>discover</em> to <em>build</em>, in
+<a href="08-algorithms.html#the-shape">Algorithms</a>. Runs on every request in <code>callServer()</code>.</p>
 </dd>
 <dt class="hdlist1">Expanding CU</dt>
 <dd>
@@ -1534,7 +1532,7 @@ whatever the request is. The direction is to move it into <code>-getproject</cod
 <p>The references that parsing one CU adds to referenceable items, wherever they are
 positioned, i.e. in the CU and in the headers it includes. They are not kept as a unit.
 Only the knowledge time is. A header is never parsed on its own, so it has no knowledge
-of its own (ADR-0032).</p>
+of its own (ADR-0032). In short, knowledge is knowledge of references.</p>
 </dd>
 <dt class="hdlist1">Knowledge time</dt>
 <dd>
@@ -1622,7 +1620,8 @@ the traditional sense.</p>
 <dd>
 <p>The file a request names, usually the one the cursor is in. Most operations parse it.
 A search or a push by name answers from the reference table and does not.<br>
-<em>Avoid "input file"</em>, although the code still says it in places (<code>inputFileName</code>).</p>
+In the code it is <code>requestFileNumber</code>.<br>
+<em>Avoid "input file"</em>.</p>
 </dd>
 <dt class="hdlist1">Restoring</dt>
 <dd>
@@ -2041,13 +2040,188 @@ they might legitimately be absent if they&#8217;re generated or live outside the
 <div class="sect2">
 <h3 id="entry-refresh">8.2. Entry Refresh</h3>
 <div class="paragraph">
-<p>Entry refresh is the per-request mechanism that ensures the reference table is
-up-to-date before any operation executes. It runs at the top of <code>callServer()</code>, before
-the operation dispatches. See <a href="06-principles.html">Principles</a> for why this is
-necessary.</p>
+<p>Entry refresh is what a request does before it answers, so that the knowledge the answer
+reads is up to date: the steps of the shape below, from <em>discover</em> to <em>build</em>. It runs at
+the top of <code>callServer()</code>, before the operation dispatches. See
+<a href="06-principles.html">Principles</a> for why this is necessary.</p>
 </div>
 <div class="sect3">
-<h4 id="_overview">8.2.1. Overview</h4>
+<h4 id="freshness-is-make">8.2.1. Freshness Is Make, for the Goal</h4>
+<div class="paragraph">
+<p>ADR-0032 and ADR-0035 make the entry refresh work like Make. The terms map like this:</p>
+</div>
+<table class="tableblock frame-all grid-all stretch">
+<colgroup>
+<col style="width: 33.3333%;">
+<col style="width: 66.6667%;">
+</colgroup>
+<thead>
+<tr>
+<th class="tableblock halign-left valign-top">Make</th>
+<th class="tableblock halign-left valign-top">c-xrefactory</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">target</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">the knowledge of a CU, i.e. the references its parse put in the table</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">prerequisites</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">the CU, its include closure and the project config</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">the target&#8217;s mtime</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">the CU&#8217;s <code>knowledgeTime</code>, taken before the content is read</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">a prerequisite&#8217;s mtime</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">the change time of the content the server reads for a file: the held buffer&#8217;s, the disk mtime, or the moment the server stops reading a held buffer</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">the recipe</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">parsing the CU, <code>buildKnowledgeOfCU()</code></p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>make goal</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">the entry refresh for one request, over the CUs on its goal: the request, the held files and the siblings</p></td>
+</tr>
+</tbody>
+</table>
+<div class="paragraph">
+<p><code>knowledgeIsOutOfDate()</code> in <code>src/freshness.c</code> is the rule.
+It counts every doubt as out of date: no knowledge, an input that no longer exists, a change within the coarse clock&#8217;s 10 ms, a closure above 1000 files.
+So it can rebuild for nothing, but should not call stale knowledge current.</p>
+</div>
+<div class="paragraph">
+<p>The dependencies work like the <code>.d</code> files from <code>gcc -MD</code>.
+They come from the previous build, the parse that gave the CU its knowledge.
+That is enough, because a new dependency can only appear through a change in a file that is already one, and that change makes the CU out of date anyway.
+An extra edge, like the scan&#8217;s include that an <code>#ifdef</code> does not take, only costs a rebuild.
+A missing edge, like the scan&#8217;s missing <code>&lt;&#8230;&#8203;&gt;</code> includes, only affects a CU without knowledge, and that is out of date anyway.</p>
+</div>
+<div class="paragraph">
+<p>What this guarantees is an absence.
+After the entry refresh, no CU on the goal is out of date without that being known, i.e. every rule reachable from the goal has been evaluated and the recipes that need to run are known.
+The position the operation asks about is only looked at after that.</p>
+</div>
+<div class="paragraph">
+<p>Make has no counterpart for one thing: several recipes write the same output.
+A header&#8217;s references are put in the table by every CU that includes it.
+ADR-0035 removes them when the header changes, so every includer is out of date and puts its part back when it is built.
+Until the last one has, the header is incomplete, and the CUs that are out of date say what is missing.
+Nothing has to be cleared afterwards.</p>
+</div>
+</div>
+<div class="sect3">
+<h4 id="the-shape">8.2.2. The Shape It Converges To</h4>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-none hljs">discover = walk the project for its files                     (first request, config change)
+changed  = the files whose content is not the same as when last seen (ADR-0036)
+scan     = rescan the changed files' includes, giving the include graph
+remove   = the references of the changed files, and of the files including them (ADR-0035)
+goal     = reach(request file) or the whole project              (policy)
+build    = the out-of-date CUs in the goal, ask above the budget (one predicate)
+answer (a cursor parse only where it is needed)</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>Each step of the request should belong to one of these lines.
+The changed files are a fact about each file&#8217;s content, the goal is policy, and the build is the one predicate.
+A step that belongs to none of them is a workaround, usually for the removal.</p>
+</div>
+<div class="paragraph">
+<p>For some operations <strong>answer</strong> is more than a lookup.
+A refactoring performs before it answers: it analyses the flow, makes the edits, and the edits are the answer.
+That is still the answer line, since it reads the knowledge the steps above brought up to date.
+A server call it makes for a part of the work, e.g. parsing the region to extract, goes through <code>callServer()</code> again, and so through the steps again.</p>
+</div>
+<div class="paragraph">
+<p><strong>Changed</strong> is found once, and the scan and the removal both use it.
+It is about a file&#8217;s content, the held buffer when there is one, and is not a CU&#8217;s knowledge time, which is the build&#8217;s.
+The scan and the removal each compare it with a stamp of their own.
+The scan&#8217;s is per session, since the edges are not in the snapshot, so in a new session every known file is scanned and nothing is removed.
+The removal&#8217;s change time is in the snapshot.
+A config change is a change of every file: everything is scanned again with the new search path, and every reference is removed.
+Discovery, walking the directories for files, is rarer than a scan of the files already known.</p>
+</div>
+<div class="paragraph">
+<p>The files that include a changed file are found in the new graph.
+Only the changed files' own edges differ from the old one, and those files are removed anyway.
+A rescan can also compare a file&#8217;s old edges with its new ones: an include that is gone means the file stopped including a header, and what it put there stays until something removes it (<code>variant-b</code>).
+Treating that header as changed removes it.
+An <code>#ifdef</code> that flips leaves the edge in place, since the scan over-approximates, so that part of <code>variant-b</code> stays open.</p>
+</div>
+<div class="paragraph">
+<p>Today the code finds <strong>changed</strong> twice, with two meanings.
+<code>rescanChangedFiles()</code> compares the disk&#8217;s modification time with the scan time and reads the disk.
+<code>removeReferencesOfChangedFiles()</code> uses <code>contentTimeOf()</code>, which also knows held buffers and buffers let go.
+So for a held file they can disagree, and the parse still adds include edges to the graph beside the scan&#8217;s.
+Once the scan reads what the parse reads, the graph has one writer.
+Refined on the Mac, session <code>4839a129</code>, 2026-11-06.</p>
+</div>
+<div class="paragraph">
+<p>The goal must contain every CU whose references the answer reads.
+The removal is not limited to the goal, so a changed file outside it has its references missing until a request needs them.
+That is safe because the CUs reaching it are out of date, and the next goal that contains them builds them.
+A goal that is smaller than what the answer reads gives an answer that is incomplete without that being known (<code>request-target</code>).
+The shape was first written down on the Mac, session <code>4839a129</code>, with the removal last, as a sweep.</p>
+</div>
+</div>
+<div class="sect3">
+<h4 id="_where_it_is_not_yet_make">8.2.3. Where It Is Not Yet Make</h4>
+<div class="paragraph">
+<p>Items in <code>doc/backlog.md</code>:</p>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p><strong>The removal on change is only done for headers</strong> (<code>remove-on-change</code>). A changed CU loses its references when it is built.</p>
+</li>
+<li>
+<p><strong>The cap</strong> (<code>cap-is-a-question</code>). At most 128 recipes run, and the rest stay out of date without a question. They are known, though. ADR-0032 makes it a question, and later a time budget (<code>time-budget</code>).</p>
+</li>
+<li>
+<p><strong>The goal is too small</strong> (<code>request-target</code>). We run <code>make request.o</code>, but the answer is linked from more objects than that.</p>
+</li>
+<li>
+<p><strong>The config is not a prerequisite</strong> (<code>out-of-date</code>). That is the classic Make pitfall where changing <code>CFLAGS</code> rebuilds nothing. <code>markAllCompilationUnitsStale()</code> covers it for now, but removes no references.</p>
+</li>
+<li>
+<p><strong>A file changed on disk, outside the goal,</strong> is not seen, and keeps its old references (<code>behind-the-back</code>).</p>
+</li>
+<li>
+<p><strong>A missing include edge</strong> (<code>scan-angle-includes</code>). The scan&#8217;s edges are facts about each file now, but it records no <code>&lt;&#8230;&#8203;&gt;</code> includes. A CU that reaches a changed header through such an include alone is not out of date, so its part of the header is missing without that being known.</p>
+</li>
+<li>
+<p><strong>Files that appear between requests</strong> are not seen (<code>files-appear-vanish</code>). The prerequisites of a known file are checked, but a new file is not known. A vanished header is seen to change and loses its references, but is not marked deleted, so it stays in the file table.</p>
+</li>
+<li>
+<p><strong>A recipe that stops writing part of a shared output</strong> leaves that part (<code>variant-b</code>). Make writes its targets whole, so it never meets this.</p>
+</li>
+<li>
+<p><strong>The request&#8217;s own recipe runs as part of the operation</strong>, since the lexer finds the cursor during the parse. Reusing the knowledge when it is current is <code>cursor-parse-reuse</code>.</p>
+</li>
+</ul>
+</div>
+</div>
+<div class="sect3">
+<h4 id="_overview">8.2.4. Overview</h4>
+<div class="admonitionblock note">
+<table>
+<tr>
+<td class="icon">
+<i class="fa icon-note" title="Note"></i>
+</td>
+<td class="content">
+From here to Pass 3, this section describes the entry refresh as it was before
+ADR-0032, ADR-0035 and ADR-0036, as three passes. The shape above replaces it, and these
+subsections are rewritten under <code>docs-audit</code> in <code>doc/backlog.md</code>.
+</td>
+</tr>
+</table>
+</div>
 <div class="paragraph">
 <p>The three passes, by what they reparse: Pass 1 (stale edited CUs), Pass 2 (includers of
 stale edited headers) and Pass 3 (unparsed sibling CUs). <em>Stale</em> here means changed in the
@@ -2110,7 +2284,7 @@ build; see Pass 2 for the rationale.</p>
 </div>
 </div>
 <div class="sect3">
-<h4 id="_what_refresh_covers">8.2.2. What Refresh Covers</h4>
+<h4 id="_what_refresh_covers">8.2.5. What Refresh Covers</h4>
 <div class="paragraph">
 <p>Between them, the passes and the cleaning concern below cover the ways the codebase
 can change from one request to the next:</p>
@@ -2162,7 +2336,7 @@ gap the next section addresses.</p>
 </div>
 </div>
 <div class="sect3">
-<h4 id="entry-refresh-pass-1">8.2.3. Pass 1: Held CUs Whose Knowledge Is Out of Date</h4>
+<h4 id="entry-refresh-pass-1">8.2.6. Pass 1: Held CUs Whose Knowledge Is Out of Date</h4>
 <div class="paragraph">
 <p>The simplest case: the user edited a <code>.c</code> file, or the client sent a <code>-preload</code> with
 newer content.
@@ -2184,7 +2358,7 @@ include edges).</p>
 </div>
 </div>
 <div class="sect3">
-<h4 id="entry-refresh-pass-2">8.2.4. Pass 2: Strip Changed Held Headers, Take Their Includers</h4>
+<h4 id="entry-refresh-pass-2">8.2.7. Pass 2: Strip Changed Held Headers, Take Their Includers</h4>
 <div class="paragraph">
 <p>If the user edited a header file, all CUs that include it (transitively) have stale
 references — even though those CUs themselves haven&#8217;t changed.</p>
@@ -2225,7 +2399,7 @@ there yet, but <code>bar.c</code> is held and out of date, so it is built anyway
 </div>
 </div>
 <div class="sect3">
-<h4 id="entry-refresh-pass-3">8.2.5. Pass 3: Parse Unparsed Sibling CUs</h4>
+<h4 id="entry-refresh-pass-3">8.2.8. Pass 3: Parse Unparsed Sibling CUs</h4>
 <div class="paragraph">
 <p>On cold start (no snapshot, or snapshot doesn&#8217;t cover everything), many CUs have never
 been parsed. If the user navigates to a symbol defined in a header, the server needs
@@ -2267,7 +2441,7 @@ defines the symbol being navigated to.</p>
 </div>
 </div>
 <div class="sect3">
-<h4 id="project-wide-operations">8.2.6. Project-wide Operations: Parse All</h4>
+<h4 id="project-wide-operations">8.2.9. Project-wide Operations: Parse All</h4>
 <div class="paragraph">
 <p>Pass 3 follows includes from a position. Some operations have no position to start
 from, or are about the whole project by definition, so no include-based subset can make
@@ -2310,7 +2484,7 @@ shares no header, which only appears when linking. That is the same trade-off as
 </div>
 </div>
 <div class="sect3">
-<h4 id="_staleness_after_refactoring">8.2.7. Staleness After Refactoring</h4>
+<h4 id="_staleness_after_refactoring">8.2.10. Staleness After Refactoring</h4>
 <div class="paragraph">
 <p>Refactoring operations (rename, move-function, etc.) modify editor buffers in memory.
 The disk files and their mtimes are unchanged, so the normal mtime-based staleness
@@ -2328,7 +2502,7 @@ the next request, triggering a reparse via Pass 1.</p>
 </div>
 </div>
 <div class="sect3">
-<h4 id="_cleaning_stale_emissions">8.2.8. Cleaning Stale Emissions</h4>
+<h4 id="_cleaning_stale_emissions">8.2.11. Cleaning Stale Emissions</h4>
 <div class="paragraph">
 <p>Reparsing a CU strips its old references and adds its current ones — but "old" means
 only references at <code>position.file == CU</code>. <code>removeReferenceableItemsForFile</code> is
@@ -7133,15 +7307,14 @@ without editing the includer, so the includer is always stale when the edge is n
 <div class="listingblock">
 <div class="content">
 <pre class="highlightjs highlight"><code class="language-none hljs">            └─&gt; processFile(baseArgs, requestArgs, &amp;firstPass) [server.c:199]
-                 ├─ SETS: inputFileName = fileItem-&gt;name [line 205]
                  │
                  └─&gt; singlePass(args, nargs, &amp;firstPass) [server.c:155]
                       │
                       ├─&gt; initializeFileProcessing(args, nargs, &amp;firstPass) [startup.c:490]
-                      │    ├─ READS: fileName = inputFileName [line 502]
+                      │    ├─ TAKES: the file to parse as a parameter
                       │    ├─ USES: parsingConfig.fileNumber = currentFile.characterBuffer.fileNumber [line 161]
                       │    │
-                      │    └─&gt; computeAndOpenInputFile(inputFileName) [startup.c:112]
+                      │    └─&gt; computeAndOpenInputFile(fileName) [startup.c:112]
                       │         ├─ Gets EditorBuffer or opens file
                       │         │
                       │         └─&gt; initInput(inputFile, inputBuffer, "\n", fileName) [yylex.c]
@@ -7154,7 +7327,6 @@ without editing the includer, so the includer is always stale when the edge is n
                       │    └─&gt; callParser(parsingConfig.fileNumber, parsingConfig.language) [line 140]
                       │
                       └─&gt; SPECIAL CASE: Completion in macro body [lines 183-196]
-                           ├─ SETS: inputFileName = getFileItemWithFileNumber(...)-&gt;name [line 189]
                            ├─&gt; initializeFileProcessing(args, nargs, &amp;firstPass) [again]
                            └─&gt; parseInputFile() [again]</code></pre>
 </div>
@@ -7180,22 +7352,6 @@ without editing the includer, so the includer is always stale when the edge is n
 <div class="sect3">
 <h4 id="_key_observations">13.3.4. Key Observations</h4>
 <div class="paragraph">
-<p><strong><em>Assignments to `inputFileName`</em></strong></p>
-</div>
-<div class="paragraph">
-<p><strong>Server Mode:</strong> Set once per file processed</p>
-</div>
-<div class="ulist">
-<ul>
-<li>
-<p><code>processFile()</code> line 205 - sets the file for the current request</p>
-</li>
-<li>
-<p>Special case: macro completion may parse a different file (line 189) to resolve symbols in unexpanded macro bodies</p>
-</li>
-</ul>
-</div>
-<div class="paragraph">
 <p><strong><em>`requestFileNumber` Only Used in Server Mode</em></strong></p>
 </div>
 <div class="ulist">
@@ -7209,12 +7365,11 @@ without editing the includer, so the includer is always stale when the edge is n
 </ul>
 </div>
 <div class="paragraph">
-<p><strong><em>Confusion: THREE Different File Number Globals!</em></strong></p>
+<p><strong><em>Confusion: Two Different File Number Globals!</em></strong></p>
 </div>
 <div class="listingblock">
 <div class="content">
-<pre class="highlightjs highlight"><code class="language-c hljs" data-lang="c">inputFileName           // The file name being processed
-requestFileNumber       // Server: file number from scheduled file (server.c)
+<pre class="highlightjs highlight"><code class="language-c hljs" data-lang="c">requestFileNumber       // Server: file number from scheduled file (server.c)
 currentFileNumber       // set when parsing starts (parsers.c)</code></pre>
 </div>
 </div>
@@ -7277,9 +7432,6 @@ target.
 </div>
 <div class="ulist">
 <ul>
-<li>
-<p><code>inputFileName</code> - set in different places depending on the operation</p>
-</li>
 <li>
 <p><code>requestFileNumber</code> - represents the file from the request</p>
 </li>
@@ -9606,7 +9758,7 @@ With typed requests each of them gets its own field, and the parameter number is
 <p><strong>4. Migrate refactoring to own its <code>Request</code>.</strong> The coordinator (currently the refactoring call graph in <code>refactory.c</code>) holds a typed <code>RefactoringRequest</code> as first-class state. Sub-operations parse their own fresh requests. <code>refactoringOptions</code>, <code>deepCopyOptionsFromTo(&amp;options, &amp;refactoringOptions)</code>, and <code>beInteractive&#8217;s `localSavedOptions</code> all die together.</p>
 </div>
 <div class="paragraph">
-<p>The <code>inputFileName</code> global (already flagged as a cleanup target) becomes a <code>Request</code> field naturally in step 3 — same disease, same cure.</p>
+<p>The <code>inputFileName</code> global is gone: the request file is <code>requestFileNumber</code>, and the file to parse a parameter of <code>initializeFileProcessing()</code>. <code>requestFileNumber</code> becomes a <code>Request</code> field in step 3.</p>
 </div>
 </div>
 <div class="sect3">
@@ -11078,159 +11230,8 @@ pointer to a <code>Symbol</code>.</p>
 <div class="sect2">
 <h3 id="_freshness_is_make_for_the_goal">19.3. Freshness Is Make, for the Goal</h3>
 <div class="paragraph">
-<p>Date: 2026-10-12, updated 2026-11-03</p>
-</div>
-<div class="paragraph">
-<p>ADR-0032 and ADR-0035 make the entry refresh work like Make. The terms map like this:</p>
-</div>
-<table class="tableblock frame-all grid-all stretch">
-<colgroup>
-<col style="width: 33.3333%;">
-<col style="width: 66.6667%;">
-</colgroup>
-<thead>
-<tr>
-<th class="tableblock halign-left valign-top">Make</th>
-<th class="tableblock halign-left valign-top">c-xrefactory</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td class="tableblock halign-left valign-top"><p class="tableblock">target</p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">the knowledge of a CU, i.e. the references its parse put in the table</p></td>
-</tr>
-<tr>
-<td class="tableblock halign-left valign-top"><p class="tableblock">prerequisites</p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">the CU, its include closure and the project config</p></td>
-</tr>
-<tr>
-<td class="tableblock halign-left valign-top"><p class="tableblock">the target&#8217;s mtime</p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">the CU&#8217;s <code>knowledgeTime</code>, taken before the content is read</p></td>
-</tr>
-<tr>
-<td class="tableblock halign-left valign-top"><p class="tableblock">a prerequisite&#8217;s mtime</p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">the change time of the content the server reads for a file: the held buffer&#8217;s, the disk mtime, or the moment the server stops reading a held buffer</p></td>
-</tr>
-<tr>
-<td class="tableblock halign-left valign-top"><p class="tableblock">the recipe</p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">parsing the CU, <code>buildKnowledgeOfCU()</code></p></td>
-</tr>
-<tr>
-<td class="tableblock halign-left valign-top"><p class="tableblock"><code>make goal</code></p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">the entry refresh for one request, over the CUs on its goal: the request, the held files and the siblings</p></td>
-</tr>
-</tbody>
-</table>
-<div class="paragraph">
-<p><code>knowledgeIsOutOfDate()</code> in <code>src/freshness.c</code> is the rule.
-It counts every doubt as out of date: no knowledge, an input that no longer exists, a change within the coarse clock&#8217;s 10 ms, a closure above 1000 files.
-So it can rebuild for nothing, but should not call stale knowledge current.</p>
-</div>
-<div class="paragraph">
-<p>The dependencies work like the <code>.d</code> files from <code>gcc -MD</code>.
-They come from the previous build, the parse that gave the CU its knowledge.
-That is enough, because a new dependency can only appear through a change in a file that is already one, and that change makes the CU out of date anyway.
-An extra edge, like the scan&#8217;s include that an <code>#ifdef</code> does not take, only costs a rebuild.
-A missing edge, like the scan&#8217;s missing <code>&lt;&#8230;&#8203;&gt;</code> includes, only affects a CU without knowledge, and that is out of date anyway.</p>
-</div>
-<div class="paragraph">
-<p>What this guarantees is an absence.
-After the entry refresh, no CU on the goal is out of date without that being known, i.e. every rule reachable from the goal has been evaluated and the recipes that need to run are known.
-The position the operation asks about is only looked at after that.</p>
-</div>
-<div class="paragraph">
-<p>Make has no counterpart for one thing: several recipes write the same output.
-A header&#8217;s references are put in the table by every CU that includes it.
-ADR-0035 removes them when the header changes, so every includer is out of date and puts its part back when it is built.
-Until the last one has, the header is incomplete, and the CUs that are out of date say what is missing.
-Nothing has to be cleared afterwards.</p>
-</div>
-<div class="sect3">
-<h4 id="_the_shape_it_converges_to">19.3.1. The shape it converges to</h4>
-<div class="listingblock">
-<div class="content">
-<pre class="highlightjs highlight"><code class="language-none hljs">discover = walk the project for its files                     (first request, config change)
-changed  = the files whose content is not the same as when last seen (ADR-0036)
-scan     = rescan the changed files' includes, giving the include graph
-remove   = the references of the changed files, and of the files including them (ADR-0035)
-goal     = reach(request file) or the whole project              (policy)
-build    = the out-of-date CUs in the goal, ask above the budget (one predicate)
-answer (a cursor parse only where it is needed)</code></pre>
-</div>
-</div>
-<div class="paragraph">
-<p>Each step of the request should belong to one of these lines.
-The changed files are a fact about each file&#8217;s content, the goal is policy, and the build is the one predicate.
-A step that belongs to none of them is a workaround, usually for the removal.</p>
-</div>
-<div class="paragraph">
-<p><strong>Changed</strong> is found once, and the scan and the removal both use it.
-It is about a file&#8217;s content, the held buffer when there is one, and is not a CU&#8217;s knowledge time, which is the build&#8217;s.
-The scan and the removal each compare it with a stamp of their own.
-The scan&#8217;s is per session, since the edges are not in the snapshot, so in a new session every known file is scanned and nothing is removed.
-The removal&#8217;s change time is in the snapshot.
-A config change is a change of every file: everything is scanned again with the new search path, and every reference is removed.
-Discovery, walking the directories for files, is rarer than a scan of the files already known.</p>
-</div>
-<div class="paragraph">
-<p>The files that include a changed file are found in the new graph.
-Only the changed files' own edges differ from the old one, and those files are removed anyway.
-A rescan can also compare a file&#8217;s old edges with its new ones: an include that is gone means the file stopped including a header, and what it put there stays until something removes it (<code>variant-b</code>).
-Treating that header as changed removes it.
-An <code>#ifdef</code> that flips leaves the edge in place, since the scan over-approximates, so that part of <code>variant-b</code> stays open.</p>
-</div>
-<div class="paragraph">
-<p>Today the code finds <strong>changed</strong> twice, with two meanings.
-<code>rescanChangedFiles()</code> compares the disk&#8217;s modification time with the scan time and reads the disk.
-<code>removeReferencesOfChangedFiles()</code> uses <code>contentTimeOf()</code>, which also knows held buffers and buffers let go.
-So for a held file they can disagree, and the parse still adds include edges to the graph beside the scan&#8217;s.
-Once the scan reads what the parse reads, the graph has one writer.
-Refined on the Mac, session <code>4839a129</code>, 2026-11-06.</p>
-</div>
-<div class="paragraph">
-<p>The goal must contain every CU whose references the answer reads.
-The removal is not limited to the goal, so a changed file outside it has its references missing until a request needs them.
-That is safe because the CUs reaching it are out of date, and the next goal that contains them builds them.
-A goal that is smaller than what the answer reads gives an answer that is incomplete without that being known (<code>request-target</code>).
-The shape was first written down on the Mac, session <code>4839a129</code>, with the removal last, as a sweep.</p>
-</div>
-</div>
-<div class="sect3">
-<h4 id="_where_it_is_not_yet_make">19.3.2. Where it is not yet Make</h4>
-<div class="paragraph">
-<p>Items in <code>doc/backlog.md</code>:</p>
-</div>
-<div class="ulist">
-<ul>
-<li>
-<p><strong>The removal on change is only done for headers</strong> (<code>remove-on-change</code>). A changed CU loses its references when it is built. A header let go does not yet change the headers that include it.</p>
-</li>
-<li>
-<p><strong>The cap</strong> (<code>cap-is-a-question</code>). At most 128 recipes run, and the rest stay out of date without a question. They are known, though. ADR-0032 makes it a question, and later a time budget (<code>time-budget</code>).</p>
-</li>
-<li>
-<p><strong>The goal is too small</strong> (<code>request-target</code>). We run <code>make request.o</code>, but the answer is linked from more objects than that.</p>
-</li>
-<li>
-<p><strong>The config is not a prerequisite</strong> (<code>out-of-date</code>). That is the classic Make pitfall where changing <code>CFLAGS</code> rebuilds nothing. <code>markAllCompilationUnitsStale()</code> covers it for now, but removes no references.</p>
-</li>
-<li>
-<p><strong>A file changed on disk, outside the goal,</strong> is not seen, and keeps its old references (<code>behind-the-back</code>).</p>
-</li>
-<li>
-<p><strong>A missing include edge</strong> (<code>scan-angle-includes</code>). The scan&#8217;s edges are facts about each file now, but it records no <code>&lt;&#8230;&#8203;&gt;</code> includes. A CU that reaches a changed header through such an include alone is not out of date, so its part of the header is missing without that being known.</p>
-</li>
-<li>
-<p><strong>Files that appear or vanish between requests</strong> are not seen (<code>files-appear-vanish</code>). The prerequisites of a known file are checked, but a new file is not known, and a vanished header is not seen to change.</p>
-</li>
-<li>
-<p><strong>A recipe that stops writing part of a shared output</strong> leaves that part (<code>variant-b</code>). Make writes its targets whole, so it never meets this.</p>
-</li>
-<li>
-<p><strong>The request&#8217;s own recipe runs as part of the operation</strong>, since the lexer finds the cursor during the parse. Reusing the knowledge when it is current is <code>cursor-parse-reuse</code>.</p>
-</li>
-</ul>
-</div>
+<p>Moved to <a href="08-algorithms.html#entry-refresh">Entry Refresh</a> in Algorithms, with the shape
+it converges to and where it is not yet Make (Mac, session <code>4839a129</code>, 2026-11-13).</p>
 </div>
 </div>
 <div class="sect2">
@@ -12734,7 +12735,7 @@ carried forward in <a href="21-archive.adoc#cu-reparse-header-staleness">a later
 </div>
 <div id="footer">
 <div id="footer-text">
-Last updated 2026-11-12 15:58:19 UTC
+Last updated 2026-11-13 11:34:06 UTC
 </div>
 </div>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.18.3/highlight.min.js"></script>
