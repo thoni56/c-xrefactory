@@ -913,8 +913,7 @@ static Result validateReferencePointsToFunction(EditorMarker *marker, char *func
     if (strcmp(nameAtMarker, functionName) != 0) {
         char tmpBuff[TMP_BUFF_SIZE];
         ppcGotoMarker(marker);
-        sprintf(tmpBuff, "This reference is not pointing to the function/method name. Maybe a composed symbol. "
-                         "Sorry, do not know how to handle this case.");
+        sprintf(tmpBuff, "This reference is not pointing to the function name.");
         formatOutputLine(tmpBuff, ERROR_MESSAGE_STARTING_OFFSET);
         errorMessage(ERR_ST, tmpBuff);
         return RESULT_ERR;
@@ -930,8 +929,7 @@ static Result getParameterPosition(EditorMarker *point, char *functionOrMacroNam
     if (strcmp(nameOnPoint, functionOrMacroName) != 0) {
         char tmpBuff[TMP_BUFF_SIZE];
         ppcGotoMarker(point);
-        sprintf(tmpBuff, "This reference is not pointing to the function/method name. Maybe a composed symbol. "
-                         "Sorry, do not know how to handle this case.");
+        sprintf(tmpBuff, "This reference is not pointing to the function name.");
         formatOutputLine(tmpBuff, ERROR_MESSAGE_STARTING_OFFSET);
         errorMessage(ERR_ST, tmpBuff);
         return RESULT_ERR;
@@ -946,7 +944,7 @@ static Result getParameterPosition(EditorMarker *point, char *functionOrMacroNam
     if (parameterBeginPosition.file == NO_FILE_NUMBER || parameterEndPosition.file == NO_FILE_NUMBER ||
         parameterBeginPosition.file == -1 || parameterEndPosition.file == -1) {
         ppcGotoMarker(point);
-        errorMessage(ERR_INTERNAL, "Can't get end of parameter");
+        errorMessage(ERR_INTERNAL, "Can't get end of parameter.");
         result = RESULT_ERR;
     }
     // check some logical preconditions,
@@ -956,7 +954,7 @@ static Result getParameterPosition(EditorMarker *point, char *functionOrMacroNam
          parameterBeginPosition.col > parameterEndPosition.col)) {
         char tmpBuff[TMP_BUFF_SIZE];
         ppcGotoMarker(point);
-        sprintf(tmpBuff, "Something goes wrong at this occurence, can't get reasonable parameter limits");
+        sprintf(tmpBuff, "Something went wrong analysing this parameter, can't get reasonable parameter limits.");
         formatOutputLine(tmpBuff, ERROR_MESSAGE_STARTING_OFFSET);
         errorMessage(ERR_ST, tmpBuff);
         result = RESULT_ERR;
