@@ -177,6 +177,10 @@ every push, `After` dashed and `Goes with` not at all, linked at the end of this
 - (#9) <a id="remove-bridge"></a>**Remove the `parseBufferUsingServer` bridge** — §17.3; 9 refactoring call sites
    re-entering `callServer`. Independent of the rest of this section, but it is the last
    divergent parse path. `-olexmacro` and `-olexvariable` only exist for it and go with it.
+   Each re-entry runs the entry refresh again, so one refactoring brings knowledge up to
+   date several times, and the knowledge can change between its steps. "The Shape It
+   Converges To" in `08-algorithms` has the steps once, then the answer, which for a
+   refactoring is to perform it (Mac, session `4839a129`, 2026-11-13).
 - (#62) <a id="docs-audit"></a>**Audit the docs, chapter by chapter** — much of `doc/docs/` was
     written while the batch modes and the disk database were the truth. Each chapter is
     read against the code as it is and against the shape, "The Shape It Converges To" in
