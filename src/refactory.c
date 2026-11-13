@@ -19,6 +19,7 @@
 #include "move_function.h"
 #include "options.h"
 #include "organize_includes.h"
+#include "parsers.h"
 #include "parsing.h"
 #include "position.h"
 #include "ppc.h"
@@ -30,6 +31,7 @@
 #include "server.h"
 #include "session.h"
 #include "undo.h"
+#include "yylex.h"
 
 
 #define RRF_CHARS_TO_PRE_CHECK_AROUND 1
@@ -892,15 +894,21 @@ static void clearParameterPositions(void) {
 }
 
 static Result getParameterNamePosition(EditorMarker *point, char *fileName, int argn) {
-    char  pushOptions[TMP_STRING_SIZE];
-    char *nameOnPoint;
+    initInput(NULL, point->buffer, "\n", point->buffer->fileName);
 
-    nameOnPoint = getIdentifierOnMarker_static(point);
+    /* Set up parsing configuration */
+    setupParsingConfig(point->buffer->fileNumber);
+    parsingConfig.operation = PARSE_TO_TRACK_PARAMETERS;
+    parsingConfig.targetParameterIndex = argn;
+    parsingConfig.cursorOffset = point->offset;
+
+    pushEmptySession(&browsingStack);
+
     clearParameterPositions();
-    assert(strcmp(nameOnPoint, fileName) == 0);
-    sprintf(pushOptions, "-internal-parse-to-goto-param-name=%d", argn);
-    parseBufferUsingServer(refactoringOptions.project, point, NULL, pushOptions, NULL);
+    callParser(point->buffer->fileNumber, parsingConfig.language);
+
     popReferenceOnly();
+
     if (parameterPosition.file != NO_FILE_NUMBER) {
         return RESULT_OK;
     } else {

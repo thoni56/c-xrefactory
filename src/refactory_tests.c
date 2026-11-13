@@ -20,6 +20,7 @@
 #include "move_function.mock"
 #include "options.mock"
 #include "organize_includes.mock"
+#include "parsers.mock"
 #include "parsing.mock"
 #include "ppc.mock"
 #include "progress.mock"
@@ -28,6 +29,7 @@
 #include "session.mock"
 #include "server.mock"
 #include "startup.mock"
+#include "yylex.mock"
 
 
 Describe(Refactory);
