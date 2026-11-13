@@ -583,7 +583,7 @@ implementation, and are noted in `cu-prerequisites`, `out-of-date`, `time-budget
     part does not depend on how a change is found.
     Goes with: out-of-date
     After: change-is-difference
-- (#9) <a id="remove-bridge"></a>**Remove the `parseBufferUsingServer` bridge** — §17.3; 9 refactoring call sites
+- (#9) <a id="remove-bridge"></a>**Remove the `parseBufferUsingServer` bridge** — §17.3; 7 refactoring call sites
     re-entering `callServer`. It is the last divergent parse path. `-olexmacro` and
     `-olexvariable` only exist for it and go with it.
     Each re-entry runs the entry refresh again, so one refactoring brings knowledge up to
@@ -595,7 +595,11 @@ implementation, and are noted in `cu-prerequisites`, `out-of-date`, `time-budget
     Under ADR-0036 the content token has to keep that working, and it goes with the
     bridge. So this comes before the scan and a CU's own change move to tokens, which
     then need not serve it (Mac, session `4839a129`, 2026-11-13).
-    Goes with: change-is-difference
+    A parse that needs only a point, e.g. the bounds, still selects the symbol at the
+    cursor into the top browsing entry (`cxref.c:328`), since `needsReferenceAtCursor()`
+    decides both. Through the bridge each such parse pushed an entry of its own and left
+    it; without it, they write into the refactoring's entry.
+    Goes with: change-is-difference, rename-leaves-sessions
 - (#109) <a id="session-refresh-time"></a>**A session refreshes a file by a time, not a flag** —
     a file's references get a time they last changed, never cleared, and a session
     refreshes its copy of a file when that is later than the copy. Replaces
