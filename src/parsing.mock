@@ -54,3 +54,7 @@ void initializeParsingSubsystem(void) {
 void parseToCreateReferences(const char *fileName) {
     mock(fileName);
 }
+
+void startParsingBuffer(EditorBuffer *buffer, ParserOperation operation) {
+    mock(buffer, operation);
+}

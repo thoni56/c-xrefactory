@@ -71,17 +71,21 @@ bool allowsDuplicateReferences(ParserOperation op) {
     return op == PARSE_TO_EXTRACT;
 }
 
+/* The operation's own fields, e.g. the cursor offset, are set after this,
+ * since the setup takes the rest from the options */
+void startParsingBuffer(EditorBuffer *buffer, ParserOperation operation) {
+    initInput(NULL, buffer, "\n", buffer->fileName);
+
+    setupParsingConfig(buffer->fileNumber);
+    parsingConfig.operation = operation;
+}
 
 bool isValidMoveTarget(EditorMarker *target) {
     MoveTargetValidationResult result = {
         .valid = false
     };
 
-    initInput(NULL, target->buffer, "\n", target->buffer->fileName);
-
-    /* Set up parsing configuration */
-    setupParsingConfig(target->buffer->fileNumber);
-    parsingConfig.operation = PARSE_TO_VALIDATE_MOVE_TARGET;
+    startParsingBuffer(target->buffer, PARSE_TO_VALIDATE_MOVE_TARGET);
     parsingConfig.cursorOffset = target->offset;
 
     /* Clear previous results */
@@ -96,20 +100,14 @@ bool isValidMoveTarget(EditorMarker *target) {
 }
 
 static void parseToGetDefinitionBoundaries(EditorMarker *marker) {
-    EditorBuffer *buffer = marker->buffer;
-
-    initInput(NULL, buffer, "\n", buffer->fileName);
-
-    /* Set up parsing configuration */
-    setupParsingConfig(buffer->fileNumber);
-    parsingConfig.operation = PARSE_TO_GET_FUNCTION_BOUNDS;
+    startParsingBuffer(marker->buffer, PARSE_TO_GET_FUNCTION_BOUNDS);
     parsingConfig.cursorOffset = marker->offset;
 
     /* Clear previous results */
     for (int i = 0; i < IPP_MAX; i++)
         parsedPositions[i] = NO_POSITION;
 
-    callParser(buffer->fileNumber, parsingConfig.language);
+    callParser(marker->buffer->fileNumber, parsingConfig.language);
 }
 
 /* Extract results from global state */
@@ -173,11 +171,7 @@ void parseToCreateReferences(const char *fileName) {
         }
     }
 
-    /* Setup input for parsing */
-    initInput(NULL, buffer, "\n", (char *)fileName);
-
-    setupParsingConfig(currentFile.characterBuffer.fileNumber);
-    parsingConfig.operation = PARSE_TO_CREATE_REFERENCES;
+    startParsingBuffer(buffer, PARSE_TO_CREATE_REFERENCES);
 
     log_trace("parseToCreateReferences: Parsing '%s' as %s", fileName,
               parsingConfig.language == LANG_YACC ? "YACC" : "C");

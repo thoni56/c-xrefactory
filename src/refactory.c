@@ -31,7 +31,6 @@
 #include "server.h"
 #include "session.h"
 #include "undo.h"
-#include "yylex.h"
 
 
 #define RRF_CHARS_TO_PRE_CHECK_AROUND 1
@@ -894,11 +893,7 @@ static void clearParameterPositions(void) {
 }
 
 static Result getParameterNamePosition(EditorMarker *point, char *fileName, int argn) {
-    initInput(NULL, point->buffer, "\n", point->buffer->fileName);
-
-    /* Set up parsing configuration */
-    setupParsingConfig(point->buffer->fileNumber);
-    parsingConfig.operation = PARSE_TO_TRACK_PARAMETERS;
+    startParsingBuffer(point->buffer, PARSE_TO_TRACK_PARAMETERS);
     parsingConfig.targetParameterIndex = argn;
     parsingConfig.cursorOffset = point->offset;
 

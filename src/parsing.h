@@ -194,5 +194,6 @@ extern void initializeParsingSubsystem(void);
  */
 extern void parseToCreateReferences(const char *fileName);
 extern void setupParsingConfig(int fileNumber);
+extern void startParsingBuffer(EditorBuffer *buffer, ParserOperation operation);
 
 #endif
