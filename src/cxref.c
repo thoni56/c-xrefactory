@@ -300,7 +300,7 @@ Reference *handleFoundSymbolReference(Symbol *symbol, Position position, Usage u
               position.col, visibility==VisibilityGlobal?"Global":"Local",
               usageKindEnumName[usage], storageEnumName[symbol->storage]);
 
-    if (options.serverOperation == OP_INTERNAL_PARSE_TO_EXTRACT) {
+    if (parsingConfig.operation == PARSE_TO_EXTRACT) {
         if (currentFileNumber != currentFile.characterBuffer.fileNumber) {
             LEAVE();
             return NULL;
