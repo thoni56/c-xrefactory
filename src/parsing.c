@@ -78,6 +78,8 @@ void startParsingBuffer(EditorBuffer *buffer, ParserOperation operation) {
 
     setupParsingConfig(buffer->fileNumber);
     parsingConfig.operation = operation;
+
+    resetForCompilationUnit();
 }
 
 bool isValidMoveTarget(EditorMarker *target) {
@@ -154,6 +156,8 @@ void initializeParsingSubsystem(void) {
     /* Prevent lowercasing of filenames on case-sensitive filesystems.
      * This ensures buffer lookups match how files were stored during didOpen. */
     options.fileNamesCaseSensitive = true;
+
+    saveProjectBaseline();
 }
 
 void parseToCreateReferences(const char *fileName) {

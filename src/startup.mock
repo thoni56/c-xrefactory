@@ -18,6 +18,14 @@ bool initializeFileProcessing(ArgumentsVector args, ArgumentsVector nargs, char 
     return (bool)mock(args.argc, args.argv, nargs.argc, nargs.argv, fileName);
 }
 
+void resetForCompilationUnit(void) {
+    mock();
+}
+
+void saveProjectBaseline(void) {
+    mock();
+}
+
 bool isProjectConfigChanged(void) {
     return (bool)mock();
 }

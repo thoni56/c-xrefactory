@@ -6,7 +6,6 @@
 #include "argumentsvector.h"
 #include "optionsets.h"
 #include "stringlist.h"
-#include "options.h"
 
 
 /* Project-level configuration, separate from per-request options */
@@ -25,6 +24,9 @@ extern void mainTaskEntryInitialisations(ArgumentsVector args, StringList **oper
 
 extern bool initializeProjectContext(char *fileName, ArgumentsVector baseArgs, ArgumentsVector requestArgs);
 extern bool initializeFileProcessing(ArgumentsVector args, ArgumentsVector nargs, char *fileName);
+extern void resetForCompilationUnit(void);
+
+extern void saveProjectBaseline(void);
 
 /* Config-change detection: re-run scan when .c-xrefrc is edited mid-session */
 extern bool isProjectConfigChanged(void);

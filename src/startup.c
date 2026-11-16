@@ -20,6 +20,7 @@
 #include "macroargumenttable.h"
 #include "memory.h"
 #include "misc.h"
+#include "options.h"
 #include "optionsets.h"
 #include "proto.h"
 #include "referenceableitemtable.h"
@@ -375,14 +376,14 @@ typedef struct {
     int ppmMemoryIndex;
 } MemoryCheckpoint;
 
-/* Clean Checkpoint: Saved before any options loading.  Reset to get a completely clean
+/* Empty Baseline: Saved before any options loading. Reset to get a completely clean
  * settings state. */
-static MemoryCheckpoint cleanCheckpoint = { .saved = false };
+static MemoryCheckpoint emptyBaseline = { .saved = false };
 
-/* Project Checkpoint: Saved after compiler discovery, but before pass-specific
+/* Project Baseline: Saved after compiler discovery, but before pass-specific
  * settings. Reset to process more files in the same project, with the same or different
  * pass */
-static MemoryCheckpoint projectCheckpoint = { .saved = false };
+static MemoryCheckpoint projectBaseline = { .saved = false };
 
 static void saveCheckpoint(MemoryCheckpoint *checkpoint) {
     log_debug("Saving checkpoint %p: ppmMemoryIndex=%d", (void*)checkpoint, ppmMemory.index);
@@ -395,6 +396,10 @@ static void saveCheckpoint(MemoryCheckpoint *checkpoint) {
     checkpoint->firstFreeStackMemoryIndex = currentBlock->firstFreeIndex;
 
     checkpoint->saved = true;
+}
+
+void saveProjectBaseline(void) {
+    saveCheckpoint(&projectBaseline);
 }
 
 static void restoreCheckpoint(MemoryCheckpoint *checkpoint) {
@@ -411,17 +416,23 @@ static void restoreCheckpoint(MemoryCheckpoint *checkpoint) {
     recoverMemoryFromIncludeList();
 }
 
+/* Start a parse from the project's state, as each request's parse does */
+void resetForCompilationUnit(void) {
+    restoreCheckpoint(&projectBaseline);
+    initializationsPerInvocation();
+}
+
 static void loadProjectSettings(ArgumentsVector baseArgs, ArgumentsVector requestArgs,
                                 char projectConfigFileName[]) {
     StringList *tmpIncludeDirs;
     /* === PHASE 2: Options File Processing === */
-    if (cleanCheckpoint.saved)
-        restoreCheckpoint(&cleanCheckpoint);
+    if (emptyBaseline.saved)
+        restoreCheckpoint(&emptyBaseline);
     else
-        saveCheckpoint(&cleanCheckpoint);
+        saveCheckpoint(&emptyBaseline);
 
     /* Load and process project settings from .c-xrefrc */
-    log_debug("initializeFileProcessing - if-branch, cleanCheckpoint.saved=%d", cleanCheckpoint.saved);
+    log_debug("initializeFileProcessing - if-branch, emptyBaseline.saved=%d", emptyBaseline.saved);
 
     initCwd();
     initOptions();  /* TODO: should be initProjectOptions() - only PROJECT fields need
@@ -453,7 +464,7 @@ static void loadProjectSettings(ArgumentsVector baseArgs, ArgumentsVector reques
 
     /* === PHASE 4: Memory Checkpoint === */
     /* Save memory state so subsequent files in same project can skip phases 2-3 */
-    saveCheckpoint(&projectCheckpoint);
+    saveCheckpoint(&projectBaseline);
 
     /* Then for the particular pass */
     StringList *configOperands = NULL;
@@ -617,7 +628,7 @@ bool initializeFileProcessing(ArgumentsVector baseArgs, ArgumentsVector requestA
         /* Same project as last file - restore from checkpoint (fast path) */
         log_debug("initializeFileProcessing - else-branch (same project, restoring projectCheckpoint)");
         log_debug("Memories: ppmMemory.index=%d, currentBlock=%p", ppmMemory.index, currentBlock);
-        restoreCheckpoint(&projectCheckpoint); /* Skip phases 2-3, restore cached compiler discovery */
+        restoreCheckpoint(&projectBaseline); /* Skip phases 2-3, restore cached compiler discovery */
 
         deepCopyOptionsFromTo(&savedOptions, &options);
         processOptions(requestArgs, NULL); /* no include or define options */

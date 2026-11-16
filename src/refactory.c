@@ -10,6 +10,7 @@
 #include "editor.h"
 #include "editorbuffer.h"
 #include "editormarker.h"
+#include "extract.h"
 #include "filetable.h"
 #include "globals.h"
 #include "head.h"
@@ -1261,19 +1262,28 @@ static void parameterManipulation(EditorMarker *point, int manip, int argn1, int
     ppcGotoMarker(point);
 }
 
-
 // -------------------  Extract
 
+static void parseToExtract(EditorMarker *point, EditorMarker *mark, ExtractMode extractMode) {
+    startParsingBuffer(point->buffer, PARSE_TO_EXTRACT);
+
+    parsingConfig.cursorOffset = point->offset;
+    parsingConfig.markOffset = mark->offset;
+    parsingConfig.extractMode = extractMode;
+
+    callParser(point->buffer->fileNumber, parsingConfig.language);
+}
+
 static void extractFunction(EditorMarker *point, EditorMarker *mark) {
-    parseBufferUsingServer(refactoringOptions.project, point, mark, "-internal-parse-to-extract", NULL);
+    parseToExtract(point, mark, EXTRACT_FUNCTION);
 }
 
 static void extractMacro(EditorMarker *point, EditorMarker *mark) {
-    parseBufferUsingServer(refactoringOptions.project, point, mark, "-internal-parse-to-extract", "-olexmacro");
+    parseToExtract(point, mark, EXTRACT_MACRO);
 }
 
 static void extractVariable(EditorMarker *point, EditorMarker *mark) {
-    parseBufferUsingServer(refactoringOptions.project, point, mark, "-internal-parse-to-extract", "-olexvariable");
+    parseToExtract(point, mark, EXTRACT_VARIABLE);
 }
 
 void serverPerformRefactoring(void) {
