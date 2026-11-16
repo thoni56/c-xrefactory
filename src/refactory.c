@@ -892,7 +892,7 @@ static void clearParameterPositions(void) {
     parameterEndPosition   = NO_POSITION;
 }
 
-static Result getParameterNamePosition(EditorMarker *point, char *fileName, int argn) {
+static void parseToTrackParameter(EditorMarker *point, int argn) {
     startParsingBuffer(point->buffer, PARSE_TO_TRACK_PARAMETERS);
     parsingConfig.targetParameterIndex = argn;
     parsingConfig.cursorOffset = point->offset;
@@ -903,6 +903,10 @@ static Result getParameterNamePosition(EditorMarker *point, char *fileName, int 
     callParser(point->buffer->fileNumber, parsingConfig.language);
 
     popReferenceOnly();
+}
+
+static Result getParameterNamePosition(EditorMarker *point, char *fileName, int argn) {
+    parseToTrackParameter(point, argn);
 
     if (parameterPosition.file != NO_FILE_NUMBER) {
         return RESULT_OK;
@@ -925,7 +929,6 @@ static Result validateReferencePointsToFunction(EditorMarker *marker, char *func
 }
 
 static Result getParameterPosition(EditorMarker *point, char *functionOrMacroName, int argn) {
-    char  pushOptions[TMP_STRING_SIZE];
     char *nameOnPoint;
 
     nameOnPoint = getIdentifierOnMarker_static(point);
@@ -938,10 +941,7 @@ static Result getParameterPosition(EditorMarker *point, char *functionOrMacroNam
         return RESULT_ERR;
     }
 
-    clearParameterPositions();
-    sprintf(pushOptions, "-internal-parse-to-get-param-coordinates=%d", argn);
-    parseBufferUsingServer(refactoringOptions.project, point, NULL, pushOptions, NULL);
-    popReferenceOnly();
+    parseToTrackParameter(point, argn);
 
     Result result = RESULT_OK;
     if (parameterBeginPosition.file == NO_FILE_NUMBER || parameterEndPosition.file == NO_FILE_NUMBER ||
