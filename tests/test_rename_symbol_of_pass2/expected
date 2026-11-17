@@ -1,0 +1,39 @@
+CXREF -server -o server-buffer
+-getproject CURDIR/source.c
+end-of-options
+
+<sync>
+<set-info len=<n>>CURDIR</set-info>
+-rfct-rename -renameto=renamed2 -cursor=78 CURDIR/source.c
+end-of-options
+
+<sync>
+<goto>
+ <position-off off=77 len=<n>>CURDIR/source.c</position-off>
+</goto>
+<precheck len=<n>> only2;</precheck>
+<goto>
+ <position-off off=100 len=<n>>CURDIR/source.c</position-off>
+</goto>
+<precheck len=<n>> only2 </precheck>
+<goto>
+ <position-off off=78 len=<n>>CURDIR/source.c</position-off>
+</goto>
+<goto>
+ <position-off off=78 len=<n>>CURDIR/source.c</position-off>
+</goto>
+<replacement>
+ <str len=<n>>only2</str>  <str len=<n>>renamed2</str>
+</replacement>
+<goto>
+ <position-off off=104 len=<n>>CURDIR/source.c</position-off>
+</goto>
+<replacement>
+ <str len=<n>>only2</str>  <str len=<n>>renamed2</str>
+</replacement>
+<goto>
+ <position-off off=78 len=<n>>CURDIR/source.c</position-off>
+</goto>
+-exit
+end-of-options
+

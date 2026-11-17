@@ -1,0 +1,14 @@
+Bug: a rename does not find a symbol that only pass 1 defines
+
+The parse that finds the symbol at the cursor (pushReferences() in refactory.c)
+runs once, from the project baseline, without any pass's options. So -DPASS1 is
+not defined and only1 is not seen: "No symbol found at the cursor."
+Green at 7daee9dc and 499b84af, where the push went through the bridge and so
+through processFile()'s loop over the passes. Red from 101a522c, which moved the
+push off the bridge (WSL, session d25255b8, 2026-11-17).
+
+The fix is the shape we want for every parse of a CU: one loop over the passes,
+each starting the CU from the baseline plus that pass's options, and then the
+input (a -D is lexed through the same input, so the pass comes first).
+The refresh (parseFileWithFullInit()) and the request's own parse
+(processFile()) already loop; the direct refactoring parses do not.

@@ -1,0 +1,6 @@
+CXREF -server
+-getproject CURDIR/source.c
+<sync>
+-rfct-rename -renameto=renamed2 -cursor=78 CURDIR/source.c
+<sync>
+<exit>

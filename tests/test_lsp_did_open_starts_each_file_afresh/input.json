@@ -1,0 +1,52 @@
+[
+    {
+        "jsonrpc": "2.0",
+        "id": 1,
+        "method": "initialize",
+        "params": {
+            "rootUri": "file://CURDIR",
+            "capabilities": {}
+        }
+    },
+    {"jsonrpc":"2.0","method":"initialized"},
+    {
+        "jsonrpc": "2.0",
+        "method": "textDocument/didOpen",
+        "params": {
+            "textDocument": {
+                "uri": "file://CURDIR/a.c",
+                "languageId": "c",
+                "version": 1,
+                "text": "#define FEATURE\nint a;\n"
+            }
+        }
+    },
+    {
+        "jsonrpc": "2.0",
+        "method": "textDocument/didOpen",
+        "params": {
+            "textDocument": {
+                "uri": "file://CURDIR/b.c",
+                "languageId": "c",
+                "version": 1,
+                "text": "#ifdef FEATURE\nint wrong;\n#else\nint right;\n#endif\nint use(void) { return right; }\n"
+            }
+        }
+    },
+    {
+        "jsonrpc": "2.0",
+        "id": 2,
+        "method": "textDocument/definition",
+        "params": {
+            "textDocument": {
+                "uri": "file://CURDIR/b.c"
+            },
+            "position": {
+                "line": 5,
+                "character": 23
+            }
+        }
+    },
+    {"jsonrpc":"2.0","id":3,"method":"shutdown"},
+    {"jsonrpc":"2.0","method":"exit"}
+]

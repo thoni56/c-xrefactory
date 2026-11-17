@@ -11,6 +11,7 @@
 #include "log.h"
 #include "lsp_adapter.h"
 #include "lsp_sender.h"
+#include "startup.h"
 #include "parsing.h"
 #include "timestamp.h"
 
@@ -111,6 +112,7 @@ void handle_did_open(JSON *notification) {
     /* Parse the file to populate the reference database.
      * Language is derived from filename extension by parseToCreateReferences(). */
     log_trace("LSP: Parsing file '%s'", buffer->fileName);
+    resetForCompilationUnit();
     parseToCreateReferences(buffer->fileName);
     log_trace("LSP: Finished parsing file '%s'", buffer->fileName);
 }

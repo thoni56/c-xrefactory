@@ -1,0 +1,4 @@
+
+{"jsonrpc":"2.0","id":2,"result":{"uri":"file://CURDIR/b.c","range":{"start":{"line":3,"character":4},"end":{"line":3,"character":9}}}}
+
+{"jsonrpc":"2.0","id":3,"result":null}
