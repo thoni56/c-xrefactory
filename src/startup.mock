@@ -18,7 +18,7 @@ bool initializeFileProcessing(ArgumentsVector args, ArgumentsVector nargs, char 
     return (bool)mock(args.argc, args.argv, nargs.argc, nargs.argv, fileName);
 }
 
-void resetForCompilationUnit(void) {
+void startCompilationUnit(void) {
     mock();
 }
 

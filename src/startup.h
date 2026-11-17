@@ -24,7 +24,7 @@ extern void mainTaskEntryInitialisations(ArgumentsVector args, StringList **oper
 
 extern bool initializeProjectContext(char *fileName, ArgumentsVector baseArgs, ArgumentsVector requestArgs);
 extern bool initializeFileProcessing(ArgumentsVector args, ArgumentsVector nargs, char *fileName);
-extern void resetForCompilationUnit(void);
+extern void startCompilationUnit(void);
 
 extern int numberOfPasses(void);
 extern void saveProjectBaseline(void);

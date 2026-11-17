@@ -112,7 +112,7 @@ void handle_did_open(JSON *notification) {
     /* Parse the file to populate the reference database.
      * Language is derived from filename extension by parseToCreateReferences(). */
     log_trace("LSP: Parsing file '%s'", buffer->fileName);
-    resetForCompilationUnit();
+    startCompilationUnit();
     parseToCreateReferences(buffer->fileName);
     log_trace("LSP: Finished parsing file '%s'", buffer->fileName);
 }

@@ -85,7 +85,7 @@ bool isValidMoveTarget(EditorMarker *target) {
         .valid = false
     };
 
-    resetForCompilationUnit();
+    startCompilationUnit();
     startParsingBuffer(target->buffer, PARSE_TO_VALIDATE_MOVE_TARGET);
     parsingConfig.cursorOffset = target->offset;
 
@@ -101,7 +101,7 @@ bool isValidMoveTarget(EditorMarker *target) {
 }
 
 static void parseToGetDefinitionBoundaries(EditorMarker *marker) {
-    resetForCompilationUnit();
+    startCompilationUnit();
     startParsingBuffer(marker->buffer, PARSE_TO_GET_FUNCTION_BOUNDS);
     parsingConfig.cursorOffset = marker->offset;
 

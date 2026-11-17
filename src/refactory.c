@@ -190,7 +190,7 @@ static void pushReferences(EditorMarker *point, ServerOperation operation, char 
     pushEmptySession(&browsingStack);
     browsingStack.top->operation = operation;
 
-    resetForCompilationUnit();
+    startCompilationUnit();
     startParsingBuffer(point->buffer, PARSE_TO_CREATE_REFERENCES);
     parsingConfig.cursorOffset = point->offset;
     callParser();
@@ -900,7 +900,7 @@ static void clearParameterPositions(void) {
 }
 
 static void parseToTrackParameter(EditorMarker *point, int argn) {
-    resetForCompilationUnit();
+    startCompilationUnit();
     startParsingBuffer(point->buffer, PARSE_TO_TRACK_PARAMETERS);
     parsingConfig.targetParameterIndex = argn;
     parsingConfig.cursorOffset = point->offset;
@@ -1272,7 +1272,7 @@ static void parameterManipulation(EditorMarker *point, int manip, int argn1, int
 // -------------------  Extract
 
 static void parseToExtract(EditorMarker *point, EditorMarker *mark, ExtractMode extractMode) {
-    resetForCompilationUnit();
+    startCompilationUnit();
     startParsingBuffer(point->buffer, PARSE_TO_EXTRACT);
 
     parsingConfig.cursorOffset = point->offset;

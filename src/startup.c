@@ -421,7 +421,7 @@ static void restoreCheckpoint(MemoryCheckpoint *checkpoint) {
     recoverMemoryFromIncludeList();
 }
 
-void resetForCompilationUnit(void) {
+void startCompilationUnit(void) {
     restoreCheckpoint(&projectBaseline);
     initializationsPerInvocation();
 }

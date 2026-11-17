@@ -146,7 +146,7 @@ Ensure(LspHandler, handles_did_open) {
     expect(createNewEditorBuffer, when(fileName, is_equal_to_string("/path/to/file.c")),
         will_return(&buffer));
     expect(loadTextIntoEditorBuffer, when(buffer, is_equal_to(&buffer)), when(text, is_equal_to_string(text)));
-    expect(resetForCompilationUnit);
+    expect(startCompilationUnit);
     expect(parseToCreateReferences);
 
     // Action
