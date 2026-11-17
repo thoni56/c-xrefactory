@@ -207,14 +207,19 @@ static void pushReferences(EditorMarker *point, ServerOperation operation, char 
     }
 }
 
-static void safetyCheck(char *project, EditorMarker *point) {
-    parseBufferUsingServer(project, point, NULL, "-internal-safety-check", NULL);
-
-    assert(browsingStack.top != NULL);
-    if (browsingStack.top->hkSelectedSym == NULL) {
-        errorMessage(ERR_ST, "No symbol found for refactoring safety check");
-    }
-    createSelectionMenuForOperation(browsingStack.top->operation);
+static void safetyCheck(EditorMarker *point) {
+    ArgumentsVector baseArgs = {
+        .argc = argument_count(serverDefaultArguments),
+        .argv = serverDefaultArguments
+    };
+    Prerequisites *prerequisites = collectPrerequisites();
+    removeReferencesOfChangedFiles(prerequisites);
+    BuildList *buildList = newBuildList(MAX_CUS_TO_REPARSE);
+    collectOutOfDateHeldCUs(buildList, prerequisites);
+    buildKnowledgeOfAll(buildList, baseArgs);
+    freeBuildList(buildList);
+    freePrerequisites(prerequisites);
+    pushReferences(point, OP_INTERNAL_SAFETY_CHECK, NULL, 0);
 }
 
 static char *getIdentifierOnMarker_static(EditorMarker *marker) {
@@ -462,7 +467,7 @@ static bool makeSafetyCheckAndUndo(EditorMarker *point, EditorMarkerList **occs,
     EditorMarker *defin = point;
 
     olcxPushSpecialCheckMenuSym(LINK_NAME_SAFETY_CHECK_MISSED);
-    safetyCheck(refactoringOptions.project, defin);
+    safetyCheck(defin);
 
     EditorMarkerList *chks = convertReferencesToEditorMarkers(browsingStack.top->references);
 
