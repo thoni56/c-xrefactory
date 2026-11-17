@@ -335,6 +335,11 @@ every push, `After` dashed and `Goes with` not at all, linked at the end of this
     When `handleHasIncludeOperator()` (`src/yylex.c`) has reported what is wrong and
     returns 0, `cppexp_yyparse()` adds "Syntax error on: `__has_include`"
     through `styyerror()` (`src/semact.c`). The second message says nothing more.
+- (#114) <a id="delete-last-parameter-void"></a>**Deleting a function's only parameter leaves `()`, not `(void)`** — *no repo home yet.*
+    Before C23, `f()` declares a function without a prototype, so the declaration says less
+    than it did. A macro's `()` is right. No test deletes the only parameter of a function:
+    `test_parameter_delete_void` deletes the `void`, and Add Parameter has the reverse
+    (`test_parameter_add_to_void`). Start with that test.
 
 ## 4. Performance, in strict dependency order
 
