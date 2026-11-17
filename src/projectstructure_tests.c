@@ -634,8 +634,6 @@ Ensure(ProjectStructure, does_not_mark_header_as_deleted) {
 }
 
 
-static FileTimestamp scanTime = {.tv_sec = 1000, .tv_nsec = 0};
-
 static void given_one_file_in_the_table(FileItem *fileItem) {
     expect(getNextExistingFileNumber, when(fileNumber, is_equal_to(0)), will_return(1));
     always_expect(getFileItemWithFileNumber, when(fileNumber, is_equal_to(1)),
@@ -643,10 +641,25 @@ static void given_one_file_in_the_table(FileItem *fileItem) {
     expect(getNextExistingFileNumber, when(fileNumber, is_equal_to(2)), will_return(-1));
 }
 
-Ensure(ProjectStructure, rescans_a_file_whose_content_is_not_the_content_scanned) {
-    FileItem fileItem = {.name = "/project/a.c", .scanTime = scanTime};
-    given_one_file_in_the_table(&fileItem);
+void given_a_scanned_file_whose_content_is_unchanged(void) {
+    expect(contentTokenIsMissing, will_return(false));
+    expect(contentTokensAreSame, will_return(true));
+}
+
+void given_a_scanned_file_whose_content_has_changed(void) {
+    expect(contentTokenIsMissing, will_return(false));
     expect(contentTokensAreSame, will_return(false));
+}
+
+void given_a_file_the_scan_never_read(void) {
+    expect(contentTokenIsMissing, will_return(true));
+    never_expect(contentTokensAreSame);
+}
+
+Ensure(ProjectStructure, rescans_a_file_whose_content_is_not_the_content_scanned) {
+    FileItem fileItem = {.name = "/project/a.c"};
+    given_one_file_in_the_table(&fileItem);
+    given_a_scanned_file_whose_content_has_changed();
     expect(openFile, when(fileName, is_equal_to_string("/project/a.c")),
            will_return((FILE *)1));
     expect(startScanOf, when(fileNumber, is_equal_to(1)));
@@ -657,9 +670,9 @@ Ensure(ProjectStructure, rescans_a_file_whose_content_is_not_the_content_scanned
 }
 
 Ensure(ProjectStructure, does_not_rescan_a_file_whose_content_is_the_content_scanned) {
-    FileItem fileItem = {.name = "/project/a.c", .scanTime = scanTime};
+    FileItem fileItem = {.name = "/project/a.c"};
     given_one_file_in_the_table(&fileItem);
-    expect(contentTokensAreSame, will_return(true));
+    given_a_scanned_file_whose_content_is_unchanged();
     never_expect(openFile);
 
     rescanChangedFiles(NULL);
@@ -669,16 +682,16 @@ Ensure(ProjectStructure, does_not_rescan_a_file_whose_content_is_the_content_sca
 Ensure(ProjectStructure, does_not_scan_a_file_the_scan_never_read) {
     FileItem fileItem = {.name = "/usr/include/stdio.h"};
     given_one_file_in_the_table(&fileItem);
-    never_expect(contentTokensAreSame);
+    given_a_file_the_scan_never_read();
     never_expect(openFile);
 
     rescanChangedFiles(NULL);
 }
 
 Ensure(ProjectStructure, also_scans_a_header_a_rescanned_file_now_includes_for_the_first_time) {
-    FileItem fileItem = {.name = "/project/a.c", .scanTime = scanTime};
+    FileItem fileItem = {.name = "/project/a.c"};
     given_one_file_in_the_table(&fileItem);
-    expect(contentTokensAreSame, will_return(false));
+    given_a_scanned_file_whose_content_has_changed();
     char *content = "#include \"h.h\"\n";
     expect(openFile, when(fileName, is_equal_to_string("/project/a.c")),
            will_return((FILE *)1));

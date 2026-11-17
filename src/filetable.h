@@ -33,7 +33,6 @@ typedef struct fileItem {	/* to be renamed to constant pool item TODO: Why?*/
     bool isDeleted : 1;                 // file no longer exists on disk
     int *scannedIncludes;               // the files the lightweight scan found it including
     int scannedIncludeCount;
-    FileTimestamp scanTime;             // when the lightweight scan last read it
     ContentToken scanToken;             // the content the lightweight scan last read (ADR-0036)
     struct fileItem *next;
 } FileItem;
@@ -64,7 +63,7 @@ extern void mapOverFileTableWithPointer(void (*fun)(FileItem *, void *), void *p
 
 extern void markFileAsDeleted(int fileNumber);
 extern void addScannedInclude(int includerFileNumber, int includedFileNumber);
-extern void startScanOf(int fileNumber, FileTimestamp scanTime, ContentToken scanToken);
+extern void startScanOf(int fileNumber, ContentToken scanToken);
 
 extern void fileTableMemoryStatistics(void);
 

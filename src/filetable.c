@@ -83,10 +83,9 @@ void addScannedInclude(int includerFileNumber, int includedFileNumber) {
 }
 
 /* What the scan finds replaces what it found before */
-void startScanOf(int fileNumber, FileTimestamp scanTime, ContentToken scanToken) {
+void startScanOf(int fileNumber, ContentToken scanToken) {
     FileItem *fileItem = getFileItemWithFileNumber(fileNumber);
     fileItem->scannedIncludeCount = 0;
-    fileItem->scanTime = scanTime;
     fileItem->scanToken = scanToken;
 }
 

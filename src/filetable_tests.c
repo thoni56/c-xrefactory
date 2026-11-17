@@ -87,16 +87,13 @@ Ensure(FileTable, a_scan_of_a_file_starts_over_and_is_stamped) {
     FileItem includer = {"includer.c"};
     int includerNumber = addFileItemToFileTable(&includer);
     addScannedInclude(includerNumber, 7);
-    FileTimestamp scanTime = {.tv_sec = 1234, .tv_nsec = 5678};
     ContentToken scanToken = {.hash = 42};
 
-    startScanOf(includerNumber, scanTime, scanToken);
+    startScanOf(includerNumber, scanToken);
     addScannedInclude(includerNumber, 9);
 
     assert_that(includer.scannedIncludeCount, is_equal_to(1));
     assert_that(includer.scannedIncludes[0], is_equal_to(9));
-    assert_that(includer.scanTime.tv_sec, is_equal_to(1234));
-    assert_that(includer.scanTime.tv_nsec, is_equal_to(5678));
     assert_that(includer.scanToken.hash, is_equal_to(42));
 }
 

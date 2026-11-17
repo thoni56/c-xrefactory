@@ -3,6 +3,7 @@
 #include <string.h>
 
 #include "commons.h"
+#include "contenttoken.h"
 #include "fileio.h"
 #include "filetable.h"
 #include "log.h"
@@ -43,7 +44,7 @@ static StringList *scanFileForIncludes(const char *filePath, int includerFileNum
     if (file == NULL)
         return NULL;
     /* Taken before the content is read, so a change while reading is seen later */
-    startScanOf(includerFileNumber, fileTimestampNow(), contentTokenOf((char *)filePath));
+    startScanOf(includerFileNumber, contentTokenOf((char *)filePath));
     char buf[SCAN_BUFFER_SIZE];
     size_t leftover = 0;
     size_t bytesRead;
@@ -174,7 +175,7 @@ void rescanChangedFiles(StringList *includeDirs) {
     StringList *worklist = NULL;
     for (int i = getNextExistingFileNumber(0); i != -1; i = getNextExistingFileNumber(i + 1)) {
         FileItem *fileItem = getFileItemWithFileNumber(i);
-        if (fileTimestampIsZero(fileItem->scanTime))
+        if (contentTokenIsMissing(fileItem->scanToken))
             continue;
         if (contentTokensAreSame(contentTokenOf(fileItem->name), fileItem->scanToken))
             continue;
