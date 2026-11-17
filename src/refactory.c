@@ -84,7 +84,7 @@ static void beInteractive(void) {
         ppcSynchronize();
         deepCopyOptionsFromTo(&localSavedOptions, &options);
 
-        ArgumentsVector args = {.argc = argument_count(serverDefaultArguments), .argv = serverDefaultArguments};
+        ArgumentsVector args = {.argc = argumentCount(serverDefaultArguments), .argv = serverDefaultArguments};
         processOptions(args, NULL);
 
         ArgumentsVector pipedOptions = readOptionsFromPipe();
@@ -145,7 +145,7 @@ static void pushReferences(EditorMarker *point, ServerOperation operation, char 
 
 static void safetyCheck(EditorMarker *point) {
     ArgumentsVector baseArgs = {
-        .argc = argument_count(serverDefaultArguments),
+        .argc = argumentCount(serverDefaultArguments),
         .argv = serverDefaultArguments
     };
     Prerequisites *prerequisites = collectPrerequisites();
