@@ -184,10 +184,14 @@ static void displayResolutionDialog(char *message, int messageType) {
     "There are several symbols referred from this place. Continuing this refactoring will process the selected "  \
     "symbols all at once."
 
-static void pushReferences(EditorMarker *point, char *pushOption, char *resolveMessage,
+static void pushReferences(EditorMarker *point, ServerOperation operation, char *resolveMessage,
                            int messageType) {
-    /* now remake task initialisation as for edit server */
-    parseBufferUsingServer(refactoringOptions.project, point, NULL, pushOption, NULL);
+    pushEmptySession(&browsingStack);
+    browsingStack.top->operation = operation;
+
+    startParsingBuffer(point->buffer, PARSE_TO_CREATE_REFERENCES);
+    parsingConfig.cursorOffset = point->offset;
+    callParser(point->buffer->fileNumber, parsingConfig.language);
 
     assert(browsingStack.top != NULL);
     if (browsingStack.top->hkSelectedSym == NULL) {
@@ -622,7 +626,7 @@ static void simpleRename(EditorMarkerList *markerList, EditorMarker *marker, cha
 static EditorMarkerList *getReferences(EditorMarker *point, char *resolveMessage,
                                        int messageType) {
     EditorMarkerList *occs;
-    pushReferences(point, "-internal-push-for-rename", resolveMessage, messageType); /* TODO: WTF do we use "rename"?!? */
+    pushReferences(point, OP_INTERNAL_PUSH_FOR_RENAME, resolveMessage, messageType); /* TODO: WTF do we use "rename"?!? */
     if (browsingStack.top->hkSelectedSym == NULL)
         return NULL;
     occs = convertReferencesToEditorMarkers(browsingStack.top->references);
@@ -1054,7 +1058,7 @@ static int addStringAsParameter(EditorMarker *point, EditorMarker *endMarkerOrMa
 
 static int isThisSymbolUsed(EditorMarker *marker) {
     int refn;
-    pushReferences(marker, "-internal-push-for-usage-check", STANDARD_SELECT_SYMBOLS_MESSAGE, PPCV_BROWSER_TYPE_INFO);
+    pushReferences(marker, OP_INTERNAL_PUSH_FOR_USAGE_CHECK, STANDARD_SELECT_SYMBOLS_MESSAGE, PPCV_BROWSER_TYPE_INFO);
     LIST_LEN(refn, Reference, browsingStack.top->references);
     popReferenceOnly();
     return refn > 1;
@@ -1246,7 +1250,7 @@ static void applyParameterManipulation(EditorMarker *point, int manipulation, in
     EditorMarkerList *occurrences;
 
     strcpy(nameOnPoint, getIdentifierOnMarker_static(point));
-    pushReferences(point, "-internal-push-for-argument-manipulation", STANDARD_SELECT_SYMBOLS_MESSAGE, PPCV_BROWSER_TYPE_INFO);
+    pushReferences(point, OP_INTERNAL_PUSH_FOR_ARGUMENT_MANIPULATION, STANDARD_SELECT_SYMBOLS_MESSAGE, PPCV_BROWSER_TYPE_INFO);
     occurrences = convertReferencesToEditorMarkers(browsingStack.top->references);
 
     ppcGotoMarker(point);
