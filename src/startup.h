@@ -28,6 +28,7 @@ extern void startCompilationUnit(void);
 
 extern int numberOfPasses(void);
 extern void saveProjectBaseline(void);
+extern void startCompilationUnitForPass(int pass);
 
 /* Config-change detection: re-run scan when .c-xrefrc is edited mid-session */
 extern bool isProjectConfigChanged(void);

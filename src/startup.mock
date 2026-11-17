@@ -30,6 +30,10 @@ void saveProjectBaseline(void) {
     mock();
 }
 
+void startCompilationUnitForPass(int pass) {
+    mock(pass);
+}
+
 bool isProjectConfigChanged(void) {
     return (bool)mock();
 }

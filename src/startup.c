@@ -426,6 +426,12 @@ void startCompilationUnit(void) {
     initializationsPerInvocation();
 }
 
+void startCompilationUnitForPass(int pass) {
+    restoreCheckpoint(&projectBaseline);
+    applyOptionSet(projectConfig.optionSets.set[pass]);
+    initializationsPerInvocation();
+}
+
 static void loadProjectSettings(ArgumentsVector baseArgs, ArgumentsVector requestArgs,
                                 char projectConfigFileName[]) {
     StringList *tmpIncludeDirs;

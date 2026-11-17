@@ -190,10 +190,12 @@ static void pushReferences(EditorMarker *point, ServerOperation operation, char 
     pushEmptySession(&browsingStack);
     browsingStack.top->operation = operation;
 
-    startCompilationUnit();
-    startParsingBuffer(point->buffer, PARSE_TO_CREATE_REFERENCES);
-    parsingConfig.cursorOffset = point->offset;
-    callParser();
+    for (int pass = 1; pass <= numberOfPasses(); pass++) {
+        startCompilationUnitForPass(pass);
+        startParsingBuffer(point->buffer, PARSE_TO_CREATE_REFERENCES);
+        parsingConfig.cursorOffset = point->offset;
+        callParser();
+    }
 
     assert(browsingStack.top != NULL);
     if (browsingStack.top->hkSelectedSym == NULL) {
