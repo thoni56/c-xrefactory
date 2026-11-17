@@ -442,8 +442,6 @@ static void loadProjectSettings(ArgumentsVector baseArgs, ArgumentsVector reques
         saveCheckpoint(&emptyBaseline);
 
     /* Load and process project settings from .c-xrefrc */
-    log_debug("initializeFileProcessing - if-branch, emptyBaseline.saved=%d", emptyBaseline.saved);
-
     initCwd();
     initOptions();  /* TODO: should be initProjectOptions() - only PROJECT fields need
                      * resetting here. Resetting SESSION/REQUEST fields forces callers to
