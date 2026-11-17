@@ -191,9 +191,10 @@ A rescan can also compare a file's old edges with its new ones: an include that 
 Treating that header as changed removes it.
 An `#ifdef` that flips leaves the edge in place, since the scan over-approximates, so that part of `variant-b` stays open.
 
-Today the code finds *changed* twice, with two meanings.
-`rescanChangedFiles()` compares the disk's modification time with the scan time and reads the disk.
-`removeReferencesOfChangedFiles()` uses `contentTimeOf()`, which also knows held buffers and buffers let go.
+Today the code finds *changed* twice, with the same meaning but not the same content.
+Both compare content tokens.
+`rescanChangedFiles()` takes the disk's token, and reads the disk.
+`removeReferencesOfChangedFiles()` takes `editorContentTokenOf()`, the held buffer's when there is one.
 So for a held file they can disagree, and the parse still adds include edges to the graph beside the scan's.
 Once the scan reads what the parse reads, the graph has one writer.
 Refined on the Mac, session `4839a129`, 2026-11-06.

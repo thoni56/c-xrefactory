@@ -575,8 +575,9 @@ implementation, and are noted in `cu-prerequisites`, `out-of-date`, `time-budget
     `4839a129`, 2026-11-06, the racy rule dropped 2026-11-10).
     Done: the `contenttoken` module, the seen token in the snapshot (1.16.0), the
     removal of a header by tokens, and the build reading only a header's noticed change
-    time, so a deleted header costs its includers one build. Left: the scan by tokens
-    (`rescanChangedFiles()`, a seen token per session), a CU's own change by tokens,
+    time, so a deleted header costs its includers one build, and the scan by tokens of
+    the disk. Left: the scan reading a held file's buffer, as the parse does, so that the
+    include graph has one writer, a CU's own change by tokens,
     which takes the 10 ms gap with it, `forgetKnowledgeForHeldContent()`, and a header
     not yet seen counting as changed.
     Waits for: adr-0036
