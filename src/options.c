@@ -1063,33 +1063,16 @@ static bool processIOption(int *argi, ArgumentsVector args) {
     else if (strcmp(args.argv[i], "-info")==0) {
         /* Log level handled in main.c initLogging() */;
     }
-    else if (strcmp(args.argv[i], "-internal-parse-to-extract")==0) {
-        options.serverOperation = OP_INTERNAL_PARSE_TO_EXTRACT;
-    }
     else if (strcmp(args.argv[i], "-internal-push-for-rename")==0)
         options.serverOperation = OP_INTERNAL_PUSH_FOR_RENAME;
     else if (strcmp(args.argv[i], "-internal-push-for-argument-manipulation")==0)
         options.serverOperation = OP_INTERNAL_PUSH_FOR_ARGUMENT_MANIPULATION;
     else if (strcmp(args.argv[i], "-internal-safety-check")==0)
         options.serverOperation = OP_INTERNAL_SAFETY_CHECK;
-    else if (strncmp(args.argv[i], "-internal-parse-to-goto-param-name=",35)==0) {
-        options.serverOperation = OP_INTERNAL_PARSE_TO_GOTO_PARAM_NAME;
-        options.index = 0;
-        sscanf(args.argv[i]+35, "%d", &options.index);
-    }
-    else if (strncmp(args.argv[i], "-internal-parse-to-get-param-coordinates=",41)==0) {
-        options.serverOperation = OP_INTERNAL_PARSE_TO_GET_PARAM_COORDINATES;
-        options.index = 0;
-        sscanf(args.argv[i]+41, "%d", &options.index);
-    }
     else if (strcmp(args.argv[i], "-internal-push-for-usage-check")==0) {
         options.serverOperation = OP_INTERNAL_PUSH_FOR_USAGE_CHECK;
         options.manualResolve = RESOLVE_DIALOG_NEVER;
     }
-    else if (strcmp(args.argv[i], "-internal-parse-to-set-move-target")==0)
-        options.serverOperation=OP_INTERNAL_PARSE_TO_SET_MOVE_TARGET;
-    else if (strcmp(args.argv[i], "-internal-get-function-bounds")==0)
-        options.serverOperation=OP_INTERNAL_GET_FUNCTION_BOUNDS;
     else return false;
     *argi = i;
     return true;

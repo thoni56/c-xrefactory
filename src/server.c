@@ -50,8 +50,6 @@ static bool opensBrowsingSession(ServerOperation operation) {
     return operation==OP_BROWSE_PUSH
         ||  operation==OP_BROWSE_PUSH_ONLY
         ||  operation==OP_BROWSE_PUSH_AND_CALL_MACRO
-        ||  operation==OP_INTERNAL_PARSE_TO_GOTO_PARAM_NAME
-        ||  operation==OP_INTERNAL_PARSE_TO_GET_PARAM_COORDINATES
         ||  operation==OP_GET_AVAILABLE_REFACTORINGS
         ||  operation==OP_BROWSE_PUSH_NAME
         ||  operation==OP_INTERNAL_PUSH_FOR_USAGE_CHECK
@@ -61,7 +59,6 @@ static bool opensBrowsingSession(ServerOperation operation) {
         ||  operation==OP_INTERNAL_PUSH_FOR_RENAME
         ||  operation==OP_INTERNAL_PUSH_FOR_ARGUMENT_MANIPULATION
         ||  operation==OP_INTERNAL_SAFETY_CHECK
-        ||  operation==OP_INTERNAL_GET_FUNCTION_BOUNDS
         ||  operation==OP_REFACTORY
         ;
 }
@@ -86,9 +83,7 @@ static const char *parseAllPromptFor(ServerOperation operation) {
 
 static bool requiresProcessingInputFile(ServerOperation operation) {
     return operation==OP_COMPLETION
-           || operation==OP_INTERNAL_PARSE_TO_EXTRACT
            || operation==OP_SEARCH
-           || operation==OP_INTERNAL_PARSE_TO_SET_MOVE_TARGET
            || opensBrowsingSession(operation)
         ;
 }
@@ -234,7 +229,7 @@ static void processFile(ArgumentsVector baseArgs, ArgumentsVector requestArgs,
     for (currentPass=1; currentPass <= numberOfPasses(); currentPass++) {
         assert(fileItem->name!=NULL);
         singlePass(baseArgs, requestArgs, prerequisites, fileItem->name);
-        if (options.serverOperation==OP_INTERNAL_PARSE_TO_EXTRACT || (completionStringServed && !opensBrowsingSession(options.serverOperation)))
+        if (completionStringServed && !opensBrowsingSession(options.serverOperation))
             break;
     }
 }

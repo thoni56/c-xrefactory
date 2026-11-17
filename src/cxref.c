@@ -2005,32 +2005,6 @@ void answerEditorAction(void) {
         break;
 
         /* INTERNAL */
-    case OP_INTERNAL_PARSE_TO_EXTRACT:
-        if (!parsedInfo.extractProcessedFlag) {
-            fprintf(outputFile,"*** No function/method enclosing selected block found **");
-        }
-        break;
-
-    case OP_INTERNAL_PARSE_TO_SET_MOVE_TARGET:
-        assert(options.cxrefProtocol);
-        if (!parsedInfo.moveTargetAccepted) {
-            ppcGenRecord(PPC_ERROR, "Invalid target place");
-        }
-        break;
-
-    case OP_INTERNAL_PARSE_TO_GOTO_PARAM_NAME:
-        // I hope this is not used anymore, put there assert(0); Well,
-        // it is used from refactory, but that probably only executes
-        // the parsers and server and not cxref...
-        if (completionStringServed && parameterPosition.file != NO_FILE_NUMBER) {
-            ppcGotoPosition(parameterPosition);
-            deleteEntryFromSessionStack(browsingStack.top);
-        } else {
-            char tmpBuff[TMP_BUFF_SIZE];
-            sprintf(tmpBuff, "Parameter %d not found.", options.index);
-            errorMessage(ERR_ST, tmpBuff);
-        }
-        break;
     case OP_INTERNAL_PUSH_FOR_ARGUMENT_MANIPULATION: {
         SessionStackEntry *stack = browsingStack.top;
         assert(stack!=NULL);

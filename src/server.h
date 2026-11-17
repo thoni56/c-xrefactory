@@ -31,12 +31,7 @@
     ENUM(OP_FILTER)                                     \
     ENUM(OP_GET_AVAILABLE_REFACTORINGS)                 \
     ENUM(OP_GET_ENV_VALUE)                              \
-    ENUM(OP_INTERNAL_GET_FUNCTION_BOUNDS)               \
     ENUM(OP_INTERNAL_LIST)                              \
-    ENUM(OP_INTERNAL_PARSE_TO_EXTRACT)                  \
-    ENUM(OP_INTERNAL_PARSE_TO_GET_PARAM_COORDINATES)    \
-    ENUM(OP_INTERNAL_PARSE_TO_GOTO_PARAM_NAME)          \
-    ENUM(OP_INTERNAL_PARSE_TO_SET_MOVE_TARGET)          \
     ENUM(OP_INTERNAL_PUSH_FOR_ARGUMENT_MANIPULATION)    \
     ENUM(OP_INTERNAL_PUSH_FOR_USAGE_CHECK)              \
     ENUM(OP_INTERNAL_PUSH_FOR_RENAME)                   \

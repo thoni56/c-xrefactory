@@ -23,15 +23,6 @@ int currentFileNumber = -1;     /* Currently parsed file, maybe a header file */
 
 ParserOperation getParserOperation(ServerOperation serverOp) {
     switch (serverOp) {
-        case OP_INTERNAL_GET_FUNCTION_BOUNDS:
-            return PARSE_TO_GET_FUNCTION_BOUNDS;
-        case OP_INTERNAL_PARSE_TO_SET_MOVE_TARGET:
-            return PARSE_TO_VALIDATE_MOVE_TARGET;
-        case OP_INTERNAL_PARSE_TO_EXTRACT:
-            return PARSE_TO_EXTRACT;
-        case OP_INTERNAL_PARSE_TO_GOTO_PARAM_NAME:
-        case OP_INTERNAL_PARSE_TO_GET_PARAM_COORDINATES:
-            return PARSE_TO_TRACK_PARAMETERS;
         case OP_COMPLETION:
             return PARSE_TO_COMPLETE;
         default:
