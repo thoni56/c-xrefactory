@@ -40,6 +40,7 @@ PassMarker readPassMarker(char *optionText, int *passNumber) {
 OptionSets makeOptionSets(void) {
     OptionSets d;
 
+    d.passCount = 0;
     for (size_t i = 0; i < sizeof(d.set) / sizeof(d.set[0]); i++)
         d.set[i] = NULL;
     return d;
@@ -59,16 +60,26 @@ void readOptionSets(FILE *file, OptionSets *resultingDeltas) {
     char optionsText[MAX_OPTION_LEN];
 
     int passN = 0;
+    bool seen[MAX_PASS_COUNT+1] = {false};
     int ch = getOptionFromFile(file, NULL, optionsText, &charsRead);
     while (ch != EOF) {
-        int markerPass;
-        PassMarker marker = readPassMarker(optionsText, &markerPass);
+        int markerPassNumber;
+        PassMarker marker = readPassMarker(optionsText, &markerPassNumber);
 
         if (optionsText[0] == '[')
             ; /* Skip section/project markers */
-        else if (marker == WellFormedPassMarker)
-            passN = markerPass;
-        else if (marker == IllFormedPassMarker)
+        else if (marker == WellFormedPassMarker) {
+            if (seen[markerPassNumber]) {
+                char message[TMP_BUFF_SIZE];
+                sprintf(message, "'%s' is used more than once, section ignored",
+                        optionsText);
+                errorMessage(ERR_ST, message);
+                passN = PASS_IGNORED;
+            } else {
+                seen[markerPassNumber] = true;
+                passN = ++resultingDeltas->passCount;
+            }
+        } else if (marker == IllFormedPassMarker)
             passN = PASS_IGNORED; /* readPassMarker has told the user why */
         else if (passN != PASS_IGNORED) {
             assert(passN >= 0 && passN <= MAX_PASS_COUNT);

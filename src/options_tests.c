@@ -598,23 +598,6 @@ static bool stringListContains(StringList *d, char *wantedString) {
     return false;
 }
 
-Ensure(Options, readPassOptions_merges_sections_with_same_pass_number) {
-    OptionSets d = makeOptionSets();
-
-    expect_characters("-pass1\n",  false);
-    expect_characters("-DPASS1\n", false);
-    expect_characters("-pass1\n",  false);
-    expect_characters("-DPASS2\n", true);
-
-    readOptionSets(NULL, &d);
-
-    assert_that(d.set[1], is_non_null);        // both defines live here - membership, not order
-    /* assert delta[1] contains -DPASS1 AND -DPASS2 (walk the list, order-agnostic) */
-    assert_that(stringListContains(d.set[1], "-DPASS1"));
-    assert_that(stringListContains(d.set[1], "-DPASS2"));
-    assert_that(d.set[2], is_null);            // THE point: same N merged, did not split
-}
-
 Ensure(Options, readPassOptions_skips_section_markers) {
     OptionSets d = makeOptionSets();
 

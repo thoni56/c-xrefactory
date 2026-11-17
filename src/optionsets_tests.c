@@ -93,24 +93,6 @@ static bool stringListContains(StringList *d, char *wantedString) {
     return false;
 }
 
-Ensure(OptionSets, readPassOptions_merges_sections_with_same_pass_number) {
-    OptionSets d = makeOptionSets();
-
-    expectOptionRead("-pass1");
-    expectOptionRead("-DPASS1");
-    expectOptionRead("-pass1");
-    expectOptionRead("-DPASS2");
-    expect(getOptionFromFile, will_return(EOF));
-
-    readOptionSets(NULL, &d);
-
-    assert_that(d.set[1], is_non_null);        // both defines live here - membership, not order
-    /* assert delta[1] contains -DPASS1 AND -DPASS2 (walk the list, order-agnostic) */
-    assert_that(stringListContains(d.set[1], "-DPASS1"));
-    assert_that(stringListContains(d.set[1], "-DPASS2"));
-    assert_that(d.set[2], is_null);            // THE point: same N merged, did not split
-}
-
 Ensure(OptionSets, readPassOptions_skips_section_markers) {
     OptionSets d = makeOptionSets();
 
@@ -213,4 +195,54 @@ Ensure(OptionSets, argsFromPassDelta_preserves_source_order) {
     assert_that(args.argc, is_equal_to(3));
     assert_that(args.argv[1], is_equal_to_string("-DPASS1"));
     assert_that(args.argv[2], is_equal_to_string("-DPASS2"));
+}
+
+Ensure(OptionSets, readPassOptions_counts_the_pass_sections) {
+    OptionSets d = makeOptionSets();
+
+    expectOptionRead("-pass1");
+    expectOptionRead("-DPASS1");
+    expectOptionRead("-pass2");
+    expectOptionRead("-DPASS2");
+    expect(getOptionFromFile, will_return(EOF));
+
+    readOptionSets(NULL, &d);
+
+    assert_that(d.passCount, is_equal_to(2));
+}
+
+Ensure(OptionSets, readPassOptions_ignores_pass_ordering) {
+    OptionSets d = makeOptionSets();
+
+    expectOptionRead("-pass3");
+    expectOptionRead("-DPASS3");
+    expectOptionRead("-pass2");
+    expectOptionRead("-DPASS2");
+    expect(getOptionFromFile, will_return(EOF));
+
+    readOptionSets(NULL, &d);
+
+    assert_that(d.passCount, is_equal_to(2));
+    assert_that(d.set[0], is_null);
+    assert_that(stringListContains(d.set[1], "-DPASS3"));
+    assert_that(stringListContains(d.set[2], "-DPASS2"));
+}
+
+Ensure(OptionSets, readPassOptions_reports_a_repeated_pass_and_ignores_its_section) {
+    OptionSets d = makeOptionSets();
+
+    expectOptionRead("-pass1");
+    expectOptionRead("-DFIRST");
+    expectOptionRead("-pass1");
+    expectOptionRead("-DREPEATED");
+    expect(getOptionFromFile, will_return(EOF));
+
+    expect(errorMessage, when(message, contains_string("-pass1")));
+
+    readOptionSets(NULL, &d);
+
+    assert_that(d.passCount, is_equal_to(1));
+    assert_that(stringListContains(d.set[1], "-DFIRST"));
+    assert_that(!stringListContains(d.set[1], "-DREPEATED"));
+    assert_that(d.set[2], is_null);
 }
