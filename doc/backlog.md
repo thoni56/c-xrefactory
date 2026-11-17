@@ -583,7 +583,7 @@ implementation, and are noted in `cu-prerequisites`, `out-of-date`, `time-budget
     part does not depend on how a change is found.
     Goes with: out-of-date
     After: change-is-difference
-- (#9) <a id="remove-bridge"></a>**Remove the `parseBufferUsingServer` bridge** — §17.3; 7 refactoring call sites
+- (#9) <a id="remove-bridge"></a>**Remove the `parseBufferUsingServer` bridge** — §17.3; 2 refactoring call sites
     re-entering `callServer`. It is the last divergent parse path. `-olexmacro` and
     `-olexvariable` only exist for it and go with it.
     Each re-entry runs the entry refresh again, so one refactoring brings knowledge up to
@@ -599,7 +599,19 @@ implementation, and are noted in `cu-prerequisites`, `out-of-date`, `time-budget
     cursor into the top browsing entry (`cxref.c:328`), since `needsReferenceAtCursor()`
     decides both. Through the bridge each such parse pushed an entry of its own and left
     it; without it, they write into the refactoring's entry.
+    A parse off the bridge starts from the project baseline in `startParsingBuffer()`, but
+    the refresh's parse is also reset in `initializeFileProcessing()` (`rebuild.c:328`),
+    so a translation unit is started in two places. The loop should keep only the first.
     Goes with: change-is-difference, rename-leaves-sessions
+- (#113) <a id="symbol-at-cursor-from-table"></a>**The symbol at the cursor is looked up in the table, not parsed for** —
+    a push, browsing or for a refactoring, parses the request file only to find what is at
+    the cursor (`cxref.c:328`), although the refresh has just built its references. The
+    LSP looks it up by position (`lsp_adapter.c:43`), and so do `##` symbols
+    (`refactory.c:482`). The lookup has to give the set of referenceables at the position,
+    visible usages only, with the macro default position (`cxref.c:351`) and the caller
+    position. Needs tests for macros, `##` and several symbols at one position first
+    (WSL, session `d25255b8`, 2026-11-17).
+    After: remove-bridge
 - (#109) <a id="session-refresh-time"></a>**A session refreshes a file by a time, not a flag** —
     a file's references get a time they last changed, never cleared, and a session
     refreshes its copy of a file when that is later than the copy. Replaces
