@@ -260,119 +260,6 @@ Move functions in this order (lowest risk first):
 NOTE: This refactoring is independent of the LexemStream API improvements but would benefit from them being completed first, as they simplify buffer management patterns throughout the macro expansion code.
 
 
-[[clean-parser-api]]
-=== Remove `parseBufferUsingServer` Bridge
-
-==== Problem
-
-Refactoring operations that need structural information from parsing (function boundaries, move target validation, parameter positions, etc.) do not call the parser directly. Instead, they go through `parseBufferUsingServer()` — a function that constructs magic string arguments (like `"-olcxmovetarget"`, `"-olcxgetfunctionbounds"`) and runs a full `initServer()` + `callServer()` cycle. This is the internal equivalent of the editor sending a command over the protocol.
-
-[source,c]
-----
-// refactory.c — 7 calls like this:
-parseBufferUsingServer(refactoringOptions.project, point, NULL, "-olcxpush", NULL);
-parseBufferUsingServer(refactoringOptions.project, point, NULL, "-olcxsafetycheck", NULL);
-parseBufferUsingServer(refactoringOptions.project, point, mark, "-olcxextract", "-olexmacro");
-
-// parsing.c — 2 bridge calls:
-parseBufferUsingServer(options.project, target, NULL, "-olcxmovetarget", NULL);
-parseBufferUsingServer(options.project, marker, NULL, "-olcxgetfunctionbounds", NULL);
-----
-
-This makes the control flow circular and hard to follow: a refactoring operation (already running inside the server) constructs fake arguments, re-enters the server, which dispatches the operation, which calls the parser, which produces a side-effect in global state, which the original caller then reads.
-
-==== What's Done
-
-A clean parser API in `parsing.h/c` already exists and handles all call sites in `server.c`:
-
-* **`ParserOperation` enum** — type-safe operations (`PARSE_TO_CREATE_REFERENCES`, `PARSE_TO_GET_FUNCTION_BOUNDS`, `PARSE_TO_VALIDATE_MOVE_TARGET`, `PARSE_TO_EXTRACT`, `PARSE_TO_TRACK_PARAMETERS`, `PARSE_TO_COMPLETE`)
-* **`ParsingConfig` struct** — centralizes what was scattered across global flags (`cursorOffset`, `markOffset`, `extractMode`, `targetParameterIndex`, etc.)
-* **Operation predicates** — `needsReferenceAtCursor()`, `allowsDuplicateReferences()` replace implicit per-operation behavior
-* **`parseToCreateReferences(fileName)`** — the completed pattern: direct parsing without any bridge, used by entry refresh (ADR 20) and LSP
-
-Two convenience functions have clean APIs but still bridge internally:
-
-* **`isValidMoveTarget(target)`** — sets up `ParsingConfig`, then calls `parseBufferUsingServer` with `"-olcxmovetarget"`
-* **`getFunctionBoundaries(marker)`** — sets up `ParsingConfig`, then calls `parseBufferUsingServer` with `"-olcxgetfunctionbounds"`
-
-These demonstrate the migration pattern: the public API is already clean, only the implementation still bridges.
-
-==== What Remains
-
-**9 bridge calls** to eliminate (2 in `parsing.c`, 7 in `refactory.c`):
-
-[cols="1,2,2"]
-|===
-|Location |Magic string |Purpose
-
-|`parsing.c:99`
-|`-olcxmovetarget`
-|Validate move target position
-
-|`parsing.c:124`
-|`-olcxgetfunctionbounds`
-|Find function boundaries around cursor
-
-|`refactory.c:294`
-|`-olcxpush` (with rename/safety flags)
-|Push reference for rename safety check
-
-|`refactory.c:309`
-|`-olcxsafetycheck`
-|Verify rename safety
-
-|`refactory.c:909`
-|`-olcxpush` (with parameter flags)
-|Navigate to parameter for add/delete
-
-|`refactory.c:934`
-|`-olcxpush` (with parameter flags)
-|Get parameter coordinates
-
-|`refactory.c:1252`
-|`-olcxextract`
-|Extract function
-
-|`refactory.c:1256`
-|`-olcxextract -olexmacro`
-|Extract macro
-
-|`refactory.c:1260`
-|`-olcxextract -olexvariable`
-|Extract variable
-|===
-
-Each call follows the same pattern: set global flags → call `parseBufferUsingServer` → read results from global state. The migration for each is: set `ParsingConfig` fields → call parser directly → read results from the same global state.
-
-==== Migration Pattern
-
-The two `parsing.c` bridges show the pattern clearly. Today:
-
-[source,c]
-----
-/* isValidMoveTarget — bridge still present */
-syncParsingConfigFromOptions(options);
-parsingConfig.operation = PARSE_TO_VALIDATE_MOVE_TARGET;
-parsingConfig.positionOfSelectedReference = makePositionFromEditorMarker(target);
-parsedInfo.moveTargetAccepted = false;
-parseBufferUsingServer(options.project, target, NULL, "-olcxmovetarget", NULL);
-result.valid = parsedInfo.moveTargetAccepted;
-----
-
-The `ParsingConfig` is already set up — the bridge call is redundant, it just re-enters the server which re-reads the same config. Replacing it with a direct `callParser()` (similar to `parseToCreateReferences`) is the straightforward next step.
-
-The `refactory.c` calls are slightly more involved because they also need buffer preloading (the editor marker's buffer must be set as input for parsing) and some set additional global flags. But the mechanism is the same.
-
-==== Independence
-
-This refactoring is **independent of the memory-as-truth architecture**. The bridge removal is about how refactoring operations invoke parsing internally — not about where references come from or how they're stored. It can proceed at any time, one call site at a time.
-
-==== Code Locations
-
-* `src/parsing.h` — public API (ParserOperation, ParsingConfig, convenience functions)
-* `src/parsing.c` — implementation, 2 remaining bridges
-* `src/refactory.c` — `parseBufferUsingServer` definition (line 199) and 7 call sites
-
 [[typed-requests]]
 === Replace Global `options` with Typed Requests
 
@@ -383,7 +270,7 @@ The `Options` struct is one global blob serving four distinct lifetimes:
 * **Session** — set once at server startup: xrefrc path, debug/log config, compiler discovery, default options.
 * **Project** — discovered on project load: project root, include paths, source dirs, compiler include closure.
 * **Request** — per-operation: `serverOperation`, cursor/mark offsets, input/output filenames, filter strings.
-* **Refactoring** — spans multiple internal requests: `theRefactoring`, `renameTo`, `parameterNumber`/`toParameterNumber`, `moveTargetFile`, refactoring-level `cursorOffset`/`markOffset`.
+* **Refactoring** — spans the refactoring and its dialog with the editor: `theRefactoring`, `renameTo`, `parameterNumber`/`toParameterNumber`, `moveTargetFile`, refactoring-level `cursorOffset`/`markOffset`.
 
 Session and Project are tangled in time as well as in the struct. Process start no longer does project work, but the first request that names a file sets up the project, whatever that request is, so project setup is not yet bound to one step.
 
@@ -392,9 +279,9 @@ These lifetimes are held together by a save/restore discipline scattered across 
 * `server.c:723-726` — outer server loop snapshots `options` into `savedOptions` at startup, restores per iteration.
 * `startup.c:143,577,705` — legacy startup paths with the same pattern.
 * `refactory.c:166,170` — `beInteractive` snapshots into `localSavedOptions` because the outer loop's snapshot would otherwise be clobbered mid-dialog.
-* `refactory.c:1238` — `serverPerformRefactoring` snapshots `options` into a parallel `refactoringOptions` global because sub-tasks re-enter option parsing and trample intent fields.
+* `refactory.c:1238` — `serverPerformRefactoring` snapshots `options` into a parallel `refactoringOptions` global because option parsing is re-entered during the refactoring and tramples intent fields.
 
-The `refactoringOptions` parallel global is the clearest symptom. Refactoring sub-tasks (extract, rename, parameter manipulation) synthesize argv like `"-olcxextract"` and re-enter `processOptions`, which overwrites `options`. Reading the refactoring intent (`refactoringOptions.theRefactoring`, `refactoringOptions.renameTo`, etc.) from a shadow copy is how that survives.
+The `refactoringOptions` parallel global is the clearest symptom. The refactoring's dialog with the editor (`beInteractive()`) goes through `processOptions` for each answer, and so does applying a pass's options before each parse, and both overwrite `options`. Reading the refactoring intent (`refactoringOptions.theRefactoring`, `refactoringOptions.renameTo`, etc.) from a shadow copy is how that survives.
 
 Compounding the problem, `processOptions` is not a pure parser. It opens the output file, turns each `-D` into a macro definition, and triggers file-processing initialization. Reading the config is not pure either. It picks the pass sections by looking at the global `currentPass`. Those side effects are why the global-mutation pattern is load-bearing today: parsing and its consequences are entangled.
 
@@ -415,8 +302,8 @@ Request *parseCommandLine(ArgumentsVector args);
 
 No globals mutated, no output files opened, no pass flags flipped. The dispatcher decides what side effects to run based on the returned `Request`. Each operation gets a typed struct — a tagged union or base struct with per-operation extensions — so the dispatch switch reads typed fields instead of guessing which `Options` fields are meaningful for which operation.
 
-`options.index` is one such field, the `=N` of seven options with three meanings: where to go in a list (`-browse-goto=`, `-completion-goto=`, `-search-goto=`), which item to select (`-completion-select=`, `-search-select=`), and a parameter number (`-internal-parse-to-goto-param-name=`, `-internal-parse-to-get-param-coordinates=`).
-With typed requests each of them gets its own field, and the parameter number is probably the same thing as `parameterNumber` (`-parameter=`).
+`options.index` is one such field, the `=N` of five options with two meanings: where to go in a list (`-browse-goto=`, `-completion-goto=`, `-search-goto=`) and which item to select (`-completion-select=`, `-search-select=`).
+With typed requests each of them gets its own field.
 
 The refactoring coordinator holds its own long-lived `RefactoringRequest` (the current `refactoringOptions` content, but owned by the coordinator, not a shadow global). Sub-operations construct their own fresh `Request` structs via normal parsing; the coordinator's state is safe because it lives elsewhere. `refactoringOptions` disappears. The save/restore sites disappear — each tier has one owner, and nothing trampled means nothing to restore.
 
@@ -428,7 +315,7 @@ The client already forces server restart on project switch ("Do you want to swit
 
 * **`ProjectConfig.sourceDirs`** — first project-scoped field migrated off `Options`. The extraction pattern is proven; more fields can follow the same shape.
 * **`ParsingConfig` struct** — in `parsing.h`, already a typed struct carrying parser parameters instead of relying on globals. A working prototype of the same pattern one layer up.
-* **Bridge removal** (see <<clean-parser-api>>) — the precondition that eliminates sub-task option trampling. Once sub-tasks call parsing directly instead of re-entering the server via synthetic argv, `options` stops being clobbered mid-refactoring, which makes the refactoring-coordinator migration trivial.
+* **No internal requests** — a refactoring calls the parser directly and no longer re-enters the server with synthetic argv (the bridge, removed 2026-11, see the Archive). What still overwrites `options` during a refactoring is its dialog and the pass options.
 
 ==== Incremental Steps
 
@@ -469,7 +356,6 @@ The `inputFileName` global is gone: the request file is `requestFileNumber`, and
 * `src/refactory.c:166,170` — `beInteractive` save/restore via `localSavedOptions`
 * `src/server.c:723-726` — outer server loop save/restore
 * `src/parsing.h` — `ParsingConfig` as a prototype of the typed-struct pattern
-* <<clean-parser-api>> — prerequisite that eliminates sub-task option trampling
 
 [[remove-hashtab]]
 === Remove Hashtab by Migrating to Hashlist

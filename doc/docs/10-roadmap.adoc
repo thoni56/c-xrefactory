@@ -30,6 +30,8 @@ convergence is **complete**; the mechanism lives in <<06-principles.adoc#,Princi
   (link:/workspace/1/decisions/C-xrefactory#22[ADR-0022]).
 * *Refactoring as a server operation* — all refactorings run via `OP_REFACTORY`;
   `RefactoryMode` and the `-refactory` process removed.
+* *The bridge removed* — a refactoring parses directly and no longer re-enters the
+  server with an internal request (2026-11, see the Archive).
 * *Search from the in-memory table* — `searchInMemoryTable()` replaced the disk scan;
   the last disk-as-truth read is gone.
 * *Disk snapshot* — `.cx` loaded and mtime-validated at startup, saved on exit and
@@ -55,10 +57,6 @@ convergence is **complete**; the mechanism lives in <<06-principles.adoc#,Princi
  the collection caps stays truncated for as long as the session lives. A session reading
  the live table, with those caps gone, would show what is known now instead of what was
  known at the push.
-
-|Remove `parseBufferUsingServer` bridge
-|The last divergent parse path, re-entering `callServer` from 9 refactoring call sites.
- See Chapter 17.3.
 
 |Behind-the-back disk-change detection
 |Entry refresh is editor-buffer-driven, so a file changed on disk without a preload
@@ -140,7 +138,7 @@ that fixes it is in <<17-major-codebase-improvements.adoc#,Major Codebase Improv
 
 |Partition `options` by lifetime
 |Session, Project and Request with one owner each, and a pure `parseCommandLine()` that
- opens no files and flips no flags. Chapter 17.4. It gates the three rows below, so it
+ opens no files and flips no flags. Chapter 17.3. It gates the three rows below, so it
  comes first even though it reads last.
 
 |The client stops sending `-p`

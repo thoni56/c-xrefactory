@@ -8,11 +8,8 @@ The _editorExtension_ calls the server using command line
 options. These are then converted to first a command enum starting in
 `OP` ("operation") or `AVR` ("available refactoring").
 
-Some refactorings need a file parsed again, which is done in the same
-manner, command line options, but this call is internal so the wanted
-arguments are stored in a vector which is passed to `callServer()`
-(the `parseBufferUsingServer` bridge, §17.3) in the same manner as
-`main()` passes the actual `argc`/`argv`.
+Some refactorings need a file parsed again. They call the parser
+directly, see "Refactoring and the parsers" below.
 
 Many of the commands require extra arguments like positions/markers
 which are passed in as extra arguments. E.g. a rename requires the
@@ -302,16 +299,16 @@ See the **Parsing** component's Internal Structure section in the <<12-component
 
 Some refactorings need detailed information about the code beyond what the in-memory
 reference table provides — for example, parameter manipulation needs the exact byte
-offsets of parameter declarations. The refactorer calls the parser via
-`parseBufferUsingServer()` to collect this information through the corresponding
-semantic actions. The collected information is stored in various global variables (for
+offsets of parameter declarations. The refactorer starts the compilation unit
+(`startCompilationUnit()`, or `startCompilationUnitForPass()` once for each pass),
+sets up the input with `startParsingBuffer()` and calls `callParser()`. The
+information is collected through the corresponding semantic actions. The collected information is stored in various global variables (for
 example, `parameterBeginPosition`) and in the `ParsedInfo` structure for use by
 extract operations and similar.
 
-NOTE: This `parseBufferUsingServer` bridge — and the global-variable communication
-channel — is targeted for removal; see "Remove `parseBufferUsingServer` Bridge" in
-link:17-major-codebase-improvements.adoc[Chapter 17] and "Replace Global `options`
-with Typed Requests" in the same chapter.
+NOTE: The global-variable communication channel is targeted for removal; see "Replace
+Global `options` with Typed Requests" in
+link:17-major-codebase-improvements.adoc[Chapter 17].
 
 Findings:
 
@@ -352,8 +349,7 @@ current status.
 Refactorings need semantic information beyond what the in-memory reference table holds
 — for example, byte offsets of block and function boundaries needed to verify that an
 editor region selected for "Extract Function" does not cross a block break. This
-information is collected when the refactoring entry calls `parseBufferUsingServer()` to
-drive a full parse over the buffer of interest; the parser's semantic actions populate
+information is collected when the refactoring parses the buffer of interest directly; the parser's semantic actions populate
 dedicated structures.
 
 Two structures currently hold this information; the main one is `parsedInfo`.

@@ -633,6 +633,44 @@ With server-side refactoring (2026-03), these constraints no longer apply. The s
 entry refresh mechanism keeps references fresh, and refactorings execute within the
 server process without a separate `callXref()` step.
 
+=== The Refactoring Process, the Bridge and Its Removal
+
+In the original Xrefactory every refactoring was a process of its own, `c-xref
+-refactory`, started by the editor and gone when the refactoring was done. Inside it the
+refactoring code ran the cross-referencer to update the references (see above), and the
+editor server as a "sub-task" whenever it needed something parsed. That could be the
+references of the symbol at the cursor, the region to extract, where a parameter is, or
+the references after a rename for the safety check. Each such call built an argument
+vector as if the editor had sent a request, and ran it through the server's own
+initialisation and request handling (`refactoryEditServerParseBuffer()`, the "interface
+to edit server sub-task" in `refactory.c`). Since the process went away afterwards,
+nothing it left in the options, the globals or the reference table mattered.
+
+The function was renamed `parseBufferUsingServer()` in 2022. When the parsing got its
+own `ParsingConfig` (December 2025) it became "the bridge" between the refactorings and
+that API.
+
+In March 2026 the refactorings moved into the server (`OP_REFACTORY`), and the separate
+process was removed. The bridge came along, so the server now called itself. Every
+internal parse went through `initServer()` and `callServer()`, with the entry refresh, as
+if it was a new request. A refactoring could bring the knowledge up to date several
+times, and it could change between its steps. The internal requests needed operations,
+options and answers of their own (`-internal-push-for-rename`, `-internal-safety-check`,
+`-olexmacro` and others). `quasiSaveModifiedEditorBuffers()` gave the edited buffers a new
+time, and could sleep up to a second, so that the nested refresh saw the edits. And what
+the nested request left in the table now stayed.
+
+The bridge was removed in November 2026, one call at a time, on both machines (Mac,
+session `4839a129`, and WSL, session `d25255b8`). Each internal parse became a direct
+parse of the buffer, i.e. the compilation unit started from the project baseline and a
+pass's options, the input and `callParser()`. Two things turned out to have been carried
+by the bridge without being visible. The start of a compilation unit, without which a
+parse saw what the previous one left, e.g. an include guard. And the loop over the
+passes, so that a symbol defined only under one pass's `-D` was found. The safety check
+needs more than a parse. A rename has edited several buffers, so the check builds the
+compilation units that are out of date before it pushes the new name. The quasi-save
+went too, since a change is now found by its content (ADR-0036).
+
 === The lastParsedMtime Optimization and Refactoring Conflict (Historical)
 
 This section captures a conflict diagnosed in 2025-01 between navigation's
@@ -851,8 +889,9 @@ entry refresh before every operation. The steps taken:
 2. *Snapshot save/load* — `.cx` loaded at startup, saved on `-exit`; no manual `-create`
    after the first session.
 3. *Refactoring moved into the server (strangler fig)* — all refactorings run as
-   `OP_REFACTORY`; `RefactoryMode` and the `-refactory` process removed. Remaining: remove
-   the `parseBufferUsingServer` bridge.
+   `OP_REFACTORY`; `RefactoryMode` and the `-refactory` process removed. The
+   `parseBufferUsingServer` bridge went in 2026-11, see "The Refactoring Process, the
+   Bridge and Its Removal".
 4. *`.cx` became a startup snapshot only* — never consulted during operation; every
    operation reads the in-memory table.
 

@@ -175,7 +175,7 @@ A step that belongs to none of them is a workaround, usually for the removal.
 For some operations *answer* is more than a lookup.
 A refactoring performs before it answers: it analyses the flow, makes the edits, and the edits are the answer.
 That is still the answer line, since it reads the knowledge the steps above brought up to date.
-A server call it makes for a part of the work, e.g. parsing the region to extract, goes through `callServer()` again, and so through the steps again.
+A parse it needs for a part of the work, e.g. the region to extract, is a direct parse of that buffer, once for each pass. The safety check after a rename reads references in the files the rename edited, so it builds the compilation units that are out of date first, i.e. the build line again for those files.
 
 *Changed* is found once, and the scan and the removal both use it.
 It is about a file's content, the held buffer when there is one, and is not a CU's knowledge time, which is the build's.
@@ -760,20 +760,16 @@ answerEditorAction():
       │
       ├─ deepCopyOptionsFromTo(&options, &refactoringOptions)
       ├─ loadAllOpenedEditorBuffers()
-      ├─ quasiSaveModifiedEditorBuffers()
       │
       ├─ Create point/mark EditorMarkers from cursor/mark offsets
       │
-      ├─ Dispatch on refactoringOptions.theRefactoring:
-      │   ├─ AVR_RENAME_SYMBOL    → renameAtPoint(point)
-      │   ├─ AVR_EXTRACT_*        → extractFunction/Macro/Variable(point, mark)
-      │   ├─ AVR_ADD/DEL/MOVE_PARAMETER → parameterManipulation(point, ...)
-      │   ├─ AVR_MOVE_FUNCTION    → moveFunction(point)
-      │   ├─ AVR_ORGANIZE_INCLUDES → organizeIncludes(point)
-      │   └─ AVR_RENAME_MODULE/INCLUDED_FILE → renameAtInclude(point)
-      │
-      ├─ markModifiedEditorBuffersAsStale()   ← mark for entry refresh
-      └─ quasiSaveModifiedEditorBuffers()     ← update buffer mtimes
+      └─ Dispatch on refactoringOptions.theRefactoring:
+          ├─ AVR_RENAME_SYMBOL    → renameAtPoint(point)
+          ├─ AVR_EXTRACT_*        → extractFunction/Macro/Variable(point, mark)
+          ├─ AVR_ADD/DEL/MOVE_PARAMETER → parameterManipulation(point, ...)
+          ├─ AVR_MOVE_FUNCTION    → moveFunction(point)
+          ├─ AVR_ORGANIZE_INCLUDES → organizeIncludes(point)
+          └─ AVR_RENAME_MODULE/INCLUDED_FILE → renameAtInclude(point)
 ----
 
 No separate initialization::
@@ -781,15 +777,14 @@ No separate initialization::
   refresh that ran before this request. The refactoring code directly uses the
   references.
 
-Mark stale on completion::
-  After the refactoring, `markModifiedEditorBuffersAsStale()` sets `lastParsedMtime = 0`
-  on all files whose editor buffers were modified. This ensures the next request's entry
-  refresh reparses them, picking up the post-refactoring state.
+Edits are found by their content::
+  The edited buffers differ from what their knowledge was built from, so the next
+  request's refresh builds them again (ADR-0036).
 
-`parseBufferUsingServer()` calls remain::
-  Some refactoring functions call `parseBufferUsingServer()` internally (e.g. to gather
-  semantic information for safety checks). These calls parse into the existing reference
-  table without wiping `cxMemory`.
+Direct parses::
+  A refactoring that needs semantic information, e.g. a parameter's position or the
+  region to extract, parses the buffer directly into the existing reference table, see
+  "Refactoring and the parsers" in <<14-code.adoc#,Code>>.
 
 ==== Interactive Dialogs
 

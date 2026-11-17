@@ -28,19 +28,19 @@ every push, `After` dashed and `Goes with` not at all, linked at the end of this
 ## 1. The foundational one
 
 - (#3) <a id="partition-options"></a>**Partition `options` by lifetime, in this sequence** — Session / Project / Request,
-   one owner each, and a pure `parseCommandLine()`. `doc/docs/17-major-codebase-improvements.adoc` §17.4.
+   one owner each, and a pure `parseCommandLine()`. `doc/docs/17-major-codebase-improvements.adoc` §17.3.
    The roadmap's Setup Ladder says it gates the rows below it.
    c. <a id="config-without-pass"></a>**A change of pass does not reload the config** — both reads in
       `loadProjectSettings()` are already without a pass, and a pass's options come through
       `applyOptionSet()`, so the full reload on a change of pass (`initializeFileProcessing()`)
       has nothing left to reload. Only the first load needs it. Takes
       `test_cold_start_interrogates_compiler_once` off suspension. A first attempt also changed
-      three move function tests, for a reason not understood. §17.4 step 2.b.
+      three move function tests, for a reason not understood. §17.3 step 2.b.
    d. <a id="defines-at-parse-start"></a>**`-D` is applied when a parse starts** — from `definitionStrings`, which takes
-      the config's defines out of the memory checkpoint. §17.4 step 2.c.
+      the config's defines out of the memory checkpoint. §17.3 step 2.c.
       After: config-without-pass
    e. <a id="side-effects-to-dispatcher"></a>**Opening the output file and initialising file processing move into the dispatcher** —
-      the last side effects of option parsing. §17.4 step 2.d.
+      the last side effects of option parsing. §17.3 step 2.d.
       After: defines-at-parse-start
    f. <a id="rebuild-keeps-request-options"></a>**A rebuild keeps the request's options** — today the fast path of
       `initializeFileProcessing()` copies `savedOptions` over `options`, and `parseFileWithFullInit()`
@@ -50,16 +50,16 @@ every push, `After` dashed and `Goes with` not at all, linked at the end of this
       (`src/cxref.c:1829`), so a request with no operation gets a `-getproject` answer (WSL, session
       `d25255b8`, 2026-10-14). Solved once `savedOptions` holds only Session and Project.
       After: side-effects-to-dispatcher
-   g. <a id="project-config-constructor"></a>**`ProjectConfig` grows, and gets `makeProjectConfig()`** — §17.4 step 1, one
+   g. <a id="project-config-constructor"></a>**`ProjectConfig` grows, and gets `makeProjectConfig()`** — §17.3 step 1, one
       field at a time. When it stops being a file-static singleton (`src/startup.c:42`), the
       constructor returns `{.sourceDirs = NULL, .optionSets = makeOptionSets()}`, since both
       are emptied today by code that frees first and is safe only because static storage is zeroed.
    h. <a id="typed-request-pilot"></a>**A typed `Request` for one operation** — `OP_SEARCH` or `OP_ABOUT`, parsed and
-      dispatched end to end. §17.4 step 3. `inputFileName`'s request half goes here.
+      dispatched end to end. §17.3 step 3. `inputFileName`'s request half goes here.
       After: side-effects-to-dispatcher
    i. <a id="refactoring-request"></a>**Refactoring owns a `RefactoringRequest`** — `refactoringOptions`,
       `deepCopyOptionsFromTo(&options, &refactoringOptions)` and `beInteractive`'s
-      `localSavedOptions` go together. §17.4 step 4.
+      `localSavedOptions` go together. §17.3 step 4.
       After: typed-request-pilot
 - (#4) <a id="setup-ladder"></a>**The Setup Ladder, in this sequence**, each small once the partition lands
    (`doc/docs/10-roadmap.adoc`, Convergence: The Setup Ladder → Remaining):
