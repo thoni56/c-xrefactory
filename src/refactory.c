@@ -52,75 +52,11 @@ static char *serverDefaultArguments[] = {
 Options refactoringOptions;
 
 
-static int argument_count(char **argv) {
+static int argumentCount(char **argv) {
     int count;
     for (count = 0; *argv != NULL; count++, argv++)
         ;
     return count;
-}
-
-static void setArguments(char *argv[MAX_NARGV_OPTIONS_COUNT], char *project,
-                         EditorMarker *point, EditorMarker *mark) {
-    static char optPoint[TMP_STRING_SIZE];
-    static char optMark[TMP_STRING_SIZE];
-    int         i = 0;
-
-    argv[i] = "null";
-    i++;
-    if (project != NULL) {
-        argv[i] = "-p";
-        i++;
-        argv[i] = project;
-        i++;
-    }
-    assert(i < MAX_NARGV_OPTIONS_COUNT);
-    if (point != NULL) {
-        sprintf(optPoint, "-cursor=%d", point->offset);
-        argv[i] = optPoint;
-        i++;
-    }
-    assert(i < MAX_NARGV_OPTIONS_COUNT);
-    if (mark != NULL) {
-        sprintf(optMark, "-mark=%d", mark->offset);
-        argv[i] = optMark;
-        i++;
-    }
-    assert(i < MAX_NARGV_OPTIONS_COUNT);
-
-    if (point) {
-        argv[i] = point->buffer->fileName;
-        i++;
-    }
-    assert(i < MAX_NARGV_OPTIONS_COUNT);
-
-    // finally mark end of options
-    argv[i] = NULL;
-    i++;
-    assert(i < MAX_NARGV_OPTIONS_COUNT);
-}
-
-void parseBufferUsingServer(char *project, EditorMarker *point, EditorMarker *mark,
-                            char *pushOption, char *pushOption2) {
-    int   argumentCount;
-    char *argumentVector[MAX_NARGV_OPTIONS_COUNT];
-
-    currentPass = ANY_PASS;
-
-    setArguments(argumentVector, project, point, mark);
-    argumentCount = argument_count(argumentVector);
-    if (pushOption != NULL) {
-        argumentVector[argumentCount++] = pushOption;
-    }
-    if (pushOption2 != NULL) {
-        argumentVector[argumentCount++] = pushOption2;
-    }
-    ArgumentsVector args = {.argc = argument_count(serverDefaultArguments), .argv = serverDefaultArguments};
-    ArgumentsVector nargs = {.argc = argumentCount, .argv = argumentVector};
-    initServer(nargs);
-
-    /* Bridge: Sync parsingConfig with options for old code path */
-    syncParsingConfigFromOptions(options);
-    callServer(args, nargs);
 }
 
 /* Interactive command loop for refactoring operations that need user input.
