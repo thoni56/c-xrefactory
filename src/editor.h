@@ -25,7 +25,6 @@ extern ContentToken editorContentTokenOf(char *path);
 extern void replaceStringInEditorBuffer(EditorBuffer *buff, int position, int delsize, char *str,
                                         int strlength, EditorUndo **undo);
 extern void moveBlockInEditorBuffer(EditorMarker *src, EditorMarker *dest, int size, EditorUndo **undo);
-extern void quasiSaveModifiedEditorBuffers(void);
 extern void loadAllOpenedEditorBuffers(void);
 extern void closeEditorBufferIfCloseable(char *name);
 extern void closeAllEditorBuffersIfClosable(void);

@@ -26,7 +26,6 @@ typedef struct editorBuffer {
     FileTimestamp              modificationTime;
     bool                       textLoaded : 1;
     bool                       modified : 1;
-    bool                       modifiedSinceLastQuasiSave : 1;
     bool                       heldThisRequest : 1;
     size_t                     size;
     struct editorMarker       *markers;

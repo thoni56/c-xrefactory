@@ -1244,7 +1244,6 @@ void serverPerformRefactoring(void) {
     refactoringOptions.serverOperation = OP_INTERNAL_LIST;
 
     loadAllOpenedEditorBuffers();
-    quasiSaveModifiedEditorBuffers();
 
     if (requestFileNumber == NO_FILE_NUMBER) {
         errorMessage(ERR_ST, "No input file for refactoring");
@@ -1304,8 +1303,6 @@ void serverPerformRefactoring(void) {
 
     writeRelativeProgress(0);
     writeRelativeProgress(100);
-
-    quasiSaveModifiedEditorBuffers();
 
     LEAVE();
 }

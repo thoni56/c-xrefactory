@@ -284,47 +284,6 @@ void moveBlockInEditorBuffer(EditorMarker *sourceMarker, EditorMarker *destinati
     }
 }
 
-static void quasiSaveEditorBuffer(EditorBuffer *buffer) {
-    buffer->modifiedSinceLastQuasiSave = false;
-    buffer->modificationTime = fileTimestampNow();
-}
-
-void quasiSaveModifiedEditorBuffers(void) {
-    bool saving = false;
-    static FileTimestamp lastQuasiSaveTime = NULL_TIMESTAMP;
-
-    for (int i = 0; i != -1; i = getNextExistingEditorBufferIndex(i + 1)) {
-        for (EditorBufferList *ll = getEditorBufferListElementAt(i); ll != NULL; ll = ll->next) {
-            if (ll->buffer->modifiedSinceLastQuasiSave) {
-                saving = true;
-                goto cont;
-            }
-        }
-    }
-cont:
-    if (saving) {
-        // sychronization, since last quazi save, there must
-        // be at least one second, otherwise times will be wrong
-        FileTimestamp currentTime = fileTimestampNow();
-        long currentSeconds = fileTimestampSeconds(currentTime);
-        long lastSaveSeconds = fileTimestampSeconds(lastQuasiSaveTime);
-        if (lastSaveSeconds > currentSeconds + 5) {
-            FATAL_ERROR(ERR_INTERNAL, "last save in the future, travelling in time?",
-                        EXIT_FAILURE);
-        } else if (lastSaveSeconds >= currentSeconds) {
-            sleep(1 + lastSaveSeconds - currentSeconds);
-        }
-    }
-    for (int i = 0; i != -1; i = getNextExistingEditorBufferIndex(i + 1)) {
-        for (EditorBufferList *ll = getEditorBufferListElementAt(i); ll != NULL; ll = ll->next) {
-            if (ll->buffer->modifiedSinceLastQuasiSave) {
-                quasiSaveEditorBuffer(ll->buffer);
-            }
-        }
-    }
-    lastQuasiSaveTime = fileTimestampNow();
-}
-
 void loadAllOpenedEditorBuffers(void) {
     for (int i = 0; i != -1; i = getNextExistingEditorBufferIndex(i + 1)) {
         for (EditorBufferList *l = getEditorBufferListElementAt(i); l != NULL; l = l->next) {

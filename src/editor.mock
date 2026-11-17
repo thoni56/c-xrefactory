@@ -40,10 +40,6 @@ void moveBlockInEditorBuffer(EditorMarker *src, EditorMarker *dest, int size, Ed
   mock(dest, src, size, undo);
 }
 
-void quasiSaveModifiedEditorBuffers(void) {
-  mock();
-}
-
 void loadAllOpenedEditorBuffers(void) {
   mock();
 }
