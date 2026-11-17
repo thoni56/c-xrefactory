@@ -64,7 +64,6 @@ extern int requestFileNumber;
 
 
 extern int currentPass;
-extern int maxPasses;
 
 extern Completions collectedCompletions;
 

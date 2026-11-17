@@ -10,14 +10,12 @@
 #include "editorbuffertable.h"
 #include "filedescriptor.h"  /* currentFile */
 #include "filetable.h"
-#include "globals.h"         /* currentPass, maxPasses */
+#include "globals.h"         /* currentPass */
 #include "log.h"
 #include "misc.h"
-#include "navigation.h"
 #include "options.h"
 #include "parsing.h"         /* parseToCreateReferences */
 #include "progress.h"
-#include "referenceableitem.h"
 #include "referenceableitemtable.h"
 #include "startup.h"         /* initializeFileProcessing */
 #include "timestamp.h"       /* fileTimestampNow, if it doesn't come via another header */

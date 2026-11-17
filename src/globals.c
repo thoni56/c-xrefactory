@@ -31,7 +31,6 @@ Completions collectedCompletions;
 /* **************** cached symbols ********************** */
 
 int currentPass;
-int maxPasses;
 
 char *cppVarArgsName = "__VA_ARGS__";
 

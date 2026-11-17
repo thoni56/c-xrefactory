@@ -755,8 +755,6 @@ bool readOptionsIntoArgs(FILE *file, Position *position, ArgumentsVector *outArg
              * than silently attributing it to the pass before it. */
             isActivePass = passMarker == WellFormedPassMarker
                 && (passNumber == currentPass || currentPass == ANY_PASS);
-            if (passMarker == WellFormedPassMarker && passNumber > maxPasses)
-                maxPasses = passNumber;
         } else if (strcmp(optionText,"-set")==0 && isActivePass && memory != NULL) {
             // pre-evaluation of -set
             found = true;

@@ -250,13 +250,11 @@ Ensure(Options, collects_the_options_of_a_well_formed_pass_marker) {
     ArgumentsVector nargs;
 
     currentPass = 2;
-    maxPasses = 1;
     expect_characters("-pass2\n-DSECONDPASS\n", true);
 
     readOptionsIntoArgs(NULL, NULL, &nargs, &ppmMemory);
 
     assert_that(argsContain(nargs, "-DSECONDPASS"), is_true);
-    assert_that(maxPasses, is_equal_to(2));
 }
 
 Ensure(Options, reads_the_options_after_a_second_section_header) {
@@ -274,7 +272,6 @@ Ensure(Options, drops_the_section_of_a_pass_marker_without_a_number) {
     ArgumentsVector nargs;
 
     currentPass = 1;
-    maxPasses = 1;
     expect_characters("-pass1\n-DWANTED\n-passfoo\n-DUNWANTED\n", true);
     expect(errorMessage);
 
@@ -282,19 +279,6 @@ Ensure(Options, drops_the_section_of_a_pass_marker_without_a_number) {
 
     assert_that(argsContain(nargs, "-DWANTED"), is_true);
     assert_that(argsContain(nargs, "-DUNWANTED"), is_false);
-}
-
-Ensure(Options, does_not_raise_maxPasses_above_the_maximum) {
-    ArgumentsVector nargs;
-
-    currentPass = 1;
-    maxPasses = 1;
-    expect_characters("-pass12\n", true);
-    expect(errorMessage);
-
-    readOptionsIntoArgs(NULL, NULL, &nargs, &ppmMemory);
-
-    assert_that(maxPasses, is_equal_to(1));
 }
 
 static bool errorMessageCalled;
