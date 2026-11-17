@@ -22,6 +22,10 @@ void resetForCompilationUnit(void) {
     mock();
 }
 
+int numberOfPasses(void) {
+    return (int)mock();
+}
+
 void saveProjectBaseline(void) {
     mock();
 }

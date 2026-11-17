@@ -76,6 +76,7 @@ Ensure(Rebuild, builds_every_cu_on_the_list_in_its_order) {
     always_expect(editorFileModificationTime, will_return(&contentTime));
     expectAParseWithOptionalSideEffect("test.c", NULL);
     expectAParseWithOptionalSideEffect("test.c", NULL);
+    always_expect(numberOfPasses, will_return(1));
 
     BuildList *list = newBuildList(MAX_CUS_TO_REPARSE);
     addToBuildList(list, 1);
@@ -103,6 +104,7 @@ Ensure(Rebuild, removes_the_old_references_of_a_cu_before_it_is_parsed) {
     expect(removeReferenceableItemsForFile, when(fileNumber, is_equal_to(42)),
            with_side_effect(recordReferencesRemoved, NULL));
     expectAParseWithOptionalSideEffect("test.c", recordWhetherReferencesWereRemoved);
+    always_expect(numberOfPasses, will_return(1));
 
     BuildList *list = buildListOf(42);
     buildKnowledgeOfAll(list, baseArgs);
@@ -123,6 +125,7 @@ Ensure(Rebuild, a_built_cu_knows_it_was_built_from_what_it_had_when_the_parse_st
     FileItem fileItem = {.name = "test.c"};
     expectAFileOnDisk(&fileItem);
     expectAParseWithOptionalSideEffect("test.c", recordParseStart);
+    always_expect(numberOfPasses, will_return(1));
 
     FileTimestamp before = fileTimestampNow();
     BuildList *list = buildListOf(42);
@@ -138,6 +141,7 @@ Ensure(Rebuild, a_cu_that_did_not_parse_has_no_knowledge) {
     expectAFileOnDisk(&fileItem);
     expect(initializeFileProcessing, will_return(false));
     never_expect(parseToCreateReferences);
+    always_expect(numberOfPasses, will_return(1));
 
     BuildList *list = buildListOf(42);
     buildKnowledgeOfAll(list, baseArgs);
@@ -172,6 +176,7 @@ Ensure(Rebuild, does_not_see_the_cursor_of_the_request) {
     expect(parseToCreateReferences, with_side_effect(recordCursorOffset, NULL));
     expect(closeCharacterBuffer);
     options.cursorOffset = 17;
+    always_expect(numberOfPasses, will_return(1));
 
     BuildList *list = buildListOf(42);
     buildKnowledgeOfAll(list, baseArgs);
@@ -185,6 +190,7 @@ Ensure(Rebuild, a_built_cu_has_its_browsing_stack_refreshed) {
     FileItem fileItem = {.name = "test.c"};
     expectAFileOnDisk(&fileItem);
     expectAParseWithOptionalSideEffect("test.c", NULL);
+    always_expect(numberOfPasses, will_return(1));
 
     BuildList *list = buildListOf(42);
     buildKnowledgeOfAll(list, baseArgs);

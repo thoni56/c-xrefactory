@@ -369,6 +369,11 @@ static void getAndProcessProjectConfig(char *configFileName, StringList **operan
     processOptions(args, operands); /* .c-xrefrc opts*/
 }
 
+int numberOfPasses(void) {
+    int count = projectConfig.optionSets.passCount;
+    return count == 0 ? 1 : count;
+}
+
 /* Memory checkpoint structure */
 typedef struct {
     bool saved;

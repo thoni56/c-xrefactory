@@ -231,8 +231,7 @@ static void processFile(ArgumentsVector baseArgs, ArgumentsVector requestArgs,
                         Prerequisites *prerequisites) {
     FileItem *fileItem = getFileItemWithFileNumber(requestFileNumber);
 
-    maxPasses = 1;
-    for (currentPass=1; currentPass<=maxPasses; currentPass++) {
+    for (currentPass=1; currentPass <= numberOfPasses(); currentPass++) {
         assert(fileItem->name!=NULL);
         singlePass(baseArgs, requestArgs, prerequisites, fileItem->name);
         if (options.serverOperation==OP_INTERNAL_PARSE_TO_EXTRACT || (completionStringServed && !opensBrowsingSession(options.serverOperation)))

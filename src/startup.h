@@ -26,6 +26,7 @@ extern bool initializeProjectContext(char *fileName, ArgumentsVector baseArgs, A
 extern bool initializeFileProcessing(ArgumentsVector args, ArgumentsVector nargs, char *fileName);
 extern void resetForCompilationUnit(void);
 
+extern int numberOfPasses(void);
 extern void saveProjectBaseline(void);
 
 /* Config-change detection: re-run scan when .c-xrefrc is edited mid-session */

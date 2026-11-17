@@ -322,9 +322,8 @@ static bool parseFileWithFullInit(char *fileName, ArgumentsVector baseArgs) {
     char *savedDumpSelection = options.dumpSelection != NULL ? strdup(options.dumpSelection) : NULL;
 
     ArgumentsVector emptyArgs = {.argc = 0, .argv = NULL};
-    maxPasses = 1;
     silenceMessages();
-    for (currentPass = 1; currentPass <= maxPasses; currentPass++) {
+    for (currentPass = 1; currentPass <= numberOfPasses(); currentPass++) {
         if (initializeFileProcessing(baseArgs, emptyArgs, fileName)) {
             options.cursorOffset = NO_CURSOR_OFFSET;
             parseToCreateReferences(fileName);
