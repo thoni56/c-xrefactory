@@ -9,9 +9,9 @@
 YYSTYPE *uniyylval = &c_yylval;
 
 
-void callParser(int fileNumber, Language language) {
-    currentFileNumber = fileNumber;
-    if (language == LANG_YACC) {
+void callParser(void) {
+    currentFileNumber = parsingConfig.fileNumber;
+    if (parsingConfig.language == LANG_YACC) {
         uniyylval = &yacc_yylval;
         yacc_yyparse();
     } else {

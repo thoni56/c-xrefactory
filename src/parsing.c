@@ -93,7 +93,7 @@ bool isValidMoveTarget(EditorMarker *target) {
     /* Clear previous results */
     parsedInfo.moveTargetAccepted = false;
 
-    callParser(target->buffer->fileNumber, parsingConfig.language);
+    callParser();
 
     /* Extract result from global state */
     result.valid = parsedInfo.moveTargetAccepted;
@@ -109,7 +109,7 @@ static void parseToGetDefinitionBoundaries(EditorMarker *marker) {
     for (int i = 0; i < IPP_MAX; i++)
         parsedPositions[i] = NO_POSITION;
 
-    callParser(marker->buffer->fileNumber, parsingConfig.language);
+    callParser();
 }
 
 /* Extract results from global state */
@@ -181,7 +181,7 @@ void parseToCreateReferences(const char *fileName) {
               parsingConfig.language == LANG_YACC ? "YACC" : "C");
 
     /* Parse the file - populating the ReferenceableItemTable */
-    callParser(parsingConfig.fileNumber, parsingConfig.language);
+    callParser();
 
     log_trace("parseToCreateReferences: Completed parsing '%s'", fileName);
 }

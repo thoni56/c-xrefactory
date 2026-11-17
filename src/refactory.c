@@ -191,7 +191,7 @@ static void pushReferences(EditorMarker *point, ServerOperation operation, char 
 
     startParsingBuffer(point->buffer, PARSE_TO_CREATE_REFERENCES);
     parsingConfig.cursorOffset = point->offset;
-    callParser(point->buffer->fileNumber, parsingConfig.language);
+    callParser();
 
     assert(browsingStack.top != NULL);
     if (browsingStack.top->hkSelectedSym == NULL) {
@@ -905,7 +905,7 @@ static void parseToTrackParameter(EditorMarker *point, int argn) {
     pushEmptySession(&browsingStack);
 
     clearParameterPositions();
-    callParser(point->buffer->fileNumber, parsingConfig.language);
+    callParser();
 
     popReferenceOnly();
 }
@@ -1275,7 +1275,7 @@ static void parseToExtract(EditorMarker *point, EditorMarker *mark, ExtractMode 
     parsingConfig.markOffset = mark->offset;
     parsingConfig.extractMode = extractMode;
 
-    callParser(point->buffer->fileNumber, parsingConfig.language);
+    callParser();
 }
 
 static void extractFunction(EditorMarker *point, EditorMarker *mark) {

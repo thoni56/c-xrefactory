@@ -22,7 +22,6 @@
 #endif
 
 #include "ast.h"
-#include "head.h"               /* For Language type */
 
 #include "stackmemory.h"
 
@@ -44,6 +43,6 @@ extern int yacc_yydebug;
 
 extern YYSTYPE *uniyylval;
 
-void callParser(int fileNumber, Language language);
+void callParser(void);
 
 #endif

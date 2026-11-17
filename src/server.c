@@ -163,7 +163,7 @@ static void parseInputFile(void) {
         log_debug("parse start");
         if (currentPass == 1)
             announceAnalysing(currentFile.fileName);
-        callParser(parsingConfig.fileNumber, parsingConfig.language);
+        callParser();
         log_debug("parse end");
     } else
         log_debug("Not parsing input because of server operation TAG_SEARCH or PUSH_NAME");
