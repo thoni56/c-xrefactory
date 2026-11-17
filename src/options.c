@@ -85,7 +85,6 @@ Options presetOptions = {
     /* --- REFACTORING --- */
     .theRefactoring = AVR_NO_REFACTORING,
     .continueRefactoring = RC_NONE,
-    .extractMode = 0,
     .renameTo = NULL,
     .moveTargetFile = NULL,
     .refactorParameterName = "",
@@ -1122,10 +1121,6 @@ static bool processMOption(int *argi, ArgumentsVector args) {
 static bool processOOption(int *argi, ArgumentsVector args) {
     int i = * argi;
     if (0) {}
-    else if (strcmp(args.argv[i], "-olexmacro")==0)
-        options.extractMode=EXTRACT_MACRO;
-    else if (strcmp(args.argv[i], "-olexvariable")==0)
-        options.extractMode=EXTRACT_VARIABLE;
     else if (strcmp(args.argv[i], "-optinclude")==0) {
         i = handleIncludeOption(i, args);
     }

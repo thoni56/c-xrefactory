@@ -99,7 +99,6 @@ typedef struct options {
     /* --- REFACTORING: Set internally by refactoring engine --- */
     Refactoring theRefactoring;                 /* REFACTORING */
     ContinueRefactoringKind continueRefactoring; /* REFACTORING */
-    ExtractMode extractMode;                    /* REFACTORING */
     char *renameTo;                             /* REFACTORING */
     char *moveTargetFile;                       /* REFACTORING */
     char *refactorParameterName;                /* REFACTORING */
