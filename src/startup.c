@@ -416,7 +416,6 @@ static void restoreCheckpoint(MemoryCheckpoint *checkpoint) {
     recoverMemoryFromIncludeList();
 }
 
-/* Start a parse from the project's state, as each request's parse does */
 void resetForCompilationUnit(void) {
     restoreCheckpoint(&projectBaseline);
     initializationsPerInvocation();
