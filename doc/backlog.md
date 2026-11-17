@@ -30,13 +30,12 @@ every push, `After` dashed and `Goes with` not at all, linked at the end of this
 - (#3) <a id="partition-options"></a>**Partition `options` by lifetime, in this sequence** — Session / Project / Request,
    one owner each, and a pure `parseCommandLine()`. `doc/docs/17-major-codebase-improvements.adoc` §17.4.
    The roadmap's Setup Ladder says it gates the rows below it.
-   b. <a id="pass-count-as-data"></a>**The number of passes comes from `ProjectConfig.optionSets`** — not from
-      `maxPasses` set to 1 and raised by a config read. §17.4 step 2.a.
    c. <a id="config-without-pass"></a>**The config is read without a pass** — base only, per-pass options through
       `applyOptionSet()`, so a change of pass no longer forces a full reload. Takes
       `test_cold_start_interrogates_compiler_once` off suspension. A first attempt also changed
       three move function tests, for a reason not understood. §17.4 step 2.b.
-      After: pass-count-as-data
+      Until then the full reload picks a pass's section by its `-passN` label (`options.c:757`),
+      while the loops count the sections in the order they come, so labels out of order mix two passes.
    d. <a id="defines-at-parse-start"></a>**`-D` is applied when a parse starts** — from `definitionStrings`, which takes
       the config's defines out of the memory checkpoint. §17.4 step 2.c.
       After: config-without-pass
@@ -588,8 +587,8 @@ implementation, and are noted in `cu-prerequisites`, `out-of-date`, `time-budget
     part does not depend on how a change is found.
     Goes with: out-of-date
     After: change-is-difference
-- (#9) <a id="remove-bridge"></a>**Remove the `parseBufferUsingServer` bridge** — §17.3; 2 refactoring call sites
-    re-entering `callServer`. It is the last divergent parse path. `-olexmacro` and
+- (#9) <a id="remove-bridge"></a>**Remove the `parseBufferUsingServer` bridge** — §17.3; 1 refactoring call site,
+    the safety check, re-entering `callServer`. It is the last divergent parse path. `-olexmacro` and
     `-olexvariable` only exist for it and go with it.
     Each re-entry runs the entry refresh again, so one refactoring brings knowledge up to
     date several times, and the knowledge can change between its steps. "The Shape It
@@ -604,9 +603,11 @@ implementation, and are noted in `cu-prerequisites`, `out-of-date`, `time-budget
     cursor into the top browsing entry (`cxref.c:328`), since `needsReferenceAtCursor()`
     decides both. Through the bridge each such parse pushed an entry of its own and left
     it; without it, they write into the refactoring's entry.
-    A parse off the bridge starts from the project baseline in `startParsingBuffer()`, but
-    the refresh's parse is also reset in `initializeFileProcessing()` (`rebuild.c:328`),
-    so a translation unit is started in two places. The loop should keep only the first.
+    A CU is started by whoever parses it, before `startParsingBuffer()`, and parsing a CU
+    is parsing it once for each pass. Off the bridge only `pushReferences()` loops over the
+    passes. Extract, the parameters, the bounds and the move target parse once, without a
+    pass, and each needs a test where its answer depends on a pass. The safety check
+    should go straight onto the loop.
     Goes with: change-is-difference, rename-leaves-sessions
 - (#113) <a id="symbol-at-cursor-from-table"></a>**The symbol at the cursor is looked up in the table, not parsed for** —
     a push, browsing or for a refactoring, parses the request file only to find what is at

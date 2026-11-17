@@ -79,8 +79,9 @@ settings, and code inside #if and #else is never compiled together. For
 cross referencing and refactoring both parts are needed, so c-xref can
 make several passes through the sources and collect the references from
 all of them. An option '-pass<n>' makes the options that follow it,
-up to the next '-pass', apply only in pass <n>. C-xref makes as many
-passes as the largest <n> used.
+up to the next '-pass', apply only in that pass. C-xref makes one pass
+for each '-pass<n>'. The <n> only names the pass, and a name can only
+be used once.
 
 Several passes make every parse slower, including the ones done while
 editing.
