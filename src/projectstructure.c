@@ -5,7 +5,6 @@
 #include "commons.h"
 #include "fileio.h"
 #include "filetable.h"
-#include "freshness.h"
 #include "log.h"
 #include "misc.h"
 #include "stringlist.h"
@@ -44,7 +43,7 @@ static StringList *scanFileForIncludes(const char *filePath, int includerFileNum
     if (file == NULL)
         return NULL;
     /* Taken before the content is read, so a change while reading is seen later */
-    startScanOf(includerFileNumber, fileTimestampNow());
+    startScanOf(includerFileNumber, fileTimestampNow(), contentTokenOf((char *)filePath));
     char buf[SCAN_BUFFER_SIZE];
     size_t leftover = 0;
     size_t bytesRead;
@@ -168,18 +167,18 @@ void markMissingFilesAsDeleted(StringList *discoveredFiles) {
     }
 }
 
-/* A file the scan has read is read again when it changed on disk after that,
- * with the headers it now includes for the first time. Before the include
- * graph is collected, since the goal is found from it. */
+/* A file the scan has read is read again when its content on disk is not the
+ * content it read (ADR-0036), with the headers it now includes for the first
+ * time. Before the include graph is collected, since the goal is found from it. */
 void rescanChangedFiles(StringList *includeDirs) {
     StringList *worklist = NULL;
     for (int i = getNextExistingFileNumber(0); i != -1; i = getNextExistingFileNumber(i + 1)) {
         FileItem *fileItem = getFileItemWithFileNumber(i);
         if (fileTimestampIsZero(fileItem->scanTime))
             continue;
-        if (!changedAfter(fileModificationTime(fileItem->name), fileItem->scanTime))
+        if (contentTokensAreSame(contentTokenOf(fileItem->name), fileItem->scanToken))
             continue;
-        log_debug("'%s' changed after it was scanned, scanning it again", fileItem->name);
+        log_debug("'%s' changed since it was scanned, scanning it again", fileItem->name);
         prependAllHeadersToWorklist(&worklist, scanFileForIncludes(fileItem->name, i, includeDirs));
     }
     scanDiscoveredHeaders(worklist, includeDirs);

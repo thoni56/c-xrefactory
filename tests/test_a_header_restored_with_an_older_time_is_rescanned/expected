@@ -1,0 +1,26 @@
+CXREF -server -o server-buffer
+-getproject CURDIR/b.c
+end-of-options
+
+<sync>
+<set-info len=<n>>CURDIR</set-info>
+shell: cp -p CURDIR/h.h.restored CURDIR/h.h
+-browse-push -cursor=19 CURDIR/b.c
+end-of-options
+
+<sync>
+<goto>
+ <position-lc line=2 col=4 len=<n>>CURDIR/b.c</position-lc>
+</goto>
+-filter=0 -cursor=0 nil
+end-of-options
+
+<sync>
+<reference-list val=0 symbol="g">
+<src-line refn=1 len=<n>>b.c:2:int g;</src-line>
+<src-line refn=1 len=<n>>y.h:1:extern int g;</src-line>
+<src-line refn=1 len=<n>>a.c:2:void fa(void) { g = 1; }</src-line>
+</reference-list>
+-exit
+end-of-options
+

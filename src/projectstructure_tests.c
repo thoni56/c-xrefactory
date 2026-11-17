@@ -8,9 +8,9 @@
 #include "log.h"
 
 #include "commons.mock"
+#include "contenttoken.mock"
 #include "fileio.mock"
 #include "filetable.mock"
-#include "freshness.mock"
 #include "misc.mock"
 #include "yylex.mock"
 
@@ -96,8 +96,11 @@ static void given_header_without_includes(char *path) {
 }
 
 Describe(ProjectStructure);
+static ContentToken diskToken = {.hash = 7};
+
 BeforeEach(ProjectStructure) {
     log_set_level(LOG_ERROR);
+    always_expect(contentTokenOf, will_return(&diskToken));
 }
 AfterEach(ProjectStructure) {}
 
@@ -632,7 +635,6 @@ Ensure(ProjectStructure, does_not_mark_header_as_deleted) {
 
 
 static FileTimestamp scanTime = {.tv_sec = 1000, .tv_nsec = 0};
-static FileTimestamp diskTime = {.tv_sec = 2000, .tv_nsec = 0};
 
 static void given_one_file_in_the_table(FileItem *fileItem) {
     expect(getNextExistingFileNumber, when(fileNumber, is_equal_to(0)), will_return(1));
@@ -641,12 +643,10 @@ static void given_one_file_in_the_table(FileItem *fileItem) {
     expect(getNextExistingFileNumber, when(fileNumber, is_equal_to(2)), will_return(-1));
 }
 
-Ensure(ProjectStructure, rescans_a_file_that_changed_after_it_was_scanned) {
+Ensure(ProjectStructure, rescans_a_file_whose_content_is_not_the_content_scanned) {
     FileItem fileItem = {.name = "/project/a.c", .scanTime = scanTime};
     given_one_file_in_the_table(&fileItem);
-    expect(fileModificationTime, when(path, is_equal_to_string("/project/a.c")),
-           will_return(&diskTime));
-    expect(changedAfter, will_return(true));
+    expect(contentTokensAreSame, will_return(false));
     expect(openFile, when(fileName, is_equal_to_string("/project/a.c")),
            will_return((FILE *)1));
     expect(startScanOf, when(fileNumber, is_equal_to(1)));
@@ -656,11 +656,10 @@ Ensure(ProjectStructure, rescans_a_file_that_changed_after_it_was_scanned) {
     rescanChangedFiles(NULL);
 }
 
-Ensure(ProjectStructure, does_not_rescan_a_file_that_did_not_change_after_it_was_scanned) {
+Ensure(ProjectStructure, does_not_rescan_a_file_whose_content_is_the_content_scanned) {
     FileItem fileItem = {.name = "/project/a.c", .scanTime = scanTime};
     given_one_file_in_the_table(&fileItem);
-    expect(fileModificationTime, will_return(&scanTime));
-    expect(changedAfter, will_return(false));
+    expect(contentTokensAreSame, will_return(true));
     never_expect(openFile);
 
     rescanChangedFiles(NULL);
@@ -670,7 +669,7 @@ Ensure(ProjectStructure, does_not_rescan_a_file_that_did_not_change_after_it_was
 Ensure(ProjectStructure, does_not_scan_a_file_the_scan_never_read) {
     FileItem fileItem = {.name = "/usr/include/stdio.h"};
     given_one_file_in_the_table(&fileItem);
-    never_expect(fileModificationTime);
+    never_expect(contentTokensAreSame);
     never_expect(openFile);
 
     rescanChangedFiles(NULL);
@@ -679,8 +678,7 @@ Ensure(ProjectStructure, does_not_scan_a_file_the_scan_never_read) {
 Ensure(ProjectStructure, also_scans_a_header_a_rescanned_file_now_includes_for_the_first_time) {
     FileItem fileItem = {.name = "/project/a.c", .scanTime = scanTime};
     given_one_file_in_the_table(&fileItem);
-    expect(fileModificationTime, will_return(&diskTime));
-    expect(changedAfter, will_return(true));
+    expect(contentTokensAreSame, will_return(false));
     char *content = "#include \"h.h\"\n";
     expect(openFile, when(fileName, is_equal_to_string("/project/a.c")),
            will_return((FILE *)1));

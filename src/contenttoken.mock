@@ -1,0 +1,36 @@
+/* -*- c -*-*/
+#include <cgreen/mocks.h>
+#include "contenttoken.h"
+
+
+ContentToken makeContentToken(FileTimestamp modificationTime, long size) {
+    ContentToken *token = (ContentToken *)mock(size);
+    return *token;
+}
+
+ContentToken missingContentToken(void) {
+    ContentToken *token = (ContentToken *)mock();
+    return *token;
+}
+
+ContentToken contentTokenOf(char *path) {
+    ContentToken *token = (ContentToken *)mock(path);
+    return *token;
+}
+
+bool contentTokensAreSame(ContentToken a, ContentToken b) {
+    return (bool)mock();
+}
+
+bool contentTokenIsMissing(ContentToken token) {
+    return (bool)mock();
+}
+
+int contentTokenAsInt(ContentToken token) {
+    return (int)mock();
+}
+
+ContentToken contentTokenFromInt(int value) {
+    ContentToken *token = (ContentToken *)mock(value);
+    return *token;
+}

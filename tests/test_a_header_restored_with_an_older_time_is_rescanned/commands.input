@@ -1,0 +1,9 @@
+CXREF -server
+-getproject CURDIR/b.c
+<sync>
+!cp -p CURDIR/h.h.restored CURDIR/h.h
+-browse-push -cursor=19 CURDIR/b.c
+<sync>
+-filter=0 -cursor=0 nil
+<sync>
+<exit>
