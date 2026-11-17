@@ -35,6 +35,27 @@ static char *resolveIncludePath(const char *includedFile, const char *includerPa
     return NULL;
 }
 
+static StringList *addIncludeOnLine(char *line, const char *filePath, int includerFileNumber,
+                                    StringList *includeDirs, StringList *discovered) {
+    char includedFile[256];
+    if (sscanf(line, " # include \"%255[^\"]\"", includedFile) == 1) {
+        char *resolved = resolveIncludePath(includedFile, filePath, includeDirs);
+        if (resolved != NULL) {
+            /* Copy the static buffer before any other call that uses
+             * normalizeFileName_static can clobber it. */
+            char resolvedPath[MAX_FILE_NAME_SIZE];
+            strcpy(resolvedPath, resolved);
+            bool alreadyKnown = existsInFileTable(resolvedPath);
+            int includedFileNumber = addFileNameToFileTable(resolvedPath);
+            addScannedInclude(includerFileNumber, includedFileNumber);
+            if (!alreadyKnown)
+                discovered = newStringList(strdup(resolvedPath), discovered);
+        }
+    }
+
+    return discovered;
+}
+
 /* Scan a single file for #include "..." lines. Returns a list of newly
    discovered resolved paths (caller must free). */
 static StringList *scanFileForIncludes(const char *filePath, int includerFileNumber,
@@ -65,21 +86,7 @@ static StringList *scanFileForIncludes(const char *filePath, int includerFileNum
                 break;
             }
 
-            char includedFile[256];
-            if (sscanf(line, " # include \"%255[^\"]\"", includedFile) == 1) {
-                char *resolved = resolveIncludePath(includedFile, filePath, includeDirs);
-                if (resolved != NULL) {
-                    /* Copy the static buffer before any other call that uses
-                     * normalizeFileName_static can clobber it. */
-                    char resolvedPath[MAX_FILE_NAME_SIZE];
-                    strcpy(resolvedPath, resolved);
-                    bool alreadyKnown = existsInFileTable(resolvedPath);
-                    int includedFileNumber = addFileNameToFileTable(resolvedPath);
-                    addScannedInclude(includerFileNumber, includedFileNumber);
-                    if (!alreadyKnown)
-                        discovered = newStringList(strdup(resolvedPath), discovered);
-                }
-            }
+            discovered = addIncludeOnLine(line, filePath, includerFileNumber, includeDirs, discovered);
 
             line = eol + 1;
         }
