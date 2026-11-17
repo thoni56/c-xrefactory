@@ -30,12 +30,12 @@ every push, `After` dashed and `Goes with` not at all, linked at the end of this
 - (#3) <a id="partition-options"></a>**Partition `options` by lifetime, in this sequence** — Session / Project / Request,
    one owner each, and a pure `parseCommandLine()`. `doc/docs/17-major-codebase-improvements.adoc` §17.4.
    The roadmap's Setup Ladder says it gates the rows below it.
-   c. <a id="config-without-pass"></a>**The config is read without a pass** — base only, per-pass options through
-      `applyOptionSet()`, so a change of pass no longer forces a full reload. Takes
+   c. <a id="config-without-pass"></a>**A change of pass does not reload the config** — both reads in
+      `loadProjectSettings()` are already without a pass, and a pass's options come through
+      `applyOptionSet()`, so the full reload on a change of pass (`initializeFileProcessing()`)
+      has nothing left to reload. Only the first load needs it. Takes
       `test_cold_start_interrogates_compiler_once` off suspension. A first attempt also changed
       three move function tests, for a reason not understood. §17.4 step 2.b.
-      Until then the full reload picks a pass's section by its `-passN` label (`options.c:757`),
-      while the loops count the sections in the order they come, so labels out of order mix two passes.
    d. <a id="defines-at-parse-start"></a>**`-D` is applied when a parse starts** — from `definitionStrings`, which takes
       the config's defines out of the memory checkpoint. §17.4 step 2.c.
       After: config-without-pass

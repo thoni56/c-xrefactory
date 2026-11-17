@@ -444,7 +444,7 @@ A likely order, cheapest first:
 
 [loweralpha]
 . *Pass count as data.* Done. The parse loops take the number of passes from `ProjectConfig.optionSets`, one for each `-passN` section, in the order they come.
-. *Read the config without a pass.* Per-pass options already arrive through `applyOptionSet()`, so the config read can be base-only. The loaded settings are then the same in every pass, and a change of pass no longer forces a full reload. This should also stop a cold start from interrogating the compiler twice (`tests/test_cold_start_interrogates_compiler_once`).
+. *No reload on a change of pass.* The config is already read without a pass, and per-pass options arrive through `applyOptionSet()`, so the loaded settings are the same in every pass. A change of pass still forces a full reload in `initializeFileProcessing()`, although only the first load needs it. Without it a cold start should no longer interrogate the compiler twice (`tests/test_cold_start_interrogates_compiler_once`).
 . *Defines when a parse starts.* `-D` is saved in `definitionStrings` and also turned into a macro immediately. Applying the saved strings when a parse starts takes the config's defines out of the memory checkpoint.
 . *The rest.* Output-file opening and file-processing initialization move into the dispatcher.
 

@@ -476,7 +476,7 @@ static void loadProjectSettings(ArgumentsVector baseArgs, ArgumentsVector reques
     /* Save memory state so subsequent files in same project can skip phases 2-3 */
     saveCheckpoint(&projectBaseline);
 
-    /* Then for the particular pass */
+    /* Read again, still without a pass, for the config's operands */
     StringList *configOperands = NULL;
     /* The first read has reported what is wrong with the config. Reading it once is #3's. */
     silenceMessages();
