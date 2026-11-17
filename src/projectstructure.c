@@ -4,6 +4,8 @@
 
 #include "commons.h"
 #include "contenttoken.h"
+#include "editor.h"
+#include "editorbuffer.h"
 #include "fileio.h"
 #include "filetable.h"
 #include "log.h"
@@ -56,10 +58,36 @@ static StringList *addIncludeOnLine(char *line, const char *filePath, int includ
     return discovered;
 }
 
-/* Scan a single file for #include "..." lines. Returns a list of newly
-   discovered resolved paths (caller must free). */
+/* A buffer's text is not terminated, and need not end in a newline */
+static StringList *scanTextForIncludes(char *text, size_t length, const char *filePath,
+                                       int includerFileNumber, StringList *includeDirs) {
+    StringList *discovered = NULL;
+    char line[SCAN_BUFFER_SIZE];
+    size_t start = 0;
+    while (start < length) {
+        char *eol = memchr(text + start, '\n', length - start);
+        size_t end = eol != NULL ? (size_t)(eol - text) : length;
+        size_t lineLength = end - start < sizeof(line) ? end - start : sizeof(line) - 1;
+        memcpy(line, text + start, lineLength);
+        line[lineLength] = '\0';
+        discovered = addIncludeOnLine(line, filePath, includerFileNumber, includeDirs, discovered);
+        start = end + 1;
+    }
+    return discovered;
+}
+
+/* Scan a single file for #include "..." lines, from its buffer when there is
+   one, as the parse reads it. Returns a list of newly discovered resolved
+   paths (caller must free). */
 static StringList *scanFileForIncludes(const char *filePath, int includerFileNumber,
                                        StringList *includeDirs) {
+    EditorBuffer *buffer = getOpenedAndLoadedEditorBuffer((char *)filePath);
+    if (buffer != NULL) {
+        startScanOf(includerFileNumber, editorContentTokenOf((char *)filePath));
+        return scanTextForIncludes(getTextInEditorBuffer(buffer), getSizeOfEditorBuffer(buffer),
+                                   filePath, includerFileNumber, includeDirs);
+    }
+
     StringList *discovered = NULL;
     FILE *file = openFile((char *)filePath, "r");
     if (file == NULL)
@@ -184,7 +212,7 @@ void rescanChangedFiles(StringList *includeDirs) {
         FileItem *fileItem = getFileItemWithFileNumber(i);
         if (contentTokenIsMissing(fileItem->scanToken))
             continue;
-        if (contentTokensAreSame(contentTokenOf(fileItem->name), fileItem->scanToken))
+        if (contentTokensAreSame(editorContentTokenOf(fileItem->name), fileItem->scanToken))
             continue;
         log_debug("'%s' changed since it was scanned, scanning it again", fileItem->name);
         prependAllHeadersToWorklist(&worklist, scanFileForIncludes(fileItem->name, i, includeDirs));

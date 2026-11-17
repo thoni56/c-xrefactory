@@ -9,6 +9,8 @@
 
 #include "commons.mock"
 #include "contenttoken.mock"
+#include "editor.mock"
+#include "editorbuffer.mock"
 #include "fileio.mock"
 #include "filetable.mock"
 #include "misc.mock"
@@ -101,6 +103,8 @@ static ContentToken diskToken = {.hash = 7};
 BeforeEach(ProjectStructure) {
     log_set_level(LOG_ERROR);
     always_expect(contentTokenOf, will_return(&diskToken));
+    always_expect(editorContentTokenOf, will_return(&diskToken));
+    always_expect(getOpenedAndLoadedEditorBuffer, will_return(NULL));
 }
 AfterEach(ProjectStructure) {}
 
