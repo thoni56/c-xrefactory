@@ -194,7 +194,7 @@ static void pushReferences(EditorMarker *point, char *pushOption, char *resolveM
         errorMessage(ERR_ST, "No symbol found at the cursor.");
     }
     createSelectionMenuForOperation(browsingStack.top->operation);
-    if (resolveMessage != NULL && showSelectionMenu()) {
+    if (resolveMessage != NULL && showSelectionMenu(browsingStack.top->operation)) {
         displayResolutionDialog(resolveMessage, messageType);
     }
 }

@@ -343,7 +343,7 @@ Reference *handleFoundSymbolReference(Symbol *symbol, Position position, Usage u
              * processing CUs might be parsed during the entry refresh but should NOT
              * update callerPosition - it should remain as set during the original
              * PUSH. */
-            if (operationShouldUpdateCallerPosition(options.serverOperation)) {
+            if (operationShouldUpdateCallerPosition(browsingStack.top->operation)) {
                 olSetCallerPosition(position);
             }
             defaultPosition = NO_POSITION;
@@ -1405,14 +1405,14 @@ static BrowsingMenu *firstVisibleSymbol(BrowsingMenu *menu) {
 }
 
 
-bool showSelectionMenu(void) {
+bool showSelectionMenu(ServerOperation operation) {
     // decide whether to show manual resolution menu
     assert(browsingStack.top);
-    if (options.serverOperation == OP_INTERNAL_PUSH_FOR_USAGE_CHECK) {
+    if (operation == OP_INTERNAL_PUSH_FOR_USAGE_CHECK) {
         // never ask for resolution for PEEK symbols
         return false;
     }
-    if (options.serverOperation == OP_INTERNAL_SAFETY_CHECK) {
+    if (operation == OP_INTERNAL_SAFETY_CHECK) {
         // safety check showing of menu is resolved by safetyCheck2ShouldWarn
         return false;
     }
@@ -1429,11 +1429,11 @@ bool showSelectionMenu(void) {
         return false; // no visible
     }
     first = NULL;
-    if (   options.serverOperation==OP_BROWSE_PUSH
-        || options.serverOperation==OP_BROWSE_PUSH_ONLY
-        || options.serverOperation==OP_BROWSE_PUSH_AND_CALL_MACRO
-        || options.serverOperation==OP_INTERNAL_PUSH_FOR_RENAME
-        || options.serverOperation==OP_INTERNAL_PUSH_FOR_ARGUMENT_MANIPULATION
+    if (   operation==OP_BROWSE_PUSH
+        || operation==OP_BROWSE_PUSH_ONLY
+        || operation==OP_BROWSE_PUSH_AND_CALL_MACRO
+        || operation==OP_INTERNAL_PUSH_FOR_RENAME
+        || operation==OP_INTERNAL_PUSH_FOR_ARGUMENT_MANIPULATION
     ) {
         // manually only if different
         for (BrowsingMenu *ss=browsingStack.top->menu; ss!=NULL; ss=ss->next) {
@@ -1618,12 +1618,12 @@ static void answerPushingAction(ServerOperation operation) {
         dumpSelectionMenu(browsingStack.top->menu);
 
     if (options.manualResolve == RESOLVE_DIALOG_ALWAYS
-        || (showSelectionMenu()
+        || (showSelectionMenu(operation)
             && options.manualResolve != RESOLVE_DIALOG_NEVER)) {
         ppcGenRecord(PPC_DISPLAY_OR_UPDATE_BROWSER, "");
     } else {
         assert(browsingStack.top);
-        printPushingAction(options.serverOperation);
+        printPushingAction(operation);
     }
 }
 

@@ -87,7 +87,7 @@ bool filterLevelAtLeast(unsigned level, unsigned atLeast) {
     return (bool) mock(level, atLeast);
 }
 
-bool showSelectionMenu(void) {
+bool showSelectionMenu(ServerOperation operation) {
     return (int) mock();
 }
 
