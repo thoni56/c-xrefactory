@@ -52,13 +52,9 @@ static bool opensBrowsingSession(ServerOperation operation) {
         ||  operation==OP_BROWSE_PUSH_AND_CALL_MACRO
         ||  operation==OP_GET_AVAILABLE_REFACTORINGS
         ||  operation==OP_BROWSE_PUSH_NAME
-        ||  operation==OP_INTERNAL_PUSH_FOR_USAGE_CHECK
         ||  operation==OP_UNUSED_IN_PROJECT
         ||  operation==OP_UNUSED_IN_FILE
         ||  operation==OP_INTERNAL_LIST
-        ||  operation==OP_INTERNAL_PUSH_FOR_RENAME
-        ||  operation==OP_INTERNAL_PUSH_FOR_ARGUMENT_MANIPULATION
-        ||  operation==OP_INTERNAL_SAFETY_CHECK
         ||  operation==OP_REFACTORY
         ;
 }

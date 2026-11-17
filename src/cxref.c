@@ -74,10 +74,6 @@ static bool fileIsUnderIncludePaths(char *fileName) {
 
 /* *********************************************************************** */
 
-static int referencePositionIsLess(Reference *r1, Reference *r2) {
-    return positionIsLessThan(r1->position, r2->position);
-}
-
 /* Compare positions the same way referenceIsLessThan sorts references:
    by filename, then file number, then line, then column.
    Note: simpleFileNameFromFileNum uses a static buffer, so we must
@@ -389,26 +385,7 @@ void addTrivialCxReference(char *name, Type type, Storage storage, Position posi
 
 /* ***************************************************************** */
 
-
-
-static Reference *copyReference(Reference *reference) {
-    Reference *r = malloc(sizeof(Reference));
-    *r = *reference;
-    r->next = NULL;
-    return r;
-}
-
-static void appendReference(Reference *reference, SessionStackEntry *sessionStackEntry) {
-    Reference *copy;
-    copy = copyReference(reference);
-    LIST_APPEND(Reference, sessionStackEntry->references, copy);
-    log_debug("olcx appending %s %s:%d:%d", usageKindEnumName[reference->usage],
-              getFileItemWithFileNumber(reference->position.file)->name, reference->position.line, reference->position.col);
-}
-
 static void addReferencesFromFileToList(Reference *references, int fileNumber, Reference **listP) {
-
-    /* from now, you should add it to macros as REVERSE_LIST_MAP() WTF? Huh? */
     Reference *revlist = NULL;
     while (references!=NULL) {
         Reference *tmp = references->next; references->next = revlist;
@@ -442,16 +419,6 @@ bool sessionHasReferencesValidForOperation(SessionStackEntry **entryP,
         return false;
     }
     return true;
-}
-
-
-static void initializeRename(void) {
-    SessionStackEntry *sessionStackEntry;
-
-    if (!sessionHasReferencesValidForOperation(&sessionStackEntry, CHECK_NULL_YES))
-        return;
-    sessionStackEntry->current = sessionStackEntry->references;
-    ppcGotoPosition(sessionStackEntry->current->position);
 }
 
 
@@ -1203,67 +1170,6 @@ void popReferenceOnly(void) {
     browsingStack.top = entry->previous;
 }
 
-static void safetyCheckAddDiffRef(Reference *r, SessionStackEntry *diffrefs,
-                                  int mode) {
-    int prefixchar;
-    prefixchar = ' ';
-    if (diffrefs->references == NULL) {
-        fprintf(outputFile, "%s", COLCX_LIST);
-        prefixchar = '>';
-    }
-    if (mode == DIFF_MISSING_REF) {
-        fprintf(outputFile, "%c %s:%d missing reference\n", prefixchar,
-                simpleFileNameFromFileNum(r->position.file), r->position.line);
-    } else if (mode == DIFF_UNEXPECTED_REF) {
-        fprintf(outputFile, "%c %s:%d unexpected new reference\n", prefixchar,
-                simpleFileNameFromFileNum(r->position.file), r->position.line);
-    } else {
-        assert(0);
-    }
-    appendReference(r, diffrefs);
-}
-
-static void safetyCheckDiff(Reference **anr1,
-                            Reference **aor2,
-                            SessionStackEntry *diffrefs
-                            ) {
-    Reference *r, *nr1, *or2;
-    int mode;
-    LIST_MERGE_SORT(Reference, *anr1, referencePositionIsLess);
-    LIST_MERGE_SORT(Reference, *aor2, referencePositionIsLess);
-    nr1 = *anr1; or2 = *aor2;
-    while (nr1!=NULL && or2!=NULL) {
-        if (nr1->position.file==or2->position.file && nr1->position.line==or2->position.line) {
-            nr1 = nr1->next; or2=or2->next;
-        } else {
-            if (SORTED_LIST_LESS(nr1, *or2)) {
-                safetyCheckAddDiffRef(nr1, diffrefs, DIFF_UNEXPECTED_REF);
-                nr1=nr1->next;
-            } else {
-                safetyCheckAddDiffRef(or2, diffrefs, DIFF_MISSING_REF);
-                or2=or2->next;
-            }
-        }
-    }
-    if (nr1!=NULL || or2!=NULL) {
-        if (nr1!=NULL) {
-            r = nr1;
-            mode = DIFF_UNEXPECTED_REF;
-        } else {
-            r = or2;
-            mode = DIFF_MISSING_REF;
-        }
-        for (; r!=NULL; r=r->next) {
-            safetyCheckAddDiffRef(r, diffrefs, mode);
-        }
-    }
-    diffrefs->current = diffrefs->references;
-    if (diffrefs->references!=NULL) {
-        assert(diffrefs->menu);
-        extendBrowsingMenuWithReferences(diffrefs->menu, diffrefs->references);
-    }
-}
-
 int getFileNumberFromName(char *name) {
     char *normalizedName;
     int fileNumber;
@@ -1274,64 +1180,6 @@ int getFileNumberFromName(char *name) {
     } else {
         return NO_FILE_NUMBER;
     }
-}
-
-static Reference *olcxCreateFileShiftedRefListForCheck(Reference *reference) {
-    Reference *res, **resa;
-    int ofn, nfn, fmline, lmline;
-
-    if (options.checkFileMovedFrom==NULL) return NULL;
-    if (options.checkFileMovedTo==NULL) return NULL;
-    //&fprintf(dumpOut,"!shifting %s --> %s\n", options.checkFileMovedFrom, options.checkFileMovedTo);
-    ofn = getFileNumberFromName(options.checkFileMovedFrom);
-    nfn = getFileNumberFromName(options.checkFileMovedTo);
-    //&fprintf(dumpOut,"!shifting %d --> %d\n", ofn, nfn);
-    if (ofn==NO_FILE_NUMBER) return NULL;
-    if (nfn==NO_FILE_NUMBER) return NULL;
-    fmline = options.checkFirstMovedLine;
-    lmline = options.checkFirstMovedLine + options.checkLinesMoved;
-    res = NULL; resa = &res;
-    for (Reference *r=reference; r!=NULL; r=r->next) {
-        Reference *tt = malloc(sizeof(Reference));
-        *tt = *r;
-        if (tt->position.file==ofn && tt->position.line>=fmline && tt->position.line<lmline) {
-            tt->position.file = nfn;
-            //&fprintf(dumpOut,"!shifting %d:%d to %d (%d %d %d)\n", tt->position.file, tt->position.line, options.checkNewLineNumber + (tt->position.line - fmline), options.checkFirstMovedLine, options.checkLinesMoved, options.checkNewLineNumber);
-            tt->position.line = options.checkNewLineNumber + (tt->position.line - fmline);
-        }
-        *resa=tt; tt->next=NULL; resa= &(tt->next);
-    }
-    LIST_MERGE_SORT(Reference, res, referencePositionIsLess);
-    return res;
-}
-
-static void safetyCheck(void) {
-    SessionStackEntry *sessionEntry, *origrefs, *newrefs, *diffrefs;
-    Reference *shifted;
-    int pbflag=0;
-    origrefs = newrefs = diffrefs = NULL;
-    SAFETY_CHECK_GET_SYM_LISTS(sessionEntry,origrefs,newrefs,diffrefs, pbflag);
-    assert(origrefs && newrefs && diffrefs);
-    if (pbflag) return;
-    shifted = olcxCreateFileShiftedRefListForCheck(origrefs->references);
-    if (shifted != NULL) {
-        safetyCheckDiff(&newrefs->references, &shifted, diffrefs);
-        freeReferences(shifted);
-    } else {
-        safetyCheckDiff(&newrefs->references, &origrefs->references, diffrefs);
-    }
-    if (diffrefs->references == NULL) {
-        // no need to free here, as popings are not freed
-        browsingStack.top = browsingStack.top->previous;
-        browsingStack.top = browsingStack.top->previous;
-        browsingStack.top = browsingStack.top->previous;
-        fprintf(outputFile, "*Done. No conflicts detected.");
-    } else {
-        assert(diffrefs->menu);
-        browsingStack.top = browsingStack.top->previous;
-        fprintf(outputFile, " ** Some misinterpreted references detected. Please, undo last refactoring.");
-    }
-    fflush(outputFile);
 }
 
 static void selectCompletion(void) {
@@ -1576,25 +1424,6 @@ static void printPushingAction(ServerOperation operation) {
             noSymbolFoundErrorMessage();
             deleteEntryFromSessionStack(browsingStack.top);
         }
-        break;
-    case OP_INTERNAL_PUSH_FOR_USAGE_CHECK:
-        if (haveBrowsingMenu())
-            pushOnly();
-        else
-            noSymbolFoundErrorMessage();
-        break;
-    case OP_INTERNAL_PUSH_FOR_RENAME:
-    case OP_INTERNAL_PUSH_FOR_ARGUMENT_MANIPULATION:
-        if (haveBrowsingMenu())
-            initializeRename();
-        else
-            noSymbolFoundErrorMessage();
-        break;
-    case OP_INTERNAL_SAFETY_CHECK:
-        if (haveBrowsingMenu())
-            safetyCheck();
-        else
-            noSymbolFoundErrorMessage();
         break;
     default:
         assert(0);

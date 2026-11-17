@@ -93,11 +93,6 @@ Options presetOptions = {
     .refactorTargetLine = "",
     .parameterNumber = 0,
     .toParameterNumber = 0,
-    .checkFileMovedFrom = NULL,
-    .checkFileMovedTo = NULL,
-    .checkFirstMovedLine = 0,
-    .checkLinesMoved = MAXIMAL_INT,
-    .checkNewLineNumber = 0,
 
     /* --- INTERNAL --- */
     .detectedProjectRoot = "",
@@ -167,7 +162,6 @@ void usage(void) {
     fprintf(stdout, "\t-line-length=<n>          - length of lines for on-line output\n");
     fprintf(stdout, "\t-search                   - search info about identifier\n");
     fprintf(stdout, "\t-browse-push              - generate and push references for browsing\n");
-    fprintf(stdout, "\t-internal-push-for-rename - generate and push xrfs for rename\n");
     fprintf(stdout, "\t-browse-pop               - pop on-line cxrefs\n");
     fprintf(stdout, "\t-browse-next              - browse to next reference\n");
     fprintf(stdout, "\t-browse-previous          - browse to previous reference\n");
@@ -1062,16 +1056,6 @@ static bool processIOption(int *argi, ArgumentsVector args) {
     }
     else if (strcmp(args.argv[i], "-info")==0) {
         /* Log level handled in main.c initLogging() */;
-    }
-    else if (strcmp(args.argv[i], "-internal-push-for-rename")==0)
-        options.serverOperation = OP_INTERNAL_PUSH_FOR_RENAME;
-    else if (strcmp(args.argv[i], "-internal-push-for-argument-manipulation")==0)
-        options.serverOperation = OP_INTERNAL_PUSH_FOR_ARGUMENT_MANIPULATION;
-    else if (strcmp(args.argv[i], "-internal-safety-check")==0)
-        options.serverOperation = OP_INTERNAL_SAFETY_CHECK;
-    else if (strcmp(args.argv[i], "-internal-push-for-usage-check")==0) {
-        options.serverOperation = OP_INTERNAL_PUSH_FOR_USAGE_CHECK;
-        options.manualResolve = RESOLVE_DIALOG_NEVER;
     }
     else return false;
     *argi = i;

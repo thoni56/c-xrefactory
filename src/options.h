@@ -107,11 +107,6 @@ typedef struct options {
     char *refactorTargetLine;                   /* REFACTORING */
     int parameterNumber;                        /* REFACTORING */
     int toParameterNumber;                      /* REFACTORING */
-    char *checkFileMovedFrom;                   /* REFACTORING */
-    char *checkFileMovedTo;                     /* REFACTORING */
-    int checkFirstMovedLine;                    /* REFACTORING */
-    int checkLinesMoved;                        /* REFACTORING */
-    int checkNewLineNumber;                     /* REFACTORING */
 
     /* --- INTERNAL: Bookkeeping, not user-facing --- */
     char *detectedProjectRoot;                  /* INTERNAL */
