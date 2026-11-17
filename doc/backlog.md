@@ -163,8 +163,7 @@ every push, `After` dashed and `Goes with` not at all, linked at the end of this
     Every source goes through the same `processOptions()` and every option is accepted
     from all of them. The sources are three contexts: startup (`mainTaskEntryInitialisations()`),
     project (the config read in `getAndProcessProjectConfig()`, `applyOptionSet()`, and an
-    `-optinclude`, which takes the context it appears in) and request (`initServer()`, and
-    the bridge in `refactory.c` until #9). These are #3's lifetimes, which `options.h`
+    `-optinclude`, which takes the context it appears in) and request (`initServer()`). These are #3's lifetimes, which `options.h`
     already marks per field as SESSION, PROJECT and REQUEST.
     `processOptions()` takes the context, and an option's entry states where it is allowed, e.g. a `-server` in
     `.c-xrefrc` is reported with its position, as an unterminated quote is. #7 decides the
@@ -436,6 +435,13 @@ Roadmap → Optimization has the baseline: a cold-start PUSH on ffmpeg, measured
     and a rename without conflicts pops neither. Write the test first: a rename from
     inside a session, then a Pop that lands in that session.
     Goes with: index-based-sessions
+- (#117) <a id="refused-rename-references"></a>**A rename the safety check refuses leaves the edited references** —
+    the check builds the edited CUs into the table before it undoes the edits. A change is
+    a difference in content (ADR-0036), so the undo and a new time on the buffers should be
+    enough for the next request to build them again. Not shown: a rename the check
+    refuses, then a push on the old name, which should find its references
+    (WSL, session `d25255b8`, 2026-11-17).
+    Goes with: rename-leaves-sessions
 - (#24) <a id="retry-creating-request"></a>**Retry the request that created the project** — small, and it becomes first contact
     with every new project once auto-discovery is the only way in.
 - (#25) <a id="lsp-tiers"></a>**LSP tiers 1–2** — code actions and `workspace/executeCommand` for extract, move
@@ -587,28 +593,13 @@ implementation, and are noted in `cu-prerequisites`, `out-of-date`, `time-budget
     part does not depend on how a change is found.
     Goes with: out-of-date
     After: change-is-difference
-- (#9) <a id="remove-bridge"></a>**Remove the `parseBufferUsingServer` bridge** — §17.3; 1 refactoring call site,
-    the safety check, re-entering `callServer`. It is the last divergent parse path. `-olexmacro` and
-    `-olexvariable` only exist for it and go with it.
-    Each re-entry runs the entry refresh again, so one refactoring brings knowledge up to
-    date several times, and the knowledge can change between its steps. "The Shape It
-    Converges To" in `08-algorithms` has the steps once, then the answer, which for a
-    refactoring is to perform it.
-    The re-entries are also why `quasiSaveModifiedEditorBuffers()` stamps edited buffers
-    with the time, and sleeps up to a second, so that a nested refresh sees the edits.
-    Under ADR-0036 the content token has to keep that working, and it goes with the
-    bridge. So this comes before the scan and a CU's own change move to tokens, which
-    then need not serve it (Mac, session `4839a129`, 2026-11-13).
-    A parse that needs only a point, e.g. the bounds, still selects the symbol at the
-    cursor into the top browsing entry (`cxref.c:328`), since `needsReferenceAtCursor()`
-    decides both. Through the bridge each such parse pushed an entry of its own and left
-    it; without it, they write into the refactoring's entry.
-    A CU is started by whoever parses it, before `startParsingBuffer()`, and parsing a CU
-    is parsing it once for each pass. Off the bridge only `pushReferences()` loops over the
-    passes. Extract, the parameters, the bounds and the move target parse once, without a
-    pass, and each needs a test where its answer depends on a pass. The safety check
-    should go straight onto the loop.
-    Goes with: change-is-difference, rename-leaves-sessions
+- (#115) <a id="every-parse-all-passes"></a>**Every parse of a CU parses it once for each pass** —
+    a CU is started by whoever parses it, before `startParsingBuffer()`, from the project
+    baseline and that pass's options (`startCompilationUnitForPass()`). The refresh, the
+    request's own parse and `pushReferences()` loop over the passes. Extract, the
+    parameters, the bounds and the move target parse once, without a pass. Each needs a
+    test where its answer depends on a pass first, and with the second loop, "parse this
+    buffer in every pass" can become one function (WSL, session `d25255b8`, 2026-11-17).
 - (#113) <a id="symbol-at-cursor-from-table"></a>**The symbol at the cursor is looked up in the table, not parsed for** —
     a push, browsing or for a refactoring, parses the request file only to find what is at
     the cursor (`cxref.c:328`), although the refresh has just built its references. The
@@ -617,7 +608,16 @@ implementation, and are noted in `cu-prerequisites`, `out-of-date`, `time-budget
     visible usages only, with the macro default position (`cxref.c:351`) and the caller
     position. Needs tests for macros, `##` and several symbols at one position first
     (WSL, session `d25255b8`, 2026-11-17).
-    After: remove-bridge
+    A parse that needs only a point, e.g. the bounds, also selects the symbol at the
+    cursor, into the refactoring's browsing entry, since `needsReferenceAtCursor()`
+    decides both.
+- (#116) <a id="refactoring-session-kinds"></a>**The refactorings' push operations are session kinds** —
+    `OP_INTERNAL_PUSH_FOR_RENAME`, `_ARGUMENT_MANIPULATION`, `_USAGE_CHECK` and
+    `OP_INTERNAL_SAFETY_CHECK` are no longer requests. `pushReferences()` stores them as the
+    session's operation, and they decide the selection menu (`showSelectionMenu()`,
+    `isRenameMenuSelection()`). Rename and argument manipulation behave the same everywhere
+    and can be one. The `OP_INTERNAL_` prefix, and their place in `ServerOperation`, say
+    something else.
 - (#109) <a id="session-refresh-time"></a>**A session refreshes a file by a time, not a flag** —
     a file's references get a time they last changed, never cleared, and a session
     refreshes its copy of a file when that is later than the copy. Replaces
