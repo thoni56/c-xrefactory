@@ -1,0 +1,9 @@
+CXREF -server
+-getproject a.c
+<sync>
+-search=feature_only a.c
+<sync>
+!cp c-xrefrc.without_feature .c-xrefrc
+-search=feature_only a.c
+<sync>
+<exit>

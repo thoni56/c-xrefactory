@@ -1,0 +1,7 @@
+Bug: a config change leaves what a header had under the old config
+
+A config change clears every CU's knowledge (markAllCompilationUnitsStale(),
+src/server.c), but removes no references. A CU loses its own when it is built again,
+but a header's references go only when the header or something it includes changes,
+so feature_only stays in h.h after FEATURE is gone from the config. The shape says a
+config change is a change of every file: every reference is removed. Backlog #106.
