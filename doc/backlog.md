@@ -212,7 +212,7 @@ fails if a name is unknown.
     nothing includes and no request names is missing until a restart, also from an
     operation on a name, and nothing says so. Deletion is seen for CUs only:
     `markMissingFilesAsDeleted()` at the walk, or when a CU is about to be built. A
-    deleted header loses its references (`change-is-difference`), but is not marked
+    deleted header loses its references (ADR-0036), but is not marked
     deleted, so it stays in the file table and is saved in the snapshot, a file that does
     not exist and has no references. Its includers' scan edges to it stay. Once setup moves into
     `-openproject` the request loop sees only changes to files it knows, so "until a
@@ -581,8 +581,7 @@ Roadmap → Optimization has the baseline: a cold-start PUSH on ffmpeg, measured
 
 ## 7. Freshness as make (ADR-0032, ADR-0035, ADR-0036)
 
-The order is roughly as listed. Next is `change-is-difference`, then the rest of
-`remove-on-change`, whose config part can come first. "Freshness Is Make, for the
+The order is roughly as listed. Next is the rest of `remove-on-change`, its config part. "Freshness Is Make, for the
 Goal" in `08-algorithms` has the shape the request converges to.
 
 Performance, from reading the code (Mac, session `05984816`, 2026-10-08): at equal
@@ -594,25 +593,6 @@ walk of the table per changed file — is small beside what goes. The risks are 
 implementation, and are noted in `cu-prerequisites`, `out-of-date`, `time-budget` and
 `removal-cost`.
 
-- (#112) <a id="change-is-difference"></a>**A change is a difference, ordered by the server's own clock** —
-    ADR-0036. One reading of *changed*, used by the scan and the removal: a
-    content token, modification time and size, of its preload for a held buffer,
-    not the same as when last seen. A vanished file and
-    a new one have changed, which fixes the deleted header
-    (`test_a_deleted_header_leaves_no_references`, and the vanishing half of
-    `files-appear-vanish`). The build orders noticed changes and knowledge by the
-    server's own clock, not by file times, so `letGoTime`, the zero special cases and the
-    10 ms gap go, with the extra build of a held CU after each edit. A held file is
-    saved with its preload's token, so it has changed after a restart (Mac, session
-    `4839a129`, 2026-11-06, the racy rule dropped 2026-11-10).
-    Done: the `contenttoken` module, the seen token in the snapshot (1.16.0), the
-    removal of a header by tokens, and the build reading only a header's noticed change
-    time, so a deleted header costs its includers one build, and the scan by tokens,
-    reading a held file's buffer as the parse does, and a CU's own change by tokens, which
-    took the 10 ms gap and `forgetKnowledgeForHeldContent()` with it. The include graph gets
-    one writer with `scan-angle-includes`. Left: a header not yet seen counting as changed.
-    Waits for: adr-0036
-    Goes with: remove-on-change, files-appear-vanish
 - (#106) <a id="remove-on-change"></a>**A file's references are removed when its content changes** —
     ADR-0035. On a newer disk time, new content in a held buffer, or a held buffer let go,
     and that moment is the file's change time. Done for headers and CUs, and the mark is
@@ -621,7 +601,6 @@ implementation, and are noted in `cu-prerequisites`, `out-of-date`, `time-budget
     `markAllCompilationUnitsStale()` is called today.
     Waits for: adr-0035
     Goes with: out-of-date
-    After: change-is-difference
 - (#115) <a id="every-parse-all-passes"></a>**Every parse of a CU parses it once for each pass** —
     a CU is started by whoever parses it, before `startParsingBuffer()`, from the project
     baseline and that pass's options (`startCompilationUnitForPass()`). The refresh, the
