@@ -70,19 +70,31 @@ static void given_cu_without_includes(char *path) {
     expect(closeFile);
 }
 
-static void given_include_resolves(char *includeName, char *dir, char *resolvedPath,
-                                   int includedFileNum, int includerFileNum) {
+static void given_include_resolves_when(bool alreadyKnown, char *includeName, char *dir,
+                                        char *resolvedPath, int includedFileNum, int includerFileNum) {
     expect(directoryName_static, will_return(dir));
     expect(normalizeFileName_static, when(name, is_equal_to_string(includeName)),
            will_return(resolvedPath));
     expect(fileExists, when(fullPath, is_equal_to_string(resolvedPath)),
            will_return(true));
     expect(existsInFileTable, when(fileName, is_equal_to_string(resolvedPath)),
-           will_return(false));
+           will_return(alreadyKnown));
     expect(addFileNameToFileTable, when(fileName, is_equal_to_string(resolvedPath)),
            will_return(includedFileNum));
     expect(addScannedInclude, when(includerFileNumber, is_equal_to(includerFileNum)),
            when(includedFileNumber, is_equal_to(includedFileNum)));
+}
+
+/* A header seen for the first time, which the scan then also scans */
+static void given_include_resolves(char *includeName, char *dir, char *resolvedPath,
+                                   int includedFileNum, int includerFileNum) {
+    given_include_resolves_when(false, includeName, dir, resolvedPath, includedFileNum, includerFileNum);
+}
+
+/* The include is still recorded, but the header is not scanned again */
+static void given_include_resolves_to_known(char *includeName, char *dir, char *resolvedPath,
+                                            int includedFileNum, int includerFileNum) {
+    given_include_resolves_when(true, includeName, dir, resolvedPath, includedFileNum, includerFileNum);
 }
 
 
@@ -322,18 +334,7 @@ Ensure(ProjectStructure, lightweight_scan_skips_already_known_header_in_transiti
     expect(addFileNameToFileTable, when(fileName, is_equal_to_string("/project/h1.h")),
            will_return(2));
     given_header_with_content("/project/h1.h", "#include \"shared.h\"\n");
-    expect(directoryName_static, will_return("/project"));
-    expect(normalizeFileName_static, when(name, is_equal_to_string("shared.h")),
-           will_return("/project/shared.h"));
-    expect(fileExists, when(fullPath, is_equal_to_string("/project/shared.h")),
-           will_return(true));
-    expect(existsInFileTable, when(fileName, is_equal_to_string("/project/shared.h")),
-           will_return(true));
-    /* Still records the include reference, but does NOT add to worklist */
-    expect(addFileNameToFileTable, when(fileName, is_equal_to_string("/project/shared.h")),
-           will_return(4));
-    expect(addScannedInclude, when(includerFileNumber, is_equal_to(2)),
-           when(includedFileNumber, is_equal_to(4)));
+    given_include_resolves_to_known("shared.h", "/project", "/project/shared.h", 4, 2);
 
     scanProjectForFilesAndIncludes("/project", NULL, NULL);
 }
@@ -379,17 +380,7 @@ Ensure(ProjectStructure, lightweight_scan_handles_circular_includes_without_infi
     expect(addFileNameToFileTable, when(fileName, is_equal_to_string("/project/b.h")),
            will_return(3));
     given_header_with_content("/project/b.h", "#include \"a.h\"\n");
-    expect(directoryName_static, will_return("/project"));
-    expect(normalizeFileName_static, when(name, is_equal_to_string("a.h")),
-           will_return("/project/a.h"));
-    expect(fileExists, when(fullPath, is_equal_to_string("/project/a.h")),
-           will_return(true));
-    expect(existsInFileTable, when(fileName, is_equal_to_string("/project/a.h")),
-           will_return(true));
-    expect(addFileNameToFileTable, when(fileName, is_equal_to_string("/project/a.h")),
-           will_return(2));
-    expect(addScannedInclude, when(includerFileNumber, is_equal_to(3)),
-           when(includedFileNumber, is_equal_to(2)));
+    given_include_resolves_to_known("a.h", "/project", "/project/a.h", 2, 3);
     /* No further scanning - worklist is empty */
 
     scanProjectForFilesAndIncludes("/project", NULL, NULL);
@@ -739,17 +730,7 @@ Ensure(ProjectStructure, scans_a_held_file_from_its_buffer_not_from_disk) {
     expect(getSizeOfEditorBuffer, when(buffer, is_equal_to(buffer)), will_return(strlen(text)));
     never_expect(openFile);
 
-    /* h.h is already known, so the scan records the include and goes no further */
-    expect(directoryName_static, will_return("/project"));
-    expect(normalizeFileName_static, when(name, is_equal_to_string("h.h")),
-           will_return("/project/h.h"));
-    expect(fileExists, when(fullPath, is_equal_to_string("/project/h.h")), will_return(true));
-    expect(existsInFileTable, when(fileName, is_equal_to_string("/project/h.h")),
-           will_return(true));
-    expect(addFileNameToFileTable, when(fileName, is_equal_to_string("/project/h.h")),
-           will_return(2));
-    expect(addScannedInclude, when(includerFileNumber, is_equal_to(1)),
-           when(includedFileNumber, is_equal_to(2)));
+    given_include_resolves_to_known("h.h", "/project", "/project/h.h", 2, 1);
 
     scanProjectForFilesAndIncludes("/project", NULL, NULL);
 }
