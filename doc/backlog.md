@@ -402,6 +402,14 @@ Roadmap → Optimization has the baseline: a cold-start PUSH on ffmpeg, measured
     when the region declares two or more locals used after it, the call site passes them by
     address but no longer declares them. GitHub issue #79.
     Test: `tests/test_extract_locals_declared_in_region_used_after` (suspended).
+- (#118) <a id="inline-output-parameter"></a>**Inline Output Parameter** — removes the copies Extract Function
+    makes of a local it changes, `size_t length = *_length;` and `*_length = length;`, and uses the
+    pointer instead. 11-planned-features → Inline Output Parameter.
+    A real case: `readFileContent()` in `src/projectstructure.c`, done by hand (WSL session d25255b8).
+- (#119) <a id="output-parameter-to-return"></a>**Turn an output parameter into the return value** — for a function
+    with a single output parameter and no return value. 11-planned-features → Inline Output Parameter,
+    last paragraph.
+    After: inline-output-parameter
 - (#97) <a id="rename-partial-in-broken-code"></a>**Rename in code that does not parse leaves occurrences behind** —
     with the cursor on a declaration the parser still saw, only that occurrence is renamed,
     with no warning. On a use it refuses, see `tests/test_rename_in_code_that_does_not_parse`,
