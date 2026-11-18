@@ -26,12 +26,10 @@
 #include "referenceableitemtable.h"
 #include "stackmemory.h"
 #include "symboltable.h"
-#include "timestamp.h"
 #include "yylex.h"
 
 
 static char previousProjectConfigurationFile[MAX_FILE_NAME_SIZE];
-static FileTimestamp previousProjectConfigurationFileModificationTime;
 static int previousPass;
 static ProjectConfig projectConfig = {0};
 
@@ -537,8 +535,6 @@ bool isProjectConfigChanged(void) {
 void reloadProjectConfig(ArgumentsVector baseArgs, ArgumentsVector requestArgs) {
     log_info("Config file '%s' changed, reloading project settings", previousProjectConfigurationFile);
     loadProjectSettings(baseArgs, requestArgs, previousProjectConfigurationFile);
-
-    previousProjectConfigurationFileModificationTime = fileModificationTime(previousProjectConfigurationFile);
 }
 
 /* Initialize project context: discover project, load options, interrogate compiler, and
@@ -550,7 +546,6 @@ void reloadProjectConfig(ArgumentsVector baseArgs, ArgumentsVector requestArgs) 
  */
 bool initializeProjectContext(char *fileName, ArgumentsVector baseArgs, ArgumentsVector requestArgs) {
     char projectConfigFileName[MAX_FILE_NAME_SIZE];
-    FileTimestamp modifiedTime;
 
     /* === PHASE 1: Project Discovery === */
     /* TODO: Duplicated in `intializeProjectContext` */
@@ -562,13 +557,10 @@ bool initializeProjectContext(char *fileName, ArgumentsVector baseArgs, Argument
 
     initAllInputs();
 
-    modifiedTime = fileModificationTime(projectConfigFileName);
-
     /* === PHASES 2-4: Options, compiler interrogation, checkpoint === */
     loadProjectSettings(baseArgs, requestArgs, projectConfigFileName);
 
     strcpy(previousProjectConfigurationFile, projectConfigFileName);
-    previousProjectConfigurationFileModificationTime = modifiedTime;
     previousPass = currentPass;
     return true;
 }
@@ -589,7 +581,6 @@ static void applyCurrentPassOptions(void) {
  */
 bool initializeFileProcessing(ArgumentsVector baseArgs, ArgumentsVector requestArgs, char *fileName) {
     char projectConfigFileName[MAX_FILE_NAME_SIZE];
-    FileTimestamp modifiedTime;
     bool inputOpened;
 
     ENTER();
@@ -612,11 +603,6 @@ bool initializeFileProcessing(ArgumentsVector baseArgs, ArgumentsVector requestA
 
     initAllInputs();
 
-    if (projectConfigFileName[0] != 0 )
-        modifiedTime = fileModificationTime(projectConfigFileName);
-    else
-        modifiedTime = previousProjectConfigurationFileModificationTime;               // !!! just for now
-
     /* Determine if we need full initialization or can restore from checkpoint.
      * Full init required when: first pass, different pass or different project.
      * A change to the options file is callServer()'s, see reloadProjectConfig(). */
@@ -636,7 +622,6 @@ bool initializeFileProcessing(ArgumentsVector baseArgs, ArgumentsVector requestA
 
         /* Save these values as previous */
         strcpy(previousProjectConfigurationFile,projectConfigFileName);
-        previousProjectConfigurationFileModificationTime = modifiedTime;
         previousPass = currentPass;
 
     } else {
