@@ -28,6 +28,7 @@ flowchart BT
   groundwork --&gt; first_item
   first_item --&gt; second_item
   rung_a --&gt; rung_b
+  linkStyle 0,1,2 stroke:#333,stroke-width:2.5px
   class first_item ready
   class second_item blocked
   class rung_a ready

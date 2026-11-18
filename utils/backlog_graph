@@ -108,10 +108,21 @@ def node_lines(work, foundation):
 def edge_lines(work):
     # Goes with is not drawn: the layout would take it as an edge to rank by
     # What an item comes after is a preferred order, so it is dashed and does not block
-    return ([f"  {node_id(waited)} --> {node_id(item['slug'])}"
+    waits = [f"  {node_id(waited)} --> {node_id(item['slug'])}"
              for item in work for waited in item['waits']]
-            + [f"  {node_id(before)} -.-> {node_id(item['slug'])}"
-               for item in work for before in item['after']])
+    afters = [f"  {node_id(before)} -.-> {node_id(item['slug'])}"
+              for item in work for before in item['after']]
+    return waits + afters + style_lines(len(waits), len(afters))
+
+
+def style_lines(waits, afters):
+    # Mermaid styles an edge by its number, in the order the edges are written
+    lines = []
+    if waits:
+        lines.append(f"  linkStyle {','.join(str(n) for n in range(waits))} stroke:#333,stroke-width:2.5px")
+    if afters:
+        lines.append(f"  linkStyle {','.join(str(n) for n in range(waits, waits + afters))} stroke:#aaa,stroke-width:1px")
+    return lines
 
 
 def state_lines(work, items, foundation):

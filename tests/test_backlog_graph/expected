@@ -12,6 +12,8 @@ flowchart BT
   first_item --> second_item
   rung_a --> rung_b
   first_item -.-> odd_title
+  linkStyle 0,1,2 stroke:#333,stroke-width:2.5px
+  linkStyle 3 stroke:#aaa,stroke-width:1px
   class first_item ready
   class second_item blocked
   class rung_a ready
