@@ -21,9 +21,12 @@ features. Relative effort only — no dates (#noestimates).
 Each item has a name, the `<a id>` before its title, and the title is on one line. A
 `Waits for:` line names what it waits for. An `After:` line names the one item it should
 preferably come after, an order that can be skipped, and these make the themes trees.
+Every item has one or the other. An order may be invented, e.g. for a group of small bugs,
+since the order is what gets changed, and an item without either widens the graph.
 `Goes with:` names what it belongs with. The docs build draws the dependency graph on
-every push, `After` dashed and `Goes with` not at all, linked at the end of this file, and
-`utils/backlog_graph --check`, run with the tests, fails if a name is unknown.
+every push, `Waits for` thick and dark, `After` dashed and grey and `Goes with` not at all,
+linked at the end of this file, and `utils/backlog_graph --check`, run with the tests,
+fails if a name is unknown.
 
 ## 1. The foundational one
 
@@ -630,6 +633,7 @@ implementation, and are noted in `cu-prerequisites`, `out-of-date`, `time-budget
     the same rule as a header, asking ADR-0036's *changed*. A held CU let go needs no
     case of its own then, since its token is the disk's, not the preload's. The config
     part does not depend on how a change is found.
+    Waits for: adr-0035
     Goes with: out-of-date
     After: change-is-difference
 - (#115) <a id="every-parse-all-passes"></a>**Every parse of a CU parses it once for each pass** —
