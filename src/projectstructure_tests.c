@@ -41,10 +41,16 @@ static void given_is_directory(char *path, bool isDir) {
            will_return(isDir));
 }
 
+static void given_no_buffer_held_for(char *path) {
+    expect(getOpenedAndLoadedEditorBuffer, when(name, is_equal_to_string(path)),
+           will_return(NULL));
+}
+
 static void given_cu_with_content(char *path, int fileNum, char *content) {
     expect(isCompilationUnit, will_return(true));
     expect(addFileNameToFileTable, when(fileName, is_equal_to_string(path)),
            will_return(fileNum));
+    given_no_buffer_held_for(path);
     expect(openFile, when(fileName, is_equal_to_string(path)),
            will_return((FILE *)1));
     expect(startScanOf, when(fileNumber, is_equal_to(fileNum)));
@@ -57,6 +63,7 @@ static void given_cu_with_content(char *path, int fileNum, char *content) {
 static void given_cu_without_includes(char *path) {
     expect(isCompilationUnit, will_return(true));
     expect(addFileNameToFileTable, when(fileName, is_equal_to_string(path)));
+    given_no_buffer_held_for(path);
     expect(openFile, will_return((FILE *)1));
     expect(startScanOf);
     expect(readFile, will_return(0));
@@ -80,6 +87,7 @@ static void given_include_resolves(char *includeName, char *dir, char *resolvedP
 
 
 static void given_header_with_content(char *path, char *content) {
+    given_no_buffer_held_for(path);
     expect(openFile, when(fileName, is_equal_to_string(path)),
            will_return((FILE *)1));
     expect(startScanOf);
@@ -91,6 +99,7 @@ static void given_header_with_content(char *path, char *content) {
 
 static void given_header_without_includes(char *path) {
     (void)path; /* order of header scanning is not guaranteed */
+    expect(getOpenedAndLoadedEditorBuffer, will_return(NULL));
     expect(openFile, will_return((FILE *)1));
     expect(startScanOf);
     expect(readFile, will_return(0));
@@ -104,7 +113,6 @@ BeforeEach(ProjectStructure) {
     log_set_level(LOG_ERROR);
     always_expect(contentTokenOf, will_return(&diskToken));
     always_expect(editorContentTokenOf, will_return(&diskToken));
-    always_expect(getOpenedAndLoadedEditorBuffer, will_return(NULL));
 }
 AfterEach(ProjectStructure) {}
 
@@ -183,6 +191,7 @@ Ensure(ProjectStructure, lightweight_scan_handles_include_split_across_buffer_bo
     expect(isCompilationUnit, will_return(true));
     expect(addFileNameToFileTable, when(fileName, is_equal_to_string("/project/source.c")),
            will_return(1));
+    given_no_buffer_held_for("/project/source.c");
     expect(openFile, will_return((FILE *)1));
     expect(startScanOf, when(fileNumber, is_equal_to(1)));
     expect(readFile, will_set_contents_of_parameter(buffer, chunk1, strlen(chunk1)),
@@ -449,6 +458,7 @@ Ensure(ProjectStructure, lightweight_scan_resolves_include_via_includeDirs_when_
     expect(isCompilationUnit, will_return(true));
     expect(addFileNameToFileTable, when(fileName, is_equal_to_string("/project/source.c")),
            will_return(1));
+    given_no_buffer_held_for("/project/source.c");
     expect(openFile, when(fileName, is_equal_to_string("/project/source.c")),
            will_return((FILE *)1));
     expect(startScanOf, when(fileNumber, is_equal_to(1)));
@@ -664,6 +674,7 @@ Ensure(ProjectStructure, rescans_a_file_whose_content_is_not_the_content_scanned
     FileItem fileItem = {.name = "/project/a.c"};
     given_one_file_in_the_table(&fileItem);
     given_a_scanned_file_whose_content_has_changed();
+    given_no_buffer_held_for("/project/a.c");
     expect(openFile, when(fileName, is_equal_to_string("/project/a.c")),
            will_return((FILE *)1));
     expect(startScanOf, when(fileNumber, is_equal_to(1)));
@@ -697,6 +708,7 @@ Ensure(ProjectStructure, also_scans_a_header_a_rescanned_file_now_includes_for_t
     given_one_file_in_the_table(&fileItem);
     given_a_scanned_file_whose_content_has_changed();
     char *content = "#include \"h.h\"\n";
+    given_no_buffer_held_for("/project/a.c");
     expect(openFile, when(fileName, is_equal_to_string("/project/a.c")),
            will_return((FILE *)1));
     expect(startScanOf, when(fileNumber, is_equal_to(1)));
@@ -710,4 +722,34 @@ Ensure(ProjectStructure, also_scans_a_header_a_rescanned_file_now_includes_for_t
     given_header_with_content("/project/h.h", "/* no includes */\n");
 
     rescanChangedFiles(NULL);
+}
+
+Ensure(ProjectStructure, scans_a_held_file_from_its_buffer_not_from_disk) {
+    EditorBuffer *buffer = (EditorBuffer *)1;
+    char *text = "#include \"h.h\""; /* a buffer need not end in a newline */
+
+    given_project_files(newStringList("/project/a.c", NULL));
+    expect(isCompilationUnit, will_return(true));
+    expect(addFileNameToFileTable, when(fileName, is_equal_to_string("/project/a.c")),
+           will_return(1));
+    expect(getOpenedAndLoadedEditorBuffer, when(name, is_equal_to_string("/project/a.c")),
+           will_return(buffer));
+    expect(startScanOf, when(fileNumber, is_equal_to(1)));
+    expect(getTextInEditorBuffer, when(buffer, is_equal_to(buffer)), will_return(text));
+    expect(getSizeOfEditorBuffer, when(buffer, is_equal_to(buffer)), will_return(strlen(text)));
+    never_expect(openFile);
+
+    /* h.h is already known, so the scan records the include and goes no further */
+    expect(directoryName_static, will_return("/project"));
+    expect(normalizeFileName_static, when(name, is_equal_to_string("h.h")),
+           will_return("/project/h.h"));
+    expect(fileExists, when(fullPath, is_equal_to_string("/project/h.h")), will_return(true));
+    expect(existsInFileTable, when(fileName, is_equal_to_string("/project/h.h")),
+           will_return(true));
+    expect(addFileNameToFileTable, when(fileName, is_equal_to_string("/project/h.h")),
+           will_return(2));
+    expect(addScannedInclude, when(includerFileNumber, is_equal_to(1)),
+           when(includedFileNumber, is_equal_to(2)));
+
+    scanProjectForFilesAndIncludes("/project", NULL, NULL);
 }
