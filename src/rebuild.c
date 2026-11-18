@@ -92,7 +92,7 @@ void stripRequestCU(BuildList *list, int requestFileNumber) {
     if (list->stripRequest) {
         log_debug("file has changed content, removing old references for file %d",
                   requestFileNumber);
-        removeReferenceableItemsForFile(requestFileNumber);
+        removeReferencesForFile(requestFileNumber);
     }
 }
 
@@ -181,7 +181,7 @@ static void removeReferencesOfIncludersOfChanged(Prerequisites *prerequisites, i
         for (int c = 0; c < closureCount && c < MAX_FILES; c++) {
             if (!fileTimestampIsZero(changedAt[closure[c]])) {
                 log_debug("'%s' includes a changed header, removing its references", items[h]->name);
-                removeReferenceableItemsForFile(headers[h]);
+                removeReferencesForFile(headers[h]);
                 if (fileTimestampIsLessThan(items[h]->noticeTime, changedAt[closure[c]]))
                     items[h]->noticeTime = changedAt[closure[c]];
                 break;
@@ -193,13 +193,13 @@ static void removeReferencesOfIncludersOfChanged(Prerequisites *prerequisites, i
 
 /* Its include references lead to its siblings until it is built */
 static void removeReferencesOfChangedCu(int fileNumber, FileItem *fileItem) {
-    removeReferenceableItemsForFileExceptIncludes(fileNumber);
+    removeReferencesForFileExceptIncludes(fileNumber);
     fileItem->knowledgeTime = NULL_TIMESTAMP;
 }
 
 /* The CUs that reach it are out of date by the time the change was noticed */
 static void removeReferencesOfChangedHeader(int fileNumber, FileItem *fileItem) {
-    removeReferenceableItemsForFile(fileNumber);
+    removeReferencesForFile(fileNumber);
     fileItem->noticeTime = changeTimeNow();
 }
 
@@ -368,7 +368,7 @@ static void buildKnowledgeOfCU(int fileNumber, ArgumentsVector baseArgs) {
         markFileAsDeleted(fileNumber);
         return;
     }
-    removeReferenceableItemsForFile(fileNumber);
+    removeReferencesForFile(fileNumber);
     /* Taken before the content is read, so an edit during the parse makes the
      * knowledge out of date. */
     FileTimestamp knowledgeTime = fileTimestampNow();

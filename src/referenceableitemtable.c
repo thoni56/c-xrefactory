@@ -84,7 +84,7 @@ static void removeReferencesInFile(ReferenceableItem *item, int fileNumber) {
     }
 }
 
-void removeReferenceableItemsForFile(int fileNumber) {
+void removeReferencesForFile(int fileNumber) {
     log_trace("removing all references for file number %d", fileNumber);
 
     for (int i = 0; i < referenceableItemTable.size; i++)
@@ -92,7 +92,7 @@ void removeReferenceableItemsForFile(int fileNumber) {
             removeReferencesInFile(item, fileNumber);
 }
 
-void removeReferenceableItemsForFileExceptIncludes(int fileNumber) {
+void removeReferencesForFileExceptIncludes(int fileNumber) {
     log_trace("removing all references except includes for file number %d", fileNumber);
 
     for (int i = 0; i < referenceableItemTable.size; i++)

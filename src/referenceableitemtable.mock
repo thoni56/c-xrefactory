@@ -53,10 +53,10 @@ void setReferenceableItem(int index, ReferenceableItem *item) {
     mock(index, item);
 }
 
-void removeReferenceableItemsForFile(int fileNumber) {
+void removeReferencesForFile(int fileNumber) {
     mock(fileNumber);
 }
 
-void removeReferenceableItemsForFileExceptIncludes(int fileNumber) {
+void removeReferencesForFileExceptIncludes(int fileNumber) {
     mock(fileNumber);
 }

@@ -53,7 +53,7 @@ static BuildList *buildListOf(int fileNumber) {
 static void expectAFileOnDisk(FileItem *fileItem) {
     always_expect(getFileItemWithFileNumber, when(fileNumber, is_equal_to(42)), will_return(fileItem));
     expect(editorFileExists, when(path, is_equal_to_string(fileItem->name)), will_return(true));
-    expect(removeReferenceableItemsForFile, when(fileNumber, is_equal_to(42)));
+    expect(removeReferencesForFile, when(fileNumber, is_equal_to(42)));
 }
 
 /* sideEffect, if not NULL, runs when the parse starts */
@@ -71,8 +71,8 @@ Ensure(Rebuild, builds_every_cu_on_the_list_in_its_order) {
     FileItem fileItem = {.name = "test.c"};
     always_expect(getFileItemWithFileNumber, will_return(&fileItem));
     always_expect(editorFileExists, will_return(true));
-    expect(removeReferenceableItemsForFile, when(fileNumber, is_equal_to(1)));
-    expect(removeReferenceableItemsForFile, when(fileNumber, is_equal_to(2)));
+    expect(removeReferencesForFile, when(fileNumber, is_equal_to(1)));
+    expect(removeReferencesForFile, when(fileNumber, is_equal_to(2)));
     always_expect(editorFileModificationTime, will_return(&contentTime));
     expectAParseWithOptionalSideEffect("test.c", NULL);
     expectAParseWithOptionalSideEffect("test.c", NULL);
@@ -101,7 +101,7 @@ Ensure(Rebuild, removes_the_old_references_of_a_cu_before_it_is_parsed) {
     referencesRemoved = false;
     always_expect(getFileItemWithFileNumber, will_return(&fileItem));
     expect(editorFileExists, will_return(true));
-    expect(removeReferenceableItemsForFile, when(fileNumber, is_equal_to(42)),
+    expect(removeReferencesForFile, when(fileNumber, is_equal_to(42)),
            with_side_effect(recordReferencesRemoved, NULL));
     expectAParseWithOptionalSideEffect("test.c", recordWhetherReferencesWereRemoved);
     always_expect(numberOfPasses, will_return(1));
@@ -222,7 +222,7 @@ Ensure(Rebuild, removes_the_references_of_a_header_whose_content_changed) {
     FileItem fileItem = {.name = "header.h", .seenToken = tokenSeen()};
     ContentToken now = tokenOfAnEdit();
     expectOneHeaderInTheFileTable(&fileItem, &now);
-    expect(removeReferenceableItemsForFile, when(fileNumber, is_equal_to(42)));
+    expect(removeReferencesForFile, when(fileNumber, is_equal_to(42)));
     expect(changeTimeNow, will_return(&noticedTime));
 
     removeReferencesOfChangedFiles(NULL);
@@ -247,7 +247,7 @@ Ensure(Rebuild, removes_the_references_of_a_header_restored_with_an_older_time) 
     FileItem fileItem = {.name = "header.h", .seenToken = tokenOfAnEdit()};
     ContentToken now = tokenSeen();
     expectOneHeaderInTheFileTable(&fileItem, &now);
-    expect(removeReferenceableItemsForFile, when(fileNumber, is_equal_to(42)));
+    expect(removeReferencesForFile, when(fileNumber, is_equal_to(42)));
     expect(changeTimeNow, will_return(&noticedTime));
 
     removeReferencesOfChangedFiles(NULL);
@@ -257,7 +257,7 @@ Ensure(Rebuild, removes_the_references_of_a_header_that_vanished) {
     FileItem fileItem = {.name = "header.h", .seenToken = tokenSeen()};
     ContentToken now = missingContentToken();
     expectOneHeaderInTheFileTable(&fileItem, &now);
-    expect(removeReferenceableItemsForFile, when(fileNumber, is_equal_to(42)));
+    expect(removeReferencesForFile, when(fileNumber, is_equal_to(42)));
     expect(changeTimeNow, will_return(&noticedTime));
 
     removeReferencesOfChangedFiles(NULL);
@@ -295,7 +295,7 @@ Ensure(Rebuild, removes_the_references_and_knowledge_of_a_cu_whose_content_chang
                          .knowledgeTime = {.tv_sec = 1500, .tv_nsec = 0}};
     ContentToken now = tokenOfAnEdit();
     expectOneCuInTheFileTable(&fileItem, &now);
-    expect(removeReferenceableItemsForFileExceptIncludes, when(fileNumber, is_equal_to(42)));
+    expect(removeReferencesForFileExceptIncludes, when(fileNumber, is_equal_to(42)));
     never_expect(removeReferenceableItemsForFile);
 
     removeReferencesOfChangedFiles(NULL);
@@ -328,8 +328,8 @@ Ensure(Rebuild, removes_the_references_of_a_header_that_includes_a_changed_one) 
     expect(collectIncludeClosureOf, when(fileNumber, is_equal_to(43)),
            will_set_contents_of_parameter(fileNumbers, closureOfMid, sizeof(closureOfMid)),
            will_return(1));
-    expect(removeReferenceableItemsForFile, when(fileNumber, is_equal_to(42)));
-    expect(removeReferenceableItemsForFile, when(fileNumber, is_equal_to(43)));
+    expect(removeReferencesForFile, when(fileNumber, is_equal_to(42)));
+    expect(removeReferencesForFile, when(fileNumber, is_equal_to(43)));
 
     removeReferencesOfChangedFiles(NULL);
 
@@ -344,7 +344,7 @@ Ensure(Rebuild, keeps_the_references_of_a_header_that_does_not_include_a_changed
     expectTwoHeadersInTheFileTable(&leaf, &leafNow, &other, &otherNow);
     expect(changeTimeNow, will_return(&noticedTime));
     expect(collectIncludeClosureOf, when(fileNumber, is_equal_to(43)), will_return(0));
-    expect(removeReferenceableItemsForFile, when(fileNumber, is_equal_to(42)));
+    expect(removeReferencesForFile, when(fileNumber, is_equal_to(42)));
 
     removeReferencesOfChangedFiles(NULL);
 

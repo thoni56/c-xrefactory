@@ -72,7 +72,7 @@ FileItem *getFileItemWithFileNumber(int fileNumber) {
 void markFileAsDeleted(int fileNumber) {
     FileItem *item = getFileItemWithFileNumber(fileNumber);
     item->isDeleted = true;
-    removeReferenceableItemsForFile(fileNumber);
+    removeReferencesForFile(fileNumber);
 }
 
 void addScannedInclude(int includerFileNumber, int includedFileNumber) {

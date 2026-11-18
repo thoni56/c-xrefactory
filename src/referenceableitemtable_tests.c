@@ -53,7 +53,7 @@ Ensure(ReferenceableItemTable, removes_references_from_chained_items) {
     ReferenceableItem sym2 = {.linkName = "beta", .references = &ref2};
     addToReferenceableItemTable(&sym2);
 
-    removeReferenceableItemsForFile(SOME_FILE);
+    removeReferencesForFile(SOME_FILE);
 
     assert_that(sym1.references, is_null);
     assert_that(sym2.references, is_null);
@@ -73,7 +73,7 @@ Ensure(ReferenceableItemTable, can_remove_the_references_of_a_file_except_its_in
                                  .references = &includeReference};
     addToReferenceableItemTable(&include);
 
-    removeReferenceableItemsForFileExceptIncludes(SOME_FILE);
+    removeReferencesForFileExceptIncludes(SOME_FILE);
 
     assert_that(symbol.references, is_null);
     assert_that(include.references, is_equal_to(&includeReference));
