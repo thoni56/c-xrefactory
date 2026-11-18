@@ -1,3 +1,7 @@
+# Version 1.11.1
+
+- Fewer files are analysed again after a round of analysing, and starting the server is as fast as before 1.11.0
+
 # Version 1.11.0
 
 - Files changed on disk, e.g. after a `git switch`, are noticed for `.c` files too, also when the request does not analyse them
