@@ -646,6 +646,7 @@ watch-for-systemtests-silent:
 .PHONY: system-tests-proper
 system-tests-proper:
 	$(MAKE) -e test
+	@echo; date "+Tests finished %F %T"
 	$(MAKE) -e merge-coverage-from-tests
 	@$(MAKE) -e coverage-report
 
