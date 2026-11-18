@@ -1,0 +1,8 @@
+CXREF -server
+-getproject CURDIR/source.c
+<sync>
+-search-goto=1
+<sync>
+-search-select=1
+<sync>
+<exit>

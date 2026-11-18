@@ -45,12 +45,19 @@ static bool isASearchResultNumber(int refn) {
     return false;
 }
 
+/* A restarted server has not searched, but the client can still show results */
+static bool thereAreSearchResults(void) {
+    if (searchingStack.top != NULL)
+        return true;
+    errorMessage(ERR_ST, "There are no search results");
+    return false;
+}
+
 void selectSearchItem(int refn) {
     char buffer[MAX_FUNCTION_NAME_LENGTH];
 
-    if (!isASearchResultNumber(refn))
+    if (!thereAreSearchResults() || !isASearchResultNumber(refn))
         return;
-    assert(searchingStack.top);
     SessionStackEntry *entry = searchingStack.top;
     Match *match = getMatchOnNthLine(entry->matches, refn);
     if (match == NULL) {
@@ -67,9 +74,8 @@ void selectSearchItem(int refn) {
 void gotoSearchItem(int refn) {
     Match *match;
 
-    if (!isASearchResultNumber(refn))
+    if (!thereAreSearchResults() || !isASearchResultNumber(refn))
         return;
-    assert(searchingStack.top);
     match = getMatchOnNthLine(searchingStack.top->matches, refn);
     if (match != NULL) {
         if (positionsAreNotEqual(match->reference.position, NO_POSITION)) {
