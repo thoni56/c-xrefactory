@@ -2,8 +2,6 @@
 
 #include <stdlib.h>
 
-#include "constants.h"
-#include "editor.h"
 #include "filetable.h"
 #include "includegraph.h"
 #include "log.h"
