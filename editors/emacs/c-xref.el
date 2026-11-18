@@ -102,8 +102,9 @@ has to do it after this returns rather than before.
 "
   (if c-xref-server-process
       (progn
-        (process-send-string (car c-xref-server-process) "-exit\nend-of-options\n\n")
-        (accept-process-output (car c-xref-server-process) 1)
+        (when (process-live-p (car c-xref-server-process))
+          (process-send-string (car c-xref-server-process) "-exit\nend-of-options\n\n")
+          (accept-process-output (car c-xref-server-process) 1))
         (setq c-xref-server-process nil)
         t)))
 

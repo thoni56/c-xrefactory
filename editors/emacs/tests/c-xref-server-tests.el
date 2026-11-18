@@ -46,6 +46,13 @@
   (should (string-match-p "server had stopped (exit status 3), starting a new one"
                           (c-xref-test-restart-message (c-xref-test-exited-process 3)))))
 
+;; The server can be gone before it is asked to stop, e.g. killed from a
+;; shell. Stopping it then only forgets it, so an upgrade goes on to build.
+(ert-deftest c-xref-stopping-a-killed-server-forgets-it ()
+  (let ((c-xref-server-process (cons (c-xref-test-killed-process 9) (cons "" nil))))
+    (c-xref-stop-server)
+    (should (null c-xref-server-process))))
+
 ;; The user can give the server options of their own, e.g. a log
 (ert-deftest c-xref-server-is-started-with-the-startup-options ()
   (let ((c-xref-server-startup-options '("-info" "-log=c-xref.log"))
