@@ -136,8 +136,8 @@ Ensure(Freshness, compilation_unit_with_a_header_gone_since_before_its_knowledge
     assert_that(knowledgeIsOutOfDate(prerequisitesFromGraph(NULL), A_C), is_false);
 }
 
-/* A change the server makes itself is not stamped by the coarse clock, so
- * knowledge built right after it must still be current */
+
+/* Knowledge built right after it must still be current */
 Ensure(Freshness, compilation_unit_built_right_after_a_change_the_server_made_is_not_out_of_date) {
     FileItem headerItem = {.name = "a.h", .noticeTime = changeTimeNow()};
     expectACUWithKnowledgeAt(fileTimestampNow());

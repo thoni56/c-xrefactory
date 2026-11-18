@@ -23,23 +23,15 @@ void freePrerequisites(Prerequisites *prerequisites) {
     free(prerequisites);
 }
 
-/* The filesystem stamps modification times from a coarse clock that lags the
- * system clock, so a write just after the knowledge time can get a time up to
- * a tick before it. Generous; a gap too wide only costs an extra parse
- * (ADR-0032) */
-#define COARSE_CLOCK_GAP_IN_NANOSECONDS 10000000L
-
 #define MAX_INCLUDE_CLOSURE 1000
 
-/* Stamped as the coarse clock would, a gap back, so that knowledge built after
- * it is current and knowledge built before it is not */
+/* The time a change is noticed, on the server's clock */
 FileTimestamp changeTimeNow(void) {
-    return fileTimestampMinus(fileTimestampNow(), COARSE_CLOCK_GAP_IN_NANOSECONDS);
+    return fileTimestampNow();
 }
 
 bool changedAfter(FileTimestamp changeTime, FileTimestamp readTime) {
-    return fileTimestampIsLessThan(fileTimestampMinus(readTime, COARSE_CLOCK_GAP_IN_NANOSECONDS),
-                                   changeTime);
+    return fileTimestampIsLessThan(readTime, changeTime);
 }
 
 int collectIncludeClosureOf(Prerequisites *prerequisites, int fileNumber, int fileNumbers[],
