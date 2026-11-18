@@ -735,11 +735,14 @@ void moveFunction(EditorMarker *point) {
         separateWithBlankLines(lineBeforeTarget, target);
         closeTheGap(blockEnd);
     }
-    if (lineBeforeTarget != NULL)
-        freeEditorMarker(lineBeforeTarget);
 
     // and generate output
     applyWholeRefactoringFromUndo();
     ppcGotoMarker(point);
     ppcValueRecord(PPC_INDENT, lines, "");
+
+    freeEditorMarker(lineBeforeTarget);
+    freeEditorMarker(blockStart);
+    freeEditorMarker(definitionStart);
+    freeEditorMarker(blockEnd);
 }
