@@ -476,12 +476,9 @@ Roadmap → Optimization has the baseline: a cold-start PUSH on ffmpeg, measured
 - (#26) <a id="move-function-next"></a>**Move Function next steps** — smarter header placement and a preview.
     11-planned-features → Move Function → Next steps.
     After: move-shared-static
-- (#98) <a id="move-between-blank-lines"></a>**Move Function puts the moved function between blank lines** —
-    today the target needs one added by hand first.
-    After: move-function-next
 - (#99) <a id="move-removes-forward-declaration"></a>**Move Function removes the forward declaration in the source** —
     a `static` one left behind breaks the build. 11-planned-features → Move Function → Next steps.
-    After: move-between-blank-lines
+    After: move-function-next
 - (#100) <a id="move-includes"></a>**Move Function adds the includes the moved function needs to the target** —
     moving `waitForUserConfirmation()` into `src/ppc.c` needed `log.h` added by hand (2026-10-27).
     11-planned-features → Move Function → Include management.
