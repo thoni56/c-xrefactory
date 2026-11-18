@@ -64,6 +64,7 @@ extern void mapOverFileTableWithPointer(void (*fun)(FileItem *, void *), void *p
 extern void markFileAsDeleted(int fileNumber);
 extern void addScannedInclude(int includerFileNumber, int includedFileNumber);
 extern void startScanOf(int fileNumber, ContentToken scanToken);
+extern void recordFirstSeenToken(int fileNumber, ContentToken token);
 
 extern void fileTableMemoryStatistics(void);
 

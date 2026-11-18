@@ -48,6 +48,8 @@ void processIncludeDirective(Position includePosition, bool include_next);
 
 
 Describe(Yylex);
+static ContentToken anyContentToken = {.hash = 7};
+
 BeforeEach(Yylex) {
     log_set_level(LOG_ERROR);
     initOuterCodeBlock();
@@ -61,6 +63,7 @@ BeforeEach(Yylex) {
 
     always_expect(initCharacterBuffer);
     always_expect(editorFileExists, will_return(false));
+    always_expect(editorContentTokenOf, will_return(&anyContentToken));
 }
 AfterEach(Yylex) {}
 

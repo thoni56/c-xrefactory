@@ -9,6 +9,7 @@
 #include "constants.h"
 #include "cppexp_parser.h"
 #include "cxref.h"
+#include "editor.h"
 #include "extract.h"
 #include "filedescriptor.h"
 #include "fileio.h"
@@ -222,6 +223,8 @@ static void setCurrentFileInfoFor(char *fileName) {
         number = addFileNameToFileTable(fileName);
         FileItem *fileItem = getFileItemWithFileNumber(number);
         name = fileItem->name;
+        /* What the parse puts in the table is from the content it reads now */
+        recordFirstSeenToken(number, editorContentTokenOf(name));
     }
     currentFile.characterBuffer.fileNumber = number;
     currentFile.fileName = name;

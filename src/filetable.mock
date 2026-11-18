@@ -42,6 +42,10 @@ void startScanOf(int fileNumber, ContentToken scanToken) {
     mock(fileNumber);
 }
 
+void recordFirstSeenToken(int fileNumber, ContentToken token) {
+    mock(fileNumber);
+}
+
 int getNextExistingFileNumber(int fileNumber) {
     return (int)mock(fileNumber);
 }

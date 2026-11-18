@@ -10,6 +10,7 @@
 
 #include "commons.mock"
 #include "editor.mock"
+#include "fileio.mock"
 #include "globals.mock"
 
 

@@ -89,6 +89,13 @@ void startScanOf(int fileNumber, ContentToken scanToken) {
     fileItem->scanToken = scanToken;
 }
 
+/* A later read leaves the seen token alone, so the removal still sees a change */
+void recordFirstSeenToken(int fileNumber, ContentToken token) {
+    FileItem *fileItem = getFileItemWithFileNumber(fileNumber);
+    if (contentTokenIsMissing(fileItem->seenToken))
+        fileItem->seenToken = token;
+}
+
 int getNextExistingFileNumber(int index) {
     for (int i=index; i < fileTable.size; i++)
         if (fileTable.tab[i] != NULL)

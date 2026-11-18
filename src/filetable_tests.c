@@ -7,6 +7,7 @@
 #include "commons.mock"
 #include "cxref.mock"
 #include "editor.mock"
+#include "fileio.mock"
 #include "globals.mock"
 #include "misc.mock"
 #include "stackmemory.h"
@@ -95,6 +96,30 @@ Ensure(FileTable, a_scan_of_a_file_starts_over_and_is_stamped) {
     assert_that(includer.scannedIncludeCount, is_equal_to(1));
     assert_that(includer.scannedIncludes[0], is_equal_to(9));
     assert_that(includer.scanToken.hash, is_equal_to(42));
+}
+
+/* The parse's references belong to the content it read, so a file it reads
+ * first is seen as it read it (ADR-0036) */
+Ensure(FileTable, a_file_read_before_it_was_seen_is_seen_as_read) {
+    FileItem item = {"header.h"};
+    int fileNumber = addFileItemToFileTable(&item);
+    ContentToken token = {.hash = 42};
+
+    recordFirstSeenToken(fileNumber, token);
+
+    assert_that(item.seenToken.hash, is_equal_to(42));
+}
+
+/* A later read must not hide a change from the removal, since references
+ * from the content seen before can still be in the table */
+Ensure(FileTable, a_file_already_seen_keeps_its_seen_token) {
+    FileItem item = {"header.h", .seenToken = {.hash = 7}};
+    int fileNumber = addFileItemToFileTable(&item);
+    ContentToken token = {.hash = 42};
+
+    recordFirstSeenToken(fileNumber, token);
+
+    assert_that(item.seenToken.hash, is_equal_to(7));
 }
 
 Ensure(FileTable, can_return_next_existing_file_index) {
