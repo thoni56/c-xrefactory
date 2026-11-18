@@ -1,0 +1,6 @@
+CXREF -server
+-getproject a.c
+<sync>
+-search=feature_only a.c
+<sync>
+<exit>

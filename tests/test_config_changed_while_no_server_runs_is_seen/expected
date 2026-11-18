@@ -1,0 +1,31 @@
+CXREF -server -o server-buffer
+-getproject a.c
+end-of-options
+
+<sync>
+<set-info len=<n>>CURDIR</set-info>
+-search=feature_only a.c
+end-of-options
+
+<sync>
+<symbol-list>
+ <str len=<n>>feature_only :h.h :CURDIR/h.h</str>
+</symbol-list>
+-exit
+end-of-options
+
+CXREF -server -o server-buffer
+-getproject a.c
+end-of-options
+
+<sync>
+<set-info len=<n>>CURDIR</set-info>
+-search=feature_only a.c
+end-of-options
+
+<sync>
+<symbol-list>
+</symbol-list>
+-exit
+end-of-options
+

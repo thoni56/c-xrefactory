@@ -1,0 +1,12 @@
+Bug: a config changed while no server runs is not seen by the next one
+
+A config change is found by the config's modification time, recorded when it is read
+(isProjectConfigChanged(), src/startup.c), so it is seen only within a session. In
+the next session the snapshot's knowledge, built under the old config, looks current.
+The removal does see .c-xrefrc changed by its content token, since it is in the file
+table and its seen token is in the snapshot: the trace says "'.c-xrefrc' changed,
+removing its references". But it is treated like a header without includers, so
+nothing follows. The fix: a config whose content token differs from its seen token is
+a config change (remove every reference, take every CU's knowledge, and within a
+session also reload), so the up-to-date check is the same as for every other file.
+Backlog #36 (WSL, session d25255b8, 2026-11-18).
