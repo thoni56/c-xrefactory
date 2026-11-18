@@ -1,0 +1,11 @@
+CXREF -server
+-getproject CURDIR/a.c
+<sync>
+-browse-push -cursor=37 CURDIR/a.c
+<sync>
+!cp CURDIR/p.h.v2 CURDIR/p.h
+-browse-push -cursor=4 CURDIR/b.c
+<sync>
+-filter=0 -cursor=0 nil
+<sync>
+<exit>
