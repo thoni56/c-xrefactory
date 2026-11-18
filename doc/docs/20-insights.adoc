@@ -72,7 +72,7 @@ It is also an edge in the include graph, from which freshness and the siblings a
 When a file changes, the two roles pull apart.
 The knowledge should be removed (ADR-0035), but the edges are needed to find the goal.
 Removing a CU's references would also remove its edges, so a request in a header would no longer find that CU.
-That is why a changed CU still loses its references only when it is built (`remove-on-change`).
+So a changed CU loses its references but keeps its include references, which are the only edges for `<...>` includes until the scan records them (`scan-angle-includes`).
 
 Make only asks the forward question: is this target out of date?
 For that the edges from the previous build are enough, since a new edge only appears through a change in the target itself.

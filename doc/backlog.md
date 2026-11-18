@@ -608,22 +608,17 @@ implementation, and are noted in `cu-prerequisites`, `out-of-date`, `time-budget
     Done: the `contenttoken` module, the seen token in the snapshot (1.16.0), the
     removal of a header by tokens, and the build reading only a header's noticed change
     time, so a deleted header costs its includers one build, and the scan by tokens,
-    reading a held file's buffer as the parse does. The include graph gets one writer
-    with `scan-angle-includes`. Left: a CU's own change by tokens,
-    which takes the 10 ms gap with it, `forgetKnowledgeForHeldContent()`, and a header
-    not yet seen counting as changed.
+    reading a held file's buffer as the parse does, and a CU's own change by tokens, which
+    took the 10 ms gap and `forgetKnowledgeForHeldContent()` with it. The include graph gets
+    one writer with `scan-angle-includes`. Left: a header not yet seen counting as changed.
     Waits for: adr-0036
     Goes with: remove-on-change, files-appear-vanish
 - (#106) <a id="remove-on-change"></a>**A file's references are removed when its content changes** —
     ADR-0035. On a newer disk time, new content in a held buffer, or a held buffer let go,
-    and that moment is the file's change time. Done for headers, and the mark is gone.
-    Left: a config change removes every file's references, where
-    `markAllCompilationUnitsStale()` is called today. A changed CU still loses its
-    references only when it is built. The include graph a request takes no longer
-    depends on them, since the scan's edges are facts on each file, so a CU can follow
-    the same rule as a header, asking ADR-0036's *changed*. A held CU let go needs no
-    case of its own then, since its token is the disk's, not the preload's. The config
-    part does not depend on how a change is found.
+    and that moment is the file's change time. Done for headers and CUs, and the mark is
+    gone. A CU keeps its include references, the only edges for `<...>` includes until
+    `scan-angle-includes`. Left: a config change removes every file's references, where
+    `markAllCompilationUnitsStale()` is called today.
     Waits for: adr-0035
     Goes with: out-of-date
     After: change-is-difference
