@@ -191,6 +191,18 @@ static void removeReferencesOfIncludersOfChanged(Prerequisites *prerequisites, i
     free(closure);
 }
 
+/* Its include references lead to its siblings until it is built */
+static void removeReferencesOfChangedCu(int fileNumber, FileItem *fileItem) {
+    removeReferenceableItemsForFileExceptIncludes(fileNumber);
+    fileItem->knowledgeTime = NULL_TIMESTAMP;
+}
+
+/* The CUs that reach it are out of date by the time the change was noticed */
+static void removeReferencesOfChangedHeader(int fileNumber, FileItem *fileItem) {
+    removeReferenceableItemsForFile(fileNumber);
+    fileItem->noticeTime = changeTimeNow();
+}
+
 /* A file has changed when its content token is not the one last seen, and the
  * change of a header is stamped when it is noticed (ADR-0036). A changed CU
  * loses its knowledge too, but keeps its include references, which lead to its
@@ -213,21 +225,21 @@ void removeReferencesOfChangedFiles(Prerequisites *prerequisites) {
         ContentToken contentToken = editorContentTokenOf(fileItem->name);
         if (contentTokenIsMissing(fileItem->seenToken)) {
             fileItem->seenToken = contentToken;
-        } else if (isCu && !contentTokensAreSame(fileItem->seenToken, contentToken)) {
-            log_debug("'%s' changed, removing its references", fileItem->name);
-            removeReferenceableItemsForFileExceptIncludes(i);
-            fileItem->needsBrowsingStackRefresh = true;
-            fileItem->seenToken = contentToken;
-            fileItem->knowledgeTime = NULL_TIMESTAMP;
-        } else if (!contentTokensAreSame(fileItem->seenToken, contentToken)) {
-            log_debug("'%s' changed, removing its references", fileItem->name);
-            removeReferenceableItemsForFile(i);
-            fileItem->needsBrowsingStackRefresh = true;
-            fileItem->seenToken = contentToken;
-            fileItem->noticeTime = changeTimeNow();
+            continue;
+        }
+        if (contentTokensAreSame(fileItem->seenToken, contentToken))
+            continue;
+
+        log_debug("'%s' changed, removing its references", fileItem->name);
+        if (isCu) {
+            removeReferencesOfChangedCu(i, fileItem);
+        } else {
+            removeReferencesOfChangedHeader(i, fileItem);
             changedAt[i] = fileItem->noticeTime;
             anyChanged = true;
         }
+        fileItem->needsBrowsingStackRefresh = true;
+        fileItem->seenToken = contentToken;
     }
 
     if (anyChanged)
