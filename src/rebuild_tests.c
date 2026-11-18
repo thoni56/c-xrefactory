@@ -265,18 +265,30 @@ Ensure(Rebuild, removes_the_references_of_a_header_that_vanished) {
     assert_that(contentTokenIsMissing(fileItem.seenToken));
 }
 
-/* A header the removal has not seen, or saw missing, has no references of its
- * own to remove. What a parse put there before the removal looked is kept,
- * and its includers are out of date by its time on disk */
-Ensure(Rebuild, records_the_token_of_a_header_seen_for_the_first_time_and_keeps_its_references) {
+/* A file not seen before has changed (ADR-0036), since a parse may have put
+ * references there before the removal looked, e.g. through a <...> include,
+ * which the scan does not follow */
+Ensure(Rebuild, removes_the_references_of_a_header_seen_for_the_first_time) {
     FileItem fileItem = {.name = "header.h"};
     ContentToken now = tokenSeen();
     expectOneHeaderInTheFileTable(&fileItem, &now);
-    never_expect(removeReferenceableItemsForFile);
+    expect(removeReferencesForFile, when(fileNumber, is_equal_to(42)));
+    expect(changeTimeNow, will_return(&noticedTime));
 
     removeReferencesOfChangedFiles(NULL);
 
     assert_that(contentTokensAreSame(fileItem.seenToken, now));
+    assert_that(fileTimestampsEqual(fileItem.noticeTime, noticedTime));
+}
+
+Ensure(Rebuild, keeps_a_header_that_is_still_missing) {
+    FileItem fileItem = {.name = "header.h", .seenToken = missingContentToken()};
+    ContentToken now = missingContentToken();
+    expectOneHeaderInTheFileTable(&fileItem, &now);
+    never_expect(removeReferencesForFile);
+
+    removeReferencesOfChangedFiles(NULL);
+
     assert_that(fileTimestampIsZero(fileItem.noticeTime));
 }
 

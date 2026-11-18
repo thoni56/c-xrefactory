@@ -206,8 +206,9 @@ static void removeReferencesOfChangedHeader(int fileNumber, FileItem *fileItem) 
 /* A file has changed when its content token is not the one last seen, and the
  * change of a header is stamped when it is noticed (ADR-0036). A changed CU
  * loses its knowledge too, but keeps its include references, which lead to its
- * siblings until it is built. A file not seen before, or seen missing, has no
- * references of its own to remove, and keeps what a parse put there. */
+ * siblings until it is built. A file not seen before has changed, since a parse
+ * may have put references there before the removal looked, and one still missing
+ * has not. */
 void removeReferencesOfChangedFiles(Prerequisites *prerequisites) {
     int *headers = malloc(MAX_FILES * sizeof(int));
     FileItem **items = malloc(MAX_FILES * sizeof(FileItem *));
@@ -223,10 +224,6 @@ void removeReferencesOfChangedFiles(Prerequisites *prerequisites) {
             items[headerCount++] = fileItem;
         }
         ContentToken contentToken = editorContentTokenOf(fileItem->name);
-        if (contentTokenIsMissing(fileItem->seenToken)) {
-            fileItem->seenToken = contentToken;
-            continue;
-        }
         if (contentTokensAreSame(fileItem->seenToken, contentToken))
             continue;
 
