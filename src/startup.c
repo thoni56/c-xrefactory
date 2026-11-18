@@ -514,13 +514,20 @@ static void loadProjectSettings(ArgumentsVector baseArgs, ArgumentsVector reques
     options.project = currentRequestProject;
 }
 
-/* Pure predicate: has the .c-xrefrc file been modified since we last read it?
- * No side effects - only stats the file and compares mtime. */
+/* The config has changed as any file has, its content token is not the one last
+ * seen (ADR-0036), also across a restart, since the token is in the snapshot. It is
+ * asked here and not left to the removal, since the config is a special case: its
+ * change is a change of every file, and it must be read again before the scan. The
+ * removal then sees it too, and takes the new token. */
 bool isProjectConfigChanged(void) {
     if (previousProjectConfigurationFile[0] == '\0')
         return false;
-    FileTimestamp currentMtime = fileModificationTime(previousProjectConfigurationFile);
-    return !fileTimestampsEqual(currentMtime, previousProjectConfigurationFileModificationTime);
+    int fileNumber = getFileNumberFromFileName(previousProjectConfigurationFile);
+    if (fileNumber == -1)
+        return false;
+    ContentToken seenToken = getFileItemWithFileNumber(fileNumber)->seenToken;
+    return !contentTokenIsMissing(seenToken)
+        && !contentTokensAreSame(seenToken, editorContentTokenOf(previousProjectConfigurationFile));
 }
 
 /* Re-read project config after detecting a change. Updates options.includeDirs
