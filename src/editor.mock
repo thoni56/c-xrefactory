@@ -52,10 +52,6 @@ void editorDumpUndoList(EditorUndo *uu) {
   mock(uu);
 }
 
-void closeEditorBufferIfCloseable(char *name) {
-  mock(name);
-}
-
 void closeAllEditorBuffersIfClosable(void) {
   mock();
 }

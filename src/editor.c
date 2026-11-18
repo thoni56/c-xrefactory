@@ -470,13 +470,6 @@ static bool bufferIsCloseable(EditorBuffer *buffer) {
         && ! buffer->modified;
 }
 
-void closeEditorBufferIfCloseable(char *name) {
-    EditorBuffer *buffer = findOrCreateAndLoadEditorBufferForFile(name);
-    if (bufferIsCloseable(buffer))
-        deregisterEditorBuffer(name);
-    freeEditorBuffer(buffer);
-}
-
 void closeAllEditorBuffersIfClosable(void) {
     EditorBufferList *allEditorBuffers = computeListOfAllEditorBuffers();
     for (EditorBufferList *l = allEditorBuffers; l!=NULL; l=l->next) {
