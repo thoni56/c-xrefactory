@@ -983,9 +983,11 @@ static void generateLineNumber(int lineNumber) {
     ppcValueRecord(PPC_INT_VALUE, lineNumber, "");
 }
 
+/* The line after the previous definition, unless that ended on the line where this
+ * function begins, as when a macro expands to several definitions on one line */
 static unsigned extractionInsertionPosition(void) {
-    if (parsedInfo.blockBeginLine > 0
-        && parsedInfo.functionBeginPosition >= (unsigned)parsedInfo.blockBeginLine) {
+    if (parsedInfo.functionNameLine > 0
+        && parsedInfo.functionBeginPosition > (unsigned)parsedInfo.functionNameLine) {
         return parsedInfo.previousFunctionBeginPosition;
     }
     return parsedInfo.functionBeginPosition;

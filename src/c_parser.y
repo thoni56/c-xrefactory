@@ -1558,6 +1558,7 @@ external_definition
         counters.localVar = 0;
         assert($1.data->typeModifier && $1.data->typeModifier->type == TypeFunction);
         parsedInfo.function = $1.data;
+        parsedInfo.functionNameLine = $1.data->position.line;
         generateInternalLabelReference(-1, UsageDefined);
 
         int i = 1;

@@ -1926,7 +1926,7 @@ YYSTYPE yylval;
 short yyss[YYSTACKSIZE];
 YYSTYPE yyvs[YYSTACKSIZE];
 #define yystacksize YYSTACKSIZE
-#line 1687 "c_parser.y"
+#line 1688 "c_parser.y"
 
 static CompletionFunctionsTable specialCompletionsCollectorsTable[]  = {
     {COMPLETE_FOR_STATEMENT1,    collectForStatementCompletions1},
@@ -3949,6 +3949,7 @@ case 352:
         counters.localVar = 0;
         assert(yyvsp[0].ast_symbol.data->typeModifier && yyvsp[0].ast_symbol.data->typeModifier->type == TypeFunction);
         parsedInfo.function = yyvsp[0].ast_symbol.data;
+        parsedInfo.functionNameLine = yyvsp[0].ast_symbol.data->position.line;
         generateInternalLabelReference(-1, UsageDefined);
 
         int i = 1;
@@ -3963,7 +3964,7 @@ case 352:
     }
 break;
 case 353:
-#line 1572 "c_parser.y"
+#line 1573 "c_parser.y"
 {
         /* Capture function boundaries for move-function refactoring */
         if (parsedInfo.function != NULL
@@ -3985,7 +3986,7 @@ case 353:
     }
 break;
 case 361:
-#line 1601 "c_parser.y"
+#line 1602 "c_parser.y"
 {
         yyval.ast_symbol.data = yyvsp[-2].ast_symbol.data;
         addNewDeclaration(symbolTable, yyvsp[-2].ast_symbol.data, yyvsp[-1].ast_symbol.data, yyvsp[0].ast_idList.data, StorageExtern);
@@ -3993,7 +3994,7 @@ case 361:
     }
 break;
 case 362:
-#line 1606 "c_parser.y"
+#line 1607 "c_parser.y"
 {
         yyval.ast_symbol.data = & defaultIntDefinition;
         addNewDeclaration(symbolTable, yyval.ast_symbol.data, yyvsp[-1].ast_symbol.data, yyvsp[0].ast_idList.data, StorageExtern);
@@ -4001,7 +4002,7 @@ case 362:
     }
 break;
 case 363:
-#line 1611 "c_parser.y"
+#line 1612 "c_parser.y"
 {
         yyval.ast_symbol.data = yyvsp[-3].ast_symbol.data;
         addNewDeclaration(symbolTable, yyvsp[-3].ast_symbol.data, yyvsp[-1].ast_symbol.data, yyvsp[0].ast_idList.data, StorageExtern);
@@ -4009,7 +4010,7 @@ case 363:
     }
 break;
 case 364:
-#line 1616 "c_parser.y"
+#line 1617 "c_parser.y"
 {
         /* $$.d = &s_errorSymbol; */
         yyval.ast_symbol.data = typeSpecifier2(&errorModifier);
@@ -4017,11 +4018,11 @@ case 364:
     }
 break;
 case 365:
-#line 1624 "c_parser.y"
+#line 1625 "c_parser.y"
 { yyval.ast_symbol.data = yyvsp[0].ast_symbol.data; }
 break;
 case 366:
-#line 1625 "c_parser.y"
+#line 1626 "c_parser.y"
 {
         assert(yyvsp[-1].ast_symbol.data->typeModifier && yyvsp[-1].ast_symbol.data->typeModifier->type == TypeFunction);
         Result r = mergeArguments(yyvsp[-1].ast_symbol.data->typeModifier->args, yyvsp[0].ast_symbol.data);
@@ -4030,13 +4031,13 @@ case 366:
     }
 break;
 case 367:
-#line 1634 "c_parser.y"
+#line 1635 "c_parser.y"
 {
         yyval.ast_symbol.data = NULL;
     }
 break;
 case 368:
-#line 1637 "c_parser.y"
+#line 1638 "c_parser.y"
 {
         assert(yyvsp[-2].ast_symbol.data && yyvsp[-1].ast_symbol.data);
         for (Symbol *symbol=yyvsp[-1].ast_symbol.data; symbol!=NULL; symbol=symbol->next) {
@@ -4046,26 +4047,26 @@ case 368:
     }
 break;
 case 369:
-#line 1647 "c_parser.y"
+#line 1648 "c_parser.y"
 {
         yyval.ast_symbol.data = yyvsp[-1].ast_symbol.data;
     }
 break;
 case 370:
-#line 1650 "c_parser.y"
+#line 1651 "c_parser.y"
 {
         yyval.ast_symbol.data = yyvsp[-3].ast_symbol.data;
         LIST_APPEND(Symbol, yyval.ast_symbol.data, yyvsp[-1].ast_symbol.data);
     }
 break;
 case 371:
-#line 1654 "c_parser.y"
+#line 1655 "c_parser.y"
 {
         yyval.ast_symbol.data = yyvsp[-2].ast_symbol.data;
     }
 break;
 case 372:
-#line 1660 "c_parser.y"
+#line 1661 "c_parser.y"
 {
         completeDeclarator(&defaultIntDefinition, yyvsp[0].ast_symbol.data);
         assert(yyvsp[0].ast_symbol.data && yyvsp[0].ast_symbol.data->typeModifier);
@@ -4074,7 +4075,7 @@ case 372:
     }
 break;
 case 373:
-#line 1666 "c_parser.y"
+#line 1667 "c_parser.y"
 {
         completeDeclarator(yyvsp[-1].ast_symbol.data, yyvsp[0].ast_symbol.data);
         assert(yyvsp[0].ast_symbol.data && yyvsp[0].ast_symbol.data->typeModifier);
@@ -4083,22 +4084,22 @@ case 373:
     }
 break;
 case 374:
-#line 1675 "c_parser.y"
+#line 1676 "c_parser.y"
 { beginBlock(); }
 break;
 case 375:
-#line 1678 "c_parser.y"
+#line 1679 "c_parser.y"
 { endBlock(); }
 break;
 case 376:
-#line 1682 "c_parser.y"
-{ yyval.ast_id.data = yyvsp[0].ast_id.data; }
-break;
-case 377:
 #line 1683 "c_parser.y"
 { yyval.ast_id.data = yyvsp[0].ast_id.data; }
 break;
-#line 4102 "c_parser.tab.c"
+case 377:
+#line 1684 "c_parser.y"
+{ yyval.ast_id.data = yyvsp[0].ast_id.data; }
+break;
+#line 4103 "c_parser.tab.c"
     }
     yyssp -= yym;
     yystate = *yyssp;

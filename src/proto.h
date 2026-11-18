@@ -138,6 +138,7 @@ typedef struct parsedInfo {
     int               declaratorCount;  /* In the top level declaration being parsed */
     unsigned          functionBeginPosition;
     unsigned          previousFunctionBeginPosition;
+    int               functionNameLine; /* Where the name of the function begins */
     int               blockBeginLine;
     int               cxMemoryIndexAtFunctionBegin;
     int               cxMemoryIndexAtFunctionEnd;
