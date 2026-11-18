@@ -66,7 +66,7 @@ Ensure(Freshness, compilation_unit_with_a_time_after_its_knowledge_is_not_out_of
     assert_that(knowledgeIsOutOfDate(prerequisitesFromGraph(NULL), A_C), is_false);
 }
 
-Ensure(Freshness, compilation_unit_not_changed_since_its_knowledge_is_not_out_of_date) {
+Ensure(Freshness, compilation_unit_with_knowledge_and_no_changes_prerequisite_is_current) {
     expectACUWithKnowledgeAt(makeFileTimestamp(2000, 0));
     expect(collectIncludeClosure, when(fileNumber, is_equal_to(A_C)), will_return(0));
 
@@ -168,4 +168,3 @@ Ensure(Freshness, compilation_unit_whose_include_closure_did_not_fit_is_out_of_d
     assert_that(outOfDate.reason, is_equal_to(CLOSURE_TOO_LARGE));
     assert_that(outOfDate.fileNumber, is_equal_to(A_C));
 }
-
