@@ -83,6 +83,11 @@ fails if a name is unknown.
       different project" condition and its discovery branch, keeping only the locked one.
       The lock already makes the config names the same, so today they guard only a request
       with `-p` and no `-getproject` (WSL, session `d25255b8`, 2026-11-18).
+      `previousProjectConfigurationFile` is then nothing previous, only the project's config
+      file, set at `-getproject` and read by the config's change check and reload. It can
+      move into `ProjectConfig` (`project-config-constructor`) as a field, beside what
+      `lockedProject` says about the same project, where its name does not clash with the
+      locals called `projectConfigFileName`.
       Waits for: adr-0029, project-extent
       Goes with: startup-command-line, adr-0030
    c. <a id="setup-into-openproject"></a>**project setup moves into the future `-openproject`** — discovery, config read, compiler
