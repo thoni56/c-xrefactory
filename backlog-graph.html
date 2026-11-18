@@ -86,7 +86,6 @@ flowchart BT
   dump_reference_database["§5 · 29 · Dump Reference Database"]
   compile_commands["§5 · 30 · Read `-I` and `-D` from `compile_commands.json`"]
   yydebug_to_log["§6 · 61 · The `-yydebug` parse trace goes to the log"]
-  remove_on_change["§7 · 106 · A file's references are removed when its content changes"]
   every_parse_all_passes["§7 · 115 · Every parse of a CU parses it once for each pass"]
   symbol_at_cursor_from_table["§7 · 113 · The symbol at the cursor is looked up in the table, not parsed for"]
   refactoring_session_kinds["§7 · 116 · The refactorings' push operations are session kinds"]
@@ -123,21 +122,24 @@ flowchart BT
   adr_0030 --&gt; setup_into_openproject
   setup_into_openproject --&gt; openproject_tripwire
   adr_0031 --&gt; project_extent
+  adr_0035 --&gt; refactoring_refusals
   startup_command_line --&gt; header_static_link_names
   header_filtered_siblings --&gt; scan_angle_includes
   scan_angle_includes --&gt; lexing_cache
   lexing_cache --&gt; parallel_parsing
-  remove_on_change --&gt; remove_references_stopgap
+  adr_0035 --&gt; remove_references_stopgap
   entry_refresh --&gt; index_based_sessions
-  adr_0035 --&gt; remove_on_change
+  adr_0035 --&gt; cap_is_a_question
   adr_0032 --&gt; request_target
+  adr_0035 --&gt; variant_b
+  adr_0035 --&gt; removal_cost
+  adr_0035 --&gt; freshness_docs
   release_build --&gt; install_server
   protocol_handshake --&gt; install_server
   release_build --&gt; releases
   install_server --&gt; melpa
   releases --&gt; melpa
   protocol_handshake --&gt; melpa
-  remove_on_change --&gt; announce
   refactoring_refusals --&gt; announce
   install_server --&gt; announce
   readme_first_screen --&gt; announce
@@ -149,7 +151,6 @@ flowchart BT
   project_config_constructor -.-&gt; indexing_log_buffer
   indexing_log_buffer -.-&gt; options_carry_scope
   freshness_docs -.-&gt; docs_audit
-  remove_on_change -.-&gt; refactoring_refusals
   files_appear_vanish -.-&gt; token_pasting_trio
   adr_0031 -.-&gt; relative_include_path
   token_pasting_trio -.-&gt; unused_yacc_statics
@@ -189,17 +190,13 @@ flowchart BT
   every_parse_all_passes -.-&gt; symbol_at_cursor_from_table
   symbol_at_cursor_from_table -.-&gt; refactoring_session_kinds
   refactoring_session_kinds -.-&gt; session_refresh_time
-  remove_on_change -.-&gt; cap_is_a_question
   cu_prerequisites -.-&gt; out_of_date
   request_through_includers -.-&gt; cursor_parse_reuse
   cap_is_a_question -.-&gt; time_budget
-  remove_on_change -.-&gt; variant_b
-  remove_on_change -.-&gt; removal_cost
-  remove_on_change -.-&gt; freshness_docs
   refactoring_catalogue -.-&gt; windows_build
   customize_names -.-&gt; refactoring_catalogue
-  linkStyle 0,1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20,21,22,23 stroke:#333,stroke-width:2.5px
-  linkStyle 24,25,26,27,28,29,30,31,32,33,34,35,36,37,38,39,40,41,42,43,44,45,46,47,48,49,50,51,52,53,54,55,56,57,58,59,60,61,62,63,64,65,66,67,68,69,70,71,72,73,74,75,76,77,78,79,80 stroke:#aaa,stroke-width:1px
+  linkStyle 0,1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20,21,22,23,24,25,26 stroke:#333,stroke-width:2.5px
+  linkStyle 27,28,29,30,31,32,33,34,35,36,37,38,39,40,41,42,43,44,45,46,47,48,49,50,51,52,53,54,55,56,57,58,59,60,61,62,63,64,65,66,67,68,69,70,71,72,73,74,75,76,77,78 stroke:#aaa,stroke-width:1px
   class config_without_pass ready
   class defines_at_parse_start ready
   class side_effects_to_dispatcher ready
@@ -245,7 +242,7 @@ flowchart BT
   class inline_output_parameter ready
   class output_parameter_to_return ready
   class rename_partial_in_broken_code ready
-  class remove_references_stopgap blocked
+  class remove_references_stopgap ready
   class index_based_sessions ready
   class rename_leaves_sessions ready
   class refused_rename_references ready
@@ -267,7 +264,6 @@ flowchart BT
   class dump_reference_database ready
   class compile_commands ready
   class yydebug_to_log ready
-  class remove_on_change ready
   class every_parse_all_passes ready
   class symbol_at_cursor_from_table ready
   class refactoring_session_kinds ready

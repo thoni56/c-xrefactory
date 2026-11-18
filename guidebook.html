@@ -2168,7 +2168,155 @@ The shape was first written down on the Mac, session <code>4839a129</code>, with
 </div>
 </div>
 <div class="sect3">
-<h4 id="_where_it_is_not_yet_make">8.2.3. Where It Is Not Yet Make</h4>
+<h4 id="_what_the_server_knows_about_a_file">8.2.3. What the Server Knows About a File</h4>
+<div class="paragraph">
+<p>Knowing a file is several facts, kept in different places, and a change has to reach each of them.</p>
+</div>
+<table class="tableblock frame-all grid-all stretch">
+<colgroup>
+<col style="width: 22.2222%;">
+<col style="width: 22.2222%;">
+<col style="width: 22.2222%;">
+<col style="width: 22.2222%;">
+<col style="width: 11.1112%;">
+</colgroup>
+<thead>
+<tr>
+<th class="tableblock halign-left valign-top">Fact</th>
+<th class="tableblock halign-left valign-top">Where</th>
+<th class="tableblock halign-left valign-top">Written by</th>
+<th class="tableblock halign-left valign-top">Read by</th>
+<th class="tableblock halign-left valign-top">In the snapshot</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">references</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">the table</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">the parse</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">the answer</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">yes</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">include references (<code>TypeCppInclude</code>)</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">the table</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">the parse</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">the goal, for the siblings and the <code>&lt;&#8230;&#8203;&gt;</code> edges</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">yes</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">knowledge time</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>FileItem.knowledgeTime</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">the build</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">the build predicate</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">yes</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">notice time</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>FileItem.noticeTime</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">the removal, when a header changed</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">the build predicate, through the include closure</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">yes</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">seen token</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>FileItem.seenToken</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">the removal, and the parse when it reads a file first</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">the removal, to find <strong>changed</strong></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">yes</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">scanned includes and scan token</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>FileItem.scannedIncludes</code>, <code>scanToken</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">the scan</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">the include graph, and the rescan</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">no, a new session scans again</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">deleted</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>FileItem.isDeleted</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">the walk, and a build that finds the CU gone</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">the goal and the build</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">yes</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">a session&#8217;s references</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">the browsing stack, copied at the push</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">the push</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Next, Previous and Pop</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">no</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">refresh flag</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>FileItem.needsBrowsingStackRefresh</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">the removal and the build</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">a session, which copies the file again</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">no</p></td>
+</tr>
+</tbody>
+</table>
+<div class="paragraph">
+<p>Some facts have to change together.</p>
+</div>
+<div class="paragraph">
+<p><strong>The references and the freshness facts.</strong>
+The build predicate (<code>whyOutOfDate()</code>) reads the knowledge time and the notice times, never the table.
+So references that are removed without the knowledge going, or a change being noticed, are missing and look current, and no request ever builds them again.
+Each change does both halves:</p>
+</div>
+<table class="tableblock frame-all grid-all stretch">
+<colgroup>
+<col style="width: 20%;">
+<col style="width: 40%;">
+<col style="width: 40%;">
+</colgroup>
+<thead>
+<tr>
+<th class="tableblock halign-left valign-top">Change</th>
+<th class="tableblock halign-left valign-top">References</th>
+<th class="tableblock halign-left valign-top">Freshness</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">a CU&#8217;s content</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">removed, except the include references (<code>removeReferencesOfChangedCu()</code>)</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">no knowledge</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">a header&#8217;s content</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">removed (<code>removeReferencesOfChangedHeader()</code>)</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">noticed now, so what was built before it is out of date</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">the config</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">all removed, except the include references (<code>removeAllReferencesExceptIncludes()</code>)</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">no knowledge for any CU (<code>markAllCompilationUnitsStale()</code>)</p></td>
+</tr>
+</tbody>
+</table>
+<div class="paragraph">
+<p>The include references only take part in the first half.
+They stay because they are the only edges for <code>&lt;&#8230;&#8203;&gt;</code> includes, which the goal needs to find the siblings, and a build replaces its CU&#8217;s own.
+They do not decide whether anything is built.</p>
+</div>
+<div class="paragraph">
+<p><strong>The seen token and the references.</strong>
+The token stands for the content the references came from.
+That is why the parse records the token of a file it reads first: if the removal took it later, it could be of content that already changed, and the old references would look current.</p>
+</div>
+<div class="paragraph">
+<p><strong>The scanned includes and the include references.</strong>
+They are the two writers of the include graph, until the scan records <code>&lt;&#8230;&#8203;&gt;</code> includes (<code>scan-angle-includes</code>).</p>
+</div>
+<div class="paragraph">
+<p><strong>A session&#8217;s references and the table.</strong>
+A session works on a copy, and the refresh flag says the copy is out of date.
+It is set in only some of the places that change the table (<code>session-refresh-time</code>).</p>
+</div>
+</div>
+<div class="sect3">
+<h4 id="_where_it_is_not_yet_make">8.2.4. Where It Is Not Yet Make</h4>
 <div class="paragraph">
 <p>Items in <code>doc/backlog.md</code>:</p>
 </div>
@@ -2181,7 +2329,7 @@ The shape was first written down on the Mac, session <code>4839a129</code>, with
 <p><strong>The goal is too small</strong> (<code>request-target</code>). We run <code>make request.o</code>, but the answer is linked from more objects than that.</p>
 </li>
 <li>
-<p><strong>The config is not a prerequisite</strong> (<code>out-of-date</code>). That is the classic Make pitfall where changing <code>CFLAGS</code> rebuilds nothing. <code>markAllCompilationUnitsStale()</code> covers it for now, but removes no references.</p>
+<p><strong>The config is not an input of the build predicate</strong> (<code>out-of-date</code>). Make&#8217;s classic pitfall, changing <code>CFLAGS</code> and nothing being rebuilt, does not happen: a config change is found by its content token, also across a restart, and removes every reference and takes every CU&#8217;s knowledge. But the predicate itself does not read the config.</p>
 </li>
 <li>
 <p><strong>A missing include edge</strong> (<code>scan-angle-includes</code>). The scan&#8217;s edges are facts about each file now, but it records no <code>&lt;&#8230;&#8203;&gt;</code> includes. A CU that reaches a changed header through such an include alone is not out of date, so its part of the header is missing without that being known.</p>
@@ -2199,7 +2347,7 @@ The shape was first written down on the Mac, session <code>4839a129</code>, with
 </div>
 </div>
 <div class="sect3">
-<h4 id="_overview">8.2.4. Overview</h4>
+<h4 id="_overview">8.2.5. Overview</h4>
 <div class="admonitionblock note">
 <table>
 <tr>
@@ -2276,7 +2424,7 @@ build; see Pass 2 for the rationale.</p>
 </div>
 </div>
 <div class="sect3">
-<h4 id="_what_refresh_covers">8.2.5. What Refresh Covers</h4>
+<h4 id="_what_refresh_covers">8.2.6. What Refresh Covers</h4>
 <div class="paragraph">
 <p>Between them, the passes and the cleaning concern below cover the ways the codebase
 can change from one request to the next:</p>
@@ -2328,7 +2476,7 @@ gap the next section addresses.</p>
 </div>
 </div>
 <div class="sect3">
-<h4 id="entry-refresh-pass-1">8.2.6. Pass 1: Held CUs Whose Knowledge Is Out of Date</h4>
+<h4 id="entry-refresh-pass-1">8.2.7. Pass 1: Held CUs Whose Knowledge Is Out of Date</h4>
 <div class="paragraph">
 <p>The simplest case: the user edited a <code>.c</code> file, or the client sent a <code>-preload</code> with
 newer content.
@@ -2350,7 +2498,7 @@ include edges).</p>
 </div>
 </div>
 <div class="sect3">
-<h4 id="entry-refresh-pass-2">8.2.7. Pass 2: Strip Changed Held Headers, Take Their Includers</h4>
+<h4 id="entry-refresh-pass-2">8.2.8. Pass 2: Strip Changed Held Headers, Take Their Includers</h4>
 <div class="paragraph">
 <p>If the user edited a header file, all CUs that include it (transitively) have stale
 references — even though those CUs themselves haven&#8217;t changed.</p>
@@ -2391,7 +2539,7 @@ there yet, but <code>bar.c</code> is held and out of date, so it is built anyway
 </div>
 </div>
 <div class="sect3">
-<h4 id="entry-refresh-pass-3">8.2.8. Pass 3: Parse Unparsed Sibling CUs</h4>
+<h4 id="entry-refresh-pass-3">8.2.9. Pass 3: Parse Unparsed Sibling CUs</h4>
 <div class="paragraph">
 <p>On cold start (no snapshot, or snapshot doesn&#8217;t cover everything), many CUs have never
 been parsed. If the user navigates to a symbol defined in a header, the server needs
@@ -2433,7 +2581,7 @@ defines the symbol being navigated to.</p>
 </div>
 </div>
 <div class="sect3">
-<h4 id="project-wide-operations">8.2.9. Project-wide Operations: Parse All</h4>
+<h4 id="project-wide-operations">8.2.10. Project-wide Operations: Parse All</h4>
 <div class="paragraph">
 <p>Pass 3 follows includes from a position. Some operations have no position to start
 from, or are about the whole project by definition, so no include-based subset can make
@@ -2476,7 +2624,7 @@ shares no header, which only appears when linking. That is the same trade-off as
 </div>
 </div>
 <div class="sect3">
-<h4 id="_staleness_after_refactoring">8.2.10. Staleness After Refactoring</h4>
+<h4 id="_staleness_after_refactoring">8.2.11. Staleness After Refactoring</h4>
 <div class="paragraph">
 <p>Refactoring operations (rename, move-function, etc.) modify editor buffers in memory.
 The disk files and their mtimes are unchanged, so the normal mtime-based staleness
@@ -2494,7 +2642,7 @@ the next request, triggering a reparse via Pass 1.</p>
 </div>
 </div>
 <div class="sect3">
-<h4 id="_cleaning_stale_emissions">8.2.11. Cleaning Stale Emissions</h4>
+<h4 id="_cleaning_stale_emissions">8.2.12. Cleaning Stale Emissions</h4>
 <div class="paragraph">
 <p>Reparsing a CU strips its old references and adds its current ones — but "old" means
 only references at <code>position.file == CU</code>. <code>removeReferenceableItemsForFile</code> is
@@ -12577,7 +12725,7 @@ carried forward in <a href="21-archive.adoc#cu-reparse-header-staleness">a later
 </div>
 <div id="footer">
 <div id="footer-text">
-Last updated 2026-11-18 17:04:16 UTC
+Last updated 2026-11-18 18:41:48 UTC
 </div>
 </div>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.18.3/highlight.min.js"></script>
