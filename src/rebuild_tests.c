@@ -280,6 +280,30 @@ Ensure(Rebuild, records_the_token_of_a_header_seen_for_the_first_time_and_keeps_
     assert_that(fileTimestampIsZero(fileItem.noticeTime));
 }
 
+static void expectOneCuInTheFileTable(FileItem *fileItem, ContentToken *contentToken) {
+    expect(getNextExistingFileNumber, will_return(42));
+    expect(getNextExistingFileNumber, will_return(-1));
+    always_expect(getFileItemWithFileNumber, when(fileNumber, is_equal_to(42)), will_return(fileItem));
+    always_expect(isCompilationUnit, will_return(true));
+    expect(editorContentTokenOf, when(path, is_equal_to_string(fileItem->name)), will_return(contentToken));
+}
+
+/* A CU follows the header's rule, but keeps its include references, since they
+ * are the only edges of the include graph for <...> includes */
+Ensure(Rebuild, removes_the_references_and_knowledge_of_a_cu_whose_content_changed) {
+    FileItem fileItem = {.name = "source.c", .seenToken = tokenSeen(),
+                         .knowledgeTime = {.tv_sec = 1500, .tv_nsec = 0}};
+    ContentToken now = tokenOfAnEdit();
+    expectOneCuInTheFileTable(&fileItem, &now);
+    expect(removeReferenceableItemsForFileExceptIncludes, when(fileNumber, is_equal_to(42)));
+    never_expect(removeReferenceableItemsForFile);
+
+    removeReferencesOfChangedFiles(NULL);
+
+    assert_that(fileTimestampIsZero(fileItem.knowledgeTime));
+    assert_that(contentTokensAreSame(fileItem.seenToken, now));
+}
+
 static void expectTwoHeadersInTheFileTable(FileItem *leaf, ContentToken *leafToken,
                                            FileItem *other, ContentToken *otherToken) {
     expect(getNextExistingFileNumber, will_return(42));

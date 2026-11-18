@@ -5,7 +5,8 @@ include ../Makefile.server
 # Given a legacy project (explicit source dir)
 # When session 1 navigates and exits (saves snapshot)
 # And a source file is touched (making it stale)
-# And session 2 starts, loads snapshot, reparses stale CU, and exits
+# And session 2 starts, loads snapshot, pushes on target, which reparses the stale CU,
+#   and exits
 # Then the saved db should contain correct references for all symbols
 
 $(TEST):

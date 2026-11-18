@@ -90,3 +90,19 @@ void removeReferenceableItemsForFile(int fileNumber) {
         }
     }
 }
+
+void removeReferenceableItemsForFileExceptIncludes(int fileNumber) {
+    for (int i = 0; i < referenceableItemTable.size; i++) {
+        for (ReferenceableItem *item = referenceableItemTable.tab[i]; item != NULL; item = item->next) {
+            if (item->type == TypeCppInclude)
+                continue;
+            Reference **refP = &(item->references);
+            while (*refP != NULL) {
+                if ((*refP)->position.file == fileNumber)
+                    *refP = (*refP)->next;
+                else
+                    refP = &((*refP)->next);
+            }
+        }
+    }
+}

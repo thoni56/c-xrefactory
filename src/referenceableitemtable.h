@@ -26,5 +26,6 @@ extern bool isMemberInReferenceableItemTable(ReferenceableItem *item, int *index
 extern void mapOverReferenceableItemTable(void (*fun)(ReferenceableItem *));
 extern void mapOverReferenceableItemTableWithPointer(void (*fun)(ReferenceableItem *, void *), void *pointer);
 extern void removeReferenceableItemsForFile(int fileNumber);
+extern void removeReferenceableItemsForFileExceptIncludes(int fileNumber);
 
 #endif

@@ -58,3 +58,23 @@ Ensure(ReferenceableItemTable, removes_references_from_chained_items) {
     assert_that(sym1.references, is_null);
     assert_that(sym2.references, is_null);
 }
+
+/* A file's include references are edges of the include graph, which only the
+ * parse gives for <...> includes */
+Ensure(ReferenceableItemTable, can_remove_the_references_of_a_file_except_its_includes) {
+    int SOME_FILE = 42;
+
+    Reference symbolReference = {.position = {.file = SOME_FILE, .line = 10, .col = 1}, .usage = UsageDefined};
+    ReferenceableItem symbol = {.linkName = "alpha", .type = TypeDefault, .references = &symbolReference};
+    addToReferenceableItemTable(&symbol);
+
+    Reference includeReference = {.position = {.file = SOME_FILE, .line = 1, .col = 1}, .usage = UsageUsed};
+    ReferenceableItem include = {.linkName = "header.h", .type = TypeCppInclude, .includeFileNumber = 7,
+                                 .references = &includeReference};
+    addToReferenceableItemTable(&include);
+
+    removeReferenceableItemsForFileExceptIncludes(SOME_FILE);
+
+    assert_that(symbol.references, is_null);
+    assert_that(include.references, is_equal_to(&includeReference));
+}

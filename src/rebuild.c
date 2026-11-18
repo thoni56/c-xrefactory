@@ -191,12 +191,11 @@ static void removeReferencesOfIncludersOfChanged(Prerequisites *prerequisites, i
     free(closure);
 }
 
-/* A CU's own references are removed when it is built, and its include
- * references lead to its siblings until then, so only headers here. A header
- * has changed when its content token is not the one last seen, and the change
- * is stamped when it is noticed (ADR-0036). A header not seen before, or seen
- * missing, has no references of its own to remove, and keeps what a parse put
- * there. */
+/* A file has changed when its content token is not the one last seen, and the
+ * change of a header is stamped when it is noticed (ADR-0036). A changed CU
+ * loses its knowledge too, but keeps its include references, which lead to its
+ * siblings until it is built. A file not seen before, or seen missing, has no
+ * references of its own to remove, and keeps what a parse put there. */
 void removeReferencesOfChangedFiles(Prerequisites *prerequisites) {
     int *headers = malloc(MAX_FILES * sizeof(int));
     FileItem **items = malloc(MAX_FILES * sizeof(FileItem *));
@@ -206,13 +205,20 @@ void removeReferencesOfChangedFiles(Prerequisites *prerequisites) {
 
     for (int i = getNextExistingFileNumber(0); i != -1; i = getNextExistingFileNumber(i + 1)) {
         FileItem *fileItem = getFileItemWithFileNumber(i);
-        if (isCompilationUnit(fileItem->name))
-            continue;
-        headers[headerCount] = i;
-        items[headerCount++] = fileItem;
+        bool isCu = isCompilationUnit(fileItem->name);
+        if (!isCu) {
+            headers[headerCount] = i;
+            items[headerCount++] = fileItem;
+        }
         ContentToken contentToken = editorContentTokenOf(fileItem->name);
         if (contentTokenIsMissing(fileItem->seenToken)) {
             fileItem->seenToken = contentToken;
+        } else if (isCu && !contentTokensAreSame(fileItem->seenToken, contentToken)) {
+            log_debug("'%s' changed, removing its references", fileItem->name);
+            removeReferenceableItemsForFileExceptIncludes(i);
+            fileItem->needsBrowsingStackRefresh = true;
+            fileItem->seenToken = contentToken;
+            fileItem->knowledgeTime = NULL_TIMESTAMP;
         } else if (!contentTokensAreSame(fileItem->seenToken, contentToken)) {
             log_debug("'%s' changed, removing its references", fileItem->name);
             removeReferenceableItemsForFile(i);
