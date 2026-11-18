@@ -16,7 +16,7 @@ end-of-options
  <position-off off=492 len=<n>>CURDIR/cexercise/refactorings/parameter.c</position-off>
 </goto>
 <replacement>
- <str len=<n>>int i</str>  <str len=<n>></str>
+ <str len=<n>>int i</str>  <str len=<n>>void</str>
 </replacement>
 <goto>
  <position-off off=482 len=<n>>CURDIR/cexercise/refactorings/parameter.c</position-off>

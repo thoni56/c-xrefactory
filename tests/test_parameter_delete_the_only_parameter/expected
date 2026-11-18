@@ -1,0 +1,31 @@
+CXREF -server -o server-buffer
+-getproject CURDIR/hello.c
+end-of-options
+
+<sync>
+<set-info len=<n>>CURDIR</set-info>
+-rfct-del-param -parameter=1 -cursor=17 CURDIR/hello.c
+end-of-options
+
+<sync>
+<goto>
+ <position-off off=17 len=<n>>CURDIR/hello.c</position-off>
+</goto>
+<goto>
+ <position-off off=21 len=<n>>CURDIR/hello.c</position-off>
+</goto>
+<replacement>
+ <str len=<n>>int arg</str>  <str len=<n>>void</str>
+</replacement>
+<goto>
+ <position-off off=80 len=<n>>CURDIR/hello.c</position-off>
+</goto>
+<replacement>
+ <str len=<n>>42</str>  <str len=<n>></str>
+</replacement>
+<goto>
+ <position-off off=17 len=<n>>CURDIR/hello.c</position-off>
+</goto>
+-exit
+end-of-options
+

@@ -13,8 +13,6 @@ end-of-options
 </goto>
 <error len=<n>>Parameter number out of limits
 </error>
-<error len=<n>>Parameter number out of limits
-</error>
 <goto>
  <position-off off=36 len=<n>>CURDIR/hello.c</position-off>
 </goto>

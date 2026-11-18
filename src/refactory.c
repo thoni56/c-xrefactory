@@ -1059,7 +1059,10 @@ static void addParameter(EditorMarker *pos, char *fname, int argumentNumber, Usa
     }
 }
 
-static void deleteParameter(EditorMarker *marker, char *fname, int argumentNumber, Usage usage) {
+/* A function's only parameter leaves (void), since before C23 () declares a
+ * function without a prototype. A macro's () is right */
+static void deleteParameter(EditorMarker *marker, char *fname, int argumentNumber, Usage usage,
+                            bool isMacro) {
     char         *text;
     EditorMarker *m1, *m2;
 
@@ -1085,6 +1088,7 @@ static void deleteParameter(EditorMarker *marker, char *fname, int argumentNumbe
         }
         errorMessage(ERR_ST, "Parameter number out of limits");
     } else {
+        bool onlyParameter = text[m1->offset] == '(' && text[m2->offset] == ')';
         if (text[m1->offset] == '(') {
             m1->offset++;
             if (text[m2->offset] == ',') {
@@ -1100,7 +1104,8 @@ static void deleteParameter(EditorMarker *marker, char *fname, int argumentNumbe
         }
 
         assert(m1->offset <= m2->offset);
-        replaceString(m1, m2->offset - m1->offset, "");
+        bool leavesVoid = onlyParameter && isDefinitionOrDeclarationUsage(usage) && !isMacro;
+        replaceString(m1, m2->offset - m1->offset, leavesVoid ? "void" : "");
     }
     freeEditorMarker(m1);
     freeEditorMarker(m2);
@@ -1145,15 +1150,32 @@ static void moveParameter(EditorMarker *marker, char *fname, int argFrom, int ar
         plen = m2->offset - m1->offset;
         strncpy(par, MARKER_TO_POINTER(m1), plen);
         par[plen] = 0;
-        deleteParameter(marker, fname, argFrom, UsageUsed);
+        deleteParameter(marker, fname, argFrom, UsageUsed, false);
         addStringAsParameter(marker, NULL, fname, argTo, par);
     }
     freeEditorMarker(m1);
     freeEditorMarker(m2);
 }
 
+/* The first definition or declaration says how many parameters there are. A
+ * parameter list of (void) has none */
+static bool hasParameterToDelete(EditorMarkerList *occurrences, char *functionName, int argn) {
+    for (EditorMarkerList *l = occurrences; l != NULL; l = l->next) {
+        if (!isDefinitionOrDeclarationUsage(l->usage))
+            continue;
+        if (getParameterPosition(l->marker, functionName, argn) != RESULT_OK)
+            return false;
+        if (argn > parameterCount) {
+            errorMessage(ERR_ST, "Parameter number out of limits");
+            return false;
+        }
+        return true;
+    }
+    return true;
+}
+
 static void applyParameterManipulationToFunction(char *functionName, EditorMarkerList *occurrences,
-                                                 int manipulation, int argn1, int argn2) {
+                                                 int manipulation, int argn1, int argn2, bool isMacro) {
     int progress, count;
 
     /* Pass 1: validate every occurrence resolves to the expected function name.
@@ -1166,6 +1188,9 @@ static void applyParameterManipulationToFunction(char *functionName, EditorMarke
         if (validateReferencePointsToFunction(l->marker, functionName) != RESULT_OK)
             return;
     }
+    if (manipulation == PPC_AVR_DEL_PARAMETER && !isMacro
+        && !hasParameterToDelete(occurrences, functionName, argn1))
+        return;
 
     /* TODO Is it guaranteed that the occurrences always starts with Defined/Declared? */
     LIST_LEN(count, EditorMarkerList, occurrences);
@@ -1175,7 +1200,7 @@ static void applyParameterManipulationToFunction(char *functionName, EditorMarke
             if (manipulation == PPC_AVR_ADD_PARAMETER) {
                 addParameter(l->marker, functionName, argn1, l->usage);
             } else if (manipulation == PPC_AVR_DEL_PARAMETER) {
-                deleteParameter(l->marker, functionName, argn1, l->usage);
+                deleteParameter(l->marker, functionName, argn1, l->usage, isMacro);
             } else if (manipulation == PPC_AVR_MOVE_PARAMETER) {
                 moveParameter(l->marker, functionName, argn1, argn2);
             } else {
@@ -1198,10 +1223,12 @@ static void applyParameterManipulation(EditorMarker *point, int manipulation, in
     strcpy(nameOnPoint, getIdentifierOnMarker_static(point));
     pushReferences(point, OP_INTERNAL_PUSH_FOR_ARGUMENT_MANIPULATION, STANDARD_SELECT_SYMBOLS_MESSAGE, PPCV_BROWSER_TYPE_INFO);
     occurrences = convertReferencesToEditorMarkers(browsingStack.top->references);
+    bool isMacro = browsingStack.top->hkSelectedSym != NULL
+        && browsingStack.top->hkSelectedSym->referenceable.type == TypeMacro;
 
     ppcGotoMarker(point);
 
-    applyParameterManipulationToFunction(nameOnPoint, occurrences, manipulation, argn1, argn2);
+    applyParameterManipulationToFunction(nameOnPoint, occurrences, manipulation, argn1, argn2, isMacro);
     freeEditorMarkerListAndMarkers(occurrences); // O(n^2)!
 }
 
