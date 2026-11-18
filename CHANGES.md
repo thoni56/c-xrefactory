@@ -1,3 +1,22 @@
+# Version 1.11.0
+
+- Files changed on disk, e.g. after a `git switch`, are noticed for `.c` files too, also when the request does not analyse them
+- A file restored to an older version, or deleted, is noticed
+- A file you are editing is no longer analysed again on every request
+- Extract Function puts the new function before a cgreen `Ensure`, or any other macro that defines several things on one line, not inside it
+- Extract Variable asks for the declaration of the new variable, and puts it on the line where the expression starts
+- Extract keeps `const`, `long long` and other base types with modifiers
+- A failed extraction is undone, and a window says what to do
+- Rename refuses in code that does not parse, instead of crashing
+- Move Function creates a missing header, saves the files it creates, and leaves a `static` in a comment alone
+- Each `-passN` in `.c-xrefrc` is a pass of its own, in the order they come, and a repeated one is reported
+- A section header in `.c-xrefrc` is reported, and the rest of the config is still read
+- Project > New asks only for the project's root, says where the project is, and works from a buffer without a file
+- The project is shown by its root path, and a directory beside it with the same prefix is no longer part of it
+- Upgrade says which version it installed
+- The snapshot format has changed, so the first start after upgrading analyses the project again
+- Many fixes in keeping the references up to date
+
 # Version 1.10.0
 
 - Move Function takes along the static functions and variables that only the moved function uses
