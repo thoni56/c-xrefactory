@@ -939,7 +939,8 @@ C-xrefactory checks that a change does not alter what the program does (that&#82
 <p><strong>Add Parameter</strong> — adds a new parameter at a specified position, inserting the value you give at all call sites.</p>
 </div>
 <div class="paragraph">
-<p><strong>Delete Parameter</strong> — removes a parameter from the signature and all calls.</p>
+<p><strong>Delete Parameter</strong> — removes a parameter from the signature and all calls.
+Deleting a function&#8217;s only parameter leaves <code>(void)</code>, and a parameter that is not there is refused.</p>
 </div>
 <div class="paragraph">
 <p><strong>Move Parameter</strong> — reorders parameters, updating all calls accordingly.</p>
@@ -974,7 +975,8 @@ If the new code does not parse, the extraction is undone and a window shows what
 <h3 id="_moving_code">6.4. Moving Code</h3>
 <div class="paragraph">
 <p><strong>Move Function</strong> — moves the function at cursor to another place, possibly in another file.
-Mark the place first with <strong>Set Target for Next Moving Refactoring</strong>.</p>
+Mark the place first with <strong>Set Target for Next Moving Refactoring</strong>.
+The moved function gets a blank line before and after it, and leaves one behind.</p>
 </div>
 <div class="paragraph">
 <p>When it moves to another file, the <code>static</code> functions and variables that are only used by that function move along with it, and stay <code>static</code>.
@@ -1119,7 +1121,7 @@ Search Symbol → enter <code>config*</code> → browse results</p>
 </div>
 <div id="footer">
 <div id="footer-text">
-Last updated 2026-11-18 15:06:54 UTC
+Last updated 2026-11-18 17:03:46 UTC
 </div>
 </div>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.18.3/highlight.min.js"></script>

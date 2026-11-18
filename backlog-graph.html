@@ -52,7 +52,6 @@ flowchart BT
   included_c_file["§3 · 105 · Investigate: a `.c` file that another file includes"]
   newline_position["§3 · 71 · A `'\n'` lexem has the next line's number"]
   if_syntax_error_twice["§3 · 72 · A malformed `#if` is reported twice"]
-  delete_last_parameter_void["§3 · 114 · Deleting a function's only parameter leaves `()`, not `(void)`"]
   header_filtered_siblings["§4 · 16 · Header-filtered sibling parsing"]
   scan_angle_includes["§4 · 17 · Extend the lightweight scan to `#lt;...#gt;` includes"]
   lexing_cache["§4 · 18 · Lexing cache re-introduction"]
@@ -72,7 +71,6 @@ flowchart BT
   retry_creating_request["§5 · 24 · Retry the request that created the project"]
   lsp_tiers["§5 · 25 · LSP tiers 1–2"]
   move_function_next["§5 · 26 · Move Function next steps"]
-  move_between_blank_lines["§5 · 98 · Move Function puts the moved function between blank lines"]
   move_removes_forward_declaration["§5 · 99 · Move Function removes the forward declaration in the source"]
   move_includes["§5 · 100 · Move Function adds the includes the moved function needs to the target"]
   move_header_for_callers["§5 · 101 · Move Function declares the function for every caller, and only for them"]
@@ -165,7 +163,6 @@ flowchart BT
   completion_select_out_of_range -.-&gt; included_c_file
   include_bracket_from_macro -.-&gt; newline_position
   newline_position -.-&gt; if_syntax_error_twice
-  if_syntax_error_twice -.-&gt; delete_last_parameter_void
   request_target -.-&gt; header_filtered_siblings
   move_includes -.-&gt; move_to_new_module
   extract_array_used_after -.-&gt; extract_typing_ladder
@@ -176,8 +173,7 @@ flowchart BT
   rename_leaves_sessions -.-&gt; refused_rename_references
   lsp_mode -.-&gt; lsp_tiers
   move_shared_static -.-&gt; move_function_next
-  move_function_next -.-&gt; move_between_blank_lines
-  move_between_blank_lines -.-&gt; move_removes_forward_declaration
+  move_function_next -.-&gt; move_removes_forward_declaration
   move_includes -.-&gt; move_header_for_callers
   move_removes_forward_declaration -.-&gt; move_removes_extern
   move_removes_extern -.-&gt; move_takes_types
@@ -203,7 +199,7 @@ flowchart BT
   refactoring_catalogue -.-&gt; windows_build
   customize_names -.-&gt; refactoring_catalogue
   linkStyle 0,1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20,21,22,23 stroke:#333,stroke-width:2.5px
-  linkStyle 24,25,26,27,28,29,30,31,32,33,34,35,36,37,38,39,40,41,42,43,44,45,46,47,48,49,50,51,52,53,54,55,56,57,58,59,60,61,62,63,64,65,66,67,68,69,70,71,72,73,74,75,76,77,78,79,80,81,82 stroke:#aaa,stroke-width:1px
+  linkStyle 24,25,26,27,28,29,30,31,32,33,34,35,36,37,38,39,40,41,42,43,44,45,46,47,48,49,50,51,52,53,54,55,56,57,58,59,60,61,62,63,64,65,66,67,68,69,70,71,72,73,74,75,76,77,78,79,80 stroke:#aaa,stroke-width:1px
   class config_without_pass ready
   class defines_at_parse_start ready
   class side_effects_to_dispatcher ready
@@ -237,7 +233,6 @@ flowchart BT
   class included_c_file ready
   class newline_position ready
   class if_syntax_error_twice ready
-  class delete_last_parameter_void ready
   class header_filtered_siblings ready
   class scan_angle_includes blocked
   class lexing_cache blocked
@@ -257,7 +252,6 @@ flowchart BT
   class retry_creating_request ready
   class lsp_tiers ready
   class move_function_next ready
-  class move_between_blank_lines ready
   class move_removes_forward_declaration ready
   class move_includes ready
   class move_header_for_callers ready
