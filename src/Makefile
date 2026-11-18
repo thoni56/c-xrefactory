@@ -626,11 +626,11 @@ watch-for-systemtests-only:
 
 .PHONY: watch-for-systemtests
 watch-for-systemtests:
-	watchexec $(WATCHEXEC_FLAGS) -d 500 --no-vcs-ignore -f '*/.unittests.done' -- $(call notify,Systemtests) make system-tests-logged
+	watchexec $(WATCHEXEC_FLAGS) -d 500 --no-vcs-ignore -f '*/.unittests.done' -- make system-tests-logged
 
 # Same as system-tests, and keeps the output in systemtests.log so the result of
 # the last watcher run can be read by someone who was not watching the terminal.
-# pipefail makes the status the make's, not tee's, which is what execnotify reports on.
+# pipefail makes the status the make's, not tee's.
 .PHONY: system-tests-logged
 system-tests-logged: SHELL := /bin/bash
 system-tests-logged:
@@ -643,9 +643,10 @@ system-tests-logged:
 watch-for-systemtests-silent:
 	watchexec $(WATCHEXEC_FLAGS) --no-vcs-ignore -f '*/.unittests.done' -- make -j$(JOBS) system-tests-proper
 
+# The notification is for the tests, so it comes before the coverage
 .PHONY: system-tests-proper
 system-tests-proper:
-	$(MAKE) -e test
+	$(call notify,Systemtests) $(MAKE) -e test
 	@echo; date "+Tests finished %F %T"
 	$(MAKE) -e merge-coverage-from-tests
 	@$(MAKE) -e coverage-report
