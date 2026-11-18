@@ -124,6 +124,13 @@ EditorBuffer *findOrCreateAndLoadEditorBufferForFile(char *fileName) {
             loadFileIntoEditorBuffer(editorBuffer, fileModificationTime(fileName), fileSize(fileName));
         } else
             return NULL;
+    } else {
+        /* Registered before its text was read, e.g. by -preload */
+        char *source = editorBuffer->preLoadedFromFile != NULL ? editorBuffer->preLoadedFromFile
+                                                              : editorBuffer->fileName;
+        if (!fileExists(source))
+            return NULL;
+        loadFileIntoEditorBuffer(editorBuffer, fileModificationTime(source), fileSize(source));
     }
 
     return editorBuffer;
