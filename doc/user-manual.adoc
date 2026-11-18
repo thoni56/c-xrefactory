@@ -251,6 +251,7 @@ These work on functions and macros:
 *Add Parameter* — adds a new parameter at a specified position, inserting the value you give at all call sites.
 
 *Delete Parameter* — removes a parameter from the signature and all calls.
+Deleting a function's only parameter leaves `(void)`, and a parameter that is not there is refused.
 
 *Move Parameter* — reorders parameters, updating all calls accordingly.
 

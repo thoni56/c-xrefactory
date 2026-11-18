@@ -339,12 +339,6 @@ fails if a name is unknown.
     returns 0, `cppexp_yyparse()` adds "Syntax error on: `__has_include`"
     through `styyerror()` (`src/semact.c`). The second message says nothing more.
     After: newline-position
-- (#114) <a id="delete-last-parameter-void"></a>**Deleting a function's only parameter leaves `()`, not `(void)`** — *no repo home yet.*
-    Before C23, `f()` declares a function without a prototype, so the declaration says less
-    than it did. A macro's `()` is right. No test deletes the only parameter of a function:
-    `test_parameter_delete_void` deletes the `void`, and Add Parameter has the reverse
-    (`test_parameter_add_to_void`). Start with that test.
-    After: if-syntax-error-twice
 
 ## 4. Performance, in strict dependency order
 
