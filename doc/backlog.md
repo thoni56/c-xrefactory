@@ -79,6 +79,10 @@ fails if a name is unknown.
       membership query may reparse a changed preload of a file in the project, but not
       of one outside it. Once `-p` stops, membership is answered for real, and today's rule (the root as a prefix, or under `-I`) is
       wrong both ways, so it waits for the project's extent;
+      With `-p` gone, `initializeFileProcessing()` (`src/startup.c`) can drop its "or a
+      different project" condition and its discovery branch, keeping only the locked one.
+      The lock already makes the config names the same, so today they guard only a request
+      with `-p` and no `-getproject` (WSL, session `d25255b8`, 2026-11-18).
       Waits for: adr-0029, project-extent
       Goes with: startup-command-line, adr-0030
    c. <a id="setup-into-openproject"></a>**project setup moves into the future `-openproject`** — discovery, config read, compiler
