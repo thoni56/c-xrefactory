@@ -265,20 +265,19 @@ Ensure(Rebuild, removes_the_references_of_a_header_that_vanished) {
     assert_that(contentTokenIsMissing(fileItem.seenToken));
 }
 
-/* A file not seen before has changed (ADR-0036), since a parse may have put
- * references there before the removal looked, e.g. through a <...> include,
- * which the scan does not follow */
-Ensure(Rebuild, removes_the_references_of_a_header_seen_for_the_first_time) {
+/* A file the removal has not seen has not been read by a parse either, since
+ * the parse records the token of what it reads first, so it has no references
+ * to remove. On a cold start that is every file */
+Ensure(Rebuild, records_the_token_of_a_header_seen_for_the_first_time_and_removes_nothing) {
     FileItem fileItem = {.name = "header.h"};
     ContentToken now = tokenSeen();
     expectOneHeaderInTheFileTable(&fileItem, &now);
-    expect(removeReferencesForFile, when(fileNumber, is_equal_to(42)));
-    expect(changeTimeNow, will_return(&noticedTime));
+    never_expect(removeReferencesForFile);
 
     removeReferencesOfChangedFiles(NULL);
 
     assert_that(contentTokensAreSame(fileItem.seenToken, now));
-    assert_that(fileTimestampsEqual(fileItem.noticeTime, noticedTime));
+    assert_that(fileTimestampIsZero(fileItem.noticeTime));
 }
 
 Ensure(Rebuild, keeps_a_header_that_is_still_missing) {
