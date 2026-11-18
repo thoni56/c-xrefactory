@@ -50,7 +50,6 @@ extern void olcxPushSpecialCheckMenuSym(char *name);
 
 extern void answerEditorAction(void);
 
-extern void forgetKnowledgeForHeldContent(void);
 extern void saveReferences(void);
 
 

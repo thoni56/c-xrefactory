@@ -2002,18 +2002,6 @@ void olSetCallerPosition(Position position) {
     browsingStack.top->callerPosition = position;
 }
 
-
-void forgetKnowledgeForHeldContent(void) {
-    for (int i = getNextExistingEditorBufferIndex(0); i != -1; i = getNextExistingEditorBufferIndex(i+1)) {
-        for (EditorBufferList *l = getEditorBufferListElementAt(i); l != NULL; l = l->next) {
-            if (holdsAuthoritativeContent(l->buffer)) {
-                FileItem *fileItem = getFileItemWithFileNumber(l->buffer->fileNumber);
-                fileItem->knowledgeTime = NULL_TIMESTAMP;
-            }
-        }
-    }
-}
-
 void saveReferences(void) {
     if (options.cxFileLocation == NULL)
         return;

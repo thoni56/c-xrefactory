@@ -115,10 +115,6 @@ bool sessionHasReferencesValidForOperation(SessionStackEntry **entryP, int check
     return (bool)mock(entryP, checkNull);
 }
 
-void forgetKnowledgeForHeldContent(void) {
-    mock();
-}
-
 int findMacroExpansionFile(void) {
     return (int) mock();
 }
