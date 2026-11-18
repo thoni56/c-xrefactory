@@ -30,6 +30,20 @@ end-of-options
 extern void setupParsingConfig();</str>
 </replacement>
 <goto>
+ <position-off off=1304 len=<n>>CURDIR/parsing.c</position-off>
+</goto>
+<replacement>
+ <str len=<n>></str>  <str len=<n>>
+</str>
+</replacement>
+<goto>
+ <position-off off=4407 len=<n>>CURDIR/server.c</position-off>
+</goto>
+<replacement>
+ <str len=<n>>
+</str>  <str len=<n>></str>
+</replacement>
+<goto>
  <position-off off=1176 len=<n>>CURDIR/parsing.c</position-off>
 </goto>
 <indent-block val=4 len=<n>></indent-block>

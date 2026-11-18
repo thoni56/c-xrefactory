@@ -42,6 +42,13 @@ extern void func();</str>
 </str>
 </replacement>
 <goto>
+ <position-off off=41 len=<n>>CURDIR/source.c</position-off>
+</goto>
+<replacement>
+ <str len=<n>>
+</str>  <str len=<n>></str>
+</replacement>
+<goto>
  <position-off off=43 len=<n>>CURDIR/target.c</position-off>
 </goto>
 <indent-block val=4 len=<n>></indent-block>

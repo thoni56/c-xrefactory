@@ -270,6 +270,7 @@ If the new code does not parse, the extraction is undone and a window shows what
 
 *Move Function* — moves the function at cursor to another place, possibly in another file.
 Mark the place first with *Set Target for Next Moving Refactoring*.
+The moved function gets a blank line before and after it, and leaves one behind.
 
 When it moves to another file, the `static` functions and variables that are only used by that function move along with it, and stay `static`.
 If it uses a `static` that something else in the file also uses, it will refuse the move and name those.

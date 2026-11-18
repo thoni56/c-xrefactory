@@ -17,7 +17,14 @@ end-of-options
 </goto>
 <paste-block len=<n>></paste-block>
 <goto>
- <position-off off=1 len=<n>>CURDIR/source.c</position-off>
+ <position-off off=0 len=<n>>CURDIR/source.c</position-off>
+</goto>
+<replacement>
+ <str len=<n>>
+</str>  <str len=<n>></str>
+</replacement>
+<goto>
+ <position-off off=0 len=<n>>CURDIR/source.c</position-off>
 </goto>
 <cut-block val=38 len=<n>></cut-block>
 <goto>
@@ -44,7 +51,14 @@ extern int moved(void);
 </str>
 </replacement>
 <goto>
- <position-off off=44 len=<n>>CURDIR/target.c</position-off>
+ <position-off off=22 len=<n>>CURDIR/target.c</position-off>
+</goto>
+<replacement>
+ <str len=<n>></str>  <str len=<n>>
+</str>
+</replacement>
+<goto>
+ <position-off off=45 len=<n>>CURDIR/target.c</position-off>
 </goto>
 <indent-block val=3 len=<n>></indent-block>
 -exit

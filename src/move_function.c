@@ -363,7 +363,8 @@ static int findIncludeInsertionPoint(EditorBuffer *buffer) {
 }
 
 
-static void moveStaticFunctionAndMakeItExtern(EditorMarker *blockStart, EditorMarker *definitionStart,
+/* Returns whether it moved the function */
+static bool moveStaticFunctionAndMakeItExtern(EditorMarker *blockStart, EditorMarker *definitionStart,
                                               EditorMarker *point, EditorMarker *blockEnd,
                                               EditorMarker *target, bool isUsedElsewhere) {
     int blockSize = blockEnd->offset - blockStart->offset;
@@ -371,7 +372,7 @@ static void moveStaticFunctionAndMakeItExtern(EditorMarker *blockStart, EditorMa
     if (target->buffer == blockStart->buffer && target->offset > blockStart->offset &&
         target->offset < blockStart->offset + blockSize) {
         errorMessage(ERR_ST, "You can't move something into itself.");
-        return;
+        return false;
     }
 
     /* Check if function has "static" keyword and remove it when moving between files.
@@ -402,7 +403,7 @@ static void moveStaticFunctionAndMakeItExtern(EditorMarker *blockStart, EditorMa
     if (headerFileName != NULL && functionSignature != NULL) {
         EditorBuffer *headerBuffer = findOrCreateAndLoadEditorBufferForFile(headerFileName);
         if (headerBuffer == NULL && !isUsedElsewhere)
-            return;
+            return true;
 
         if (headerBuffer == NULL) {
             createHeaderWithDeclaration(headerFileName, functionSignature);
@@ -425,6 +426,41 @@ static void moveStaticFunctionAndMakeItExtern(EditorMarker *blockStart, EditorMa
             replaceStringInEditorBuffer(sourceBuffer, insertionOffset, 0, includeDirective, strlen(includeDirective), &editorUndo);
         }
     }
+    return true;
+}
+
+static bool isBlankLineBefore(EditorBuffer *buffer, int lineStart) {
+    return lineStart <= 1 || buffer->allocation.text[lineStart - 2] == '\n';
+}
+
+/* What moved gets a blank line before and after it, where there is none. The
+ * line before the target marks where it starts, since it does not move */
+static void separateWithBlankLines(EditorMarker *lineBeforeTarget, EditorMarker *target) {
+    EditorBuffer *buffer = target->buffer;
+    int start = lineBeforeTarget == NULL ? 0 : lineBeforeTarget->offset + 1;
+    int end = target->offset;
+    if (end < buffer->allocation.bufferSize && buffer->allocation.text[end] != '\n')
+        replaceStringInEditorBuffer(buffer, end, 0, "\n", 1, &editorUndo);
+    if (start > 0 && !isBlankLineBefore(buffer, start))
+        replaceStringInEditorBuffer(buffer, start, 0, "\n", 1, &editorUndo);
+}
+
+static EditorMarker *newMarkerOnTheLineBefore(EditorMarker *marker) {
+    return marker->offset > 0 ? newEditorMarker(marker->buffer, marker->offset - 1) : NULL;
+}
+
+/* Where a block was cut out between two blank lines, one of them goes. The
+ * start of the file counts as a blank line. The marker at the end of the block
+ * is not in it, so after the cut it is where the block was */
+static void closeTheGap(EditorMarker *blockEnd) {
+    EditorBuffer *buffer = blockEnd->buffer;
+    int at = blockEnd->offset;
+    if (!isBlankLineBefore(buffer, at))
+        return;
+    if (at < buffer->allocation.bufferSize && buffer->allocation.text[at] == '\n')
+        replaceStringInEditorBuffer(buffer, at, 1, "", 0, &editorUndo);
+    else if (at > 0 && at == buffer->allocation.bufferSize)
+        replaceStringInEditorBuffer(buffer, at - 1, 1, "", 0, &editorUndo);
 }
 
 #define MAX_STATICS 10
@@ -632,6 +668,7 @@ static void moveHelpersAlong(UsesOfMovedFunction *uses, EditorMarker *target, bo
     }
     for (int i = 0; i < uses->helperCount; i++) {
         moveBlockInEditorBuffer(starts[i], target, ends[i]->offset - starts[i]->offset, &editorUndo);
+        closeTheGap(ends[i]);
         freeEditorMarker(starts[i]);
         freeEditorMarker(ends[i]);
     }
@@ -689,11 +726,17 @@ void moveFunction(EditorMarker *point) {
     EditorMarker *blockEnd = newDefinitionScopeEnd(bounds);
 
     int lines = countLinesBetweenEditorMarkers(blockStart, blockEnd);
+    EditorMarker *lineBeforeTarget = newMarkerOnTheLineBefore(target);
 
     moveHelpersAlong(&uses, target, moveComments);
 
-    moveStaticFunctionAndMakeItExtern(blockStart, definitionStart, point, blockEnd, target,
-                                      uses.movedIsUsedElsewhere);
+    if (moveStaticFunctionAndMakeItExtern(blockStart, definitionStart, point, blockEnd, target,
+                                          uses.movedIsUsedElsewhere)) {
+        separateWithBlankLines(lineBeforeTarget, target);
+        closeTheGap(blockEnd);
+    }
+    if (lineBeforeTarget != NULL)
+        freeEditorMarker(lineBeforeTarget);
 
     // and generate output
     applyWholeRefactoringFromUndo();

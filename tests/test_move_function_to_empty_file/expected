@@ -37,7 +37,21 @@ extern void setupParsingConfig();</str>
 </str>
 </replacement>
 <goto>
- <position-off off=25 len=<n>>CURDIR/target.c</position-off>
+ <position-off off=20 len=<n>>CURDIR/target.c</position-off>
+</goto>
+<replacement>
+ <str len=<n>></str>  <str len=<n>>
+</str>
+</replacement>
+<goto>
+ <position-off off=4427 len=<n>>CURDIR/server.c</position-off>
+</goto>
+<replacement>
+ <str len=<n>>
+</str>  <str len=<n>></str>
+</replacement>
+<goto>
+ <position-off off=26 len=<n>>CURDIR/target.c</position-off>
 </goto>
 <indent-block val=4 len=<n>></indent-block>
 -exit
