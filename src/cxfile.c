@@ -29,7 +29,7 @@
 
 /* *********************** INPUT/OUTPUT FIELD MARKERS ************************** */
 
-#define C_XREF_FILE_FORMAT_VERSION "1.16.0"
+#define C_XREF_FILE_FORMAT_VERSION "1.17.0"
 
 typedef enum {
     /* 'p' and 'q' were the last parsed time, written up to 1.15.0 */
