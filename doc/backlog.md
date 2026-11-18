@@ -190,7 +190,7 @@ fails if a name is unknown.
 
 - (#10) <a id="refactoring-refusals"></a>**What a refactoring refuses, spelled out and tested** —
     *no repo home yet.* Under ADR-0035 ghosts remain from the Variant-B gap
-    (`variant-b`) and from changes not seen (`behind-the-back`). Missing references are
+    (`variant-b`). Missing references are
     known, through out-of-date CUs, and a refactoring asks about them. Today rename and the parameter refactorings compare only
     the name at each stored position (`precheckThatSymbolRefsCorresponds`,
     `validateReferencePointsToFunction`, `src/refactory.c`). A ghost whose position still
@@ -204,16 +204,7 @@ fails if a name is unknown.
     asked, what is edited anyway — and pin it with tests that make their ghosts for real,
     by changing a shared header on disk. The message "try re-saving the file" no longer fits. Found by
     reading the code (Mac, session `05984816`, 2026-10-06), not tested.
-    Goes with: behind-the-back
     After: remove-on-change
-- (#11) <a id="behind-the-back"></a>**A CU changed on disk outside the goal keeps its references** —
-    every known header is `stat`ed on each request and loses its references when it
-    changed (`removeReferencesOfChangedFiles()`, `src/rebuild.c`), but a CU loses its own
-    only when it is built, so a CU changed on disk that no request reaches keeps its old
-    references, and a browse from elsewhere shows them (ADR-0035, "Seeing a change").
-    It goes when a CU follows the header's rule (`remove-on-change`).
-    After: remove-on-change
-    Goes with: out-of-date
 - (#111) <a id="files-appear-vanish"></a>**Files that appear or vanish between requests are not seen** —
     an accepted gap, `doc/docs/12-components.adoc` ("Design boundary"), to be looked at
     again. Files are found only by the walk on the first request and on a config change,
@@ -230,7 +221,7 @@ fails if a name is unknown.
     directories the walk visits and list again those whose time moved; a vanished file is
     a change. `06-principles` (New files and deleted files) and `08-algorithms` (Deletion
     Detection) describe more than the code does (Mac, session `4839a129`, 2026-11-06).
-    Goes with: behind-the-back, setup-into-openproject
+    Goes with: setup-into-openproject
 - (#94) <a id="inserted-text-loses-non-ascii"></a>**Investigate: which refactorings insert text copied from the server's buffer** —
     *no repo home yet.* A loaded buffer has each multibyte character replaced by a space
     (`convertUtf8()`, `src/encoding.c`), so that byte offsets are character offsets. Text the
@@ -446,7 +437,7 @@ Roadmap → Optimization has the baseline: a cold-start PUSH on ffmpeg, measured
     `remove-on-change`.
     1.10.0 announces the entry in `CHANGES.md`, so its removal needs a line there too.
     Waits for: remove-on-change
-    Goes with: behind-the-back, time-budget
+    Goes with: time-budget
     Goes with: index-based-sessions
 
 - (#22) <a id="index-based-sessions"></a>**Index-based sessions** — dissolves stale-POP *and* lets an answer grow while you
