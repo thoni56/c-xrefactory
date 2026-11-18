@@ -44,12 +44,6 @@ bool changedAfter(FileTimestamp changeTime, FileTimestamp readTime) {
                                    changeTime);
 }
 
-/* A prerequisite that no longer exists has no modification time, and knowledge built
- * from it is out of date as well */
-static bool prerequisiteChangedAfter(FileTimestamp changeTime, FileTimestamp knowledgeTime) {
-    return fileTimestampIsZero(changeTime) || changedAfter(changeTime, knowledgeTime);
-}
-
 int collectIncludeClosureOf(Prerequisites *prerequisites, int fileNumber, int fileNumbers[],
                             int maxFileNumbers) {
     return collectIncludeClosure(prerequisites->includeGraph, fileNumber, fileNumbers, maxFileNumbers);
@@ -63,8 +57,6 @@ int collectIncluderClosureOf(Prerequisites *prerequisites, int fileNumber, int f
 static OutOfDate whyOutOfDate(Prerequisites *prerequisites, int fileNumber, FileItem *fileItem) {
     if (fileTimestampIsZero(fileItem->knowledgeTime))
         return (OutOfDate){KNOWLEDGE_MISSING, fileNumber};
-    if (prerequisiteChangedAfter(editorFileModificationTime(fileItem->name), fileItem->knowledgeTime))
-        return (OutOfDate){CU_CHANGED, fileNumber};
 
     int closure[MAX_INCLUDE_CLOSURE];
     int count = collectIncludeClosure(prerequisites->includeGraph, fileNumber, closure, MAX_INCLUDE_CLOSURE);
@@ -87,9 +79,6 @@ static void logOutOfDate(char *name, OutOfDate outOfDate) {
         break;
     case KNOWLEDGE_MISSING:
         log_info("'%s' is out of date: there is no knowledge of it", name);
-        break;
-    case CU_CHANGED:
-        log_info("'%s' is out of date: it changed", name);
         break;
     case PREREQUISITE_CHANGED:
         log_info("'%s' is out of date: '%s' changed", name,

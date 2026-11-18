@@ -1,0 +1,3 @@
+-browse-push -preload CURDIR/a.c CURDIR/a.preload -cursor=39 CURDIR/b.c
+<progress>Analysing 1 files... 0 remaining</progress>
+-browse-push -preload CURDIR/a.c CURDIR/a.preload -cursor=39 CURDIR/b.c

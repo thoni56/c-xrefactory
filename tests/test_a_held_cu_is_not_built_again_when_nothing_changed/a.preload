@@ -1,0 +1,2 @@
+#include "h.h"
+int shared(void) { return 2; }

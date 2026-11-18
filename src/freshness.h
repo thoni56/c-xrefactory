@@ -12,7 +12,6 @@ typedef struct prerequisites Prerequisites;
 typedef enum {
     KNOWLEDGE_CURRENT,
     KNOWLEDGE_MISSING,
-    CU_CHANGED,
     PREREQUISITE_CHANGED,
     CLOSURE_TOO_LARGE,
 } OutOfDateReason;
