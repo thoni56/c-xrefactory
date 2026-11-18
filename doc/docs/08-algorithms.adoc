@@ -192,6 +192,8 @@ Treating that header as changed removes it.
 An `#ifdef` that flips leaves the edge in place, since the scan over-approximates, so that part of `variant-b` stays open.
 
 The scan and the removal find *changed* the same way, by `editorContentTokenOf()`, the buffer's when there is one, and the scan reads that buffer, as the parse does.
+The parse records the token of a file it reads first, so a file the removal has not seen has had no parse and no references, and the removal only records its token.
+A header that only a parse finds, e.g. through a `<...>` include, then counts as changed only when its content differs from what the parse read.
 The parse still adds include edges to the graph beside the scan's (`buildIncludeGraph()`), since the scan does not record `<...>` includes.
 Once it does (`scan-angle-includes`), the graph has one writer.
 Refined on the Mac, session `4839a129`, 2026-11-06.
