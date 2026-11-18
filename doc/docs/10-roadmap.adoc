@@ -42,6 +42,8 @@ convergence is **complete**; the mechanism lives in <<06-principles.adoc#,Princi
   `*c-xref-diagnostics*` with its position, and `next-error` visits it
   (<<11-planned-features.adoc#,Planned Features>>, Diagnostics Buffer).
   This was the last thing only the batch modes could do, i.e. `-create -errors`.
+* *Changes on disk* — a file changed on disk without a preload, e.g. by `git switch`,
+  is seen on the next request by its content token (ADR-0036), a CU as well as a header.
 
 ==== Remaining
 
@@ -57,12 +59,6 @@ convergence is **complete**; the mechanism lives in <<06-principles.adoc#,Princi
  the collection caps stays truncated for as long as the session lives. A session reading
  the live table, with those caps gone, would show what is known now instead of what was
  known at the push.
-
-|Behind-the-back disk-change detection
-|Entry refresh is editor-buffer-driven, so a file changed on disk without a preload
- (`git switch`, regenerated source) is not picked up. A general per-request disk-mtime
- recheck for non-preloaded buffers would close it — see
- <<06-principles.adoc#,Principles>> (Editor Buffers Are the Content Source).
 
 |Batch prime
 |An explicit request — `-parse-all` — that parses every compilation unit the scan

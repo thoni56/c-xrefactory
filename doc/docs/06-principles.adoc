@@ -61,7 +61,7 @@ file on disk.
 The only thing that refreshes an existing buffer is the client. When the editor
 sends `-preload <file> <tmpfile>`, `openEditorBufferFromPreload` compares the temp
 file's modification time against the buffer's and reloads the buffer from the temp
-file if they differ. There is no disk polling and no background filesystem sync:
+file if they differ. There is no background filesystem sync:
 **the editor is the source of truth for file content, and the server mirrors it
 through preloads.**
 
@@ -85,19 +85,17 @@ A held buffer wins over a changed disk file::
   and loses its references, so its includers are out of date and are built again
   (ADR-0035).
 
-Behind-the-back changes are not detected (known limitation)::
-  A file the server has buffered but the editor does not have open — a header
-  reached through `#include`, or a file visited by an earlier browse — is never
-  re-preloaded, so a change to it _on disk alone_ is invisible. This bites real
-  workflows: `git switch`, regenerated files (`*.tab.[ch]`, `lexem.c`), scripts
-  that write sources. It is a limitation of the current model, not a deliberate
-  exclusion; the likely fix is a per-request disk-mtime recheck for non-preloaded
-  buffers (extending the re-sync above to fire on mtime, not only on un-preloading).
-  Deferred.
+A change on disk alone is seen on the next request::
+  A file the editor does not hold has no buffer between requests, since the server
+  closes the buffers it read itself when a request is answered. Each request compares
+  every known file's content token with the one it last saw (ADR-0036), so a change on
+  disk alone is seen then, e.g. after `git switch`, regenerated files (`*.tab.[ch]`,
+  `lexem.c`) or a script that writes sources. The file loses its references, and a CU
+  its knowledge, so they are built again when a request needs them.
 
 NOTE: A test that changes a file's content on disk between requests _without_
-sending a matching `-preload` is exercising this behind-the-back case, not a real
-editing scenario. To simulate an edit, send the new content as a preload.
+sending a matching `-preload` is exercising a change on disk alone, e.g. a `git switch`.
+To simulate an edit, send the new content as a preload.
 
 === Continuously Fresh References
 

@@ -144,8 +144,7 @@ reported over `src/`, no `$` among them.
 since a server writes it on the way out. The Emacs client does both for its own server
 from Project → Remove References and Restart Server
 (`c-xref-project-remove-references-and-restart`); the next request starts a fresh one,
-which rebuilds from the sources. It also clears the shadow occurrences that
-behind-the-back disk changes leave behind. It is a stopgap for both.
+which rebuilds from the sources. It is a stopgap.
 
 === Extract Variable puts the declaration in the wrong place for some statements
 
