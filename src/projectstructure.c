@@ -80,6 +80,8 @@ static StringList *scanTextForIncludes(char *text, size_t length, const char *fi
 static char *readFileContent(FILE *file, size_t *length) {
     size_t capacity = SCAN_BUFFER_SIZE;
     char *text = malloc(capacity);
+    if (text == NULL)
+        FATAL_ERROR(ERR_NO_MEMORY, "scan of a file", EXIT_FAILURE);
     size_t bytesRead;
     *length = 0;
     while ((bytesRead = readFile(file, text + *length, 1, capacity - *length)) > 0) {
@@ -87,6 +89,8 @@ static char *readFileContent(FILE *file, size_t *length) {
         if (*length == capacity) {
             capacity *= 2;
             text = realloc(text, capacity);
+            if (text == NULL)
+                FATAL_ERROR(ERR_NO_MEMORY, "scan of a file", EXIT_FAILURE);
         }
     }
     return text;
