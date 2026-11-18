@@ -1,0 +1,2 @@
+  CURDIR
+  -ICURDIR

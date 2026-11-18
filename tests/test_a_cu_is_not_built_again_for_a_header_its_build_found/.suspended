@@ -1,0 +1,18 @@
+Bug: a CU is built again for a header that its own build found
+
+Since cda0d9b3 a file the removal has not seen before has changed. A header that
+only a parse finds, here p.h through <p.h>, which the scan does not follow, is first
+seen by the removal in the request after the build that read it. It then counts as
+changed, is noticed, and the CU that was just built is out of date again: the trace
+says "'p.h' changed, removing its references" and "'a.c' is out of date: 'p.h'
+changed" for the second push. Measured on ffmpeg (WSL, session d25255b8,
+2026-11-18): 93 more files out of date after the first build round, 2.6s before the
+next round starts, and -getproject 0.5s slower, since on a cold start every file is
+first seen and each gets a walk over the reference table. The binary from e3a620d0
+passes this test.
+
+The likely fix: the parse records the seen token of each file it reads, as the scan
+does with startScanOf(), so its references belong to the content they came from.
+Then a file the removal sees for the first time has had no parse and no references,
+and the old first-sight branch (record the token, remove nothing) can come back.
+test_a_header_first_seen_after_a_parse_found_it_has_changed must stay green.
