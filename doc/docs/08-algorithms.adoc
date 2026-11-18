@@ -310,7 +310,7 @@ Items in `doc/backlog.md`:
 
 * *The cap* (`cap-is-a-question`). At most 128 recipes run, and the rest stay out of date without a question. They are known, though. ADR-0032 makes it a question, and later a time budget (`time-budget`).
 * *The goal is too small* (`request-target`). We run `make request.o`, but the answer is linked from more objects than that.
-* *The config is not a prerequisite* (`out-of-date`). That is the classic Make pitfall where changing `CFLAGS` rebuilds nothing. A config change removes every reference and takes every CU's knowledge, but it is found by the config's modification time, and a change while no server runs is probably not seen.
+* *The config is not an input of the build predicate* (`out-of-date`). Make's classic pitfall, changing `CFLAGS` and nothing being rebuilt, does not happen: a config change is found by its content token, also across a restart, and removes every reference and takes every CU's knowledge. But the predicate itself does not read the config.
 * *A missing include edge* (`scan-angle-includes`). The scan's edges are facts about each file now, but it records no `<...>` includes. A CU that reaches a changed header through such an include alone is not out of date, so its part of the header is missing without that being known.
 * *Files that appear between requests* are not seen (`files-appear-vanish`). The prerequisites of a known file are checked, but a new file is not known. A vanished header is seen to change and loses its references, but is not marked deleted, so it stays in the file table.
 * *A recipe that stops writing part of a shared output* leaves that part (`variant-b`). Make writes its targets whole, so it never meets this.
