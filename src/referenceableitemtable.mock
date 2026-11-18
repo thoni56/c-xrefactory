@@ -60,3 +60,7 @@ void removeReferencesForFile(int fileNumber) {
 void removeReferencesForFileExceptIncludes(int fileNumber) {
     mock(fileNumber);
 }
+
+void removeAllReferencesExceptIncludes(void) {
+    mock();
+}

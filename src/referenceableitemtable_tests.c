@@ -78,3 +78,26 @@ Ensure(ReferenceableItemTable, can_remove_the_references_of_a_file_except_its_in
     assert_that(symbol.references, is_null);
     assert_that(include.references, is_equal_to(&includeReference));
 }
+
+/* A config change is a change of every file, and the include references stay
+ * for the same reason as a changed CU's */
+Ensure(ReferenceableItemTable, can_remove_every_reference_except_the_includes) {
+    Reference firstReference = {.position = {.file = 42, .line = 10, .col = 1}, .usage = UsageDefined};
+    ReferenceableItem first = {.linkName = "alpha", .type = TypeDefault, .references = &firstReference};
+    addToReferenceableItemTable(&first);
+
+    Reference secondReference = {.position = {.file = 43, .line = 3, .col = 1}, .usage = UsageUsed};
+    ReferenceableItem second = {.linkName = "beta", .type = TypeDefault, .references = &secondReference};
+    addToReferenceableItemTable(&second);
+
+    Reference includeReference = {.position = {.file = 42, .line = 1, .col = 1}, .usage = UsageUsed};
+    ReferenceableItem include = {.linkName = "header.h", .type = TypeCppInclude, .includeFileNumber = 7,
+                                 .references = &includeReference};
+    addToReferenceableItemTable(&include);
+
+    removeAllReferencesExceptIncludes();
+
+    assert_that(first.references, is_null);
+    assert_that(second.references, is_null);
+    assert_that(include.references, is_equal_to(&includeReference));
+}

@@ -26,6 +26,7 @@
 #include "timestamp.h"
 #include "yylex.h"
 #include "rebuild.h"
+#include "referenceableitemtable.h"
 
 
 const char *operationNamesTable[] = {
@@ -332,7 +333,9 @@ void callServer(ArgumentsVector baseArgs, ArgumentsVector requestArgs) {
         bool configChanged = isProjectConfigChanged();
         if (configChanged) {
             reloadProjectConfig(baseArgs, requestArgs);
-            markAllCompilationUnitsStale();   /* config change = logical cold restart */
+            /* A config change is a change of every file (ADR-0035) */
+            removeAllReferencesExceptIncludes();
+            markAllCompilationUnitsStale();
         }
         if (!scanDone || configChanged) {
             scanProjectStructure();

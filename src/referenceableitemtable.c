@@ -100,3 +100,12 @@ void removeReferencesForFileExceptIncludes(int fileNumber) {
             if (item->type != TypeCppInclude)
                 removeReferencesInFile(item, fileNumber);
 }
+
+void removeAllReferencesExceptIncludes(void) {
+    log_trace("removing all references except includes");
+
+    for (int i = 0; i < referenceableItemTable.size; i++)
+        for (ReferenceableItem *item = referenceableItemTable.tab[i]; item != NULL; item = item->next)
+            if (item->type != TypeCppInclude)
+                item->references = NULL;
+}

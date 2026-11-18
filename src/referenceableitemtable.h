@@ -27,5 +27,6 @@ extern void mapOverReferenceableItemTable(void (*fun)(ReferenceableItem *));
 extern void mapOverReferenceableItemTableWithPointer(void (*fun)(ReferenceableItem *, void *), void *pointer);
 extern void removeReferencesForFile(int fileNumber);
 extern void removeReferencesForFileExceptIncludes(int fileNumber);
+extern void removeAllReferencesExceptIncludes(void);
 
 #endif
