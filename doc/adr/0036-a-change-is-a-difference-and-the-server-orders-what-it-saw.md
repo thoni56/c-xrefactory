@@ -4,6 +4,8 @@ Date: 2026-11-06
 
 ## Status
 
+Implemented (2026-11-18)
+
 Accepted (2026-11-11)
 
 Refines [ADR-0032](0032-knowledge-is-rebuilt-like-make-rebuilds-targets.md) and

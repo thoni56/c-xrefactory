@@ -805,7 +805,6 @@ was done.
 - <a id="adr-0031"></a>**ADR-0031: what files a project consists of**
 - <a id="adr-0032"></a>**ADR-0032: knowledge is rebuilt like `make` rebuilds targets**
 - <a id="adr-0035"></a>**ADR-0035: a file's references are removed when its content changes**
-- <a id="adr-0036"></a>**ADR-0036: a change is a difference, and the server orders what it saw**
 
 ## Open questions that would reorder this
 
