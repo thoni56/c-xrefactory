@@ -11,10 +11,11 @@
 #include "log.h"
 #include "misc.h"
 #include "stringlist.h"
-#include "timestamp.h"
 
 
 #define SCAN_BUFFER_SIZE 4096
+#define SCAN_LINE_LENGTH_MAX 4096
+
 
 /* Resolve an include path: try includer's directory first, then walk
    includeDirs. Returns the resolved path (pointer to static buffer). */
@@ -62,7 +63,7 @@ static StringList *addIncludeOnLine(char *line, const char *filePath, int includ
 static StringList *scanTextForIncludes(char *text, size_t length, const char *filePath,
                                        int includerFileNumber, StringList *includeDirs) {
     StringList *discovered = NULL;
-    char line[SCAN_BUFFER_SIZE];
+    char line[SCAN_LINE_LENGTH_MAX+1];
     size_t start = 0;
     while (start < length) {
         char *eol = memchr(text + start, '\n', length - start);
@@ -74,6 +75,21 @@ static StringList *scanTextForIncludes(char *text, size_t length, const char *fi
         start = end + 1;
     }
     return discovered;
+}
+
+static char *readFileContent(FILE *file, size_t *length) {
+    size_t capacity = SCAN_BUFFER_SIZE;
+    char *text = malloc(capacity);
+    size_t bytesRead;
+    *length = 0;
+    while ((bytesRead = readFile(file, text + *length, 1, capacity - *length)) > 0) {
+        *length += bytesRead;
+        if (*length == capacity) {
+            capacity *= 2;
+            text = realloc(text, capacity);
+        }
+    }
+    return text;
 }
 
 /* Scan a single file for #include "..." lines, from its buffer when there is
@@ -88,42 +104,21 @@ static StringList *scanFileForIncludes(const char *filePath, int includerFileNum
                                    filePath, includerFileNumber, includeDirs);
     }
 
-    StringList *discovered = NULL;
     FILE *file = openFile((char *)filePath, "r");
     if (file == NULL)
         return NULL;
+
     /* Taken before the content is read, so a change while reading is seen later */
     startScanOf(includerFileNumber, contentTokenOf((char *)filePath));
-    char buf[SCAN_BUFFER_SIZE];
-    size_t leftover = 0;
-    size_t bytesRead;
-    while ((bytesRead = readFile(file, buf + leftover, 1, sizeof(buf) - 1 - leftover)) > 0) {
-        size_t total = leftover + bytesRead;
-        buf[total] = '\0';
-        leftover = 0;
 
-        char *line = buf;
-        while (line < buf + total) {
-            char *eol = strchr(line, '\n');
-            if (eol != NULL)
-                *eol = '\0';
-            else {
-                /* Incomplete line - carry over to next read */
-                leftover = buf + total - line;
-                memmove(buf, line, leftover);
-                break;
-            }
-
-            discovered = addIncludeOnLine(line, filePath, includerFileNumber, includeDirs, discovered);
-
-            line = eol + 1;
-        }
-    }
+    size_t length;
+    char *text = readFileContent(file, &length);
     closeFile(file);
+
+    StringList *discovered = scanTextForIncludes(text, length, filePath, includerFileNumber, includeDirs);
+    free(text);
     return discovered;
 }
-
-static bool isInList(const char *name, StringList *list);
 
 static void prependAllHeadersToWorklist(StringList **worklist, StringList *newHeaders) {
     if (newHeaders != NULL) {
@@ -133,6 +128,14 @@ static void prependAllHeadersToWorklist(StringList **worklist, StringList *newHe
         tail->next = *worklist;
         *worklist = newHeaders;
     }
+}
+
+static bool isInList(const char *name, StringList *list) {
+    for (StringList *s = list; s != NULL; s = s->next) {
+        if (strcmp(s->string, name) == 0)
+            return true;
+    }
+    return false;
 }
 
 /* Recursively walk a directory tree, one level at a time via the fileio
@@ -182,14 +185,6 @@ StringList *scanProjectForFilesAndIncludes(const char *projectDir, StringList *i
     /* Phase 2: transitively scan discovered headers */
     scanDiscoveredHeaders(worklist, includeDirs);
     return discoveredCUs;
-}
-
-static bool isInList(const char *name, StringList *list) {
-    for (StringList *s = list; s != NULL; s = s->next) {
-        if (strcmp(s->string, name) == 0)
-            return true;
-    }
-    return false;
 }
 
 void markMissingFilesAsDeleted(StringList *discoveredFiles) {
