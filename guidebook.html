@@ -5,7 +5,7 @@
 <meta http-equiv="X-UA-Compatible" content="IE=edge">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <meta name="generator" content="Asciidoctor 2.0.26">
-<meta name="author" content="v{VERSION} - Generated 2026-11-17">
+<meta name="author" content="v{VERSION} - Generated 2026-11-18">
 <title>C-xrefactory - a C/Yacc refactoring and code browsing tool - Design Documentation</title>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Open+Sans:300,300italic,400,400italic,600,600italic%7CNoto+Serif:400,400italic,700,700italic%7CDroid+Sans+Mono:400,700">
 <style>
@@ -441,7 +441,7 @@ body.book #toc,body.book #preamble,body.book h1.sect0,body.book .sect1>h2{page-b
 <div id="header">
 <h1>C-xrefactory - a C/Yacc refactoring and code browsing tool - Design Documentation</h1>
 <div class="details">
-<span id="author" class="author">v{VERSION} - Generated 2026-11-17</span><br>
+<span id="author" class="author">v{VERSION} - Generated 2026-11-18</span><br>
 </div>
 <div id="toc" class="toc2">
 <div id="toctitle">Table of Contents</div>
@@ -599,12 +599,11 @@ body.book #toc,body.book #preamble,body.book h1.sect0,body.book .sect1>h2{page-b
 <ul class="sectlevel2">
 <li><a href="#_incremental_cxfile_c_cleanup">16.1. Incremental <code>cxfile.c</code> Cleanup</a></li>
 <li><a href="#macro-expansion-module">16.2. Extract Macro Expansion Module</a></li>
-<li><a href="#clean-parser-api">16.3. Remove <code>parseBufferUsingServer</code> Bridge</a></li>
-<li><a href="#typed-requests">16.4. Replace Global <code>options</code> with Typed Requests</a></li>
-<li><a href="#remove-hashtab">16.5. Remove Hashtab by Migrating to Hashlist</a></li>
-<li><a href="#split-editor-module">16.6. Split the Editor Module</a></li>
-<li><a href="#rebuild-partition">16.7. Partition the Rebuild Like Make</a></li>
-<li><a href="#_elisp_compiled_and_deleted_on_every_build">16.8. Elisp Compiled and Deleted on Every Build</a></li>
+<li><a href="#typed-requests">16.3. Replace Global <code>options</code> with Typed Requests</a></li>
+<li><a href="#remove-hashtab">16.4. Remove Hashtab by Migrating to Hashlist</a></li>
+<li><a href="#split-editor-module">16.5. Split the Editor Module</a></li>
+<li><a href="#rebuild-partition">16.6. Partition the Rebuild Like Make</a></li>
+<li><a href="#_elisp_compiled_and_deleted_on_every_build">16.7. Elisp Compiled and Deleted on Every Build</a></li>
 </ul>
 </li>
 <li><a href="#_known_bugs">17. Known Bugs</a>
@@ -647,12 +646,13 @@ body.book #toc,body.book #preamble,body.book h1.sect0,body.book .sect1>h2{page-b
 <li><a href="#_users">20.10. Users</a></li>
 <li><a href="#_architectural_invariants_historical">20.11. Architectural Invariants (Historical)</a></li>
 <li><a href="#_refactorymode_internally_calls_xrefmode">20.12. RefactoryMode Internally Calls XrefMode</a></li>
-<li><a href="#_the_lastparsedmtime_optimization_and_refactoring_conflict_historical">20.13. The lastParsedMtime Optimization and Refactoring Conflict (Historical)</a></li>
-<li><a href="#_stale_file_refresh_and_cross_file_references_historical">20.14. Stale File Refresh and Cross-File References (Historical)</a></li>
-<li><a href="#cu-reparse-header-staleness">20.15. Investigation: Does CU Reparse Leave Header-Position References Stale?</a></li>
-<li><a href="#_memory_as_truth_convergence_implementation_path_historical">20.16. Memory-as-Truth Convergence: Implementation Path (Historical)</a></li>
-<li><a href="#_navigation_architecture_and_preloading_historical">20.17. Navigation Architecture and Preloading (Historical)</a></li>
-<li><a href="#_unified_in_memory_table_discovery_historical">20.18. Unified In-Memory Table Discovery (Historical)</a></li>
+<li><a href="#_the_refactoring_process_the_bridge_and_its_removal">20.13. The Refactoring Process, the Bridge and Its Removal</a></li>
+<li><a href="#_the_lastparsedmtime_optimization_and_refactoring_conflict_historical">20.14. The lastParsedMtime Optimization and Refactoring Conflict (Historical)</a></li>
+<li><a href="#_stale_file_refresh_and_cross_file_references_historical">20.15. Stale File Refresh and Cross-File References (Historical)</a></li>
+<li><a href="#cu-reparse-header-staleness">20.16. Investigation: Does CU Reparse Leave Header-Position References Stale?</a></li>
+<li><a href="#_memory_as_truth_convergence_implementation_path_historical">20.17. Memory-as-Truth Convergence: Implementation Path (Historical)</a></li>
+<li><a href="#_navigation_architecture_and_preloading_historical">20.18. Navigation Architecture and Preloading (Historical)</a></li>
+<li><a href="#_unified_in_memory_table_discovery_historical">20.19. Unified In-Memory Table Discovery (Historical)</a></li>
 </ul>
 </li>
 </ul>
@@ -1160,7 +1160,7 @@ file on disk.</p>
 <p>The only thing that refreshes an existing buffer is the client. When the editor
 sends <code>-preload &lt;file&gt; &lt;tmpfile&gt;</code>, <code>openEditorBufferFromPreload</code> compares the temp
 file&#8217;s modification time against the buffer&#8217;s and reloads the buffer from the temp
-file if they differ. There is no disk polling and no background filesystem sync:
+file if they differ. There is no background filesystem sync:
 <strong>the editor is the source of truth for file content, and the server mirrors it
 through preloads.</strong></p>
 </div>
@@ -1190,16 +1190,14 @@ lets go of the buffer. A CU is parsed again from disk. A header changes at that 
 and loses its references, so its includers are out of date and are built again
 (ADR-0035).</p>
 </dd>
-<dt class="hdlist1">Behind-the-back changes are not detected (known limitation)</dt>
+<dt class="hdlist1">A change on disk alone is seen on the next request</dt>
 <dd>
-<p>A file the server has buffered but the editor does not have open — a header
-reached through <code>#include</code>, or a file visited by an earlier browse — is never
-re-preloaded, so a change to it <em>on disk alone</em> is invisible. This bites real
-workflows: <code>git switch</code>, regenerated files (<code>*.tab.[ch]</code>, <code>lexem.c</code>), scripts
-that write sources. It is a limitation of the current model, not a deliberate
-exclusion; the likely fix is a per-request disk-mtime recheck for non-preloaded
-buffers (extending the re-sync above to fire on mtime, not only on un-preloading).
-Deferred.</p>
+<p>A file the editor does not hold has no buffer between requests, since the server
+closes the buffers it read itself when a request is answered. Each request compares
+every known file&#8217;s content token with the one it last saw (ADR-0036), so a change on
+disk alone is seen then, e.g. after <code>git switch</code>, regenerated files (<code>*.tab.[ch]</code>,
+<code>lexem.c</code>) or a script that writes sources. The file loses its references, and a CU
+its knowledge, so they are built again when a request needs them.</p>
 </dd>
 </dl>
 </div>
@@ -1211,8 +1209,8 @@ Deferred.</p>
 </td>
 <td class="content">
 A test that changes a file&#8217;s content on disk between requests <em>without</em>
-sending a matching <code>-preload</code> is exercising this behind-the-back case, not a real
-editing scenario. To simulate an edit, send the new content as a preload.
+sending a matching <code>-preload</code> is exercising a change on disk alone, e.g. a <code>git switch</code>.
+To simulate an edit, send the new content as a preload.
 </td>
 </tr>
 </table>
@@ -2090,7 +2088,7 @@ the top of <code>callServer()</code>, before the operation dispatches. See
 </table>
 <div class="paragraph">
 <p><code>knowledgeIsOutOfDate()</code> in <code>src/freshness.c</code> is the rule.
-It counts every doubt as out of date: no knowledge, an input that no longer exists, a change within the coarse clock&#8217;s 10 ms, a closure above 1000 files.
+It counts every doubt as out of date: no knowledge, a prerequisite noticed changed after the knowledge was built, a closure above 1000 files.
 So it can rebuild for nothing, but should not call stale knowledge current.</p>
 </div>
 <div class="paragraph">
@@ -2135,7 +2133,7 @@ A step that belongs to none of them is a workaround, usually for the removal.</p
 <p>For some operations <strong>answer</strong> is more than a lookup.
 A refactoring performs before it answers: it analyses the flow, makes the edits, and the edits are the answer.
 That is still the answer line, since it reads the knowledge the steps above brought up to date.
-A server call it makes for a part of the work, e.g. parsing the region to extract, goes through <code>callServer()</code> again, and so through the steps again.</p>
+A parse it needs for a part of the work, e.g. the region to extract, is a direct parse of that buffer, once for each pass. The safety check after a rename reads references in the files the rename edited, so it builds the compilation units that are out of date first, i.e. the build line again for those files.</p>
 </div>
 <div class="paragraph">
 <p><strong>Changed</strong> is found once, and the scan and the removal both use it.
@@ -2154,11 +2152,9 @@ Treating that header as changed removes it.
 An <code>#ifdef</code> that flips leaves the edge in place, since the scan over-approximates, so that part of <code>variant-b</code> stays open.</p>
 </div>
 <div class="paragraph">
-<p>Today the code finds <strong>changed</strong> twice, with two meanings.
-<code>rescanChangedFiles()</code> compares the disk&#8217;s modification time with the scan time and reads the disk.
-<code>removeReferencesOfChangedFiles()</code> uses <code>contentTimeOf()</code>, which also knows held buffers and buffers let go.
-So for a held file they can disagree, and the parse still adds include edges to the graph beside the scan&#8217;s.
-Once the scan reads what the parse reads, the graph has one writer.
+<p>The scan and the removal find <strong>changed</strong> the same way, by <code>editorContentTokenOf()</code>, the buffer&#8217;s when there is one, and the scan reads that buffer, as the parse does.
+The parse still adds include edges to the graph beside the scan&#8217;s (<code>buildIncludeGraph()</code>), since the scan does not record <code>&lt;&#8230;&#8203;&gt;</code> includes.
+Once it does (<code>scan-angle-includes</code>), the graph has one writer.
 Refined on the Mac, session <code>4839a129</code>, 2026-11-06.</p>
 </div>
 <div class="paragraph">
@@ -2177,9 +2173,6 @@ The shape was first written down on the Mac, session <code>4839a129</code>, with
 <div class="ulist">
 <ul>
 <li>
-<p><strong>The removal on change is only done for headers</strong> (<code>remove-on-change</code>). A changed CU loses its references when it is built.</p>
-</li>
-<li>
 <p><strong>The cap</strong> (<code>cap-is-a-question</code>). At most 128 recipes run, and the rest stay out of date without a question. They are known, though. ADR-0032 makes it a question, and later a time budget (<code>time-budget</code>).</p>
 </li>
 <li>
@@ -2187,9 +2180,6 @@ The shape was first written down on the Mac, session <code>4839a129</code>, with
 </li>
 <li>
 <p><strong>The config is not a prerequisite</strong> (<code>out-of-date</code>). That is the classic Make pitfall where changing <code>CFLAGS</code> rebuilds nothing. <code>markAllCompilationUnitsStale()</code> covers it for now, but removes no references.</p>
-</li>
-<li>
-<p><strong>A file changed on disk, outside the goal,</strong> is not seen, and keeps its old references (<code>behind-the-back</code>).</p>
 </li>
 <li>
 <p><strong>A missing include edge</strong> (<code>scan-angle-includes</code>). The scan&#8217;s edges are facts about each file now, but it records no <code>&lt;&#8230;&#8203;&gt;</code> includes. A CU that reaches a changed header through such an include alone is not out of date, so its part of the header is missing without that being known.</p>
@@ -3051,20 +3041,16 @@ reference table.</p>
       │
       ├─ deepCopyOptionsFromTo(&amp;options, &amp;refactoringOptions)
       ├─ loadAllOpenedEditorBuffers()
-      ├─ quasiSaveModifiedEditorBuffers()
       │
       ├─ Create point/mark EditorMarkers from cursor/mark offsets
       │
-      ├─ Dispatch on refactoringOptions.theRefactoring:
-      │   ├─ AVR_RENAME_SYMBOL    → renameAtPoint(point)
-      │   ├─ AVR_EXTRACT_*        → extractFunction/Macro/Variable(point, mark)
-      │   ├─ AVR_ADD/DEL/MOVE_PARAMETER → parameterManipulation(point, ...)
-      │   ├─ AVR_MOVE_FUNCTION    → moveFunction(point)
-      │   ├─ AVR_ORGANIZE_INCLUDES → organizeIncludes(point)
-      │   └─ AVR_RENAME_MODULE/INCLUDED_FILE → renameAtInclude(point)
-      │
-      ├─ markModifiedEditorBuffersAsStale()   ← mark for entry refresh
-      └─ quasiSaveModifiedEditorBuffers()     ← update buffer mtimes</code></pre>
+      └─ Dispatch on refactoringOptions.theRefactoring:
+          ├─ AVR_RENAME_SYMBOL    → renameAtPoint(point)
+          ├─ AVR_EXTRACT_*        → extractFunction/Macro/Variable(point, mark)
+          ├─ AVR_ADD/DEL/MOVE_PARAMETER → parameterManipulation(point, ...)
+          ├─ AVR_MOVE_FUNCTION    → moveFunction(point)
+          ├─ AVR_ORGANIZE_INCLUDES → organizeIncludes(point)
+          └─ AVR_RENAME_MODULE/INCLUDED_FILE → renameAtInclude(point)</code></pre>
 </div>
 </div>
 <div class="dlist">
@@ -3075,17 +3061,16 @@ reference table.</p>
 refresh that ran before this request. The refactoring code directly uses the
 references.</p>
 </dd>
-<dt class="hdlist1">Mark stale on completion</dt>
+<dt class="hdlist1">Edits are found by their content</dt>
 <dd>
-<p>After the refactoring, <code>markModifiedEditorBuffersAsStale()</code> sets <code>lastParsedMtime = 0</code>
-on all files whose editor buffers were modified. This ensures the next request&#8217;s entry
-refresh reparses them, picking up the post-refactoring state.</p>
+<p>The edited buffers differ from what their knowledge was built from, so the next
+request&#8217;s refresh builds them again (ADR-0036).</p>
 </dd>
-<dt class="hdlist1"><code>parseBufferUsingServer()</code> calls remain</dt>
+<dt class="hdlist1">Direct parses</dt>
 <dd>
-<p>Some refactoring functions call <code>parseBufferUsingServer()</code> internally (e.g. to gather
-semantic information for safety checks). These calls parse into the existing reference
-table without wiping <code>cxMemory</code>.</p>
+<p>A refactoring that needs semantic information, e.g. a parameter&#8217;s position or the
+region to extract, parses the buffer directly into the existing reference table, see
+"Refactoring and the parsers" in <a href="14-code.html">Code</a>.</p>
 </dd>
 </dl>
 </div>
@@ -3759,6 +3744,10 @@ operation (<a href="/workspace/1/decisions/C-xrefactory#20">ADR-0020</a>).</p>
 <code>RefactoryMode</code> and the <code>-refactory</code> process removed.</p>
 </li>
 <li>
+<p><strong>The bridge removed</strong> — a refactoring parses directly and no longer re-enters the
+server with an internal request (2026-11, see the Archive).</p>
+</li>
+<li>
 <p><strong>Search from the in-memory table</strong> — <code>searchInMemoryTable()</code> replaced the disk scan;
 the last disk-as-truth read is gone.</p>
 </li>
@@ -3775,6 +3764,10 @@ given, <code>-server</code> or <code>-lsp</code>.</p>
 <code><strong>c-xref-diagnostics</strong></code> with its position, and <code>next-error</code> visits it
 (<a href="11-planned-features.html">Planned Features</a>, Diagnostics Buffer).
 This was the last thing only the batch modes could do, i.e. <code>-create -errors</code>.</p>
+</li>
+<li>
+<p><strong>Changes on disk</strong> — a file changed on disk without a preload, e.g. by <code>git switch</code>,
+is seen on the next request by its content token (ADR-0036), a CU as well as a header.</p>
 </li>
 </ul>
 </div>
@@ -3802,18 +3795,6 @@ This was the last thing only the batch modes could do, i.e. <code>-create -error
  the collection caps stays truncated for as long as the session lives. A session reading
  the live table, with those caps gone, would show what is known now instead of what was
  known at the push.</p></td>
-</tr>
-<tr>
-<td class="tableblock halign-left valign-top"><p class="tableblock">Remove <code>parseBufferUsingServer</code> bridge</p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">The last divergent parse path, re-entering <code>callServer</code> from 9 refactoring call sites.
- See Chapter 17.3.</p></td>
-</tr>
-<tr>
-<td class="tableblock halign-left valign-top"><p class="tableblock">Behind-the-back disk-change detection</p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">Entry refresh is editor-buffer-driven, so a file changed on disk without a preload
- (<code>git switch</code>, regenerated source) is not picked up. A general per-request disk-mtime
- recheck for non-preloaded buffers would close it — see
- <a href="06-principles.html">Principles</a> (Editor Buffers Are the Content Source).</p></td>
 </tr>
 <tr>
 <td class="tableblock halign-left valign-top"><p class="tableblock">Batch prime</p></td>
@@ -3950,7 +3931,7 @@ with it the defines it leaked into the project the server was opened on (<code>c
 <tr>
 <td class="tableblock halign-left valign-top"><p class="tableblock">Partition <code>options</code> by lifetime</p></td>
 <td class="tableblock halign-left valign-top"><p class="tableblock">Session, Project and Request with one owner each, and a pure <code>parseCommandLine()</code> that
- opens no files and flips no flags. Chapter 17.4. It gates the three rows below, so it
+ opens no files and flips no flags. Chapter 17.3. It gates the three rows below, so it
  comes first even though it reads last.</p></td>
 </tr>
 <tr>
@@ -7154,11 +7135,8 @@ options. These are then converted to first a command enum starting in
 <code>OP</code> ("operation") or <code>AVR</code> ("available refactoring").</p>
 </div>
 <div class="paragraph">
-<p>Some refactorings need a file parsed again, which is done in the same
-manner, command line options, but this call is internal so the wanted
-arguments are stored in a vector which is passed to <code>callServer()</code>
-(the <code>parseBufferUsingServer</code> bridge, §17.3) in the same manner as
-<code>main()</code> passes the actual <code>argc</code>/<code>argv</code>.</p>
+<p>Some refactorings need a file parsed again. They call the parser
+directly, see "Refactoring and the parsers" below.</p>
 </div>
 <div class="paragraph">
 <p>Many of the commands require extra arguments like positions/markers
@@ -7576,9 +7554,10 @@ startup is not acceptable.</p>
 <div class="paragraph">
 <p>Some refactorings need detailed information about the code beyond what the in-memory
 reference table provides — for example, parameter manipulation needs the exact byte
-offsets of parameter declarations. The refactorer calls the parser via
-<code>parseBufferUsingServer()</code> to collect this information through the corresponding
-semantic actions. The collected information is stored in various global variables (for
+offsets of parameter declarations. The refactorer starts the compilation unit
+(<code>startCompilationUnit()</code>, or <code>startCompilationUnitForPass()</code> once for each pass),
+sets up the input with <code>startParsingBuffer()</code> and calls <code>callParser()</code>. The
+information is collected through the corresponding semantic actions. The collected information is stored in various global variables (for
 example, <code>parameterBeginPosition</code>) and in the <code>ParsedInfo</code> structure for use by
 extract operations and similar.</p>
 </div>
@@ -7589,10 +7568,9 @@ extract operations and similar.</p>
 <i class="fa icon-note" title="Note"></i>
 </td>
 <td class="content">
-This <code>parseBufferUsingServer</code> bridge — and the global-variable communication
-channel — is targeted for removal; see "Remove <code>parseBufferUsingServer</code> Bridge" in
-<a href="17-major-codebase-improvements.adoc">Chapter 17</a> and "Replace Global <code>options</code>
-with Typed Requests" in the same chapter.
+The global-variable communication channel is targeted for removal; see "Replace
+Global <code>options</code> with Typed Requests" in
+<a href="17-major-codebase-improvements.adoc">Chapter 17</a>.
 </td>
 </tr>
 </table>
@@ -7659,8 +7637,7 @@ current status.
 <p>Refactorings need semantic information beyond what the in-memory reference table holds
 — for example, byte offsets of block and function boundaries needed to verify that an
 editor region selected for "Extract Function" does not cross a block break. This
-information is collected when the refactoring entry calls <code>parseBufferUsingServer()</code> to
-drive a full parse over the buffer of interest; the parser&#8217;s semantic actions populate
+information is collected when the refactoring parses the buffer of interest directly; the parser&#8217;s semantic actions populate
 dedicated structures.</p>
 </div>
 <div class="paragraph">
@@ -9428,186 +9405,9 @@ This refactoring is independent of the LexemStream API improvements but would be
 </div>
 </div>
 <div class="sect2">
-<h3 id="clean-parser-api">16.3. Remove <code>parseBufferUsingServer</code> Bridge</h3>
+<h3 id="typed-requests">16.3. Replace Global <code>options</code> with Typed Requests</h3>
 <div class="sect3">
 <h4 id="_problem_2">16.3.1. Problem</h4>
-<div class="paragraph">
-<p>Refactoring operations that need structural information from parsing (function boundaries, move target validation, parameter positions, etc.) do not call the parser directly. Instead, they go through <code>parseBufferUsingServer()</code> — a function that constructs magic string arguments (like <code>"-olcxmovetarget"</code>, <code>"-olcxgetfunctionbounds"</code>) and runs a full <code>initServer()</code> + <code>callServer()</code> cycle. This is the internal equivalent of the editor sending a command over the protocol.</p>
-</div>
-<div class="listingblock">
-<div class="content">
-<pre class="highlightjs highlight"><code class="language-c hljs" data-lang="c">// refactory.c — 7 calls like this:
-parseBufferUsingServer(refactoringOptions.project, point, NULL, "-olcxpush", NULL);
-parseBufferUsingServer(refactoringOptions.project, point, NULL, "-olcxsafetycheck", NULL);
-parseBufferUsingServer(refactoringOptions.project, point, mark, "-olcxextract", "-olexmacro");
-
-// parsing.c — 2 bridge calls:
-parseBufferUsingServer(options.project, target, NULL, "-olcxmovetarget", NULL);
-parseBufferUsingServer(options.project, marker, NULL, "-olcxgetfunctionbounds", NULL);</code></pre>
-</div>
-</div>
-<div class="paragraph">
-<p>This makes the control flow circular and hard to follow: a refactoring operation (already running inside the server) constructs fake arguments, re-enters the server, which dispatches the operation, which calls the parser, which produces a side-effect in global state, which the original caller then reads.</p>
-</div>
-</div>
-<div class="sect3">
-<h4 id="_whats_done">16.3.2. What&#8217;s Done</h4>
-<div class="paragraph">
-<p>A clean parser API in <code>parsing.h/c</code> already exists and handles all call sites in <code>server.c</code>:</p>
-</div>
-<div class="ulist">
-<ul>
-<li>
-<p><strong><code>ParserOperation</code> enum</strong> — type-safe operations (<code>PARSE_TO_CREATE_REFERENCES</code>, <code>PARSE_TO_GET_FUNCTION_BOUNDS</code>, <code>PARSE_TO_VALIDATE_MOVE_TARGET</code>, <code>PARSE_TO_EXTRACT</code>, <code>PARSE_TO_TRACK_PARAMETERS</code>, <code>PARSE_TO_COMPLETE</code>)</p>
-</li>
-<li>
-<p><strong><code>ParsingConfig</code> struct</strong> — centralizes what was scattered across global flags (<code>cursorOffset</code>, <code>markOffset</code>, <code>extractMode</code>, <code>targetParameterIndex</code>, etc.)</p>
-</li>
-<li>
-<p><strong>Operation predicates</strong> — <code>needsReferenceAtCursor()</code>, <code>allowsDuplicateReferences()</code> replace implicit per-operation behavior</p>
-</li>
-<li>
-<p><strong><code>parseToCreateReferences(fileName)</code></strong> — the completed pattern: direct parsing without any bridge, used by entry refresh (ADR 20) and LSP</p>
-</li>
-</ul>
-</div>
-<div class="paragraph">
-<p>Two convenience functions have clean APIs but still bridge internally:</p>
-</div>
-<div class="ulist">
-<ul>
-<li>
-<p><strong><code>isValidMoveTarget(target)</code></strong> — sets up <code>ParsingConfig</code>, then calls <code>parseBufferUsingServer</code> with <code>"-olcxmovetarget"</code></p>
-</li>
-<li>
-<p><strong><code>getFunctionBoundaries(marker)</code></strong> — sets up <code>ParsingConfig</code>, then calls <code>parseBufferUsingServer</code> with <code>"-olcxgetfunctionbounds"</code></p>
-</li>
-</ul>
-</div>
-<div class="paragraph">
-<p>These demonstrate the migration pattern: the public API is already clean, only the implementation still bridges.</p>
-</div>
-</div>
-<div class="sect3">
-<h4 id="_what_remains">16.3.3. What Remains</h4>
-<div class="paragraph">
-<p><strong>9 bridge calls</strong> to eliminate (2 in <code>parsing.c</code>, 7 in <code>refactory.c</code>):</p>
-</div>
-<table class="tableblock frame-all grid-all stretch">
-<colgroup>
-<col style="width: 20%;">
-<col style="width: 40%;">
-<col style="width: 40%;">
-</colgroup>
-<thead>
-<tr>
-<th class="tableblock halign-left valign-top">Location</th>
-<th class="tableblock halign-left valign-top">Magic string</th>
-<th class="tableblock halign-left valign-top">Purpose</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td class="tableblock halign-left valign-top"><p class="tableblock"><code>parsing.c:99</code></p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock"><code>-olcxmovetarget</code></p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">Validate move target position</p></td>
-</tr>
-<tr>
-<td class="tableblock halign-left valign-top"><p class="tableblock"><code>parsing.c:124</code></p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock"><code>-olcxgetfunctionbounds</code></p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">Find function boundaries around cursor</p></td>
-</tr>
-<tr>
-<td class="tableblock halign-left valign-top"><p class="tableblock"><code>refactory.c:294</code></p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock"><code>-olcxpush</code> (with rename/safety flags)</p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">Push reference for rename safety check</p></td>
-</tr>
-<tr>
-<td class="tableblock halign-left valign-top"><p class="tableblock"><code>refactory.c:309</code></p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock"><code>-olcxsafetycheck</code></p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">Verify rename safety</p></td>
-</tr>
-<tr>
-<td class="tableblock halign-left valign-top"><p class="tableblock"><code>refactory.c:909</code></p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock"><code>-olcxpush</code> (with parameter flags)</p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">Navigate to parameter for add/delete</p></td>
-</tr>
-<tr>
-<td class="tableblock halign-left valign-top"><p class="tableblock"><code>refactory.c:934</code></p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock"><code>-olcxpush</code> (with parameter flags)</p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">Get parameter coordinates</p></td>
-</tr>
-<tr>
-<td class="tableblock halign-left valign-top"><p class="tableblock"><code>refactory.c:1252</code></p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock"><code>-olcxextract</code></p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">Extract function</p></td>
-</tr>
-<tr>
-<td class="tableblock halign-left valign-top"><p class="tableblock"><code>refactory.c:1256</code></p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock"><code>-olcxextract -olexmacro</code></p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">Extract macro</p></td>
-</tr>
-<tr>
-<td class="tableblock halign-left valign-top"><p class="tableblock"><code>refactory.c:1260</code></p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock"><code>-olcxextract -olexvariable</code></p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">Extract variable</p></td>
-</tr>
-</tbody>
-</table>
-<div class="paragraph">
-<p>Each call follows the same pattern: set global flags → call <code>parseBufferUsingServer</code> → read results from global state. The migration for each is: set <code>ParsingConfig</code> fields → call parser directly → read results from the same global state.</p>
-</div>
-</div>
-<div class="sect3">
-<h4 id="_migration_pattern">16.3.4. Migration Pattern</h4>
-<div class="paragraph">
-<p>The two <code>parsing.c</code> bridges show the pattern clearly. Today:</p>
-</div>
-<div class="listingblock">
-<div class="content">
-<pre class="highlightjs highlight"><code class="language-c hljs" data-lang="c">/* isValidMoveTarget — bridge still present */
-syncParsingConfigFromOptions(options);
-parsingConfig.operation = PARSE_TO_VALIDATE_MOVE_TARGET;
-parsingConfig.positionOfSelectedReference = makePositionFromEditorMarker(target);
-parsedInfo.moveTargetAccepted = false;
-parseBufferUsingServer(options.project, target, NULL, "-olcxmovetarget", NULL);
-result.valid = parsedInfo.moveTargetAccepted;</code></pre>
-</div>
-</div>
-<div class="paragraph">
-<p>The <code>ParsingConfig</code> is already set up — the bridge call is redundant, it just re-enters the server which re-reads the same config. Replacing it with a direct <code>callParser()</code> (similar to <code>parseToCreateReferences</code>) is the straightforward next step.</p>
-</div>
-<div class="paragraph">
-<p>The <code>refactory.c</code> calls are slightly more involved because they also need buffer preloading (the editor marker&#8217;s buffer must be set as input for parsing) and some set additional global flags. But the mechanism is the same.</p>
-</div>
-</div>
-<div class="sect3">
-<h4 id="_independence">16.3.5. Independence</h4>
-<div class="paragraph">
-<p>This refactoring is <strong>independent of the memory-as-truth architecture</strong>. The bridge removal is about how refactoring operations invoke parsing internally — not about where references come from or how they&#8217;re stored. It can proceed at any time, one call site at a time.</p>
-</div>
-</div>
-<div class="sect3">
-<h4 id="_code_locations">16.3.6. Code Locations</h4>
-<div class="ulist">
-<ul>
-<li>
-<p><code>src/parsing.h</code> — public API (ParserOperation, ParsingConfig, convenience functions)</p>
-</li>
-<li>
-<p><code>src/parsing.c</code> — implementation, 2 remaining bridges</p>
-</li>
-<li>
-<p><code>src/refactory.c</code> — <code>parseBufferUsingServer</code> definition (line 199) and 7 call sites</p>
-</li>
-</ul>
-</div>
-</div>
-</div>
-<div class="sect2">
-<h3 id="typed-requests">16.4. Replace Global <code>options</code> with Typed Requests</h3>
-<div class="sect3">
-<h4 id="_problem_3">16.4.1. Problem</h4>
 <div class="paragraph">
 <p>The <code>Options</code> struct is one global blob serving four distinct lifetimes:</p>
 </div>
@@ -9623,7 +9423,7 @@ result.valid = parsedInfo.moveTargetAccepted;</code></pre>
 <p><strong>Request</strong> — per-operation: <code>serverOperation</code>, cursor/mark offsets, input/output filenames, filter strings.</p>
 </li>
 <li>
-<p><strong>Refactoring</strong> — spans multiple internal requests: <code>theRefactoring</code>, <code>renameTo</code>, <code>parameterNumber</code>/<code>toParameterNumber</code>, <code>moveTargetFile</code>, refactoring-level <code>cursorOffset</code>/<code>markOffset</code>.</p>
+<p><strong>Refactoring</strong> — spans the refactoring and its dialog with the editor: <code>theRefactoring</code>, <code>renameTo</code>, <code>parameterNumber</code>/<code>toParameterNumber</code>, <code>moveTargetFile</code>, refactoring-level <code>cursorOffset</code>/<code>markOffset</code>.</p>
 </li>
 </ul>
 </div>
@@ -9645,19 +9445,19 @@ result.valid = parsedInfo.moveTargetAccepted;</code></pre>
 <p><code>refactory.c:166,170</code> — <code>beInteractive</code> snapshots into <code>localSavedOptions</code> because the outer loop&#8217;s snapshot would otherwise be clobbered mid-dialog.</p>
 </li>
 <li>
-<p><code>refactory.c:1238</code> — <code>serverPerformRefactoring</code> snapshots <code>options</code> into a parallel <code>refactoringOptions</code> global because sub-tasks re-enter option parsing and trample intent fields.</p>
+<p><code>refactory.c:1238</code> — <code>serverPerformRefactoring</code> snapshots <code>options</code> into a parallel <code>refactoringOptions</code> global because option parsing is re-entered during the refactoring and tramples intent fields.</p>
 </li>
 </ul>
 </div>
 <div class="paragraph">
-<p>The <code>refactoringOptions</code> parallel global is the clearest symptom. Refactoring sub-tasks (extract, rename, parameter manipulation) synthesize argv like <code>"-olcxextract"</code> and re-enter <code>processOptions</code>, which overwrites <code>options</code>. Reading the refactoring intent (<code>refactoringOptions.theRefactoring</code>, <code>refactoringOptions.renameTo</code>, etc.) from a shadow copy is how that survives.</p>
+<p>The <code>refactoringOptions</code> parallel global is the clearest symptom. The refactoring&#8217;s dialog with the editor (<code>beInteractive()</code>) goes through <code>processOptions</code> for each answer, and so does applying a pass&#8217;s options before each parse, and both overwrite <code>options</code>. Reading the refactoring intent (<code>refactoringOptions.theRefactoring</code>, <code>refactoringOptions.renameTo</code>, etc.) from a shadow copy is how that survives.</p>
 </div>
 <div class="paragraph">
 <p>Compounding the problem, <code>processOptions</code> is not a pure parser. It opens the output file, turns each <code>-D</code> into a macro definition, and triggers file-processing initialization. Reading the config is not pure either. It picks the pass sections by looking at the global <code>currentPass</code>. Those side effects are why the global-mutation pattern is load-bearing today: parsing and its consequences are entangled.</p>
 </div>
 </div>
 <div class="sect3">
-<h4 id="_target_shape">16.4.2. Target Shape</h4>
+<h4 id="_target_shape">16.3.2. Target Shape</h4>
 <div class="paragraph">
 <p>Three tiers with explicit owners and binding moments:</p>
 </div>
@@ -9686,21 +9486,21 @@ result.valid = parsedInfo.moveTargetAccepted;</code></pre>
 <p>No globals mutated, no output files opened, no pass flags flipped. The dispatcher decides what side effects to run based on the returned <code>Request</code>. Each operation gets a typed struct — a tagged union or base struct with per-operation extensions — so the dispatch switch reads typed fields instead of guessing which <code>Options</code> fields are meaningful for which operation.</p>
 </div>
 <div class="paragraph">
-<p><code>options.index</code> is one such field, the <code>=N</code> of seven options with three meanings: where to go in a list (<code>-browse-goto=</code>, <code>-completion-goto=</code>, <code>-search-goto=</code>), which item to select (<code>-completion-select=</code>, <code>-search-select=</code>), and a parameter number (<code>-internal-parse-to-goto-param-name=</code>, <code>-internal-parse-to-get-param-coordinates=</code>).
-With typed requests each of them gets its own field, and the parameter number is probably the same thing as <code>parameterNumber</code> (<code>-parameter=</code>).</p>
+<p><code>options.index</code> is one such field, the <code>=N</code> of five options with two meanings: where to go in a list (<code>-browse-goto=</code>, <code>-completion-goto=</code>, <code>-search-goto=</code>) and which item to select (<code>-completion-select=</code>, <code>-search-select=</code>).
+With typed requests each of them gets its own field.</p>
 </div>
 <div class="paragraph">
 <p>The refactoring coordinator holds its own long-lived <code>RefactoringRequest</code> (the current <code>refactoringOptions</code> content, but owned by the coordinator, not a shadow global). Sub-operations construct their own fresh <code>Request</code> structs via normal parsing; the coordinator&#8217;s state is safe because it lives elsewhere. <code>refactoringOptions</code> disappears. The save/restore sites disappear — each tier has one owner, and nothing trampled means nothing to restore.</p>
 </div>
 </div>
 <div class="sect3">
-<h4 id="_why_one_project_per_server_makes_this_clean">16.4.3. Why One-Project-Per-Server Makes This Clean</h4>
+<h4 id="_why_one_project_per_server_makes_this_clean">16.3.3. Why One-Project-Per-Server Makes This Clean</h4>
 <div class="paragraph">
 <p>The client already forces server restart on project switch ("Do you want to switch project? Server will be restarted."). Project-tier state therefore genuinely locks in after the first project-defining operation — there is no mid-session project change to invalidate, no need for a <code>ProjectChanged</code> event kind, no cache-invalidation logic. The tier model matches the runtime commitment: one server, one project, immutable after bind.</p>
 </div>
 </div>
 <div class="sect3">
-<h4 id="_whats_already_there">16.4.4. What&#8217;s Already There</h4>
+<h4 id="_whats_already_there">16.3.4. What&#8217;s Already There</h4>
 <div class="ulist">
 <ul>
 <li>
@@ -9710,13 +9510,13 @@ With typed requests each of them gets its own field, and the parameter number is
 <p><strong><code>ParsingConfig</code> struct</strong> — in <code>parsing.h</code>, already a typed struct carrying parser parameters instead of relying on globals. A working prototype of the same pattern one layer up.</p>
 </li>
 <li>
-<p><strong>Bridge removal</strong> (see <a href="#clean-parser-api">Remove <code>parseBufferUsingServer</code> Bridge</a>) — the precondition that eliminates sub-task option trampling. Once sub-tasks call parsing directly instead of re-entering the server via synthetic argv, <code>options</code> stops being clobbered mid-refactoring, which makes the refactoring-coordinator migration trivial.</p>
+<p><strong>No internal requests</strong> — a refactoring calls the parser directly and no longer re-enters the server with synthetic argv (the bridge, removed 2026-11, see the Archive). What still overwrites <code>options</code> during a refactoring is its dialog and the pass options.</p>
 </li>
 </ul>
 </div>
 </div>
 <div class="sect3">
-<h4 id="_incremental_steps">16.4.5. Incremental Steps</h4>
+<h4 id="_incremental_steps">16.3.5. Incremental Steps</h4>
 <div class="paragraph">
 <p>Each step is independently shippable. No grand rewrite.</p>
 </div>
@@ -9762,7 +9562,7 @@ With typed requests each of them gets its own field, and the parameter number is
 </div>
 </div>
 <div class="sect3">
-<h4 id="_notes">16.4.6. Notes</h4>
+<h4 id="_notes">16.3.6. Notes</h4>
 <div class="ulist">
 <ul>
 <li>
@@ -9778,7 +9578,7 @@ With typed requests each of them gets its own field, and the parameter number is
 </div>
 </div>
 <div class="sect3">
-<h4 id="_references_3">16.4.7. References</h4>
+<h4 id="_references_3">16.3.7. References</h4>
 <div class="ulist">
 <ul>
 <li>
@@ -9796,17 +9596,14 @@ With typed requests each of them gets its own field, and the parameter number is
 <li>
 <p><code>src/parsing.h</code> — <code>ParsingConfig</code> as a prototype of the typed-struct pattern</p>
 </li>
-<li>
-<p><a href="#clean-parser-api">Remove <code>parseBufferUsingServer</code> Bridge</a> — prerequisite that eliminates sub-task option trampling</p>
-</li>
 </ul>
 </div>
 </div>
 </div>
 <div class="sect2">
-<h3 id="remove-hashtab">16.5. Remove Hashtab by Migrating to Hashlist</h3>
+<h3 id="remove-hashtab">16.4. Remove Hashtab by Migrating to Hashlist</h3>
 <div class="sect3">
-<h4 id="_problem_statement_2">16.5.1. Problem Statement</h4>
+<h4 id="_problem_statement_2">16.4.1. Problem Statement</h4>
 <div class="paragraph">
 <p>The codebase has two hash table implementations generated by C macro templates:</p>
 </div>
@@ -9854,7 +9651,7 @@ With typed requests each of them gets its own field, and the parameter number is
 </div>
 </div>
 <div class="sect3">
-<h4 id="_why_this_matters_now">16.5.2. Why This Matters Now</h4>
+<h4 id="_why_this_matters_now">16.4.2. Why This Matters Now</h4>
 <div class="paragraph">
 <p>The lightweight file structure scanning work (ADR 22) exposed hashtab&#8217;s limitations:</p>
 </div>
@@ -9873,7 +9670,7 @@ With typed requests each of them gets its own field, and the parameter number is
 </div>
 </div>
 <div class="sect3">
-<h4 id="_proposed_change">16.5.3. Proposed Change</h4>
+<h4 id="_proposed_change">16.4.3. Proposed Change</h4>
 <div class="paragraph">
 <p>Migrate <code>fileTable</code> and <code>macroArgumentTable</code> from hashtab to hashlist, then remove hashtab entirely.</p>
 </div>
@@ -9924,7 +9721,7 @@ With typed requests each of them gets its own field, and the parameter number is
 </div>
 </div>
 <div class="sect3">
-<h4 id="_file_number_semantics_the_key_challenge">16.5.4. File Number Semantics — The Key Challenge</h4>
+<h4 id="_file_number_semantics_the_key_challenge">16.4.4. File Number Semantics — The Key Challenge</h4>
 <div class="paragraph">
 <p>The file table serves a dual purpose: hash lookup by name AND array indexing by file number. File numbers are used throughout the codebase as compact identifiers (stored in references, positions, sessions, etc.).</p>
 </div>
@@ -9952,7 +9749,7 @@ With typed requests each of them gets its own field, and the parameter number is
 </div>
 </div>
 <div class="sect3">
-<h4 id="_benefits_2">16.5.5. Benefits</h4>
+<h4 id="_benefits_2">16.4.5. Benefits</h4>
 <div class="ulist">
 <ul>
 <li>
@@ -9971,7 +9768,7 @@ With typed requests each of them gets its own field, and the parameter number is
 </div>
 </div>
 <div class="sect3">
-<h4 id="_notes_2">16.5.6. Notes</h4>
+<h4 id="_notes_2">16.4.6. Notes</h4>
 <div class="ulist">
 <ul>
 <li>
@@ -9985,15 +9782,15 @@ With typed requests each of them gets its own field, and the parameter number is
 </div>
 </div>
 <div class="sect2">
-<h3 id="split-editor-module">16.6. Split the Editor Module</h3>
+<h3 id="split-editor-module">16.5. Split the Editor Module</h3>
 <div class="sect3">
-<h4 id="_problem_statement_3">16.6.1. Problem Statement</h4>
+<h4 id="_problem_statement_3">16.5.1. Problem Statement</h4>
 <div class="paragraph">
 <p>The <code>editor.c</code> module (630+ lines) bundles at least four unrelated responsibilities under the misleading name "editor". The name suggests it&#8217;s about the external editor (Emacs), but most of the code has nothing to do with editor integration&#8201;&#8212;&#8201;it&#8217;s internal text manipulation infrastructure used by refactoring.</p>
 </div>
 </div>
 <div class="sect3">
-<h4 id="_current_responsibilities">16.6.2. Current Responsibilities</h4>
+<h4 id="_current_responsibilities">16.5.2. Current Responsibilities</h4>
 <div class="paragraph">
 <p><strong>1. Text memory allocator</strong> (<code>editorMemory[]</code>, <code>allocateNewEditorBufferTextSpace</code>, <code>freeTextSpace</code>)</p>
 </div>
@@ -10020,7 +9817,7 @@ With typed requests each of them gets its own field, and the parameter number is
 </div>
 </div>
 <div class="sect3">
-<h4 id="_the_naming_problem">16.6.3. The Naming Problem</h4>
+<h4 id="_the_naming_problem">16.5.3. The Naming Problem</h4>
 <div class="paragraph">
 <p>The "Editor" prefix pervades the codebase beyond just this module:</p>
 </div>
@@ -10042,7 +9839,7 @@ With typed requests each of them gets its own field, and the parameter number is
 </div>
 </div>
 <div class="sect3">
-<h4 id="_proposed_split">16.6.4. Proposed Split</h4>
+<h4 id="_proposed_split">16.5.4. Proposed Split</h4>
 <table class="tableblock frame-all grid-all stretch">
 <colgroup>
 <col style="width: 25%;">
@@ -10087,7 +9884,7 @@ With typed requests each of them gets its own field, and the parameter number is
 </div>
 </div>
 <div class="sect3">
-<h4 id="_notes_3">16.6.5. Notes</h4>
+<h4 id="_notes_3">16.5.5. Notes</h4>
 <div class="ulist">
 <ul>
 <li>
@@ -10104,9 +9901,9 @@ With typed requests each of them gets its own field, and the parameter number is
 </div>
 </div>
 <div class="sect2">
-<h3 id="rebuild-partition">16.7. Partition the Rebuild Like Make</h3>
+<h3 id="rebuild-partition">16.6. Partition the Rebuild Like Make</h3>
 <div class="sect3">
-<h4 id="_problem_statement_4">16.7.1. Problem Statement</h4>
+<h4 id="_problem_statement_4">16.6.1. Problem Statement</h4>
 <div class="paragraph">
 <p>ADR-0032 keeps knowledge up to date the way make keeps targets up to date.
 The code has the parts, but the names do not show which part of make each one is.
@@ -10117,7 +9914,7 @@ That is most of <code>server.c</code> today, and <code>callServer()</code> mixes
 </div>
 </div>
 <div class="sect3">
-<h4 id="_wanted_partition">16.7.2. Wanted Partition</h4>
+<h4 id="_wanted_partition">16.6.2. Wanted Partition</h4>
 <table class="tableblock frame-all grid-all stretch">
 <colgroup>
 <col style="width: 20%;">
@@ -10164,7 +9961,7 @@ That is most of <code>server.c</code> today, and <code>callServer()</code> mixes
 </div>
 </div>
 <div class="sect3">
-<h4 id="_notes_4">16.7.3. Notes</h4>
+<h4 id="_notes_4">16.6.3. Notes</h4>
 <div class="ulist">
 <ul>
 <li>
@@ -10184,9 +9981,9 @@ Before that it would move three passes into a module where they are about to bec
 </div>
 </div>
 <div class="sect2">
-<h3 id="_elisp_compiled_and_deleted_on_every_build">16.8. Elisp Compiled and Deleted on Every Build</h3>
+<h3 id="_elisp_compiled_and_deleted_on_every_build">16.7. Elisp Compiled and Deleted on Every Build</h3>
 <div class="sect3">
-<h4 id="_problem_statement_5">16.8.1. Problem Statement</h4>
+<h4 id="_problem_statement_5">16.7.1. Problem Statement</h4>
 <div class="paragraph">
 <p>Building <code>c-xref</code> runs <code>$(MAKE) -C ../editors/emacs</code> from the <code>c-xref</code> recipe, and
 that Makefile&#8217;s <code>all</code> target does this:</p>
@@ -10216,7 +10013,7 @@ real product.</p>
 </div>
 </div>
 <div class="sect3">
-<h4 id="_scope">16.8.2. Scope</h4>
+<h4 id="_scope">16.7.2. Scope</h4>
 <div class="paragraph">
 <p>Decide what the step is for and make it say so:</p>
 </div>
@@ -10474,8 +10271,7 @@ reported over <code>src/</code>, no <code>$</code> among them.</p>
 since a server writes it on the way out. The Emacs client does both for its own server
 from Project → Remove References and Restart Server
 (<code>c-xref-project-remove-references-and-restart</code>); the next request starts a fresh one,
-which rebuilds from the sources. It also clears the shadow occurrences that
-behind-the-back disk changes leave behind. It is a stopgap for both.</p>
+which rebuilds from the sources. It is a stopgap.</p>
 </div>
 </div>
 <div class="sect2">
@@ -11249,7 +11045,7 @@ It is also an edge in the include graph, from which freshness and the siblings a
 <p>When a file changes, the two roles pull apart.
 The knowledge should be removed (ADR-0035), but the edges are needed to find the goal.
 Removing a CU&#8217;s references would also remove its edges, so a request in a header would no longer find that CU.
-That is why a changed CU still loses its references only when it is built (<code>remove-on-change</code>).</p>
+So a changed CU loses its references but keeps its include references, which are the only edges for <code>&lt;&#8230;&#8203;&gt;</code> includes until the scan records them (<code>scan-angle-includes</code>).</p>
 </div>
 <div class="paragraph">
 <p>Make only asks the forward question: is this target out of date?
@@ -12250,7 +12046,50 @@ server process without a separate <code>callXref()</code> step.</p>
 </div>
 </div>
 <div class="sect2">
-<h3 id="_the_lastparsedmtime_optimization_and_refactoring_conflict_historical">20.13. The lastParsedMtime Optimization and Refactoring Conflict (Historical)</h3>
+<h3 id="_the_refactoring_process_the_bridge_and_its_removal">20.13. The Refactoring Process, the Bridge and Its Removal</h3>
+<div class="paragraph">
+<p>In the original Xrefactory every refactoring was a process of its own, <code>c-xref
+-refactory</code>, started by the editor and gone when the refactoring was done. Inside it the
+refactoring code ran the cross-referencer to update the references (see above), and the
+editor server as a "sub-task" whenever it needed something parsed. That could be the
+references of the symbol at the cursor, the region to extract, where a parameter is, or
+the references after a rename for the safety check. Each such call built an argument
+vector as if the editor had sent a request, and ran it through the server&#8217;s own
+initialisation and request handling (<code>refactoryEditServerParseBuffer()</code>, the "interface
+to edit server sub-task" in <code>refactory.c</code>). Since the process went away afterwards,
+nothing it left in the options, the globals or the reference table mattered.</p>
+</div>
+<div class="paragraph">
+<p>The function was renamed <code>parseBufferUsingServer()</code> in 2022. When the parsing got its
+own <code>ParsingConfig</code> (December 2025) it became "the bridge" between the refactorings and
+that API.</p>
+</div>
+<div class="paragraph">
+<p>In March 2026 the refactorings moved into the server (<code>OP_REFACTORY</code>), and the separate
+process was removed. The bridge came along, so the server now called itself. Every
+internal parse went through <code>initServer()</code> and <code>callServer()</code>, with the entry refresh, as
+if it was a new request. A refactoring could bring the knowledge up to date several
+times, and it could change between its steps. The internal requests needed operations,
+options and answers of their own (<code>-internal-push-for-rename</code>, <code>-internal-safety-check</code>,
+<code>-olexmacro</code> and others). <code>quasiSaveModifiedEditorBuffers()</code> gave the edited buffers a new
+time, and could sleep up to a second, so that the nested refresh saw the edits. And what
+the nested request left in the table now stayed.</p>
+</div>
+<div class="paragraph">
+<p>The bridge was removed in November 2026, one call at a time, on both machines (Mac,
+session <code>4839a129</code>, and WSL, session <code>d25255b8</code>). Each internal parse became a direct
+parse of the buffer, i.e. the compilation unit started from the project baseline and a
+pass&#8217;s options, the input and <code>callParser()</code>. Two things turned out to have been carried
+by the bridge without being visible. The start of a compilation unit, without which a
+parse saw what the previous one left, e.g. an include guard. And the loop over the
+passes, so that a symbol defined only under one pass&#8217;s <code>-D</code> was found. The safety check
+needs more than a parse. A rename has edited several buffers, so the check builds the
+compilation units that are out of date before it pushes the new name. The quasi-save
+went too, since a change is now found by its content (ADR-0036).</p>
+</div>
+</div>
+<div class="sect2">
+<h3 id="_the_lastparsedmtime_optimization_and_refactoring_conflict_historical">20.14. The lastParsedMtime Optimization and Refactoring Conflict (Historical)</h3>
 <div class="paragraph">
 <p>This section captures a conflict diagnosed in 2025-01 between navigation&#8217;s
 <code>lastParsedMtime</code> optimization and refactoring&#8217;s <code>callXref()</code> reindexing path. The
@@ -12266,7 +12105,7 @@ shared-state optimizations can leak across operation boundaries.</p>
 <p>Date: 2025-01-21</p>
 </div>
 <div class="sect3">
-<h4 id="_problem_discovery">20.13.1. Problem Discovery</h4>
+<h4 id="_problem_discovery">20.14.1. Problem Discovery</h4>
 <div class="paragraph">
 <p>When implementing staleness detection for navigation (refreshing references when files are modified), an optimization was added to <code>server.c</code>:</p>
 </div>
@@ -12284,7 +12123,7 @@ if (buffer != NULL &amp;&amp; buffer-&gt;preLoadedFromFile != NULL) {
 </div>
 </div>
 <div class="sect3">
-<h4 id="_the_conflict">20.13.2. The Conflict</h4>
+<h4 id="_the_conflict">20.14.2. The Conflict</h4>
 <div class="paragraph">
 <p>This broke refactoring operations (<code>test_delete_parameter_with_preload</code>). The problem:</p>
 </div>
@@ -12312,7 +12151,7 @@ if (buffer != NULL &amp;&amp; buffer-&gt;preLoadedFromFile != NULL) {
 </div>
 </div>
 <div class="sect3">
-<h4 id="_root_cause_two_sources_of_truth">20.13.3. Root Cause: Two Sources of Truth</h4>
+<h4 id="_root_cause_two_sources_of_truth">20.14.3. Root Cause: Two Sources of Truth</h4>
 <div class="paragraph">
 <p>The architecture had two sources of references:</p>
 </div>
@@ -12341,7 +12180,7 @@ if (buffer != NULL &amp;&amp; buffer-&gt;preLoadedFromFile != NULL) {
 </div>
 </div>
 <div class="sect3">
-<h4 id="_the_workaround">20.13.4. The Workaround</h4>
+<h4 id="_the_workaround">20.14.4. The Workaround</h4>
 <div class="paragraph">
 <p>Refactoring operations were excluded from the optimization:</p>
 </div>
@@ -12370,14 +12209,14 @@ if (buffer != NULL &amp;&amp; buffer-&gt;preLoadedFromFile != NULL) {
 </div>
 </div>
 <div class="sect3">
-<h4 id="_architectural_lesson">20.13.5. Architectural Lesson</h4>
+<h4 id="_architectural_lesson">20.14.5. Architectural Lesson</h4>
 <div class="paragraph">
 <p>The workaround highlighted the underlying tension: <strong>navigation and refactoring used different sources of truth</strong>. The proper fix — eliminating <code>callXref()</code> from the refactoring path entirely — landed with server-side refactoring (<a href="10-roadmap.adoc">Chapter 10: Roadmap</a>).</p>
 </div>
 </div>
 </div>
 <div class="sect2">
-<h3 id="_stale_file_refresh_and_cross_file_references_historical">20.14. Stale File Refresh and Cross-File References (Historical)</h3>
+<h3 id="_stale_file_refresh_and_cross_file_references_historical">20.15. Stale File Refresh and Cross-File References (Historical)</h3>
 <div class="paragraph">
 <p>This section describes a refresh algorithm built around a function named
 <code>refreshStaleReferencesInSession()</code> that no longer exists in the source. The current
@@ -12393,7 +12232,7 @@ examined in <a href="#cu-reparse-header-staleness">Investigation: Does CU Repars
 <p>Date: 2025-01-29</p>
 </div>
 <div class="sect3">
-<h4 id="_stale_detection">20.14.1. Stale Detection</h4>
+<h4 id="_stale_detection">20.15.1. Stale Detection</h4>
 <div class="paragraph">
 <p>When navigating (PUSH/NEXT), the server detected if the current file was "stale" by comparing:</p>
 </div>
@@ -12412,7 +12251,7 @@ examined in <a href="#cu-reparse-header-staleness">Investigation: Does CU Repars
 </div>
 </div>
 <div class="sect3">
-<h4 id="_the_refresh_algorithm">20.14.2. The Refresh Algorithm</h4>
+<h4 id="_the_refresh_algorithm">20.15.2. The Refresh Algorithm</h4>
 <div class="paragraph">
 <p><code>refreshStaleReferencesInSession()</code> in <code>cxref.c</code> had to preserve cross-file references while updating references from the modified file:</p>
 </div>
@@ -12463,7 +12302,7 @@ when <code>includeFileNumber</code> differs, and these new items have <code>sele
 </div>
 </div>
 <div class="sect3">
-<h4 id="_why_scanning_from_disk_failed">20.14.3. Why Scanning From Disk Failed</h4>
+<h4 id="_why_scanning_from_disk_failed">20.15.3. Why Scanning From Disk Failed</h4>
 <div class="paragraph">
 <p>During PUSH, <code>createSelectionMenu</code> created menu items and added them to <code>sessionEntry&#8594;menu</code>.
 These items were marked as selected. On NEXT, the menu&#8217;s reference list was what got
@@ -12495,7 +12334,7 @@ navigation lost most of its references.</p>
 </div>
 </div>
 <div class="sect3">
-<h4 id="_architectural_note_historical">20.14.4. Architectural Note (Historical)</h4>
+<h4 id="_architectural_note_historical">20.15.4. Architectural Note (Historical)</h4>
 <div class="paragraph">
 <p>This was a manifestation of the "two sources of truth" architecture. The long-term fix
 landed with memory-as-truth: all project files have references in the in-memory table,
@@ -12507,7 +12346,7 @@ gap.</p>
 </div>
 </div>
 <div class="sect2">
-<h3 id="cu-reparse-header-staleness">20.15. Investigation: Does CU Reparse Leave Header-Position References Stale?</h3>
+<h3 id="cu-reparse-header-staleness">20.16. Investigation: Does CU Reparse Leave Header-Position References Stale?</h3>
 <div class="paragraph">
 <p>Date: 2026-05-12</p>
 </div>
@@ -12516,7 +12355,7 @@ gap.</p>
 fixed — recorded so the question isn&#8217;t re-opened from scratch.</p>
 </div>
 <div class="sect3">
-<h4 id="_the_structural_fact">20.15.1. The structural fact</h4>
+<h4 id="_the_structural_fact">20.16.1. The structural fact</h4>
 <div class="paragraph">
 <p><code>removeReferenceableItemsForFile(fileNumber)</code> strips only references whose
 <code>position.file == fileNumber</code>. A declaration that a compilation unit emits <em>into a
@@ -12527,7 +12366,7 @@ and there are two distinct triggers.</p>
 </div>
 </div>
 <div class="sect3">
-<h4 id="_variant_a_header_edited_probed_did_not_reproduce">20.15.2. Variant A — header edited (probed, did not reproduce)</h4>
+<h4 id="_variant_a_header_edited_probed_did_not_reproduce">20.16.2. Variant A — header edited (probed, did not reproduce)</h4>
 <div class="paragraph">
 <p>The header&#8217;s own text changes (a declaration shifts line). Under the editor-buffer
 content model an edit reaches the server as a <code>-preload</code> of the header, which strips the
@@ -12540,7 +12379,7 @@ not <code>(line, col)</code> — <em>would</em> have masked parallel entries had
 </div>
 </div>
 <div class="sect3">
-<h4 id="_variant_b_includer_preprocessor_state_changes_never_probed">20.15.3. Variant B — includer preprocessor state changes (never probed)</h4>
+<h4 id="_variant_b_includer_preprocessor_state_changes_never_probed">20.16.3. Variant B — includer preprocessor state changes (never probed)</h4>
 <div class="paragraph">
 <p>The header text is unchanged, but the includer toggles a macro that gates a header
 declaration (<code>#define FOO</code> guarding <code>#ifdef FOO … int bar; #endif</code>). The CU is edited,
@@ -12553,7 +12392,7 @@ is re-walked at all when only the includer&#8217;s macros changed.</p>
 </div>
 </div>
 <div class="sect3">
-<h4 id="_status_updated_2026_06_19">20.15.4. Status (updated 2026-06-19)</h4>
+<h4 id="_status_updated_2026_06_19">20.16.4. Status (updated 2026-06-19)</h4>
 <div class="paragraph">
 <p>Variant A cleared. <strong>Variant B is confirmed</strong> — reproduced 2026-06-17 in
 <code>test_preprocess_edit_removes_ifdef_define</code>: a CU that drops a <code>#define</code> orphans the
@@ -12572,7 +12411,7 @@ investigation trail and superseded by those.</p>
 </div>
 </div>
 <div class="sect2">
-<h3 id="_memory_as_truth_convergence_implementation_path_historical">20.16. Memory-as-Truth Convergence: Implementation Path (Historical)</h3>
+<h3 id="_memory_as_truth_convergence_implementation_path_historical">20.17. Memory-as-Truth Convergence: Implementation Path (Historical)</h3>
 <div class="paragraph">
 <p>The path by which <code>c-xrefactory</code> reached "memory is truth" — now complete; see the
 <a href="10-roadmap.html">Roadmap</a> Convergence section for the current state. Preserved for the
@@ -12597,8 +12436,9 @@ after the first session.</p>
 </li>
 <li>
 <p><strong>Refactoring moved into the server (strangler fig)</strong> — all refactorings run as
-<code>OP_REFACTORY</code>; <code>RefactoryMode</code> and the <code>-refactory</code> process removed. Remaining: remove
-the <code>parseBufferUsingServer</code> bridge.</p>
+<code>OP_REFACTORY</code>; <code>RefactoryMode</code> and the <code>-refactory</code> process removed. The
+<code>parseBufferUsingServer</code> bridge went in 2026-11, see "The Refactoring Process, the
+Bridge and Its Removal".</p>
 </li>
 <li>
 <p><strong><code>.cx</code> became a startup snapshot only</strong> — never consulted during operation; every
@@ -12608,12 +12448,12 @@ operation reads the in-memory table.</p>
 </div>
 </div>
 <div class="sect2">
-<h3 id="_navigation_architecture_and_preloading_historical">20.17. Navigation Architecture and Preloading (Historical)</h3>
+<h3 id="_navigation_architecture_and_preloading_historical">20.18. Navigation Architecture and Preloading (Historical)</h3>
 <div class="paragraph">
 <p>Date: 2025-12-22, updated 2026-02-21</p>
 </div>
 <div class="sect3">
-<h4 id="_how_symbol_navigation_works">20.17.1. How Symbol Navigation Works</h4>
+<h4 id="_how_symbol_navigation_works">20.18.1. How Symbol Navigation Works</h4>
 <div class="paragraph">
 <p>Symbol navigation (PUSH/NEXT/PREVIOUS/POP) merges references from <strong>two sources</strong>:</p>
 </div>
@@ -12716,7 +12556,7 @@ carried forward in <a href="21-archive.adoc#cu-reparse-header-staleness">a later
 </div>
 </div>
 <div class="sect2">
-<h3 id="_unified_in_memory_table_discovery_historical">20.18. Unified In-Memory Table Discovery (Historical)</h3>
+<h3 id="_unified_in_memory_table_discovery_historical">20.19. Unified In-Memory Table Discovery (Historical)</h3>
 <div class="paragraph">
 <p>Date: 2025-01-25</p>
 </div>
@@ -12735,7 +12575,7 @@ carried forward in <a href="21-archive.adoc#cu-reparse-header-staleness">a later
 </div>
 <div id="footer">
 <div id="footer-text">
-Last updated 2026-11-17 17:00:26 UTC
+Last updated 2026-11-18 13:25:18 UTC
 </div>
 </div>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.18.3/highlight.min.js"></script>
