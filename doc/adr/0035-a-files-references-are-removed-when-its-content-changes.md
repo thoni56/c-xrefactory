@@ -4,6 +4,8 @@ Date: 2026-11-03
 
 ## Status
 
+Implemented (2026-11-18)
+
 Accepted (2026-11-03)
 
 Amended (2026-11-03): a change of a file is a change of every file that includes it.

@@ -204,7 +204,7 @@ fails if a name is unknown.
     asked, what is edited anyway — and pin it with tests that make their ghosts for real,
     by changing a shared header on disk. The message "try re-saving the file" no longer fits. Found by
     reading the code (Mac, session `05984816`, 2026-10-06), not tested.
-    After: remove-on-change
+    Waits for: adr-0035
 - (#111) <a id="files-appear-vanish"></a>**Files that appear or vanish between requests are not seen** —
     an accepted gap, `doc/docs/12-components.adoc` ("Design boundary"), to be looked at
     again. Files are found only by the walk on the first request and on a config change,
@@ -426,11 +426,10 @@ Roadmap → Optimization has the baseline: a cold-start PUSH on ffmpeg, measured
     real work is making the database not need discarding — behind-the-back detection and
     entry refresh are probably most of it,
     and item 22 dissolves another part. Remove the entry when they land, and check the
-    symptoms are gone rather than assuming it. Two ghosts stay under ADR-0035: those of
-    the Variant-B gap (`variant-b`), and those in a snapshot written before
-    `remove-on-change`.
+    symptoms are gone rather than assuming it. One ghost stays under ADR-0035: that of
+    the Variant-B gap (`variant-b`).
     1.10.0 announces the entry in `CHANGES.md`, so its removal needs a line there too.
-    Waits for: remove-on-change
+    Waits for: adr-0035
     Goes with: time-budget
     Goes with: index-based-sessions
 
@@ -572,7 +571,7 @@ Roadmap → Optimization has the baseline: a cold-start PUSH on ffmpeg, measured
 
 ## 7. Freshness as make (ADR-0032, ADR-0035, ADR-0036)
 
-The order is roughly as listed. Next is the rest of `remove-on-change`, its config part. "Freshness Is Make, for the
+The order is roughly as listed. "Freshness Is Make, for the
 Goal" in `08-algorithms` has the shape the request converges to.
 
 Performance, from reading the code (Mac, session `05984816`, 2026-10-08): at equal
@@ -584,14 +583,6 @@ walk of the table per changed file — is small beside what goes. The risks are 
 implementation, and are noted in `cu-prerequisites`, `out-of-date`, `time-budget` and
 `removal-cost`.
 
-- (#106) <a id="remove-on-change"></a>**A file's references are removed when its content changes** —
-    ADR-0035. On a newer disk time, new content in a held buffer, or a held buffer let go,
-    and that moment is the file's change time. Done for headers and CUs, and the mark is
-    gone. A CU keeps its include references, the only edges for `<...>` includes until
-    `scan-angle-includes`. Left: a config change removes every file's references, where
-    `markAllCompilationUnitsStale()` is called today.
-    Waits for: adr-0035
-    Goes with: out-of-date
 - (#115) <a id="every-parse-all-passes"></a>**Every parse of a CU parses it once for each pass** —
     a CU is started by whoever parses it, before `startParsingBuffer()`, from the project
     baseline and that pass's options (`startCompilationUnitForPass()`). The refresh, the
@@ -635,14 +626,15 @@ implementation, and are noted in `cu-prerequisites`, `out-of-date`, `time-budget
     `collectCUsIncluding()` silently walks no further up, goes with it, since the two
     limits move together. Fixes "A refactoring can see a truncated reference set" in
     `18-known-bugs.adoc`, 13 of 25 occurrences on ffmpeg.
-    After: remove-on-change
+    Waits for: adr-0035
 - (#35) <a id="cu-prerequisites"></a>**A CU's prerequisites** — the CU, its include closure and the project
     config, put together where `out-of-date` uses them, the CU first. `Prerequisites`
     (`src/freshness.c`) holds them for one request: the include graph and each file's
     change time, asked for once. Left: the config's change time (`out-of-date`).
 - (#36) <a id="out-of-date"></a>**The config as an input of `knowledgeIsOutOfDate()`** — it
-    replaces `markAllCompilationUnitsStale()`, and the zero sentinel goes. The removal on a
-    config change is `remove-on-change`'s. The config is the
+    replaces `markAllCompilationUnitsStale()`, and the zero sentinel goes. A config change
+    already removes every reference. It is found by the config's modification time, not
+    by a content token (ADR-0036). The config is the
     `.c-xrefrc` and its local fragment (ADR-0034), and its change time is the later of the
     two. Until then a `.c-xrefrc` changed while no server runs is probably not seen: its
     mtime is recorded when it is read at startup, so the snapshot's knowledge stays current.
@@ -692,7 +684,7 @@ implementation, and are noted in `cu-prerequisites`, `out-of-date`, `time-budget
     macro expansions (`doc/freshness-after-adr-0035.md`). Generations are one
     option, and would need an ADR. `test_preprocess_edit_removes_ifdef_define` stays
     suspended, and its `.suspended` still names ADR-0033's sweep.
-    After: remove-on-change
+    Waits for: adr-0035
 - (#45) <a id="removal-cost"></a>**What removal costs** — `removeReferenceableItemsForFile()`
     walks the whole table, and runs before every CU build and once per changed file, so a
     request that sees many files change at once, e.g. after a `git checkout`, walks it
@@ -705,7 +697,7 @@ implementation, and are noted in `cu-prerequisites`, `out-of-date`, `time-budget
     only, `navigation.c` once per menu item. Per request on ffmpeg, 1376 `stat`s took
     about 5 ms and 2434 include closures about 50 ms (WSL, session `d25255b8`,
     2026-10-11).
-    After: remove-on-change
+    Waits for: adr-0035
 
 - (#41) <a id="freshness-docs"></a>**The docs follow** — *Out of date* replaces *Staleness* in
     `06-principles`, and `08-algorithms` loses "Dual Semantics". In `06-principles`, the
@@ -720,7 +712,7 @@ implementation, and are noted in `cu-prerequisites`, `out-of-date`, `time-budget
     `20-insights` ("The include edges are inputs, not knowledge"), Pass 2's
     Discovery in `08-algorithms` and `12-components.adoc:129` stale, since they describe a walk over `TypeCppInclude`
     references in the table.
-    After: remove-on-change
+    Waits for: adr-0035
 
 ## 8. Real users: installing and being found
 
@@ -765,7 +757,7 @@ Mac (session `05984816`), 2026-10-07.
     tier 2 is the shape of that, with clangd as the main server; lsp-mode takes add-on
     servers, eglot needs a look. EmacsConf, Sacha Chua's Emacs News, Show HN. A stranger's
     first project working without configuration matters here, see `compile-commands`.
-    Waits for: remove-on-change, refactoring-refusals, install-server, readme-first-screen
+    Waits for: refactoring-refusals, install-server, readme-first-screen
     Goes with: lsp-tiers, retry-creating-request, compile-commands
 - (#53) <a id="windows-build"></a>**A Windows build** — most of the code is plain C. About 28
     `__WIN32__` remnants from the original Xrefactory are there, unmaintained and untested

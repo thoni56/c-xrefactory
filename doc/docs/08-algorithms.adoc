@@ -204,13 +204,113 @@ That is safe because the CUs reaching it are out of date, and the next goal that
 A goal that is smaller than what the answer reads gives an answer that is incomplete without that being known (`request-target`).
 The shape was first written down on the Mac, session `4839a129`, with the removal last, as a sweep.
 
+==== What the Server Knows About a File
+
+Knowing a file is several facts, kept in different places, and a change has to reach each of them.
+
+[cols="2,2,2,2,1",options="header"]
+|===
+|Fact |Where |Written by |Read by |In the snapshot
+
+|references
+|the table
+|the parse
+|the answer
+|yes
+
+|include references (`TypeCppInclude`)
+|the table
+|the parse
+|the goal, for the siblings and the `<...>` edges
+|yes
+
+|knowledge time
+|`FileItem.knowledgeTime`
+|the build
+|the build predicate
+|yes
+
+|notice time
+|`FileItem.noticeTime`
+|the removal, when a header changed
+|the build predicate, through the include closure
+|yes
+
+|seen token
+|`FileItem.seenToken`
+|the removal, and the parse when it reads a file first
+|the removal, to find *changed*
+|yes
+
+|scanned includes and scan token
+|`FileItem.scannedIncludes`, `scanToken`
+|the scan
+|the include graph, and the rescan
+|no, a new session scans again
+
+|deleted
+|`FileItem.isDeleted`
+|the walk, and a build that finds the CU gone
+|the goal and the build
+|yes
+
+|a session's references
+|the browsing stack, copied at the push
+|the push
+|Next, Previous and Pop
+|no
+
+|refresh flag
+|`FileItem.needsBrowsingStackRefresh`
+|the removal and the build
+|a session, which copies the file again
+|no
+|===
+
+Some facts have to change together.
+
+*The references and the freshness facts.*
+The build predicate (`whyOutOfDate()`) reads the knowledge time and the notice times, never the table.
+So references that are removed without the knowledge going, or a change being noticed, are missing and look current, and no request ever builds them again.
+Each change does both halves:
+
+[cols="1,2,2",options="header"]
+|===
+|Change |References |Freshness
+
+|a CU's content
+|removed, except the include references (`removeReferencesOfChangedCu()`)
+|no knowledge
+|a header's content
+|removed (`removeReferencesOfChangedHeader()`)
+|noticed now, so what was built before it is out of date
+|the config
+|all removed, except the include references (`removeAllReferencesExceptIncludes()`)
+|no knowledge for any CU (`markAllCompilationUnitsStale()`)
+|===
+
+The include references only take part in the first half.
+They stay because they are the only edges for `<...>` includes, which the goal needs to find the siblings, and a build replaces its CU's own.
+They do not decide whether anything is built.
+
+*The seen token and the references.*
+The token stands for the content the references came from.
+That is why the parse records the token of a file it reads first: if the removal took it later, it could be of content that already changed, and the old references would look current.
+
+*The scanned includes and the include references.*
+They are the two writers of the include graph, until the scan records `<...>` includes (`scan-angle-includes`).
+
+*A session's references and the table.*
+A session works on a copy, and the refresh flag says the copy is out of date.
+It is set in only some of the places that change the table (`session-refresh-time`).
+
 ==== Where It Is Not Yet Make
 
 Items in `doc/backlog.md`:
 
 * *The cap* (`cap-is-a-question`). At most 128 recipes run, and the rest stay out of date without a question. They are known, though. ADR-0032 makes it a question, and later a time budget (`time-budget`).
 * *The goal is too small* (`request-target`). We run `make request.o`, but the answer is linked from more objects than that.
-* *The config is not a prerequisite* (`out-of-date`). That is the classic Make pitfall where changing `CFLAGS` rebuilds nothing. `markAllCompilationUnitsStale()` covers it for now, but removes no references.
+* *The config is not a prerequisite* (`out-of-date`). That is the classic Make pitfall where changing `CFLAGS` rebuilds nothing. A config change removes every reference and takes every CU's knowledge, but it is found by the config's modification time, and a change while no server runs is probably not seen.
 * *A missing include edge* (`scan-angle-includes`). The scan's edges are facts about each file now, but it records no `<...>` includes. A CU that reaches a changed header through such an include alone is not out of date, so its part of the header is missing without that being known.
 * *Files that appear between requests* are not seen (`files-appear-vanish`). The prerequisites of a known file are checked, but a new file is not known. A vanished header is seen to change and loses its references, but is not marked deleted, so it stays in the file table.
 * *A recipe that stops writing part of a shared output* leaves that part (`variant-b`). Make writes its targets whole, so it never meets this.
