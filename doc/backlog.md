@@ -105,6 +105,7 @@ every push, `After` dashed and `Goes with` not at all, linked at the end of this
     `doc/docs/11-planned-features.adoc` (Diagnostics Buffer). What did not parse reaches
     `*c-xref-diagnostics*` with its position, grouped by unit, and `next-error` visits it.
     Left: the report of unresolved includes.
+    After: project-config-constructor
 - (#68) <a id="lsp-mode"></a>**An `LspMode`, and a sink for the messages** — *no repo home yet.*
     LSP sets `ServerMode` (`src/parsing.c:140`), a stop-gap for the `assert(options.mode)`
     that are gone now, and nothing reads the mode any more. `Mode` becomes `ServerMode`
@@ -172,6 +173,7 @@ every push, `After` dashed and `Goes with` not at all, linked at the end of this
     Test first: an `options_tests.c` case where a request-only option in the project
     context is refused (WSL, session `d25255b8`, 2026-10-25).
     Goes with: partition-options, startup-command-line
+    After: indexing-log-buffer
 - (#62) <a id="docs-audit"></a>**Audit the docs, chapter by chapter** — much of `doc/docs/` was
     written while the batch modes and the disk database were the truth. Each chapter is
     read against the code as it is and against the shape, "The Shape It Converges To" in
@@ -237,6 +239,7 @@ every push, `After` dashed and `Goes with` not at all, linked at the end of this
     (`doc/docs/18-known-bugs.adoc`): `tests/test_token_pasting_numbers` (changes the
     passing `test_collate_const_suffix_pasting`) → `tests/test_token_pasting_float` →
     `tests/test_collate_hex_prefix_pasting` (touches how every number is lexed).
+    After: files-appear-vanish
 - (#14) <a id="header-static-link-names"></a>**Header static: prototype and definition get different link names** —
     `setStaticFunctionLinkName` (`src/semact.c`); renames break the build today.
     `tests/test_static_declared_and_defined_in_header/.suspended` has the
@@ -262,8 +265,10 @@ every push, `After` dashed and `Goes with` not at all, linked at the end of this
       After: adr-0031
    g. <a id="unused-yacc-statics"></a>**GlobalUnused gives a false positive for statics in `.y` files** —
       `18-known-bugs.adoc`.
+      After: token-pasting-trio
    h. <a id="push-by-name"></a>**Push by name when a name has several bindings** —
       `tests/test_browsing_push_by_name`. Needs the behaviour decided first.
+      After: unused-yacc-statics
    j. <a id="lsp-position-encoding"></a>**Unconfirmed: the LSP server announces `positionEncoding: "utf-8"` but counts code points** —
       *no repo home yet* (`src/lsp_handler.c`). In LSP 3.17 "utf-8" means columns in
       bytes, while the encoding collapse makes every server column a character column, so
@@ -297,6 +302,7 @@ every push, `After` dashed and `Goes with` not at all, linked at the end of this
     (`test_search_result_number_zero_is_answered`).
     Needs designing first: the client has met questions only as answers, never in the
     middle of a request it is still dispatching.
+    After: inserted-text-loses-non-ascii
 - (#60) <a id="include-bracket-from-macro"></a>**`#include MACRO` where the macro is `<...>`** — the
     header is not opened, so everything it declares is missing, e.g. FreeType's
     `#include FT_FREETYPE_H`. The lexer makes one `STRING_LITERAL` of a `<...>` only right
@@ -306,12 +312,14 @@ every push, `After` dashed and `Goes with` not at all, linked at the end of this
     as the `"..."` branch does, so they reach the parser as syntax errors
     (`processIncludeDirective()`, `src/yylex.c`). `test_parsing_include_using_macro` pins
     both; its two syntax errors go when this is fixed.
+    After: push-by-name
 - (#69) <a id="latin-1-lookalikes"></a>**Unconfirmed: Latin-1 that looks like UTF-8 is read as one character** — *no repo home yet.*
     `convertUtf8()` (`src/encoding.c`) takes a lead byte with its continuation bytes as
     one character, so `å°` and one more byte in 0x80–0xBF, in Latin-1, become one space
     and every position after it on the line is two characters early. Read a sequence that
     would be an overlong or invalid code point as single bytes. A file that is not UTF-8
     is not reported, it parses.
+    After: search-result-line-zero
 - (#70) <a id="completion-select-out-of-range"></a>**Investigate: selecting a completion says "selection out of range"** — *no repo home yet.*
     In `yylex.c`, half-way through an Add Parameter, `pre` and F8 listed 8 completions
     over 16 lines. Enter on the last one, `previousLexemP`, sent `-completion-select=16`, which
@@ -319,25 +327,30 @@ every push, `After` dashed and `Goes with` not at all, linked at the end of this
     `getMatchOnNthLine()` (`src/match.c`) counts wrapped lines and returns NULL only for an
     empty list, so the session entry `selectCompletion()` found probably had no matches.
     The completion request also got a syntax error at the cursor (858:45).
+    After: latin-1-lookalikes
 - (#105) <a id="included-c-file"></a>**Investigate: a `.c` file that another file includes** — *no repo home yet.*
     `isCompilationUnit()` decides by the file name, so an included `.c` is a CU. Building it
     on its own removes the references its includer put there
     (`removeReferenceableItemsForFile()` in `buildKnowledgeOfCU()`, `src/rebuild.c`). Find
     out what the scan, the freshness check and a rebuild do with one, and pin it in a test.
+    After: completion-select-out-of-range
 - (#71) <a id="newline-position"></a>**A `'\n'` lexem has the next line's number** — *no repo home yet.*
     `handleNewline()` (`src/lexer.c`) puts the `'\n'` after the newline, and the blanks and
     comments after it, have been read. Its column is where the line ended, its line is that
     of the next lexem. A message at the end of a line lands on the line below, e.g.
     `#if __has_include(` with nothing after it.
+    After: include-bracket-from-macro
 - (#72) <a id="if-syntax-error-twice"></a>**A malformed `#if` is reported twice** — *no repo home yet.*
     When `handleHasIncludeOperator()` (`src/yylex.c`) has reported what is wrong and
     returns 0, `cppexp_yyparse()` adds "Syntax error on: `__has_include`"
     through `styyerror()` (`src/semact.c`). The second message says nothing more.
+    After: newline-position
 - (#114) <a id="delete-last-parameter-void"></a>**Deleting a function's only parameter leaves `()`, not `(void)`** — *no repo home yet.*
     Before C23, `f()` declares a function without a prototype, so the declaration says less
     than it did. A macro's `()` is right. No test deletes the only parameter of a function:
     `test_parameter_delete_void` deletes the `void`, and Add Parameter has the reverse
     (`test_parameter_add_to_void`). Start with that test.
+    After: if-syntax-error-twice
 
 ## 4. Performance, in strict dependency order
 
@@ -398,14 +411,17 @@ Roadmap → Optimization has the baseline: a cold-start PUSH on ffmpeg, measured
     4. Deduce the type of the expression. `prettyPrintType()` (`src/misc.c`) can print it.
     5. Extract an Expression as a Function. Today that gives a void function and a
        statement call, and `isInExpression` (`src/extract.c`) is read but never set.
+    After: extract-array-used-after
 - (#96) <a id="extract-out-locals-declared"></a>**Extract Function declares the locals it returns through out parameters** —
     when the region declares two or more locals used after it, the call site passes them by
     address but no longer declares them. GitHub issue #79.
     Test: `tests/test_extract_locals_declared_in_region_used_after` (suspended).
+    After: extract-typing-ladder
 - (#118) <a id="inline-output-parameter"></a>**Inline Output Parameter** — removes the copies Extract Function
     makes of a local it changes, `size_t length = *_length;` and `*_length = length;`, and uses the
     pointer instead. 11-planned-features → Inline Output Parameter.
     A real case: `readFileContent()` in `src/projectstructure.c`, done by hand (WSL session d25255b8).
+    After: extract-out-locals-declared
 - (#119) <a id="output-parameter-to-return"></a>**Turn an output parameter into the return value** — for a function
     with a single output parameter and no return value. 11-planned-features → Inline Output Parameter,
     last paragraph.
@@ -443,6 +459,7 @@ Roadmap → Optimization has the baseline: a cold-start PUSH on ffmpeg, measured
     and a rename without conflicts pops neither. Write the test first: a rename from
     inside a session, then a Pop that lands in that session.
     Goes with: index-based-sessions
+    After: rename-partial-in-broken-code
 - (#117) <a id="refused-rename-references"></a>**A rename the safety check refuses leaves the edited references** —
     the check builds the edited CUs into the table before it undoes the edits. A change is
     a difference in content (ADR-0036), so the undo and a new time on the buffers should be
@@ -450,6 +467,7 @@ Roadmap → Optimization has the baseline: a cold-start PUSH on ffmpeg, measured
     refuses, then a push on the old name, which should find its references
     (WSL, session `d25255b8`, 2026-11-17).
     Goes with: rename-leaves-sessions
+    After: rename-leaves-sessions
 - (#24) <a id="retry-creating-request"></a>**Retry the request that created the project** — small, and it becomes first contact
     with every new project once auto-discovery is the only way in.
 - (#25) <a id="lsp-tiers"></a>**LSP tiers 1–2** — code actions and `workspace/executeCommand` for extract, move
@@ -463,10 +481,13 @@ Roadmap → Optimization has the baseline: a cold-start PUSH on ffmpeg, measured
     After: lsp-mode
 - (#26) <a id="move-function-next"></a>**Move Function next steps** — smarter header placement and a preview.
     11-planned-features → Move Function → Next steps.
+    After: move-shared-static
 - (#98) <a id="move-between-blank-lines"></a>**Move Function puts the moved function between blank lines** —
     today the target needs one added by hand first.
+    After: move-function-next
 - (#99) <a id="move-removes-forward-declaration"></a>**Move Function removes the forward declaration in the source** —
     a `static` one left behind breaks the build. 11-planned-features → Move Function → Next steps.
+    After: move-between-blank-lines
 - (#100) <a id="move-includes"></a>**Move Function adds the includes the moved function needs to the target** —
     moving `waitForUserConfirmation()` into `src/ppc.c` needed `log.h` added by hand (2026-10-27).
     11-planned-features → Move Function → Include management.
@@ -476,10 +497,13 @@ Roadmap → Optimization has the baseline: a cold-start PUSH on ffmpeg, measured
     After: move-includes
 - (#102) <a id="move-removes-extern"></a>**Move Function removes the extern from the source's header** —
     when the function was not static. 11-planned-features → Move Function → Remove extern declaration.
+    After: move-removes-forward-declaration
 - (#103) <a id="move-takes-types"></a>**Move Function takes a type that only moved code uses** — a static
     table moves along, but its `typedef` does not (`initTypeModifications()` into `src/type.c`).
+    After: move-removes-extern
 - (#104) <a id="move-api-comment"></a>**Where an API comment goes when a function moves** — today the comment goes
     with the definition, and the extern in the header gets none. Open whether it belongs in the header.
+    After: move-takes-types
 - (#88) <a id="parse-all"></a>**`-parse-all`, a request that parses every compilation unit the scan found and has not parsed** —
     what ADR-0024's CreateMode reduces to once the priming is a request rather than a mode.
     `test_ffmpeg` and `test_systemd` ask for it today by searching a name nobody defines and
@@ -497,6 +521,7 @@ Roadmap → Optimization has the baseline: a cold-start PUSH on ffmpeg, measured
     Organize Includes, describes a Make Static Function Extern the dialog does not offer, and
     Extract Function's example is Java. A test that every dialog entry (`c-xref.el`, the
     `PPC_AVR_` list) has a help entry, and every help entry a dialog entry, finds the next one.
+    After: retry-creating-request
 - (#82) <a id="browser-for-c"></a>**The browser's Symbol Pane says which symbol each line is** — a line is
     `+  1/1  LIMIT`, so a macro `LIMIT` and a `static int LIMIT` in another file look the
     same (`tests/test_menu_filter_levels`). In the Java version the pane was a class tree
@@ -513,6 +538,7 @@ Roadmap → Optimization has the baseline: a cold-start PUSH on ffmpeg, measured
     - Unused Symbols uses the browser as a plain list. A buffer like
       `*c-xref-diagnostics*`, with `M-g n`, is what it wants.
     - It need not take the whole frame without a tree to show.
+    After: refactoring-help
 - (#27) <a id="local-config-fragments"></a>**Local config fragments: the config names, the fragment binds** —
     ADR-0034, proposed. Decide it, with where the fragment lives and the syntax of a
     default. Then: expand defaults, report an unbound name, read the fragment before the
@@ -521,12 +547,14 @@ Roadmap → Optimization has the baseline: a cold-start PUSH on ffmpeg, measured
 - (#28) <a id="chapter-17-hygiene"></a>**Chapter 17 hygiene, opportunistically** — incremental `cxfile.c` cleanup,
     hashtab → hashlist, split the editor module. Also "tags" in the elisp, the last of
     the old wording: two docstrings in `c-xref.el` say the search "inspects the tags".
+    After: parse-all
 - (#76) <a id="macro-expansion-module"></a>**Extract the macro expansion module from `src/yylex.c`** — §17.2.
     `yylex.c` is 2794 lines. The macro stack, the macro arguments memory and the
     expansions of the last lexem (`lastLexemExpansions`, `noteMacroExpansionsOfLastLexem()`)
     now sit together at its top, under section comments. The plan in §17.2 is older than
     that, and says 2353 lines, so check it against the code first (WSL, session
     `d25255b8`, 2026-10-22).
+    After: chapter-17-hygiene
 - (#29) <a id="dump-reference-database"></a>**Dump Reference Database** — `-dump=knowledge` answers from the
     in-memory table (`src/dump.c`), one record per fact. The selection names which facts,
     so a new kind of fact never changes the answer for an old one. Left are selections for
@@ -540,6 +568,7 @@ Roadmap → Optimization has the baseline: a cold-start PUSH on ffmpeg, measured
     `clearPreloadedThisRequestFlags` in `src/editor.mock` (WSL, 2026-09-25), and the dump
     taken afterwards had the reference, so it could not say whether the server knew it at
     the time of the rename.
+    After: macro-expansion-module
 
 - (#30) <a id="compile-commands"></a>**Read `-I` and `-D` from `compile_commands.json`** —
     *no repo home yet.* Nothing reads it today. CMake and Meson write one, and `bear`
@@ -554,6 +583,7 @@ Roadmap → Optimization has the baseline: a cold-start PUSH on ffmpeg, measured
     writes it with `printf` (`byacc-1.9/skeleton.c`), and in a server stdout is the sync
     stream, so a client stops with `SYNCHRO PROBLEM`. It works only with the server driver
     or from a shell. The trace gives states, not rule names; byacc's `-v` listing maps them.
+    After: dump-reference-database
 
 ## 7. Freshness as make (ADR-0032, ADR-0035, ADR-0036)
 
@@ -620,6 +650,7 @@ implementation, and are noted in `cu-prerequisites`, `out-of-date`, `time-budget
     A parse that needs only a point, e.g. the bounds, also selects the symbol at the
     cursor, into the refactoring's browsing entry, since `needsReferenceAtCursor()`
     decides both.
+    After: every-parse-all-passes
 - (#116) <a id="refactoring-session-kinds"></a>**The refactorings' push operations are session kinds** —
     `OP_INTERNAL_PUSH_FOR_RENAME`, `_ARGUMENT_MANIPULATION`, `_USAGE_CHECK` and
     `OP_INTERNAL_SAFETY_CHECK` are no longer requests. `pushReferences()` stores them as the
@@ -627,6 +658,7 @@ implementation, and are noted in `cu-prerequisites`, `out-of-date`, `time-budget
     `isRenameMenuSelection()`). Rename and argument manipulation behave the same everywhere
     and can be one. The `OP_INTERNAL_` prefix, and their place in `ServerOperation`, say
     something else.
+    After: symbol-at-cursor-from-table
 - (#109) <a id="session-refresh-time"></a>**A session refreshes a file by a time, not a flag** —
     a file's references get a time they last changed, never cleared, and a session
     refreshes its copy of a file when that is later than the copy. Replaces
@@ -634,6 +666,7 @@ implementation, and are noted in `cu-prerequisites`, `out-of-date`, `time-budget
     table and is cleared by the first session that reads it (stale-POP).
     `index-based-sessions` removes it again.
     Goes with: index-based-sessions
+    After: refactoring-session-kinds
 - (#107) <a id="cap-is-a-question"></a>**The cap becomes a question for every request** —
     ADR-0032, amended 2026-11-03. `MAX_CUS_TO_REPARSE` stops capping the sibling list and
     is where the question is asked, as `analyseAllOutOfDateCUs()` does, and the two build
@@ -784,11 +817,13 @@ Mac (session `05984816`), 2026-10-07.
     probably the shortest route. From reading the code (WSL, session `d25255b8`,
     2026-10-11). Until then WSL works, but on files under `/mnt/c` each `stat` goes
     through 9P to the Windows side, at about a millisecond each.
+    After: refactoring-catalogue
 - (#73) <a id="refactoring-catalogue"></a>**Every known refactoring, with its status** — a list,
     one row per refactoring, done, planned or left out, linking to its design in
     `doc/docs/11-planned-features.adoc` and its recipe in `19-refactoring-recipes.adoc`.
     It shows how many of them c-xrefactory can do, so probably in the user manual or the
     README. *No repo home yet.*
+    After: customize-names
 
 ## Foundation
 
