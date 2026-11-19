@@ -491,7 +491,7 @@ Roadmap → Optimization has the baseline: a cold-start PUSH on ffmpeg, measured
     them. Today they write native protocol records as they go (`ppc…()` calls in
     `refactory.c`, `extract.c` and `cxref.c`). The `assert(options.cxrefProtocol)` lines
     roughly map where an operation depends on the native protocol, so keep them until then.
-    After: lsp-mode
+    After: lsp-implementation-path
 - (#26) <a id="move-function-next"></a>**Move Function next steps** — smarter header placement and a preview.
     11-planned-features → Move Function → Next steps.
     After: move-shared-static
