@@ -150,7 +150,8 @@ events are entry-refresh sync points (<<08-algorithms.adoc#,Algorithms>>). The s
    include structure. Care: reconcile the overlapping init with `initializeParsingSubsystem`.
 3. *Reparse on document events* — `didOpen` / `didChange` reparse the file; `didSave`
    triggers <<08-algorithms.adoc#entry-refresh-pass-2,Pass 2>> (reverse-include reparse). Same `bringHeldFilesUpToDate` logic, but
-   changes arrive in real time.
+   changes arrive in real time. `didClose` releases the document's buffer, so the file
+   is read from disk again, as an un-preload is in the native path.
 4. *Multi-file navigation* — with 1–3 the table holds references from all project files,
    so `definition` works across files with no new query mechanism; Pass 3 sibling parsing
    triggers lazily.
