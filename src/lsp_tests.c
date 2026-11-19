@@ -69,18 +69,55 @@ Ensure(Lsp, returns_1_when_dispatcher_returns_exit_without_shutdown) {
     fclose(mock_stdin);
 }
 
-Ensure(Lsp, dispatches_an_ending_input_as_an_exit) {
+Ensure(Lsp, asks_the_dispatcher_what_an_ending_input_means) {
     const char *input =
         "Content-Length: 40\r\n\r\n"
         "{\"jsonrpc\":\"2.0\",\"method\":\"initialized\"}";
     FILE *mock_stdin = fmemopen((void *)input, strlen(input), "r");
 
     expect(dispatch_lsp_message, will_return(LSP_RETURN_OK));
-    expect(dispatch_lsp_message, will_return(LSP_RETURN_EXIT_WITHOUT_SHUTDOWN));
+    expect(dispatch_lsp_input_ended, will_return(LSP_RETURN_EXIT_WITHOUT_SHUTDOWN));
 
     int result = lsp_server(mock_stdin);
 
     assert_that(result, is_equal_to(1));
+
+    fclose(mock_stdin);
+}
+
+Ensure(Lsp, returns_header_incomplete_for_a_header_without_a_length) {
+    const char *input = "\r\n";
+    FILE *mock_stdin = fmemopen((void *)input, strlen(input), "r");
+
+    int result = lsp_server(mock_stdin);
+
+    assert_that(result, is_equal_to(LSP_RETURN_ERROR_HEADER_INCOMPLETE));
+
+    fclose(mock_stdin);
+}
+
+Ensure(Lsp, returns_io_error_for_content_shorter_than_its_length) {
+    const char *input =
+        "Content-Length: 10\r\n\r\n"
+        "{}";
+    FILE *mock_stdin = fmemopen((void *)input, strlen(input), "r");
+
+    int result = lsp_server(mock_stdin);
+
+    assert_that(result, is_equal_to(LSP_RETURN_ERROR_IO_ERROR));
+
+    fclose(mock_stdin);
+}
+
+Ensure(Lsp, returns_json_parse_error_for_content_that_does_not_parse) {
+    const char *input =
+        "Content-Length: 3\r\n\r\n"
+        "abc";
+    FILE *mock_stdin = fmemopen((void *)input, strlen(input), "r");
+
+    int result = lsp_server(mock_stdin);
+
+    assert_that(result, is_equal_to(LSP_RETURN_ERROR_JSON_PARSE_ERROR));
 
     fclose(mock_stdin);
 }

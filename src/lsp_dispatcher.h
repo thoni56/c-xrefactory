@@ -12,4 +12,9 @@
  */
 extern LspReturnCode dispatch_lsp_message(JSON *request);
 
+/**
+ * @brief What it means that the input ended, which is the client exiting
+ */
+extern LspReturnCode dispatch_lsp_input_ended(void);
+
 #endif

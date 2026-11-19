@@ -34,6 +34,10 @@ DispatchEntry dispatch[] = {
 
 static bool shutdownRequested = false;
 
+static LspReturnCode exit_return_code(void) {
+    return shutdownRequested ? LSP_RETURN_EXIT : LSP_RETURN_EXIT_WITHOUT_SHUTDOWN;
+}
+
 LspReturnCode dispatch_lsp_message(JSON *message) {
 
     const char *method = get_json_string_item(message, "method");
@@ -49,7 +53,7 @@ LspReturnCode dispatch_lsp_message(JSON *message) {
             if (strcmp(method, "shutdown") == 0)
                 shutdownRequested = true;
             if (strcmp(method, "exit") == 0)
-                return shutdownRequested ? LSP_RETURN_EXIT : LSP_RETURN_EXIT_WITHOUT_SHUTDOWN;
+                return exit_return_code();
             else
                 return LSP_RETURN_OK;
         }
@@ -60,4 +64,9 @@ LspReturnCode dispatch_lsp_message(JSON *message) {
     } else
         log_trace("LSP: Received unsupported notification '%s'", method);
     return LSP_RETURN_ERROR_METHOD_NOT_FOUND;
+}
+
+LspReturnCode dispatch_lsp_input_ended(void) {
+    log_trace("LSP: Input ended");
+    return exit_return_code();
 }

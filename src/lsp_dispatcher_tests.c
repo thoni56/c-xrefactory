@@ -48,6 +48,23 @@ Ensure(LspDispatcher, dispatches_exit_after_shutdown_as_exit) {
     assert_that(result, is_equal_to(LSP_RETURN_EXIT));
 }
 
+Ensure(LspDispatcher, takes_an_ending_input_without_shutdown_as_exit_without_shutdown) {
+    LspReturnCode result = dispatch_lsp_input_ended();
+
+    assert_that(result, is_equal_to(LSP_RETURN_EXIT_WITHOUT_SHUTDOWN));
+}
+
+Ensure(LspDispatcher, takes_an_ending_input_after_shutdown_as_exit) {
+    JSON *shutdown = parse_json("{\"jsonrpc\":\"2.0\",\"id\":1,\"method\":\"shutdown\"}");
+
+    expect(handle_shutdown);
+
+    dispatch_lsp_message(shutdown);
+    LspReturnCode result = dispatch_lsp_input_ended();
+
+    assert_that(result, is_equal_to(LSP_RETURN_EXIT));
+}
+
 Ensure(LspDispatcher, dispatches_responds_with_not_found_for_unsupported_request) {
     const char *message = "{\"jsonrpc\":\"2.0\",\"id\":1,\"method\":\"not-known\"}";
     JSON *request = parse_json(message);

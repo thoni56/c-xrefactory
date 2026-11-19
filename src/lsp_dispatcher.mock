@@ -4,3 +4,7 @@
 int dispatch_lsp_message(const char *request) {
     return mock(request);
 }
+
+int dispatch_lsp_input_ended(void) {
+    return mock();
+}

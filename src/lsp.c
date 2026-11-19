@@ -21,46 +21,53 @@ bool want_lsp_server(ArgumentsVector args) {
     return false;
 }
 
-/* Returns 0 when the input ends, since a header without a length is an error */
-static unsigned long wait_for_and_parse_lsp_header(FILE *input_stream) {
+static LspReturnCode wait_for_and_parse_lsp_header(FILE *input_stream, unsigned long *content_length) {
     char buffer[MAX_HEADER_FIELD_LEN];
-    unsigned long content_length = 0;
+    *content_length = 0;
 
     for(;;) {
         char *s = fgets(buffer, MAX_HEADER_FIELD_LEN, input_stream);
         if (s == NULL)
-            return 0;
+            return LSP_RETURN_INPUT_ENDED;
         if (strcmp(buffer, "\r\n") == 0) { // End of header
-            if (content_length == 0)
-                exit(LSP_RETURN_ERROR_HEADER_INCOMPLETE);
-            return content_length;
+            if (*content_length == 0)
+                return LSP_RETURN_ERROR_HEADER_INCOMPLETE;
+            return LSP_RETURN_OK;
         }
 
         char *buffer_part = strtok(buffer, " ");
         if (strcmp(buffer_part, "Content-Length:") == 0) {
             buffer_part = strtok(NULL, "\n");
-            content_length = atoi(buffer_part);
+            *content_length = atoi(buffer_part);
         }
     }
 }
 
-static JSON* lsp_parse_content(FILE *input_stream, unsigned long content_length) {
+static LspReturnCode lsp_parse_content(FILE *input_stream, unsigned long content_length, JSON **request) {
     char *buffer = malloc(content_length + 1);
     if (buffer == NULL)
-        exit(LSP_RETURN_ERROR_OUT_OF_MEMORY);
+        return LSP_RETURN_ERROR_OUT_OF_MEMORY;
     size_t read_elements = fread(buffer, 1, content_length, input_stream);
     if (read_elements != content_length) {
         free(buffer);
-        exit(LSP_RETURN_ERROR_IO_ERROR);
+        return LSP_RETURN_ERROR_IO_ERROR;
     }
     buffer[content_length] = '\0';
 
-    JSON *request = parse_json(buffer);
+    *request = parse_json(buffer);
 
     free(buffer);
-    if (request == NULL)
-        exit(LSP_RETURN_ERROR_JSON_PARSE_ERROR);
-    return request;
+    if (*request == NULL)
+        return LSP_RETURN_ERROR_JSON_PARSE_ERROR;
+    return LSP_RETURN_OK;
+}
+
+static LspReturnCode read_lsp_message(FILE *input_stream, JSON **message) {
+    unsigned long content_length;
+    LspReturnCode result = wait_for_and_parse_lsp_header(input_stream, &content_length);
+    if (result != LSP_RETURN_OK)
+        return result;
+    return lsp_parse_content(input_stream, content_length, message);
 }
 
 int lsp_server(FILE *input_stream) {
@@ -68,12 +75,14 @@ int lsp_server(FILE *input_stream) {
 
     int result = LSP_RETURN_OK;
     while (result == LSP_RETURN_OK) {
-        unsigned long content_length = wait_for_and_parse_lsp_header(input_stream);
         JSON *message;
-        if (content_length == 0) /* An ending input is the client exiting */
-            message = parse_json("{\"jsonrpc\":\"2.0\",\"method\":\"exit\"}");
-        else
-            message = lsp_parse_content(input_stream, content_length);
+        result = read_lsp_message(input_stream, &message);
+        if (result == LSP_RETURN_INPUT_ENDED) {
+            result = dispatch_lsp_input_ended();
+            break;
+        }
+        if (result != LSP_RETURN_OK)
+            break;
 
         result = dispatch_lsp_message(message);
 
