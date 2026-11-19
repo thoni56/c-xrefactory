@@ -126,9 +126,6 @@ void handle_definition_request(JSON *request) {
     char *uri = get_json_string_item(textDocument, "uri");
     JSON *position = get_json_item(params, "position");
 
-    (void)uri;
-    (void)position;
-
     JSON *definition = findDefinition(uri, position);
 
     JSON *response = create_lsp_response(id_of_request(request), definition);
