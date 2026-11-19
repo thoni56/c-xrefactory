@@ -109,6 +109,15 @@ EditorBuffer *getOpenedAndLoadedEditorBuffer(char *fileName) {
     return NULL;
 }
 
+bool loadTextOfEditorBuffer(EditorBuffer *editorBuffer) {
+    char *source = editorBuffer->preLoadedFromFile != NULL ? editorBuffer->preLoadedFromFile
+        : editorBuffer->fileName;
+    if (!fileExists(source))
+        return false;
+    loadFileIntoEditorBuffer(editorBuffer, fileModificationTime(source), fileSize(source));
+    return true;
+}
+
 EditorBuffer *findOrCreateAndLoadEditorBufferForFile(char *fileName) {
     EditorBuffer *editorBuffer = getEditorBufferForFile(fileName);
 
@@ -126,11 +135,8 @@ EditorBuffer *findOrCreateAndLoadEditorBufferForFile(char *fileName) {
             return NULL;
     } else {
         /* Registered before its text was read, e.g. by -preload */
-        char *source = editorBuffer->preLoadedFromFile != NULL ? editorBuffer->preLoadedFromFile
-                                                              : editorBuffer->fileName;
-        if (!fileExists(source))
+        if (!loadTextOfEditorBuffer(editorBuffer))
             return NULL;
-        loadFileIntoEditorBuffer(editorBuffer, fileModificationTime(source), fileSize(source));
     }
 
     return editorBuffer;

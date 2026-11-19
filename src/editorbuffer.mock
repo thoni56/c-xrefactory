@@ -34,6 +34,10 @@ void freeEditorBuffer(EditorBuffer *buffer) {
     mock(buffer);
 }
 
+bool loadTextOfEditorBuffer(EditorBuffer *editorBuffer) {
+    return (bool)mock(editorBuffer);
+}
+
 EditorBuffer *findOrCreateAndLoadEditorBufferForFile(char *fileName) {
     return (EditorBuffer *) mock(fileName);
 }

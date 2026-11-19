@@ -289,11 +289,7 @@ void loadAllOpenedEditorBuffers(void) {
         for (EditorBufferList *l = getEditorBufferListElementAt(i); l != NULL; l = l->next) {
             if (!l->buffer->textLoaded) {
                 assert(l->buffer->preLoadedFromFile == NULL || l->buffer->preLoadedFromFile != l->buffer->fileName);
-                char *fileName = l->buffer->preLoadedFromFile? l->buffer->preLoadedFromFile: l->buffer->fileName;
-                if (fileExists(fileName)) {
-                    loadFileIntoEditorBuffer(l->buffer, fileModificationTime(fileName), fileSize(fileName));
-                    log_trace("loading '%s' into '%s'", fileName, l->buffer->fileName);
-                }
+                loadTextOfEditorBuffer(l->buffer);
             }
         }
     }

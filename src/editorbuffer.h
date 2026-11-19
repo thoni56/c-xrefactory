@@ -43,6 +43,7 @@ extern EditorBuffer *newEditorBuffer(char *fileName, int fileNumber, char *preLo
                                      FileTimestamp modificationTime, size_t size);
 extern EditorBuffer *createNewEditorBuffer(char *fileName, char *preLoadedFromFile, FileTimestamp modificationTime,
                                            size_t size);
+extern bool loadTextOfEditorBuffer(EditorBuffer *editorBuffer);
 extern EditorBuffer *findOrCreateAndLoadEditorBufferForFile(char *fileName);
 extern EditorBuffer *createEditorBufferForNewFile(char *fileName);
 extern EditorBuffer *openEditorBufferFromPreload(char *fileName, char *preLoadedFromFile);
