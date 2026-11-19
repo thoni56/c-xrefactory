@@ -28,7 +28,8 @@ check: c-xrefprotocol.el
 .PHONY: test
 test: c-xrefprotocol.el
 	@if command -v emacs > /dev/null; then \
-		emacs -Q --batch -L . -l ert -l c-xrefprotocol.el -l c-xrefdoc.el -l c-xrefactory.el -l c-xref.el \
+		emacs -Q --batch --eval '(setq native-comp-enable-subr-trampolines nil)' \
+		      -L . -l ert -l c-xrefprotocol.el -l c-xrefdoc.el -l c-xrefactory.el -l c-xref.el \
 		      $(addprefix -l ,$(wildcard tests/*-tests.el)) -f ert-run-tests-batch-and-exit ; \
 	else \
 		echo "emacs not found - skipping elisp tests" ; \
