@@ -46,6 +46,25 @@
   (should (string-match-p "server had stopped (exit status 3), starting a new one"
                           (c-xref-test-restart-message (c-xref-test-exited-process 3)))))
 
+;; A server started the way the client starts one, but a sleep, so it has
+;; something to kill
+(defun c-xref-test-start-a-server ()
+  "Start a server in `c-xref-test-server'."
+  (let ((start-a-process (symbol-function 'start-process))
+        (kill-emacs-hook nil))
+    (cl-letf (((symbol-function 'start-process)
+               (lambda (&rest _args)
+                 (funcall start-a-process "c-xref-test-sleep" nil "sleep" "10"))))
+      (c-xref-start-server-process '("-server") "ofile" 'c-xref-test-server #'ignore))))
+
+(defun c-xref-test-kill-the-server ()
+  "Kill the server in `c-xref-test-server', and wait until its sentinel has run."
+  (let ((server (car c-xref-test-server)))
+    (signal-process server 9)
+    (while (process-live-p server)
+      (accept-process-output server 0.05))
+    (accept-process-output nil 0.05)))
+
 ;; The server can be gone before it is asked to stop, e.g. killed from a
 ;; shell. Stopping it then only forgets it, so an upgrade goes on to build.
 (ert-deftest c-xref-stopping-a-killed-server-forgets-it ()
@@ -57,55 +76,33 @@
 ;; window showing them is closed then, not when a key in it is answered by a
 ;; new server that never searched.
 (ert-deftest c-xref-a-server-that-dies-closes-the-search-results ()
-  (let ((c-xref-test-server nil)
-        (start-a-process (symbol-function 'start-process))
-        (kill-emacs-hook nil))
-    (cl-letf (((symbol-function 'start-process)
-               (lambda (&rest _args)
-                 (funcall start-a-process "c-xref-test-sleep" nil "sleep" "10"))))
-      (c-xref-start-server-process '("-server") "ofile" 'c-xref-test-server #'ignore))
+  (let ((c-xref-test-server nil))
+    (c-xref-test-start-a-server)
     (unwind-protect
-        (let ((server (car c-xref-test-server)))
+        (progn
           (display-buffer (get-buffer-create c-xref-search-results-buffer))
-          (signal-process server 9)
-          (while (process-live-p server)
-            (accept-process-output server 0.05))
-          (accept-process-output nil 0.05)
+          (c-xref-test-kill-the-server)
           (should-not (get-buffer c-xref-search-results-buffer)))
       (when (get-buffer c-xref-search-results-buffer)
         (kill-buffer c-xref-search-results-buffer)))))
 
 ;; The browser lives in the server too, so its windows also go when it dies
 (ert-deftest c-xref-a-server-that-dies-closes-the-browser ()
-  (let ((c-xref-test-server nil)
-        (start-a-process (symbol-function 'start-process))
-        (kill-emacs-hook nil))
-    (cl-letf (((symbol-function 'start-process)
-               (lambda (&rest _args)
-                 (funcall start-a-process "c-xref-test-sleep" nil "sleep" "10"))))
-      (c-xref-start-server-process '("-server") "ofile" 'c-xref-test-server #'ignore))
+  (let ((c-xref-test-server nil))
+    (c-xref-test-start-a-server)
     (c-xref-set-this-frame-dispatch-data nil)
     (delete-other-windows)
     (switch-to-buffer (get-buffer-create "source.c"))
     (c-xref-create-browser-windows nil (list (cons 'caller-window (selected-window))))
-    (let ((server (car c-xref-test-server)))
-      (signal-process server 9)
-      (while (process-live-p server)
-        (accept-process-output server 0.05))
-      (accept-process-output nil 0.05))
+    (c-xref-test-kill-the-server)
     (should (equal (mapcar (lambda (w) (buffer-name (window-buffer w))) (window-list))
                    '("source.c")))))
 
 ;; A browser the user has closed is not closed again when the server dies,
 ;; which would give back the windows from before it opened
 (ert-deftest c-xref-a-server-that-dies-leaves-the-windows-after-a-closed-browser ()
-  (let ((c-xref-test-server nil)
-        (start-a-process (symbol-function 'start-process))
-        (kill-emacs-hook nil))
-    (cl-letf (((symbol-function 'start-process)
-               (lambda (&rest _args)
-                 (funcall start-a-process "c-xref-test-sleep" nil "sleep" "10"))))
-      (c-xref-start-server-process '("-server") "ofile" 'c-xref-test-server #'ignore))
+  (let ((c-xref-test-server nil))
+    (c-xref-test-start-a-server)
     (c-xref-set-this-frame-dispatch-data nil)
     (delete-other-windows)
     (switch-to-buffer (get-buffer-create "source.c"))
@@ -113,11 +110,7 @@
     (with-current-buffer (window-buffer (c-xref-is-browser-window-displayed))
       (c-xref-browser-dialog-exit nil))
     (set-window-buffer (split-window-horizontally) (get-buffer-create "other.c"))
-    (let ((server (car c-xref-test-server)))
-      (signal-process server 9)
-      (while (process-live-p server)
-        (accept-process-output server 0.05))
-      (accept-process-output nil 0.05))
+    (c-xref-test-kill-the-server)
     (should (equal (mapcar (lambda (w) (buffer-name (window-buffer w))) (window-list))
                    '("source.c" "other.c")))))
 
