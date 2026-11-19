@@ -52,6 +52,16 @@ emacs -l c-xrefactory/load.el
 >[!NOTE]
 >You can clone the repo anywhere and use a full path to `load.el`.
 
+To load it every time Emacs starts, add this to your init file:
+
+```elisp
+(load "/full/path/to/c-xrefactory/load.el")
+```
+
+`load.el` runs `make` in the clone each time it is loaded, so a
+`*compilation*` buffer shows up at startup. After a `git pull` that
+also rebuilds the server, so nothing more is needed to upgrade.
+
 ### Using `el-get`:
 
     M-x el-get-install<ENTER>c-xrefactory<ENTER>
