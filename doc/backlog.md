@@ -437,6 +437,13 @@ Roadmap → Optimization has the baseline: a cold-start PUSH on ffmpeg, measured
     with a single output parameter and no return value. 11-planned-features → Inline Output Parameter,
     last paragraph.
     After: inline-output-parameter
+- (#121) <a id="extract-guard-return"></a>**Extract Function lets a region out by `return <constant>;`** — the first
+    case in 11-planned-features → Extract Function with Jumps out of the Region: a region that
+    is only left by `return <constant>;`, or `return;`, and has no result of its own. The new
+    function returns a `bool` and the call site does the `return`. A real case:
+    `editorbuffer.c:128`, the else-branch of `findOrCreateAndLoadEditorBufferForFile()`,
+    which `loadAllOpenedEditorBuffers()` (`editor.c:290`) duplicates (WSL session d25255b8).
+    After: output-parameter-to-return
 - (#97) <a id="rename-partial-in-broken-code"></a>**Rename in code that does not parse leaves occurrences behind** —
     with the cursor on a declaration the parser still saw, only that occurrence is renamed,
     with no warning. On a use it refuses, see `tests/test_rename_in_code_that_does_not_parse`,
