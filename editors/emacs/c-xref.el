@@ -1621,6 +1621,11 @@ tries to delete C-xrefactory windows first.
     res
     ))
 
+(defun c-xref-server-sentinel (process _event)
+  "The search results live in the server, so they go with it."
+  (unless (process-live-p process)
+    (c-xref-delete-window-in-any-frame c-xref-search-results-buffer nil)))
+
 (defun c-xref-start-server-process (initopts ofile proc filter)
   (let ((oldpct) (opts))
     (setq oldpct process-connection-type)
@@ -1642,6 +1647,7 @@ tries to delete C-xrefactory windows first.
                               )
                    (cons "" nil)))
     (set-process-filter (car (eval proc)) filter)
+    (set-process-sentinel (car (eval proc)) #'c-xref-server-sentinel)
     (setq process-connection-type oldpct)
     (set-process-query-on-exit-flag (car (eval proc)) nil)
     (let ((server-proc proc))

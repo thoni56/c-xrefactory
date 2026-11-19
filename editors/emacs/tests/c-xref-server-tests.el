@@ -53,6 +53,28 @@
     (c-xref-stop-server)
     (should (null c-xref-server-process))))
 
+;; The search results live in the server. When it dies they are gone, so the
+;; window showing them is closed then, not when a key in it is answered by a
+;; new server that never searched.
+(ert-deftest c-xref-a-server-that-dies-closes-the-search-results ()
+  (let ((c-xref-test-server nil)
+        (start-a-process (symbol-function 'start-process))
+        (kill-emacs-hook nil))
+    (cl-letf (((symbol-function 'start-process)
+               (lambda (&rest _args)
+                 (funcall start-a-process "c-xref-test-sleep" nil "sleep" "10"))))
+      (c-xref-start-server-process '("-server") "ofile" 'c-xref-test-server #'ignore))
+    (unwind-protect
+        (let ((server (car c-xref-test-server)))
+          (display-buffer (get-buffer-create c-xref-search-results-buffer))
+          (signal-process server 9)
+          (while (process-live-p server)
+            (accept-process-output server 0.05))
+          (accept-process-output nil 0.05)
+          (should-not (get-buffer c-xref-search-results-buffer)))
+      (when (get-buffer c-xref-search-results-buffer)
+        (kill-buffer c-xref-search-results-buffer)))))
+
 ;; The user can give the server options of their own, e.g. a log
 (ert-deftest c-xref-server-is-started-with-the-startup-options ()
   (let ((c-xref-server-startup-options '("-info" "-log=c-xref.log"))
