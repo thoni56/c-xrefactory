@@ -1,8 +1,11 @@
 #include <cgreen/cgreen.h>
 #include <cgreen/mocks.h>
 
-int dispatch_lsp_message(const char *request) {
-    return mock(request);
+#include "json_utils.h"
+
+
+int dispatch_lsp_message(JSON *message) {
+    return mock(message);
 }
 
 int dispatch_lsp_input_ended(void) {

@@ -73,7 +73,7 @@ static LspReturnCode read_lsp_message(FILE *input_stream, JSON **message) {
 int lsp_server(FILE *input_stream) {
     log_trace("LSP: Server started");
 
-    int result = LSP_RETURN_OK;
+    LspReturnCode result = LSP_RETURN_OK;
     while (result == LSP_RETURN_OK) {
         JSON *message;
         result = read_lsp_message(input_stream, &message);
