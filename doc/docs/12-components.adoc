@@ -523,6 +523,27 @@ When the lexer processes an `#include`, it calls `findOrCreateAndLoadEditorBuffe
 
 If a content buffer is found, the character buffer is set up to read from it. If not (file doesn't exist or is a directory), the fallback `openFile()` path reads from disk via a FILE handle. This means **preloaded editor content transparently overrides disk content** — the parser doesn't know or care where the content came from.
 
+==== What a Content Buffer Holds
+
+A content buffer does not hold the file's bytes. It holds a copy where **every character is one byte**, so that a byte offset in the buffer is the character offset the editor counts, and a column is the number of characters before it on the line.
+
+When a file is loaded into a buffer, `performEncodingAdjustments()` (`src/encoding.c`) rewrites the text in place:
+
+* A UTF-8 sequence of two, three or four bytes becomes **one space**.
+* A byte with the high bit set that does not start a valid sequence, e.g. Latin-1, also becomes one space, and leaves the bytes after it alone.
+* CR LF, and a lone CR, become one `\n`.
+
+For the line `x = "å😀"; y` the file has 14 bytes before `y`, the buffer has 10, and Emacs says column 10. The lexer only counts bytes (`columnPosition()`, `src/characterreader.c`), so every position it records is already a character position, with no conversion anywhere else. The editor's own coding system does not matter either: the preload is written in the buffer's `buffer-file-coding-system`, and one byte per character in Latin-1 collapses the same way as two in UTF-8.
+
+The lexer only knows ASCII, so a space is all it needs to see. Inside a string or a comment, which is where non-ASCII almost always is, the space changes nothing that is referenced.
+
+A refactoring that moves code does not send the collapsed text back. It sends the editor offsets and a size (`PPC_REFACTORING_CUT_BLOCK`, `src/refactory.c`), and the editor moves its own text, so an `å` in a moved function survives.
+
+Two places where this does not hold:
+
+* **An LSP document is not collapsed.** `didOpen` text goes through `loadTextIntoEditorBuffer()`, which copies it as it is, so its columns are bytes, and CR LF stays. A file read from disk in LSP mode is collapsed, so the two disagree on any line with non-ASCII.
+* **A UTF-8 identifier is split.** `int på;` reaches the lexer as `int p ;`, so a symbol `p` gets the references. gcc and clang accept UTF-8 identifiers.
+
 ==== Lifetime
 
 Buffer lifetime depends on the server mode and buffer role:
