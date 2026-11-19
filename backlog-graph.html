@@ -43,8 +43,8 @@ flowchart BT
   relative_include_path["§3 · 15b · A relative `-I` in `.c-xrefrc` resolves against the working directory of the server process"]
   unused_yacc_statics["§3 · 15g · GlobalUnused gives a false positive for statics in `.y` files"]
   push_by_name["§3 · 15h · Push by name when a name has several bindings"]
-  lsp_position_encoding["§3 · 15j · Unconfirmed: the LSP server announces `positionEncoding: #quot;utf-8#quot;` but counts code points"]
-  lsp_input_ends["§3 · 15k · Unconfirmed: the LSP server exits as a JSON parse error when its input ends"]
+  lsp_position_encoding["§3 · 15j · The LSP server counts columns in bytes in opened documents and in code points in files from disk"]
+  utf8_identifiers["§3 · 15l · A UTF-8 identifier is split into pieces"]
   search_result_line_zero["§3 · 58 · Investigate: the client asks for search result number 0"]
   include_bracket_from_macro["§3 · 60 · `#include MACRO` where the macro is `#lt;...#gt;`"]
   latin_1_lookalikes["§3 · 69 · Unconfirmed: Latin-1 that looks like UTF-8 is read as one character"]
@@ -156,7 +156,7 @@ flowchart BT
   token_pasting_trio -.-&gt; unused_yacc_statics
   unused_yacc_statics -.-&gt; push_by_name
   lsp_mode -.-&gt; lsp_position_encoding
-  lsp_position_encoding -.-&gt; lsp_input_ends
+  lsp_position_encoding -.-&gt; utf8_identifiers
   inserted_text_loses_non_ascii -.-&gt; search_result_line_zero
   push_by_name -.-&gt; include_bracket_from_macro
   search_result_line_zero -.-&gt; latin_1_lookalikes
@@ -222,7 +222,7 @@ flowchart BT
   class unused_yacc_statics ready
   class push_by_name ready
   class lsp_position_encoding ready
-  class lsp_input_ends ready
+  class utf8_identifiers ready
   class search_result_line_zero ready
   class include_bracket_from_macro ready
   class latin_1_lookalikes ready
