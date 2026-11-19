@@ -272,17 +272,22 @@ fails if a name is unknown.
    h. <a id="push-by-name"></a>**Push by name when a name has several bindings** —
       `tests/test_browsing_push_by_name`. Needs the behaviour decided first.
       After: unused-yacc-statics
-   j. <a id="lsp-position-encoding"></a>**Unconfirmed: the LSP server announces `positionEncoding: "utf-8"` but counts code points** —
-      *no repo home yet* (`src/lsp_handler.c`). In LSP 3.17 "utf-8" means columns in
-      bytes, while the encoding collapse makes every server column a character column, so
-      on a line with non-ASCII the two disagree. The honest value is "utf-32"; the
-      protocol also lets a server pick only an encoding the client offered, with
-      "utf-16" as the default, which agrees with code points outside the astral planes.
-      From reading the code (Mac, session `36694da1`, 2026-10-02), not tested.
-      It is also in the wrong place: at the top level of the `initialize` response, where
-      the protocol has it in `result.capabilities`, so a client ignores it and assumes
-      "utf-16". `test_lsp_simple_lifecycle` pins it there (WSL, session `d25255b8`,
-      2026-10-10).
+   j. <a id="lsp-position-encoding"></a>**The LSP server counts columns in bytes in opened documents and in code points in files from disk** —
+      *no repo home yet* (`src/lsp_handler.c`, `src/editor.c`). A file read from disk
+      goes through `performEncodingAdjustments()`, which makes every UTF-8 sequence one
+      space, so its columns are code points. A `didOpen` text goes through
+      `loadTextIntoEditorBuffer()`, which copies it without that collapse, so its columns
+      are bytes (and CR LF stays). Observed: `/*å*/ int myFunction…` in a `didOpen` gives
+      the definition at character 11, which is bytes; code points would be 10 (Mac,
+      session `f5b5c93a`, 2026-11-19). The disk half cannot be observed yet, since a
+      definition is not found outside the opened document.
+      So the announced "utf-8" (columns in bytes, `243477d33`, which meant the file's
+      encoding) is true for every answer today, but it is not negotiated, and it turns
+      false once an answer comes from a file on disk. The announcement used to be outside
+      `capabilities`, where no client read it; fixed in `3cd114c26`.
+      Fix: `didOpen` collapses as a file read does, so every column is a code point; then
+      announce "utf-32" when the client offers it in `general.positionEncodings`, and
+      nothing otherwise, which means "utf-16" and agrees outside the astral planes.
       After: lsp-mode
    k. <a id="lsp-input-ends"></a>**Unconfirmed: the LSP server exits as a JSON parse error when its input ends** —
       *no repo home yet* (`src/lsp.c`). At end of file the header reader returns a length
@@ -290,6 +295,16 @@ fails if a name is unknown.
       `LSP_RETURN_ERROR_JSON_PARSE_ERROR`. The protocol does not say what an ending input
       means, but a client that died without `exit` should not look like a parse error.
       From reading the code (WSL, session `d25255b8`, 2026-10-10), not tested.
+      After: lsp-position-encoding
+   l. <a id="utf8-identifiers"></a>**A UTF-8 identifier is split into pieces** —
+      *no repo home yet* (`src/encoding.c`). The encoding collapse makes each UTF-8
+      sequence one space, which keeps columns equal to the editor's character columns, but
+      in an identifier it ends the identifier: `int på;` is lexed as `p` and nothing, so a
+      wrong symbol `p` gets the references. gcc and clang accept UTF-8 identifiers. Inside
+      strings and comments the collapse is harmless. A fix needs a placeholder that the
+      lexer reads as an identifier character, still one byte per character, and a symbol
+      name that is not the placeholder for every non-ASCII letter. From reading the code
+      (Mac, session `f5b5c93a`, 2026-11-19), not tested.
       After: lsp-position-encoding
 
 - (#58) <a id="search-result-line-zero"></a>**Investigate: the client asks for search result number 0** —
