@@ -193,6 +193,9 @@ fails if a name is unknown.
     `06-principles` first, e.g. the snapshot paragraph in "Reference Database and Parsing".
     `14-code`'s server request flow, the dispatch tree with its line numbers, the Pass
     1/2/3 entry refresh and `firstPass`, describes code that is gone.
+    `12-components`' Content Buffers, "Staleness Detection", compares `lastParsedMtime`
+    with the buffer's modification time; that field is gone, and a change is found by
+    its content token since ADR-0035/0036.
     After: freshness-docs
 
 ## 3. Correctness, by (quiet × cheap)
