@@ -292,13 +292,6 @@ fails if a name is unknown.
       announce "utf-32" when the client offers it in `general.positionEncodings`, and
       nothing otherwise, which means "utf-16" and agrees outside the astral planes.
       After: lsp-mode
-   k. <a id="lsp-input-ends"></a>**Unconfirmed: the LSP server exits as a JSON parse error when its input ends** —
-      *no repo home yet* (`src/lsp.c`). At end of file the header reader returns a length
-      of 0, the empty content does not parse, and the exit code is
-      `LSP_RETURN_ERROR_JSON_PARSE_ERROR`. The protocol does not say what an ending input
-      means, but a client that died without `exit` should not look like a parse error.
-      From reading the code (WSL, session `d25255b8`, 2026-10-10), not tested.
-      After: lsp-position-encoding
    l. <a id="utf8-identifiers"></a>**A UTF-8 identifier is split into pieces** —
       *no repo home yet* (`src/encoding.c`). The encoding collapse makes each UTF-8
       sequence one space, which keeps columns equal to the editor's character columns, but
