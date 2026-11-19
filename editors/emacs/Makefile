@@ -15,7 +15,7 @@ all: c-xrefprotocol.el
 # Ensure protocol is in sync
 c-xrefprotocol.el: ../../src/protocol.th ../../src/refactorings.def c-xrefprotocol.elt
 	# Convert protocol.th into Elisp defvar's
-	cpp c-xrefprotocol.elt | grep -v \# | sed '/./,$$!d' > c-xrefprotocol.el
+	$(CC) -E -x c c-xrefprotocol.elt | grep -v \# | sed '/./,$$!d' > c-xrefprotocol.el
 
 .PHONY: check
 check: c-xrefprotocol.el
