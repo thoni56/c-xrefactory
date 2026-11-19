@@ -21,6 +21,7 @@ bool want_lsp_server(ArgumentsVector args) {
     return false;
 }
 
+/* Returns 0 when the input ends, since a header without a length is an error */
 static unsigned long wait_for_and_parse_lsp_header(FILE *input_stream) {
     char buffer[MAX_HEADER_FIELD_LEN];
     unsigned long content_length = 0;
@@ -68,7 +69,11 @@ int lsp_server(FILE *input_stream) {
     int result = LSP_RETURN_OK;
     while (result == LSP_RETURN_OK) {
         unsigned long content_length = wait_for_and_parse_lsp_header(input_stream);
-        JSON *message = lsp_parse_content(input_stream, content_length);
+        JSON *message;
+        if (content_length == 0) /* An ending input is the client exiting */
+            message = parse_json("{\"jsonrpc\":\"2.0\",\"method\":\"exit\"}");
+        else
+            message = lsp_parse_content(input_stream, content_length);
 
         result = dispatch_lsp_message(message);
 

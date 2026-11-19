@@ -68,3 +68,19 @@ Ensure(Lsp, returns_1_when_dispatcher_returns_exit_without_shutdown) {
 
     fclose(mock_stdin);
 }
+
+Ensure(Lsp, dispatches_an_ending_input_as_an_exit) {
+    const char *input =
+        "Content-Length: 40\r\n\r\n"
+        "{\"jsonrpc\":\"2.0\",\"method\":\"initialized\"}";
+    FILE *mock_stdin = fmemopen((void *)input, strlen(input), "r");
+
+    expect(dispatch_lsp_message, will_return(LSP_RETURN_OK));
+    expect(dispatch_lsp_message, will_return(LSP_RETURN_EXIT_WITHOUT_SHUTDOWN));
+
+    int result = lsp_server(mock_stdin);
+
+    assert_that(result, is_equal_to(1));
+
+    fclose(mock_stdin);
+}
