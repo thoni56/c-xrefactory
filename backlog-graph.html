@@ -69,6 +69,7 @@ flowchart BT
   rename_leaves_sessions["§5 · 110 · A rename leaves its safety-check sessions on the browsing stack"]
   refused_rename_references["§5 · 117 · A rename the safety check refuses leaves the edited references"]
   retry_creating_request["§5 · 24 · Retry the request that created the project"]
+  lsp_implementation_path["§5 · 120 · LSP follows an edited document, and answers across files"]
   lsp_tiers["§5 · 25 · LSP tiers 1–2"]
   move_function_next["§5 · 26 · Move Function next steps"]
   move_removes_forward_declaration["§5 · 99 · Move Function removes the forward declaration in the source"]
@@ -172,7 +173,8 @@ flowchart BT
   inline_output_parameter -.-&gt; output_parameter_to_return
   rename_partial_in_broken_code -.-&gt; rename_leaves_sessions
   rename_leaves_sessions -.-&gt; refused_rename_references
-  lsp_mode -.-&gt; lsp_tiers
+  lsp_mode -.-&gt; lsp_implementation_path
+  lsp_implementation_path -.-&gt; lsp_tiers
   move_shared_static -.-&gt; move_function_next
   move_function_next -.-&gt; move_removes_forward_declaration
   move_includes -.-&gt; move_header_for_callers
@@ -196,7 +198,7 @@ flowchart BT
   refactoring_catalogue -.-&gt; windows_build
   customize_names -.-&gt; refactoring_catalogue
   linkStyle 0,1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20,21,22,23,24,25,26 stroke:#333,stroke-width:2.5px
-  linkStyle 27,28,29,30,31,32,33,34,35,36,37,38,39,40,41,42,43,44,45,46,47,48,49,50,51,52,53,54,55,56,57,58,59,60,61,62,63,64,65,66,67,68,69,70,71,72,73,74,75,76,77,78 stroke:#aaa,stroke-width:1px
+  linkStyle 27,28,29,30,31,32,33,34,35,36,37,38,39,40,41,42,43,44,45,46,47,48,49,50,51,52,53,54,55,56,57,58,59,60,61,62,63,64,65,66,67,68,69,70,71,72,73,74,75,76,77,78,79 stroke:#aaa,stroke-width:1px
   class config_without_pass ready
   class defines_at_parse_start ready
   class side_effects_to_dispatcher ready
@@ -247,6 +249,7 @@ flowchart BT
   class rename_leaves_sessions ready
   class refused_rename_references ready
   class retry_creating_request ready
+  class lsp_implementation_path ready
   class lsp_tiers ready
   class move_function_next ready
   class move_removes_forward_declaration ready
