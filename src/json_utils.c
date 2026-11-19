@@ -24,7 +24,7 @@ JSON *create_lsp_message_with_id(double id) {
 
 JSON *create_lsp_response(double id, JSON *result) {
     cJSON *response = create_lsp_message_with_id(id);
-    cJSON_AddItemToObject(response, "result", result);
+    cJSON_AddItemToObject(response, "result", result != NULL ? result : cJSON_CreateNull());
     return response;
 }
 
