@@ -477,6 +477,12 @@ Roadmap → Optimization has the baseline: a cold-start PUSH on ffmpeg, measured
     After: rename-leaves-sessions
 - (#24) <a id="retry-creating-request"></a>**Retry the request that created the project** — small, and it becomes first contact
     with every new project once auto-discovery is the only way in.
+- (#120) <a id="lsp-implementation-path"></a>**LSP follows an edited document, and answers across files** —
+    11-planned-features → LSP Integration → Implementation Path, steps 2–4: the project
+    set up on `initialize`, `didChange`, `didSave` and `didClose`, and `definition` from
+    every file. Today only `didOpen` is handled, so an edited document is answered from
+    its opened text, and a definition outside it is not found.
+    After: lsp-mode
 - (#25) <a id="lsp-tiers"></a>**LSP tiers 1–2** — code actions and `workspace/executeCommand` for extract, move
     function and the parameter refactorings. Stubs exist: `handle_code_action`,
     `handle_execute_command`, with `codeActionProvider` commented out in
