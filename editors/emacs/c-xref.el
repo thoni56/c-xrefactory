@@ -1850,26 +1850,12 @@ be cleaned up when the buffer is saved or killed)."
 (add-hook 'after-save-hook #'c-xref-preload-cleanup)
 (add-hook 'kill-buffer-hook #'c-xref-preload-cleanup)
 
-(defun c-xref-server-get-list-of-buffers-to-save-to-tmp-files (can-add-current-buffer)
-  (let ((bl) (bb) (res) (cb))
-    (setq res nil)
-    (setq bl (buffer-list))
-    (setq cb (current-buffer))
-    (while bl
-      (setq bb (car bl))
-      (if (and (buffer-file-name bb)
-                   (buffer-modified-p bb)
-                   )
-              (progn
-                (if (or can-add-current-buffer
-                            (not (equal bb cb)))
-                        (setq res (c-xref-server-add-buffer-to-tmp-files-list bb res))
-                  )))
-      (setq bl (cdr bl))
-      )
-    (set-buffer cb)
-    res
-    ))
+(defun c-xref-server-get-list-of-buffers-to-save-to-tmp-files ()
+  (let ((res nil))
+    (dolist (bb (buffer-list))
+      (when (and (buffer-file-name bb) (buffer-modified-p bb))
+        (setq res (c-xref-server-add-buffer-to-tmp-files-list bb res))))
+    res))
 
 (defun c-xref-server-get-point-and-mark-options ()
   (let ((res))
@@ -1941,12 +1927,12 @@ be cleaned up when the buffer is saved or killed)."
   "Write the modified buffers to their tmp files.
 Return the tmp files and the -preload options that send them, as a pair.
 The server holds a modified buffer only as long as each request sends it."
-  (let ((tmp-files (c-xref-server-get-list-of-buffers-to-save-to-tmp-files t)))
+  (let ((tmp-files (c-xref-server-get-list-of-buffers-to-save-to-tmp-files)))
     (cons tmp-files
           (mapconcat (lambda (argument) (format " \"%s\"" argument))
                      (c-xref-server-save-buffers-to-tmp-files tmp-files) ""))))
 
-(defun c-xref-send-data-to-process-and-dispatch (commands dispatch-data _tmp-files)
+(defun c-xref-send-data-to-process-and-dispatch (commands dispatch-data)
   "Send COMMANDS with every modified buffer as a -preload, dispatch the answer."
   (let* ((proc (cdr (assoc 'process dispatch-data)))
          (preloads (c-xref-server-preloads))
@@ -1966,7 +1952,7 @@ The server holds a modified buffer only as long as each request sends it."
       (setq blo (cdr blo))
       )
     (setq data (format "%s %s \"%s\"" options topt (buffer-file-name nil)))
-    (c-xref-send-data-to-process-and-dispatch data dispatch-data nil)
+    (c-xref-send-data-to-process-and-dispatch data dispatch-data)
     ))
 
 
@@ -2019,7 +2005,7 @@ Gets the value associated with NAME, set by -set in the .c-xrefrc file.
     (setq c-xref-global-dispatch-data (c-xref-get-basic-server-dispatch-data 'c-xref-server-process))
     (c-xref-send-data-to-process-and-dispatch
      (format "-get \"%s\"" name)
-     c-xref-global-dispatch-data nil)
+     c-xref-global-dispatch-data)
     (setq res (cdr (assoc 'info c-xref-global-dispatch-data)))
     res))
 
@@ -3058,7 +3044,7 @@ Special hotkeys available:
     (set-window-configuration winconfig)
     (c-xref-set-this-frame-dispatch-data fdd)
     ;; send nothing to continue
-    (c-xref-send-data-to-process-and-dispatch "-continuerefactoring" dispatch-data nil)
+    (c-xref-send-data-to-process-and-dispatch "-continuerefactoring" dispatch-data)
     i
     ))
 
@@ -3637,7 +3623,7 @@ bug in its own right.
   (let ((lineno 1) (cw) (_offset))
     (unless (eq (point) (point-max))
       (setq lineno (count-lines 1 (+ (point) 1))))
-    (c-xref-send-data-to-process-and-dispatch (format "-completion-select=%d" lineno) c-xref-completions-dispatch-data nil)
+    (c-xref-send-data-to-process-and-dispatch (format "-completion-select=%d" lineno) c-xref-completions-dispatch-data)
     (if (equal c-xref-completions-windows-counter  0)
             (c-xref-delete-completion-window)
       (setq c-xref-completions-windows-counter (1- c-xref-completions-windows-counter))
@@ -3656,14 +3642,14 @@ bug in its own right.
 (defun c-xref-interactive-completion-previous (_event)
   "Previous completions."
   (interactive "i")
-  (c-xref-send-data-to-process-and-dispatch "-completion-previous" c-xref-completions-dispatch-data nil)
+  (c-xref-send-data-to-process-and-dispatch "-completion-previous" c-xref-completions-dispatch-data)
   t
   )
 
 (defun c-xref-interactive-completion-next (_event)
   "Next completions."
   (interactive "i")
-  (c-xref-send-data-to-process-and-dispatch "-completion-next" c-xref-completions-dispatch-data nil)
+  (c-xref-send-data-to-process-and-dispatch "-completion-next" c-xref-completions-dispatch-data)
   t
   )
 
@@ -3742,8 +3728,7 @@ bug in its own right.
     (setq cw (selected-window))
     (c-xref-send-data-to-process-and-dispatch
      (format "-completion-goto=%d" lineno)
-     c-xref-completions-dispatch-data
-     nil)
+     c-xref-completions-dispatch-data)
     (sit-for 1)
     (select-window cw)
     t
@@ -4567,8 +4552,7 @@ given string(s).
     (setq cline (count-lines (point-min) (if (eobp) (point) (+ (point) 1))))
     (c-xref-send-data-to-process-and-dispatch
      (format "%s%d" opt (+ cline offset))
-     dispatch-data
-     nil)
+     dispatch-data)
     (select-window sw)
     ))
 
@@ -4688,7 +4672,7 @@ given string(s).
     (if (eq c-xref-this-buffer-type 'symbol-list)
             (progn
               (c-xref-browser-dialog-set-selection-sign-on-all 1)
-              (c-xref-send-data-to-process-and-dispatch "-menu-select-all" dispatch-data nil)
+              (c-xref-send-data-to-process-and-dispatch "-menu-select-all" dispatch-data)
               ))
     (select-window sw)
     ))
@@ -4701,7 +4685,7 @@ given string(s).
     (if (eq c-xref-this-buffer-type 'symbol-list)
             (progn
               (c-xref-browser-dialog-set-selection-sign-on-all 0)
-              (c-xref-send-data-to-process-and-dispatch "-menu-select-none" dispatch-data nil)
+              (c-xref-send-data-to-process-and-dispatch "-menu-select-none" dispatch-data)
               ))
     (select-window sw)
     ))
@@ -4891,8 +4875,7 @@ given string(s).
   (setq c-xref-this-buffer-filter-level level)
   (c-xref-send-data-to-process-and-dispatch
    (format "-menu-filter=%d" level)
-   dispatch-data
-   nil)
+   dispatch-data)
   (c-xref-references-set-filter 0 dispatch-data)
   (c-xref-select-dispach-data-resolution-window dispatch-data)
   )
@@ -5096,8 +5079,8 @@ next invocation of any of its functions.
   ;; to be used for profiler informations
   (setq c-xref-global-dispatch-data (c-xref-get-basic-server-dispatch-data 'c-xref-server-process))
   (if current-prefix-arg
-      (c-xref-send-data-to-process-and-dispatch "-about -exit" c-xref-global-dispatch-data nil)
-    (c-xref-send-data-to-process-and-dispatch "-about" c-xref-global-dispatch-data nil)
+      (c-xref-send-data-to-process-and-dispatch "-about -exit" c-xref-global-dispatch-data)
+    (c-xref-send-data-to-process-and-dispatch "-about" c-xref-global-dispatch-data)
     )
   )
 
