@@ -6,6 +6,9 @@ Date: 2026-09-27
 
 Accepted
 
+Amended (2026-11-20): the open carries no preloads, and the query carries them like every
+other request, see below.
+
 Builds on [ADR-0029](0029-project-identity-is-the-root-path.md)
 
 ## Deciders
@@ -43,6 +46,11 @@ _we decided to_
   binds to the project a given file belongs to, and reports in its answer what went
   wrong: no project, a different project already open, a config problem;
   and **is this file in the project**, a query without side effects,
+- (*Amended 2026-11-20:* let the open carry no `-preload`. It starts from the disk and the
+  snapshot, and the first request after it sends what the editor holds. The query is not
+  free of side effects as long as the server takes a missing `-preload` as a released
+  buffer, so it carries the preloads like every other request. Found on WSL, session
+  `d25255b8`, when the `-getproject` before each Push released every held header.),
 - let the server answer the query, from the root, the declared source directories and
   the include paths, since it is the only party that knows all three and the client
   should stay thin,
@@ -77,6 +85,8 @@ as own, visible or outside. The client starts a server with no project, opens th
 project with the first request, asks about each new file, and on *outside* asks the
 user whether to switch, which restarts the server. A request before the project is open
 gets an error in its answer.
+
+*Amended 2026-11-20:* the open carries no preloads, the query carries them.
 
 ## Consequences and Risks
 

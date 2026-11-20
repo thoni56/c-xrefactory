@@ -634,6 +634,16 @@ is not an optimization — it is a protocol invariant that the server depends on
 * **Presence of `-preload`:** "This buffer is modified in the editor; use this content."
 * **Absence of `-preload`:** "This buffer is no longer modified; the disk file is current."
 
+Every request means every one: Pop, Re-push, `-about`, the completion and menu requests,
+and `-getproject`, which the client sends before each operation that needs a project. A
+request that leaves a held buffer out releases it, and the next request that sends it
+makes it a change for every CU that includes it.
+
+Opening a project carries no `-preload` (ADR-0030). It starts from the disk and the
+snapshot, and the first request after it sends what the editor holds, so a held file that
+differs is a change, as after any restart. Until the open is a request of its own, the
+first `-getproject` opens the project and carries the preloads too. The server reads them before the project is bound, with the same result.
+
 The server uses this to detect when a user saves or closes a file:
 
 [source]
