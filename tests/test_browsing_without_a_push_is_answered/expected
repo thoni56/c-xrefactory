@@ -1,0 +1,34 @@
+CXREF -server -o server-buffer
+-getproject CURDIR/source.c
+end-of-options
+
+<sync>
+<set-info len=<n>>CURDIR</set-info>
+-browse-pop -cursor=5 CURDIR/source.c
+end-of-options
+
+<sync>
+<bottom-warning beep=1 len=<n>>Empty stack</bottom-warning>
+-browse-pop-only -cursor=5 CURDIR/source.c
+end-of-options
+
+<sync>
+<bottom-warning beep=1 len=<n>>Empty stack</bottom-warning>
+-browse-next -cursor=5 CURDIR/source.c
+end-of-options
+
+<sync>
+<bottom-warning beep=1 len=<n>>Empty stack</bottom-warning>
+-browse-previous -cursor=5 CURDIR/source.c
+end-of-options
+
+<sync>
+<bottom-warning beep=1 len=<n>>Empty stack</bottom-warning>
+-browse-repush -cursor=5 CURDIR/source.c
+end-of-options
+
+<sync>
+<bottom-warning beep=1 len=<n>>You are on the top of browser stack.</bottom-warning>
+-exit
+end-of-options
+

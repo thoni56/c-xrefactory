@@ -1,0 +1,14 @@
+CXREF -server
+-getproject CURDIR/source.c
+<sync>
+-browse-pop -cursor=5 CURDIR/source.c
+<sync>
+-browse-pop-only -cursor=5 CURDIR/source.c
+<sync>
+-browse-next -cursor=5 CURDIR/source.c
+<sync>
+-browse-previous -cursor=5 CURDIR/source.c
+<sync>
+-browse-repush -cursor=5 CURDIR/source.c
+<sync>
+<exit>
