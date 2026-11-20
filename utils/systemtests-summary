@@ -3,8 +3,7 @@
 # args: 1 = the log, e.g. src/systemtests.log
 #
 # A run where nothing passed and nothing failed did not run the tests, e.g.
-# when the build or the ERT tests before them failed. utils/failing reads this
-# line to tell that from a run that passed.
+# when the build or the ERT tests before them failed.
 
 log=$1
 

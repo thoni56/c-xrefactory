@@ -630,8 +630,8 @@ watch-for-systemtests:
 
 # Same as system-tests, and keeps the output in systemtests.log so the result of
 # the last watcher run can be read by someone who was not watching the terminal.
-# pipefail makes the status the make's, not tee's. The summary line lets
-# utils/failing tell a run where no test ran from one where all passed.
+# pipefail makes the status the make's, not tee's. The summary line shows a run
+# where no test ran, which would otherwise look like one where all passed.
 .PHONY: system-tests-logged
 system-tests-logged: SHELL := /bin/bash
 system-tests-logged:

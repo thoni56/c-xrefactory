@@ -8,31 +8,40 @@ if [[ -z "$PROJECT_ROOT" || "$(basename "$PROJECT_ROOT")" != "c-xrefactory" ]]; 
   exit 1
 fi
 
-# Silence must mean that the tests ran and passed, so a last run that did not
-# finish, or ran no test, is said, on stderr and with exit code 1. The log is
-# the watcher's (see system-tests-logged in src/Makefile)
-LOG="${SYSTEMTESTS_LOG:-$PROJECT_ROOT/src/systemtests.log}"
-status=0
-if [ -e "$PROJECT_ROOT/src/.systemtests.running" ]; then
-    echo "failing: a system test run is in progress, $LOG is not complete" >&2
-elif [ -f "$LOG" ]; then
-    summary=$(grep '^Summary:' "$LOG")
-    if [ -z "$summary" ]; then
-        echo "failing: $LOG has no summary, the last run did not finish" >&2
-        status=1
-    elif [[ "$summary" == "Summary: 0 passed, 0 failed"* ]]; then
-        echo "failing: the last run ran no system test, see $LOG" >&2
-        status=1
-    fi
-fi
+# Silence must mean that the tests passed with the c-xref there is now, however
+# they were run. A passed test leaves .passed (see OK in tests/Makefile.messages),
+# so a test without one newer than c-xref, its expected and its Makefile has not
+# passed since, e.g. when the run stopped before the system tests. Those are
+# said on stderr, with exit code 1. Slow tests are not in a quick run, so they
+# are left out.
+CXREF="$PROJECT_ROOT/src/c-xref"
+MAX_NAMED=5
+unverified=()
 
 # A test_* directory without a Makefile is not a test: it is an orphan left
 # behind when a test was deleted from git but its generated files kept the
 # directory alive. Its stale 'output' would otherwise be reported as a failure
 # forever. Same rule as tests/Makefile uses to discover tests.
 for dir in "$PROJECT_ROOT/tests/test_"*; do
-    if [ -d "$dir" ] && [ -f "$dir/Makefile" ] && [ -f "$dir/output" ] && [ ! -f "$dir/.suspended" ]; then
-        basename "$dir"
+    if [ -d "$dir" ] && [ -f "$dir/Makefile" ] && [ ! -f "$dir/.suspended" ]; then
+        if [ -f "$dir/output" ]; then
+            basename "$dir"
+        elif [ ! -f "$dir/.slow" ]; then
+            passed="$dir/.passed"
+            if [ ! -f "$passed" ] || [ "$CXREF" -nt "$passed" ] ||
+               [ "$dir/expected" -nt "$passed" ] || [ "$dir/Makefile" -nt "$passed" ]; then
+                unverified+=("$(basename "$dir")")
+            fi
+        fi
     fi
 done
-exit $status
+
+count=${#unverified[@]}
+if [ $count -gt 0 ]; then
+    if [ $count -le $MAX_NAMED ]; then
+        echo "failing: not passed since c-xref, expected or Makefile changed: ${unverified[*]}" >&2
+    else
+        echo "failing: $count tests not passed since c-xref, expected or Makefile changed" >&2
+    fi
+    exit 1
+fi
