@@ -3,7 +3,7 @@
 # Given a.c and b.c include h.h
 # And a push in a.c holds h.h with new content
 # When a pop holds h.h with the same content, as every request does
-# And a push holds it again
+# And a push holds it again, after asking for the project as the client does
 # Then neither the pop nor the push builds a.c or b.c, since h.h has not changed
 
 include ../Makefile.server
