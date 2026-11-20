@@ -26,11 +26,6 @@ typedef enum resolveDialog {
 } ResolveDialog;
 
 typedef enum {
-    CHECK_NULL_NO,
-    CHECK_NULL_YES
-} CheckNull;
-
-typedef enum {
     SEARCH_FULL,
     SEARCH_DEFINITIONS,
     SEARCH_FULL_SHORT,

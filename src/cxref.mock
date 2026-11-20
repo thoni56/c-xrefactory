@@ -111,8 +111,8 @@ void saveReferences(void) {
     mock();
 }
 
-bool sessionHasReferencesValidForOperation(SessionStackEntry **entryP, int checkNull) {
-    return (bool)mock(entryP, checkNull);
+bool sessionHasReferencesValidForOperation(SessionStackEntry **entryP) {
+    return (bool)mock(entryP);
 }
 
 int findMacroExpansionFile(void) {
