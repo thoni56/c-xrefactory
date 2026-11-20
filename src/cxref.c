@@ -1855,9 +1855,9 @@ void answerEditorAction(void) {
 int findMatchingBrowsingMenuItem(ReferenceableItem *referenceableItem,
                                  SessionStackEntry *stackEntry,
                                  BrowsingMenu **menu,
-                                 int checkSelectedFlag) {
+                                 CheckIfSelectedKind checkIfSelected) {
     for (BrowsingMenu *m=stackEntry->menu; m!=NULL; m=m->next) {
-        if ((m->selected || checkSelectedFlag==DO_NOT_CHECK_IF_SELECTED)
+        if ((m->selected || checkIfSelected==DO_NOT_CHECK_IF_SELECTED)
             && isSameReferenceableItem(referenceableItem, &m->referenceable))
         {
             *menu = m;

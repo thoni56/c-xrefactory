@@ -71,8 +71,8 @@ void olCompletionListReverse(void) {
 }
 
 int findMatchingBrowsingMenuItem(ReferenceableItem *p, SessionStackEntry *rstack, BrowsingMenu **rss,
-                               int checkSelFlag) {
-    return (int) mock(p, rstack, rss, checkSelFlag);
+                                 CheckIfSelectedKind checkIfSelected) {
+    return (int) mock(p, rstack, rss, checkIfSelected);
 }
 
 BrowsingMenu *createSelectionMenu(ReferenceableItem *dd) {

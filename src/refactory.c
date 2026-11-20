@@ -258,38 +258,43 @@ static void editorFreeSingleUndo(EditorUndo *uu) {
     free(uu);
 }
 
-static void editorApplyUndos(EditorUndo *undos, EditorUndo *until, EditorUndo **undoundo, int gen) {
-    EditorUndo   *uu, *next;
+typedef enum {
+    GENERATE_FULL_OUTPUT,
+    GENERATE_NO_OUTPUT,
+} GenerateOutputKind;
+
+static void editorApplyUndos(EditorUndo *undos, EditorUndo *until, EditorUndo **undoP, GenerateOutputKind generate) {
+    EditorUndo   *u, *next;
     EditorMarker *m1, *m2;
-    uu = undos;
-    while (uu != until && uu != NULL) {
-        switch (uu->operation) {
+    u = undos;
+    while (u != until && u != NULL) {
+        switch (u->operation) {
         case UNDO_REPLACE_STRING:
-            if (gen == GEN_FULL_OUTPUT) {
-                ppcReplace(uu->buffer->fileName, uu->u.replace.offset,
-                           uu->buffer->allocation.text + uu->u.replace.offset, uu->u.replace.size,
-                           uu->u.replace.str);
+            if (generate == GENERATE_FULL_OUTPUT) {
+                ppcReplace(u->buffer->fileName, u->u.replace.offset,
+                           u->buffer->allocation.text + u->u.replace.offset, u->u.replace.size,
+                           u->u.replace.str);
             }
-            replaceStringInEditorBuffer(uu->buffer, uu->u.replace.offset, uu->u.replace.size,
-                                        uu->u.replace.str, uu->u.replace.strlen, undoundo);
+            replaceStringInEditorBuffer(u->buffer, u->u.replace.offset, u->u.replace.size,
+                                        u->u.replace.str, u->u.replace.strlen, undoP);
 
             break;
         case UNDO_RENAME_BUFFER:
-            if (gen == GEN_FULL_OUTPUT) {
-                ppcGotoOffsetPosition(uu->buffer->fileName, 0);
-                ppcGenRecord(PPC_MOVE_FILE_AS, uu->u.rename.name);
+            if (generate == GENERATE_FULL_OUTPUT) {
+                ppcGotoOffsetPosition(u->buffer->fileName, 0);
+                ppcGenRecord(PPC_MOVE_FILE_AS, u->u.rename.name);
             }
-            renameEditorBuffer(uu->buffer, uu->u.rename.name, undoundo);
+            renameEditorBuffer(u->buffer, u->u.rename.name, undoP);
             break;
         case UNDO_MOVE_BLOCK:
-            m1 = newEditorMarker(uu->buffer, uu->u.moveBlock.offset);
-            m2 = newEditorMarker(uu->u.moveBlock.dbuffer, uu->u.moveBlock.doffset);
-            if (gen == GEN_FULL_OUTPUT) {
+            m1 = newEditorMarker(u->buffer, u->u.moveBlock.offset);
+            m2 = newEditorMarker(u->u.moveBlock.dbuffer, u->u.moveBlock.doffset);
+            if (generate == GENERATE_FULL_OUTPUT) {
                 ppcGotoMarker(m1);
-                ppcValueRecord(PPC_REFACTORING_CUT_BLOCK, uu->u.moveBlock.size, "");
+                ppcValueRecord(PPC_REFACTORING_CUT_BLOCK, u->u.moveBlock.size, "");
             }
-            moveBlockInEditorBuffer(m1, m2, uu->u.moveBlock.size, undoundo);
-            if (gen == GEN_FULL_OUTPUT) {
+            moveBlockInEditorBuffer(m1, m2, u->u.moveBlock.size, undoP);
+            if (generate == GENERATE_FULL_OUTPUT) {
                 ppcGotoMarker(m1);
                 ppcGenRecord(PPC_REFACTORING_PASTE_BLOCK, "");
             }
@@ -299,15 +304,15 @@ static void editorApplyUndos(EditorUndo *undos, EditorUndo *until, EditorUndo **
         default:
             errorMessage(ERR_INTERNAL, "Unknown operation to undo");
         }
-        next = uu->next;
-        editorFreeSingleUndo(uu);
-        uu = next;
+        next = u->next;
+        editorFreeSingleUndo(u);
+        u = next;
     }
-    assert(uu == until);
+    assert(u == until);
 }
 
 static void editorUndoUntil(EditorUndo *until, EditorUndo **undoundo) {
-    editorApplyUndos(editorUndo, until, undoundo, GEN_NO_OUTPUT);
+    editorApplyUndos(editorUndo, until, undoundo, GENERATE_NO_OUTPUT);
     editorUndo = until;
 }
 
@@ -315,7 +320,7 @@ void applyWholeRefactoringFromUndo(void) {
     EditorUndo *redoTrack;
     redoTrack = NULL;
     editorUndoUntil(refactoringStartingPoint, &redoTrack);
-    editorApplyUndos(redoTrack, NULL, NULL, GEN_FULL_OUTPUT);
+    editorApplyUndos(redoTrack, NULL, NULL, GENERATE_FULL_OUTPUT);
 }
 
 
@@ -607,7 +612,7 @@ static void checkForMultipleReferencesInSamePlace(SessionStackEntry *stackEntry,
     ReferenceableItem *other = &stackEntry->menu->referenceable;
 
     BrowsingMenu *cms;
-    bool matched = findMatchingBrowsingMenuItem(this, stackEntry, &cms, DEFAULT_VALUE);
+    bool matched = findMatchingBrowsingMenuItem(this, stackEntry, &cms, CHECK_IF_SELECTED);
 
     log_debug(":checking %s to %s (%d)", this->linkName, other->linkName, matched);
     if (!matched && haveSameBareName(this, other)) {
@@ -657,7 +662,7 @@ static void renameAtPoint(EditorMarker *point) {
         askForReallyContinueConfirmation();
     }
 
-    editorApplyUndos(redoTrack, NULL, NULL, GEN_FULL_OUTPUT);
+    editorApplyUndos(redoTrack, NULL, NULL, GENERATE_FULL_OUTPUT);
 
     ppcGotoMarker(point);
 
@@ -829,7 +834,7 @@ static void renameAtInclude(EditorMarker *point) {
 
     EditorUndo *redoTrack = NULL;
     editorUndoUntil(undoStartPoint, &redoTrack);
-    editorApplyUndos(redoTrack, NULL, NULL, GEN_FULL_OUTPUT);
+    editorApplyUndos(redoTrack, NULL, NULL, GENERATE_FULL_OUTPUT);
 
     ppcGotoMarker(point);
 

@@ -10,11 +10,6 @@ typedef unsigned char uchar;
 
 /* ***********************************************************************
 
-   Here follows some enums which were split off a gigantic enum
-   Miscellaneus (Duh!). In order to ensure they all have different
-   values they are started with a value higher than the last value in
-   the previous.
-
    TODO: should probably distribute these to where they needs to be defined...
 
 */
@@ -38,28 +33,6 @@ typedef enum {
     MARKER_IS_IN_STAR_COMMENT
 } MarkerLocationKind;
 
-typedef enum {
-    GET_PRIMARY_START,
-    GET_STATIC_PREFIX_START
-} ExpressionStartKind;
-
-enum miscellaneous { /* misc. constants */
-    DEFAULT_VALUE = GET_STATIC_PREFIX_START + 1,
-    SEARCH_SYMBOL,
-    DO_NOT_CHECK_IF_SELECTED,
-    DIFF_MISSING_REF,
-    DIFF_UNEXPECTED_REF,
-    GEN_FULL_OUTPUT,
-    GEN_NO_OUTPUT,
-    ALLOW_EDITOR_FILES,
-    DO_NOT_ALLOW_EDITOR_FILES,
-};
-
-typedef enum {
-    DEPTH_ONE,
-    DEPTH_ANY
-} SearchDepth;
-
 
 /* *******************      confirmation responses      *************** */
 
@@ -79,7 +52,6 @@ enum {
     ERR_NO_MEMORY,
     ERR_INTERNAL,
     ERR_INTERNAL_CHECK,
-    ERR_CFG,
 };
 
 

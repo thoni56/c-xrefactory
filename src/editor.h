@@ -40,7 +40,4 @@ extern Reference *convertEditorMarkersToReferences(EditorMarkerList **markerList
 
 extern void editorDumpUndoList(EditorUndo *uu);
 
-extern bool editorMapOnNonExistantFiles(char *dirname, void (*fun)(MAP_FUN_SIGNATURE), SearchDepth depth, char *a1,
-                                        char *a2, Completions *a3, void *a4, int *a5);
-
 #endif

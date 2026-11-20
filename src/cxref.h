@@ -8,6 +8,11 @@
 #include "symbol.h"
 #include "usage.h"
 
+typedef enum {
+    CHECK_IF_SELECTED,
+    DO_NOT_CHECK_IF_SELECTED,
+} CheckIfSelectedKind;
+
 
 enum menuFilterLevels {
     MenuFilterAllWithName        = 0,  // Protocol value sent from Emacs
@@ -39,7 +44,7 @@ extern void addTrivialCxReference (char *name, Type type, Storage storage,
                                    Position position, Usage usage);
 extern void olSetCallerPosition(Position position);
 extern int findMatchingBrowsingMenuItem(ReferenceableItem *p, SessionStackEntry *rstack,
-                                        BrowsingMenu **rss, int checkSelFlag);
+                                        BrowsingMenu **rss, CheckIfSelectedKind checkIfSelected);
 extern BrowsingMenu *createSelectionMenu(ReferenceableItem *dd);
 
 extern void createSelectionMenuForOperation(ServerOperation command);

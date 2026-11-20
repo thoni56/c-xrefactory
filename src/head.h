@@ -123,10 +123,6 @@ typedef enum language {
 
 /* *********************************************************************** */
 
-#define MAP_FUN_SIGNATURE char *file, char *a1, char *a2, Completions *a3, void *a4, int *a5
-
-/* *********************************************************************** */
-
 #define ENTER() {log_trace("Entering: %s", __func__); log_indent();}
 #define LEAVE() {log_outdent(); log_trace("Leaving: %s", __func__);}
 

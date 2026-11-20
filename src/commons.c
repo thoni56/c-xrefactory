@@ -285,9 +285,6 @@ static void formatMessage(char *out, int errCode, char *text) {
     case ERR_INTERNAL_CHECK:
         sprintf(out, "Internal check %s failed", text);
         break;
-    case ERR_CFG:
-        sprintf(out, "Problem while reading config record %s", text);
-        break;
     default:
         sprintf(out, "%s", text);
         break;

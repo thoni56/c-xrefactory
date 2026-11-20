@@ -583,33 +583,6 @@ char *getRealFileName_static(char *fn) {
 
 /* ***************************************************************** */
 
-#if defined (__WIN32__)
-
-static int mapPatternFiles(char *pattern ,
-                           void (*fun)(MAP_FUN_SIGNATURE),
-                           char *a1, char *a2,
-                           Completions *a3,
-                           void *a4, int *a5) {
-    WIN32_FIND_DATA     fdata;
-    HANDLE              handle;
-    int res;
-
-    res = 0;
-    handle = FindFirstFile(pattern, &fdata);
-    if (handle != INVALID_HANDLE_VALUE) {
-        do {
-            if (    strcmp(fdata.cFileName,".")!=0
-                    &&  strcmp(fdata.cFileName,"..")!=0) {
-                (*fun)(fdata.cFileName, a1, a2, a3, a4, a5);
-                res = 1;
-            }
-        } while (FindNextFile(handle,&fdata));
-        FindClose(handle);
-    }
-    return res;
-}
-#endif
-
 /* Non-static just for unittesting */
 protected char *concatDirectoryWithFileName(char *output, char *directoryName, char *fileName) {
     char *charP;
