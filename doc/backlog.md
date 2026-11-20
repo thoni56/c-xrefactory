@@ -1,6 +1,6 @@
 # Backlog
 
-What to work on next, and in what order. As of 2026-11-03.
+What to work on next, and in what order.
 
 The *descriptions* live in the guidebook (`doc/docs/`), in the `.suspended` notes and in
 the ADRs. This file carries only the **order** and the **dependencies**, which are

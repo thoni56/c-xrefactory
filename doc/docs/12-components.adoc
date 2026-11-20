@@ -178,7 +178,7 @@ Implement the Language Server Protocol interface, allowing LSP-capable editors (
 
 The LSP adapter is a self-contained subsystem with clear internal layering:
 
-* **Message loop** (`lsp.c`) — reads LSP framed messages (Content-Length headers + JSON body) from stdin, delegates to the dispatcher, and runs until shutdown/exit
+* **Message loop** (`lsp.c`) — reads LSP framed messages (Content-Length headers + JSON body) from stdin, delegates to the dispatcher, and runs until `exit` or until the input ends, which also counts as an exit, a failed one unless a `shutdown` came first
 * **Dispatcher** (`lsp_dispatcher.c`) — maps LSP method strings (`"textDocument/definition"`, `"initialize"`, etc.) to handler functions via a static dispatch table
 * **Handlers** (`lsp_handler.c`) — implement individual LSP requests and notifications: `initialize` (sets up file table, editor buffers, parsing subsystem, and reference database), `textDocument/didOpen` (loads file content and parses it), `textDocument/definition` (delegates to adapter), `shutdown`/`exit` (cleanup)
 * **Adapter** (`lsp_adapter.c`) — bridges LSP concepts to `c-xrefactory` internals. `findDefinition()` converts LSP URI and position to an internal `Position`, queries the `referenceableItemTable` directly, and returns an LSP location JSON object

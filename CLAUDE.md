@@ -79,7 +79,7 @@ Trigger them and read the result:
 ```bash
 touch src/.unittests.done   # system tests only - builds c-xref first
 touch src/main.c            # full build, unit tests, then system tests
-utils/failing               # the test directories that failed - silence means none
+utils/failing               # failed tests, and those not passed with this c-xref - silence means all passed
 cat src/systemtests.log     # the watcher's own output, build included
 cat src/unittests.log       # the same for the unit tests
 ```
