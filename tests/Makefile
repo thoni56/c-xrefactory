@@ -48,7 +48,7 @@ all: $(ALL_TESTS)
 
 .PHONY: list
 list:
-	echo $(ALL_TESTS) | tr ' ' '\n' | sed 's%./test%test%' | sort
+	echo $(ALL_TESTS) | tr ' ' '\n' | sort
 
 .PHONY: clean
 clean:
