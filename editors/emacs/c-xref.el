@@ -1950,8 +1950,11 @@ be cleaned up when the buffer is saved or killed)."
     (c-xref-server-read-answer-file-and-dispatch dispatch-data tmp-files)
     ))
 
-(defun c-xref-server-call-on-current-buffer (options dispatch-data obl)
-  (let ((_res) (bl) (data) (topt) (blo))
+(defun c-xref-server-call-on-current-buffer (options dispatch-data)
+  "Send OPTIONS for the current buffer, with every modified buffer as a -preload.
+The server holds a modified buffer only as long as each request sends it."
+  (let ((_res) (bl) (data) (topt) (blo)
+        (obl (c-xref-server-get-list-of-buffers-to-save-to-tmp-files nil)))
     (setq bl (if (buffer-modified-p (current-buffer))
                   (c-xref-server-add-buffer-to-tmp-files-list
                    (current-buffer) obl)
@@ -1967,16 +1970,6 @@ be cleaned up when the buffer is saved or killed)."
     (c-xref-send-data-to-process-and-dispatch data dispatch-data bl)
     ))
 
-(defun c-xref-server-call-on-current-buffer-no-saves (options dispatch-data)
-  (c-xref-server-call-on-current-buffer options dispatch-data nil)
-  )
-
-(defun c-xref-server-call-on-current-buffer-all-saves (options dispatch-data)
-  (let ((bl))
-    (setq bl (c-xref-server-get-list-of-buffers-to-save-to-tmp-files nil))
-    (c-xref-server-call-on-current-buffer options dispatch-data bl)
-    ))
-
 
 
 (defun c-xref-get-basic-server-dispatch-data (proc)
@@ -1989,23 +1982,14 @@ be cleaned up when the buffer is saved or killed)."
     res
     ))
 
-(defun c-xref-call-process-with-basic-file-data-no-saves (option)
+(defun c-xref-call-process-with-basic-file-data (option)
   (setq c-xref-global-dispatch-data (c-xref-get-basic-server-dispatch-data
                                                      'c-xref-server-process))
-  (c-xref-server-call-on-current-buffer-no-saves option
-                                                                     c-xref-global-dispatch-data)
-  )
-
-(defun c-xref-call-process-with-basic-file-data-all-saves (option)
-  (setq c-xref-global-dispatch-data (c-xref-get-basic-server-dispatch-data
-                                                     'c-xref-server-process))
-  (c-xref-server-call-on-current-buffer-all-saves option
-                                                                      c-xref-global-dispatch-data)
-  )
+  (c-xref-server-call-on-current-buffer option c-xref-global-dispatch-data))
 
 (defun c-xref-compute-simple-information (option)
   (let ((res))
-    (c-xref-call-process-with-basic-file-data-no-saves option)
+    (c-xref-call-process-with-basic-file-data option)
     (setq res (cdr (assoc 'info c-xref-global-dispatch-data)))
     res
     ))
@@ -3908,7 +3892,7 @@ separate window.
       )
     (setq c-xref-completion-id-after-point (c-xref-get-identifier-after (point)))
     (setq c-xref-completions-dispatch-data (c-xref-get-basic-server-dispatch-data 'c-xref-server-process))
-    (c-xref-server-call-on-current-buffer-no-saves opt c-xref-completions-dispatch-data)
+    (c-xref-server-call-on-current-buffer opt c-xref-completions-dispatch-data)
     ))
 
 
@@ -4069,7 +4053,7 @@ on the browser stack.
     (c-xref-entry-point-make-initialisations)
 
     (setq oldwins (c-xref-is-browser-window-displayed))
-    (c-xref-call-process-with-basic-file-data-all-saves "-browse-push-only")
+    (c-xref-call-process-with-basic-file-data "-browse-push-only")
     (c-xref-update-browser-if-displayed oldwins)
     ))
 
@@ -4086,7 +4070,7 @@ definition.
     (c-xref-entry-point-make-initialisations)
 
     (setq oldwins (c-xref-is-browser-window-displayed))
-    (c-xref-call-process-with-basic-file-data-all-saves
+    (c-xref-call-process-with-basic-file-data
      (concat "-browse-push"))
     (c-xref-update-browser-if-displayed oldwins)
     ))
@@ -4100,7 +4084,7 @@ definition.
     ;; (select-window sw)
     ;; reselect it like this, as caller may be moved (left-horizontal split)
     (c-xref-select-dispach-data-caller-window c-xref-global-dispatch-data)
-    (c-xref-server-call-on-current-buffer-all-saves push-option c-xref-global-dispatch-data)
+    (c-xref-server-call-on-current-buffer push-option c-xref-global-dispatch-data)
     (c-xref-update-browser-if-displayed oldwins)
     ))
 
@@ -4165,7 +4149,7 @@ other browsing functions.
     (setq sstr (completing-read "Symbol to browse: "
                                                 'c-xref-symbols-completionfun nil nil sym))
 
-    (c-xref-call-process-with-basic-file-data-all-saves
+    (c-xref-call-process-with-basic-file-data
      (format "\"-browse-push-name=%s\" -cursor-line-column=%d:%d" sstr line col))
     (c-xref-update-browser-if-displayed oldwins)
     ))
@@ -4196,7 +4180,7 @@ refactoring, changes made by this function can be undone with the
     (c-xref-multifile-undo-set-buffer-switch-point "mapping of a macro on all occurences")
 
     (setq oldwins (c-xref-is-browser-window-displayed))
-    (c-xref-call-process-with-basic-file-data-all-saves "-browse-push-and-call-macro")
+    (c-xref-call-process-with-basic-file-data "-browse-push-and-call-macro")
     (c-xref-update-browser-if-displayed oldwins)
     ))
 
@@ -4211,16 +4195,16 @@ refactoring, changes made by this function can be undone with the
 
 (defun c-xref-peek (opt)
   (c-xref-entry-point-make-initialisations)
-  (c-xref-call-process-with-basic-file-data-all-saves "-browse-push-only -resolve-dialog=never")
-  (c-xref-call-process-with-basic-file-data-no-saves opt)
-  (c-xref-call-process-with-basic-file-data-no-saves "-browse-pop-only -resolve-dialog=never")
+  (c-xref-call-process-with-basic-file-data "-browse-push-only -resolve-dialog=never")
+  (c-xref-call-process-with-basic-file-data opt)
+  (c-xref-call-process-with-basic-file-data "-browse-pop-only -resolve-dialog=never")
   )
 
 (defun c-xref-previous-next-reference (option direction)
   (let ((sw))
     (setq sw (selected-window))
     (c-xref-entry-point-make-initialisations-no-project-required)
-    (c-xref-call-process-with-basic-file-data-all-saves option)
+    (c-xref-call-process-with-basic-file-data option)
     (c-xref-move-current-reference-list-pointer-if-browser-displayed direction)
     (sit-for .5)
     (select-window sw)
@@ -4267,7 +4251,7 @@ references were pushed.
             ;; O.K. here we are
             (c-xref-entry-point-make-initialisations-no-project-required)
             (setq oldwins (c-xref-is-browser-window-displayed))
-            (c-xref-call-process-with-basic-file-data-no-saves "-browse-pop")
+            (c-xref-call-process-with-basic-file-data "-browse-pop")
             (c-xref-update-browser-if-displayed oldwins)
             ))
     ))
@@ -4279,7 +4263,7 @@ references were pushed.
   (let ((oldwins))
     (c-xref-entry-point-make-initialisations-no-project-required)
     (setq oldwins (c-xref-is-browser-window-displayed))
-    (c-xref-call-process-with-basic-file-data-no-saves "-browse-pop-only")
+    (c-xref-call-process-with-basic-file-data "-browse-pop-only")
     (c-xref-update-browser-if-displayed oldwins)
     ))
 
@@ -4299,7 +4283,7 @@ This function also moves to the current reference.
             ;; O.K. here we are
             (c-xref-entry-point-make-initialisations-no-project-required)
             (setq oldwins (c-xref-is-browser-window-displayed))
-            (c-xref-call-process-with-basic-file-data-no-saves "-browse-repush")
+            (c-xref-call-process-with-basic-file-data "-browse-repush")
             (c-xref-update-browser-if-displayed oldwins)
             ))
     ))
@@ -4350,7 +4334,7 @@ This function also moves to the current reference.
 
 (defun c-xref-get-search-results (str searchopt)
   (let ((res))
-    (c-xref-call-process-with-basic-file-data-no-saves
+    (c-xref-call-process-with-basic-file-data
      (format "\"-search=%s\" %s" str searchopt))
     (setq res (cdr (assoc 'symbol-list c-xref-global-dispatch-data)))
     res
@@ -4461,7 +4445,7 @@ symbols containing the entered string. For example, entering
   (let ((syms) (sw) (asc))
     (setq sw (selected-window))
     (c-xref-select-dispach-data-caller-window c-xref-this-buffer-dispatch-data)
-    (c-xref-call-process-with-basic-file-data-no-saves option)
+    (c-xref-call-process-with-basic-file-data option)
     (setq asc (assoc 'symbol-list c-xref-global-dispatch-data))
     (if asc
             (progn
@@ -4897,7 +4881,7 @@ given string(s).
 
 (defun c-xref-references-set-filter (level dispatch-data)
   ;; save all files, so that references refer to buffers rather than files
-  (c-xref-server-call-on-current-buffer-all-saves
+  (c-xref-server-call-on-current-buffer
    (format "-filter=%d" level)
    dispatch-data)
   )
@@ -5739,7 +5723,7 @@ refactoring.
   (interactive "")
   (c-xref-entry-point-make-initialisations)
   (setq c-xref-global-dispatch-data (c-xref-get-basic-server-dispatch-data 'c-xref-server-process))
-  (c-xref-server-call-on-current-buffer-no-saves
+  (c-xref-server-call-on-current-buffer
    "-get-available-refactorings"
    c-xref-global-dispatch-data)
   )
@@ -5771,7 +5755,7 @@ refactoring.
 
 (defun c-xref-do-refactoring (opts)
   "Execute a refactoring via the running server."
-  (c-xref-call-process-with-basic-file-data-all-saves
+  (c-xref-call-process-with-basic-file-data
    (mapconcat (lambda (opt) (if (string-match-p " " opt)
                                 (format "\"%s\"" opt)
                               opt))
