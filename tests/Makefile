@@ -23,9 +23,10 @@ void:
 # It will assume that if there is a directory starting with "test_"
 # it is a directory where you can run tests using "make"
 
-QUICK_TESTS = $(shell find . -maxdepth 1 -name 'test_*' -type d -exec test -e {}/Makefile \; ! -exec test -e {}/.slow \; -print)
-SLOW_TESTS = $(shell find . -maxdepth 1 -name 'test_*' -type d -exec test -e {}/Makefile \; -exec test -e {}/.slow \; -print)
-ALL_TESTS = $(QUICK_TESTS) $(SLOW_TESTS)
+# Make's own wildcard, once, since a process per directory took seconds
+ALL_TESTS := $(patsubst %/Makefile,%,$(wildcard test_*/Makefile))
+SLOW_TESTS := $(filter $(ALL_TESTS),$(patsubst %/.slow,%,$(wildcard test_*/.slow)))
+QUICK_TESTS := $(filter-out $(SLOW_TESTS),$(ALL_TESTS))
 
 
 .PHONY: verbose
