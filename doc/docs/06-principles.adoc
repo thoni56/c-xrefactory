@@ -143,7 +143,7 @@ Include graph changes::
   affected by the same header change.
 
 Each of these is handled by a specific mechanism in the entry refresh algorithm
-(see <<08-algorithms.adoc#entry-refresh,Entry Refresh>> in the Algorithms chapter).
+(see link:/workspace/1/documentation/C-xrefactory#entry-refresh[Entry Refresh] in the Algorithms chapter).
 The key insight is that all of them must run _before_ the operation dispatches — there is
 no lazy or deferred refresh. The cost is paid up front so that every operation sees a
 consistent view of the codebase.
@@ -298,7 +298,7 @@ Content token::
 Entry refresh::
   What a request does before it answers, so that the knowledge the answer reads is up to
   date: the steps of the shape, from _discover_ to _build_, in
-  <<08-algorithms.adoc#the-shape,Algorithms>>. Runs on every request in `callServer()`.
+  link:/workspace/1/documentation/C-xrefactory#the-shape[Algorithms]. Runs on every request in `callServer()`.
 
 Expanding CU::
   A compilation unit that expands a given macro. Browsing from inside a macro body

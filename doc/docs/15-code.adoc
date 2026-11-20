@@ -108,9 +108,9 @@ server() - Infinite request loop
                  └─ other: unschedule file
 ----
 
-The entry refresh (see Terminology in <<06-principles.adoc#,Principles>>) ensures
+The entry refresh (see Terminology in link:/workspace/1/documentation/C-xrefactory#principles[Principles]) ensures
 the reference table is up-to-date before each operation. Pass ordering is critical:
-<<08-algorithms.adoc#entry-refresh-pass-1,Pass 1>> reparses stale CUs, which updates their `TypeCppInclude` references. Pass 2
+link:/workspace/1/documentation/C-xrefactory#entry-refresh-pass-1[Pass 1] reparses stale CUs, which updates their `TypeCppInclude` references. Pass 2
 then queries those freshened references to find which CUs include stale headers. Pass 3
 uses the include structure from the lightweight scan to find CUs sharing headers with
 the request file that have never been parsed. A user cannot create a new include edge
@@ -293,7 +293,7 @@ See the **Parsing** component in the <<components,Components>> chapter.
 
 === Integrated Preprocessor
 
-See the **Parsing** component's Internal Structure section in the <<12-components.adoc#,Components>> chapter.
+See the **Parsing** component's Internal Structure section in the link:/workspace/1/documentation/C-xrefactory#components[Components] chapter.
 
 === Refactoring and the parsers
 
@@ -360,7 +360,7 @@ link:18-major-codebase-improvements.adoc[Chapter 18].
 
 === Reference Database
 
-See the **Cxref** component (in-memory reference tables and symbol resolution) and the **Cxfile** component (on-disk database format and reading) in the <<12-components.adoc#,Components>> chapter.
+See the **Cxref** component (in-memory reference tables and symbol resolution) and the **Cxfile** component (on-disk database format and reading) in the link:/workspace/1/documentation/C-xrefactory#components[Components] chapter.
 
 NOTE: The architectural direction for `cxfile.c` is documented in link:18-major-codebase-improvements.adoc[Chapter 18: Incremental cxfile.c Cleanup]. The high-level "Memory as Truth" vision is in link:10-roadmap.adoc[Chapter 10: Roadmap].
 
@@ -534,7 +534,7 @@ the option handling.
 
 === Refactoring
 
-See the **Refactory** and **Extract** components in the <<12-components.adoc#,Components>> chapter for the architecture and operation flow.
+See the **Refactory** and **Extract** components in the link:/workspace/1/documentation/C-xrefactory#components[Components] chapter for the architecture and operation flow.
 
 ==== Refactoring Protocol Details
 

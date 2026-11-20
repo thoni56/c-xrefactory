@@ -74,7 +74,7 @@ continuously maintain and improve the quality of any code base.
 
 A project is configured by a `.c-xrefrc` file in the project root, found by upward search
 from the file being worked on; it records the source roots, include paths, and defines.
-See <<06-principles.adoc#,Principles>> (Project Scope) for how project boundaries are
+See link:/workspace/1/documentation/C-xrefactory#principles[Principles] (Project Scope) for how project boundaries are
 determined.
 
 === Operational model at a glance
@@ -96,8 +96,8 @@ the references it reads are current; it never decides what to refresh. (One coul
 extract, say, strictly needs only the edited unit's references fresh — but that is a latent
 optimization, not how the system is wired: the refresh layer owns correctness, and
 operations stay ignorant of it.) The mechanism is
-<<08-algorithms.adoc#entry-refresh,Entry Refresh>>; the principle is in
-<<06-principles.adoc#,Principles>>.
+link:/workspace/1/documentation/C-xrefactory#entry-refresh[Entry Refresh]; the principle is in
+link:/workspace/1/documentation/C-xrefactory#principles[Principles].
 
 *Parsing serves two masters.* The parser both populates the reference table and collects
 information specific to the current operation — the symbol under the cursor, the region to
@@ -134,13 +134,13 @@ with no standard for interactive UI.
 
 How much of this can still reach LSP editors, and what each editor would need
 in its own extension, is covered in
-<<10-roadmap.adoc#lsp-refactoring-reach,Roadmap: Reaching refactorings>>.
+link:/workspace/1/documentation/C-xrefactory#lsp-refactoring-reach[Roadmap: Reaching refactorings].
 
 [[history]]
 === History
 
 The _c-xref_ program was, historically, a mish-mash of features in one program — a major
-cause of the source-level mess being untangled (see <<10-roadmap.adoc#,Roadmap>>). It was:
+cause of the source-level mess being untangled (see link:/workspace/1/documentation/C-xrefactory#roadmap[Roadmap]). It was:
 
 - a generator for persistent cross-reference data
 - a reference server for editors (cross-reference, navigation, completion)

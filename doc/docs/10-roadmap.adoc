@@ -2,8 +2,8 @@
 
 This chapter records where `c-xrefactory` is going — the architectural direction and the
 feature vision. The mechanisms behind the "done" items live in their home chapters
-(<<06-principles.adoc#,Principles>>, <<08-algorithms.adoc#,Algorithms>>); implementation
-detail is in <<18-major-codebase-improvements.adoc#,Major Codebase Improvements>>.
+(link:/workspace/1/documentation/C-xrefactory#principles[Principles], link:/workspace/1/documentation/C-xrefactory#algorithms[Algorithms]); implementation
+detail is in link:/workspace/1/documentation/C-xrefactory#major-codebase-improvements[Major Codebase Improvements].
 
 === Guiding Principles
 
@@ -18,8 +18,8 @@ detail is in <<18-major-codebase-improvements.adoc#,Major Codebase Improvements>
 In-memory references are the single source of truth — every operation (navigation,
 search, completion, refactoring, unused detection) reads the in-memory
 `referenceableItemTable`, and the `.cx` files are a disposable startup snapshot. This
-convergence is **complete**; the mechanism lives in <<06-principles.adoc#,Principles>>
-(Memory As Truth, Continuously Fresh References) and <<08-algorithms.adoc#,Algorithms>>
+convergence is **complete**; the mechanism lives in link:/workspace/1/documentation/C-xrefactory#principles[Principles]
+(Memory As Truth, Continuously Fresh References) and link:/workspace/1/documentation/C-xrefactory#algorithms[Algorithms]
 (Entry Refresh, Lightweight Scanning). What follows is status and what remains.
 
 ==== Done
@@ -40,7 +40,7 @@ convergence is **complete**; the mechanism lives in <<06-principles.adoc#,Princi
   given, `-server` or `-lsp`.
 * *Diagnostics buffer* — what the request's own parse could not handle reaches
   `*c-xref-diagnostics*` with its position, and `next-error` visits it
-  (<<11-planned-features.adoc#,Planned Features>>, Diagnostics Buffer).
+  (link:/workspace/1/documentation/C-xrefactory#planned-features[Planned Features], Diagnostics Buffer).
   This was the last thing only the batch modes could do, i.e. `-create -errors`.
 * *Changes on disk* — a file changed on disk without a preload, e.g. by `git switch`,
   is seen on the next request by its content token (ADR-0036), a CU as well as a header.
@@ -74,7 +74,7 @@ convergence is **complete**; the mechanism lives in <<06-principles.adoc#,Princi
 |Clean stale header emissions
 |Variant-B orphan fix — reparse by include structure gated on a per-CU fingerprint,
  provenance rejected (link:/workspace/1/decisions/C-xrefactory#25[ADR-0025]; mechanism in
- <<08-algorithms.adoc#,Algorithms>>, Cleaning Stale Emissions).
+ link:/workspace/1/documentation/C-xrefactory#algorithms[Algorithms], Cleaning Stale Emissions).
 |===
 
 ==== Decisions that shaped this direction
@@ -104,8 +104,8 @@ known, and no step guesses at what a later one settles.
 The ladder is still climbed out of order. Process start does no project work since
 `c9840fe7`, but project setup happens in the first request that names a file, whatever
 that request is, rather than in the future `-openproject`, and the config is read again for every
-pass — see <<06-principles.adoc#,Principles>> (Initialization). The lifetime partition
-that fixes it is in <<18-major-codebase-improvements.adoc#,Major Codebase Improvements>>
+pass — see link:/workspace/1/documentation/C-xrefactory#principles[Principles] (Initialization). The lifetime partition
+that fixes it is in link:/workspace/1/documentation/C-xrefactory#major-codebase-improvements[Major Codebase Improvements]
 (Replace Global `options` with Typed Requests).
 
 ==== Done
@@ -225,7 +225,7 @@ CI would mean printing elapsed time per test in `tests/Makefile`.
 |Optimization |Description
 
 |**Header-filtered sibling parsing**
-|Entry refresh <<08-algorithms.adoc#entry-refresh-pass-3,Pass 3>> currently parses all CUs sharing _any_ header with the request file. On large projects this pulls in a large fraction of all CUs (e.g. on ffmpeg, navigating `AudioFIRContext` from `af_afir.c` triggers 2481 sibling CUs because of widely-shared utility headers). When the operation is navigation, only CUs sharing the header that _defines the navigated symbol_ are relevant. Filtering to that header reduces the scope dramatically: `AudioFIRContext` is defined in `af_afir.h`, which only 3 CUs include — so 2481 → 2 sibling CUs to parse. Challenge: Pass 3 runs during sync (before dispatch), but the symbol is only known during the operation. The solution must bridge this gap — e.g. by triggering targeted sibling parsing from the operation after the symbol's defining header is identified. Measured cold-start PUSH on ffmpeg `af_afir.c`: scan 2.7s, Pass 3 round 1 19s, Pass 3 round 2 19s (from `<...>` includes discovered by full parse), total 42s. Parsing dominates — the scan is not the bottleneck. Worst case: core API headers like `avcodec.h` (614 CUs) or `internal.h` (1171 CUs) — parallel parsing may be needed for these.
+|Entry refresh link:/workspace/1/documentation/C-xrefactory#entry-refresh-pass-3[Pass 3] currently parses all CUs sharing _any_ header with the request file. On large projects this pulls in a large fraction of all CUs (e.g. on ffmpeg, navigating `AudioFIRContext` from `af_afir.c` triggers 2481 sibling CUs because of widely-shared utility headers). When the operation is navigation, only CUs sharing the header that _defines the navigated symbol_ are relevant. Filtering to that header reduces the scope dramatically: `AudioFIRContext` is defined in `af_afir.h`, which only 3 CUs include — so 2481 → 2 sibling CUs to parse. Challenge: Pass 3 runs during sync (before dispatch), but the symbol is only known during the operation. The solution must bridge this gap — e.g. by triggering targeted sibling parsing from the operation after the symbol's defining header is identified. Measured cold-start PUSH on ffmpeg `af_afir.c`: scan 2.7s, Pass 3 round 1 19s, Pass 3 round 2 19s (from `<...>` includes discovered by full parse), total 42s. Parsing dominates — the scan is not the bottleneck. Worst case: core API headers like `avcodec.h` (614 CUs) or `internal.h` (1171 CUs) — parallel parsing may be needed for these.
 
 |**Extend scan to capture `<...>` includes**
 |The lightweight scan currently only matches `#include "..."`. Projects like ffmpeg use angle-bracket includes for internal headers (with `-I` paths), so the scan misses roughly half the include structure. Extending to `<...>` requires header-filtered sibling parsing first — without that filter, ubiquitous system headers (`string.h`, `stdlib.h`) would cause Pass 3 to pull in nearly every CU in the project. Also needs care to avoid recursively scanning system headers outside the project tree.
@@ -241,7 +241,7 @@ CI would mean printing elapsed time per test in `tests/Makefile`.
 
 Consequences of the current entry refresh implementation, each deferred because it has low
 practical impact or dissolves with planned work. Mechanics are in
-<<08-algorithms.adoc#entry-refresh,Algorithms>> (Entry Refresh).
+link:/workspace/1/documentation/C-xrefactory#entry-refresh[Algorithms] (Entry Refresh).
 
 [cols="1,1",options="header"]
 |===
@@ -273,15 +273,15 @@ refactorings and symbol browsers have no natural LSP equivalent, so the Emacs cl
 likely remain the gateway to its full refactoring power. Surfacing even some refactorings
 in an LSP environment is the prize worth chasing; the reach is unknown until we get there.
 
-See <<03-functional-overview.adoc#,Functional Overview>> for the current LSP state and
-protocol limits, and <<11-planned-features.adoc#,Planned Features>> for the implementation
+See link:/workspace/1/documentation/C-xrefactory#functional-overview[Functional Overview] for the current LSP state and
+protocol limits, and link:/workspace/1/documentation/C-xrefactory#planned-features[Planned Features] for the implementation
 steps.
 
 The one durable design point: *LSP document events are entry-refresh sync points.*
 `didOpen` / `didChange` / `didSave` correspond exactly to the native path's preload and
 un-preload staleness signals, and `definition` / `references` are operations over a table
 those events have already made current. So the LSP path needs no architecture of its own —
-it reuses entry refresh (<<08-algorithms.adoc#,Algorithms>>), triggered by different events.
+it reuses entry refresh (link:/workspace/1/documentation/C-xrefactory#algorithms[Algorithms]), triggered by different events.
 
 [[lsp-refactoring-reach]]
 ==== Reaching refactorings: three tiers
@@ -324,4 +324,4 @@ extension API, such as Zed and Helix, get tiers 1 and 2 only.
 refactorings that apply to C are automated today. Extending the catalogue — both deeper
 versions of what exists (move-function follow-ups, delete-function) and new operations —
 is a standing source of value. Several candidates are specified in
-<<11-planned-features.adoc#,Planned Features>>.
+link:/workspace/1/documentation/C-xrefactory#planned-features[Planned Features].

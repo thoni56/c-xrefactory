@@ -104,7 +104,7 @@ they might legitimately be absent if they're generated or live outside the proje
 Entry refresh is what a request does before it answers, so that the knowledge the answer
 reads is up to date: the steps of the shape below, from _discover_ to _build_. It runs at
 the top of `callServer()`, before the operation dispatches. See
-<<06-principles.adoc#,Principles>> for why this is necessary.
+link:/workspace/1/documentation/C-xrefactory#principles[Principles] for why this is necessary.
 
 [[freshness-is-make]]
 ==== Freshness Is Make, for the Goal
@@ -326,7 +326,7 @@ The three passes, by what they reparse: Pass 1 (stale edited CUs), Pass 2 (inclu
 stale edited headers) and Pass 3 (unparsed sibling CUs). _Stale_ here means changed in the
 editor, i.e. sent by the client as a preload. A file changed behind the server's back is
 not seen by Pass 1 or 2. When a file held as an edited buffer also changes on disk, the
-buffer wins, see <<06-principles.adoc#,Principles>> (Editor Buffers Are the Content Source).
+buffer wins, see link:/workspace/1/documentation/C-xrefactory#principles[Principles] (Editor Buffers Are the Content Source).
 
 The refresh covers two distinct concerns:
 
@@ -627,8 +627,9 @@ Transient buffers::
 
 ==== Held Buffers and Their Release
 
-What the client sends, and what a held file is, is described in the chapter "The Editor
-Protocol". This is how the server carries it out in each request:
+What the client sends, and what a held file is, is described in
+link:/workspace/1/documentation/C-xrefactory#protocol[The Editor Protocol].
+This is how the server carries it out in each request:
 
 [source]
 ----
@@ -872,7 +873,7 @@ Edits are found by their content::
 Direct parses::
   A refactoring that needs semantic information, e.g. a parameter's position or the
   region to extract, parses the buffer directly into the existing reference table, see
-  "Refactoring and the parsers" in <<15-code.adoc#,Code>>.
+  "Refactoring and the parsers" in link:/workspace/1/documentation/C-xrefactory#implementation-notes[Code].
 
 ==== Interactive Dialogs
 

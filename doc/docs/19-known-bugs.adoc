@@ -110,7 +110,7 @@ the symbol's type and storage but not its visibility, so
 `scanFunction_SymbolNameForSnapshotLoad` stamps everything it loads `VisibilityGlobal`.
 That is lossless only while the write side's filter holds — `skip VisibilityLocal` in
 `writeReferencesFromMemoryIntoCxFile` — which is the invariant
-<<06-principles.adoc#,Principles>> states. Whenever a symbol reaches the snapshot that
+link:/workspace/1/documentation/C-xrefactory#principles[Principles] states. Whenever a symbol reaches the snapshot that
 should not have, it comes back global for the life of the server, and reparsing cannot
 repair it: `equalReferenceableItems` (`src/referenceableitemtable.c`) compares
 visibility, so the freshly parsed local symbol is a *different* table entry from the

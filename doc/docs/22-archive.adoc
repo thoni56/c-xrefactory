@@ -867,7 +867,7 @@ translation unit, and the gated-out declaration is simply not re-emitted. The ga
 invisible so long because a separate bug — a search over a preloaded file discarded the
 reparsed references — masked it; that was fixed 2026-06-18.
 
-The live treatment is now in <<08-algorithms.adoc#entry-refresh,Entry Refresh>>
+The live treatment is now in link:/workspace/1/documentation/C-xrefactory#entry-refresh[Entry Refresh]
 (_Cleaning Stale Emissions_); the fix direction and the provenance-vs-reparse decision
 are in link:/workspace/1/decisions/C-xrefactory#25[ADR-0025]. This entry is retained for the
 investigation trail and superseded by those.
@@ -875,11 +875,11 @@ investigation trail and superseded by those.
 === Memory-as-Truth Convergence: Implementation Path (Historical)
 
 The path by which `c-xrefactory` reached "memory is truth" — now complete; see the
-<<10-roadmap.adoc#,Roadmap>> Convergence section for the current state. Preserved for the
+link:/workspace/1/documentation/C-xrefactory#roadmap[Roadmap] Convergence section for the current state. Preserved for the
 sequencing and dependencies.
 
 Navigation and refactoring already shared the in-memory `ReferenceableItemTable`
-(<<21-insights.adoc#,Insights>>), so the infrastructure was largely in place: include
+(link:/workspace/1/documentation/C-xrefactory#insights[Insights]), so the infrastructure was largely in place: include
 structure tracked via `TypeCppInclude` references, mtime-based staleness detection, and
 entry refresh before every operation. The steps taken:
 
