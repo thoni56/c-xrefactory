@@ -1937,37 +1937,36 @@ be cleaned up when the buffer is saved or killed)."
     res
     ))
 
-(defun c-xref-send-data-to-process-and-dispatch (commands dispatch-data tmp-files)
-  (let ((proc) (opts))
-    (setq proc (cdr (assoc 'process dispatch-data)))
-    (setq opts (format "%s -p \"%s\""
-                               commands
-                               c-xref-active-project
-                               ))
+(defun c-xref-server-preloads ()
+  "Write the modified buffers to their tmp files.
+Return the tmp files and the -preload options that send them, as a pair.
+The server holds a modified buffer only as long as each request sends it."
+  (let ((tmp-files (c-xref-server-get-list-of-buffers-to-save-to-tmp-files t)))
+    (cons tmp-files
+          (mapconcat (lambda (argument) (format " \"%s\"" argument))
+                     (c-xref-server-save-buffers-to-tmp-files tmp-files) ""))))
 
+(defun c-xref-send-data-to-process-and-dispatch (commands dispatch-data _tmp-files)
+  "Send COMMANDS with every modified buffer as a -preload, dispatch the answer."
+  (let* ((proc (cdr (assoc 'process dispatch-data)))
+         (preloads (c-xref-server-preloads))
+         (tmp-files (car preloads))
+         (opts (format "%s%s -p \"%s\"" commands (cdr preloads) c-xref-active-project)))
     (c-xref-send-data-to-running-process opts proc)
     (c-xref-wait-until-task-sync proc tmp-files)
     (c-xref-server-read-answer-file-and-dispatch dispatch-data tmp-files)
     ))
 
 (defun c-xref-server-call-on-current-buffer (options dispatch-data)
-  "Send OPTIONS for the current buffer, with every modified buffer as a -preload.
-The server holds a modified buffer only as long as each request sends it."
-  (let ((_res) (bl) (data) (topt) (blo)
-        (obl (c-xref-server-get-list-of-buffers-to-save-to-tmp-files nil)))
-    (setq bl (if (buffer-modified-p (current-buffer))
-                  (c-xref-server-add-buffer-to-tmp-files-list
-                   (current-buffer) obl)
-                obl))
-    (setq blo (c-xref-server-save-buffers-to-tmp-files bl))
-    (setq blo (append blo (c-xref-server-get-point-and-mark-options )))
+  (let ((_res) (data) (topt) (blo))
+    (setq blo (c-xref-server-get-point-and-mark-options))
     (setq topt "")
     (while blo
       (setq topt (format "%s \"%s\"" topt (car blo)))
       (setq blo (cdr blo))
       )
     (setq data (format "%s %s \"%s\"" options topt (buffer-file-name nil)))
-    (c-xref-send-data-to-process-and-dispatch data dispatch-data bl)
+    (c-xref-send-data-to-process-and-dispatch data dispatch-data nil)
     ))
 
 
@@ -2003,11 +2002,12 @@ Browsing continuations never send it - c-xref-previous-next-reference goes
 through the no-project-required entry point - so whatever replaces a server
 has to do this before the user's next request reaches it.
 "
-  (let ((proc 'c-xref-server-process))
+  (let* ((proc 'c-xref-server-process)
+         (preloads (c-xref-server-preloads)))
     (setq c-xref-global-dispatch-data (c-xref-get-basic-server-dispatch-data proc))
-    (c-xref-send-data-to-running-process (format "-getproject \"%s\"" file) proc)
-    (c-xref-wait-until-task-sync proc nil)
-    (c-xref-server-read-answer-file-and-dispatch c-xref-global-dispatch-data nil)
+    (c-xref-send-data-to-running-process (format "-getproject \"%s\"%s" file (cdr preloads)) proc)
+    (c-xref-wait-until-task-sync proc (car preloads))
+    (c-xref-server-read-answer-file-and-dispatch c-xref-global-dispatch-data (car preloads))
     (cdr (assoc 'info c-xref-global-dispatch-data))))
 
 (defun c-xref-get-env (name)
