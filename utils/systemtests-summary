@@ -1,0 +1,17 @@
+#!/bin/bash
+# Count what a system test log says about the tests: passed, failed, suspended
+# args: 1 = the log, e.g. src/systemtests.log
+#
+# A run where nothing passed and nothing failed did not run the tests, e.g.
+# when the build or the ERT tests before them failed. utils/failing reads this
+# line to tell that from a run that passed.
+
+log=$1
+
+# Each passed test prints a ✓, a failed or suspended one "Tests in '<dir>': <colour>Failed"
+export LC_ALL=C
+passed=$(grep -o '✓' "$log" | wc -l)
+failed=$(grep -o "Tests in '[^']*': [^ ]*Failed" "$log" | wc -l)
+suspended=$(grep -o "Tests in '[^']*': [^ ]*SUSPENDED" "$log" | wc -l)
+
+echo "Summary: $((passed)) passed, $((failed)) failed, $((suspended)) suspended"

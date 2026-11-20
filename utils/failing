@@ -8,6 +8,24 @@ if [[ -z "$PROJECT_ROOT" || "$(basename "$PROJECT_ROOT")" != "c-xrefactory" ]]; 
   exit 1
 fi
 
+# Silence must mean that the tests ran and passed, so a last run that did not
+# finish, or ran no test, is said, on stderr and with exit code 1. The log is
+# the watcher's (see system-tests-logged in src/Makefile)
+LOG="${SYSTEMTESTS_LOG:-$PROJECT_ROOT/src/systemtests.log}"
+status=0
+if [ -e "$PROJECT_ROOT/src/.systemtests.running" ]; then
+    echo "failing: a system test run is in progress, $LOG is not complete" >&2
+elif [ -f "$LOG" ]; then
+    summary=$(grep '^Summary:' "$LOG")
+    if [ -z "$summary" ]; then
+        echo "failing: $LOG has no summary, the last run did not finish" >&2
+        status=1
+    elif [[ "$summary" == "Summary: 0 passed, 0 failed"* ]]; then
+        echo "failing: the last run ran no system test, see $LOG" >&2
+        status=1
+    fi
+fi
+
 # A test_* directory without a Makefile is not a test: it is an orphan left
 # behind when a test was deleted from git but its generated files kept the
 # directory alive. Its stale 'output' would otherwise be reported as a failure
@@ -17,3 +35,4 @@ for dir in "$PROJECT_ROOT/tests/test_"*; do
         basename "$dir"
     fi
 done
+exit $status

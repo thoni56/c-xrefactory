@@ -630,14 +630,16 @@ watch-for-systemtests:
 
 # Same as system-tests, and keeps the output in systemtests.log so the result of
 # the last watcher run can be read by someone who was not watching the terminal.
-# pipefail makes the status the make's, not tee's.
+# pipefail makes the status the make's, not tee's. The summary line lets
+# utils/failing tell a run where no test ran from one where all passed.
 .PHONY: system-tests-logged
 system-tests-logged: SHELL := /bin/bash
 system-tests-logged:
 	@echo $$$$ > .systemtests.running; trap 'rm -f .systemtests.running' EXIT; \
 	date "+Started %F %T" > systemtests.log; \
 	set -o pipefail; $(MAKE) -j$(JOBS) system-tests 2>&1 | tee -a systemtests.log; \
-	status=$$?; date "+Finished %F %T" | tee -a systemtests.log; exit $$status
+	status=$$?; $(ROOT_DIR)/utils/systemtests-summary systemtests.log | tee -a systemtests.log; \
+	date "+Finished %F %T" | tee -a systemtests.log; exit $$status
 
 .PHONY: watch-for-systemtests-silent
 watch-for-systemtests-silent:
