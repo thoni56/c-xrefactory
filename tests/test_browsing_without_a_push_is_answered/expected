@@ -8,27 +8,27 @@ end-of-options
 end-of-options
 
 <sync>
-<bottom-warning beep=1 len=<n>>Empty stack</bottom-warning>
+<bottom-warning beep=1 len=<n>>Nothing has been pushed</bottom-warning>
 -browse-pop-only -cursor=5 CURDIR/source.c
 end-of-options
 
 <sync>
-<bottom-warning beep=1 len=<n>>Empty stack</bottom-warning>
+<bottom-warning beep=1 len=<n>>Nothing has been pushed</bottom-warning>
 -browse-next -cursor=5 CURDIR/source.c
 end-of-options
 
 <sync>
-<bottom-warning beep=1 len=<n>>Empty stack</bottom-warning>
+<bottom-warning beep=1 len=<n>>Nothing has been pushed</bottom-warning>
 -browse-previous -cursor=5 CURDIR/source.c
 end-of-options
 
 <sync>
-<bottom-warning beep=1 len=<n>>Empty stack</bottom-warning>
+<bottom-warning beep=1 len=<n>>Nothing has been pushed</bottom-warning>
 -browse-repush -cursor=5 CURDIR/source.c
 end-of-options
 
 <sync>
-<bottom-warning beep=1 len=<n>>You are on the top of browser stack.</bottom-warning>
+<bottom-warning beep=1 len=<n>>There is nothing to re-push</bottom-warning>
 -exit
 end-of-options
 

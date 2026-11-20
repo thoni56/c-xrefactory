@@ -415,7 +415,7 @@ bool sessionHasReferencesValidForOperation(SessionStackEntry **entryP,
     }
     if (checkNull==CHECK_NULL_YES && *entryP == NULL) {
         assert(options.cxrefProtocol);
-        ppcBottomWarning("Empty stack");
+        ppcBottomWarning("Nothing has been pushed");
         return false;
     }
     return true;
@@ -1143,7 +1143,7 @@ static void rePush(void) {
         gotoCurrentReference(browsingStack.top);
         olcxPrintSymbolName(browsingStack.top);
     } else {
-        ppcBottomWarning("You are on the top of browser stack.");
+        ppcBottomWarning("There is nothing to re-push");
     }
 }
 
@@ -1755,7 +1755,7 @@ void answerEditorAction(void) {
     case OP_BROWSE_NEXT: {
         SessionStackEntry *entry = getSessionEntryForOperation(OP_BROWSE_NEXT);
         if (entry == NULL) {
-            ppcBottomWarning("Empty stack");
+            ppcBottomWarning("Nothing has been pushed");
             break;
         }
         gotoNextReference(entry);
@@ -1764,7 +1764,7 @@ void answerEditorAction(void) {
     case OP_BROWSE_PREVIOUS: {
         SessionStackEntry *entry = getSessionEntryForOperation(OP_BROWSE_PREVIOUS);
         if (entry == NULL) {
-            ppcBottomWarning("Empty stack");
+            ppcBottomWarning("Nothing has been pushed");
             break;
         }
         gotoPreviousReference(entry);
