@@ -879,7 +879,7 @@ The path by which `c-xrefactory` reached "memory is truth" — now complete; see
 sequencing and dependencies.
 
 Navigation and refactoring already shared the in-memory `ReferenceableItemTable`
-(<<20-insights.adoc#,Insights>>), so the infrastructure was largely in place: include
+(<<21-insights.adoc#,Insights>>), so the infrastructure was largely in place: include
 structure tracked via `TypeCppInclude` references, mtime-based staleness detection, and
 entry refresh before every operation. The steps taken:
 
@@ -922,7 +922,7 @@ This dual-source approach allows navigation without full project parse while pro
 NOTE: Client preloading behavior and stale file detection are now documented in link:12-components.adoc[Chapter 12: Components] under Server (Entry-Point Reparse) and Editor Extension (Preloading).
 
 NOTE: Several sections describing pre-memory-as-truth behaviour have been moved to
-link:21-archive.adoc[Archive]:
+link:22-archive.adoc[Archive]:
 
 * "Architectural Invariants" and "RefactoryMode Internally Calls XrefMode" — the
   invariants described a model where the disk database was the source of truth.
@@ -934,7 +934,7 @@ link:21-archive.adoc[Archive]:
   `refreshStaleReferencesInSession()`, no longer in the source. Current refresh is
   lazy via `needsBrowsingStackRefresh` and `updateSessionReferencesForFile` (see
   link:08-algorithms.adoc[Chapter 8]). The dedup-key insight from that section is
-  carried forward in link:21-archive.adoc#cu-reparse-header-staleness[a later investigation].
+  carried forward in link:22-archive.adoc#cu-reparse-header-staleness[a later investigation].
 
 As of 2026-03, the in-memory reference table is authoritative — see
 link:06-principles.adoc[Principles].

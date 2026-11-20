@@ -2,9 +2,9 @@
 
 This chapter documents planned user-facing features—new refactorings, navigation capabilities, and editor integrations. These represent functionality users will interact with directly.
 
-For internal architectural improvements and code quality work, see link:17-major-codebase-improvements.adoc[Chapter 17: Major Codebase Improvements].
+For internal architectural improvements and code quality work, see link:18-major-codebase-improvements.adoc[Chapter 18: Major Codebase Improvements].
 
-For detailed specifications of refactoring operations (both existing and planned), see link:19-refactoring-recipes.adoc[Chapter 19: Refactoring Recipes].
+For detailed specifications of refactoring operations (both existing and planned), see link:20-refactoring-recipes.adoc[Chapter 20: Refactoring Recipes].
 
 [[move-function-refactoring]]
 === Move Function Between Files
@@ -133,8 +133,8 @@ See the README for LSP client configuration examples. Basic setup:
 
 ==== Related Work
 
-* link:17-major-codebase-improvements.adoc[Chapter 17: Major Codebase Improvements] discusses the technical architecture
-* Multi-file support requires include graph and on-demand parsing (foundational work described in Chapter 17)
+* link:18-major-codebase-improvements.adoc[Chapter 18: Major Codebase Improvements] discusses the technical architecture
+* Multi-file support requires include graph and on-demand parsing (foundational work described in Chapter 18)
 
 ==== Implementation Path
 

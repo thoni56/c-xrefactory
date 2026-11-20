@@ -31,7 +31,7 @@ fails if a name is unknown.
 ## 1. The foundational one
 
 - (#3) <a id="partition-options"></a>**Partition `options` by lifetime, in this sequence** — Session / Project / Request,
-   one owner each, and a pure `parseCommandLine()`. `doc/docs/17-major-codebase-improvements.adoc` §17.3.
+   one owner each, and a pure `parseCommandLine()`. `doc/docs/18-major-codebase-improvements.adoc` §17.3.
    The roadmap's Setup Ladder says it gates the rows below it.
    c. <a id="config-without-pass"></a>**A change of pass does not reload the config** — both reads in
       `loadProjectSettings()` are already without a pass, and a pass's options come through
@@ -245,7 +245,7 @@ fails if a name is unknown.
     Extract Function is not checked. Seen in a Move Function's comment (WSL, session
     `d25255b8`, 2026-10-28).
 - (#13) <a id="token-pasting-trio"></a>**Token pasting trio**, in this order — the later two assume the first
-    (`doc/docs/18-known-bugs.adoc`): `tests/test_token_pasting_numbers` (changes the
+    (`doc/docs/19-known-bugs.adoc`): `tests/test_token_pasting_numbers` (changes the
     passing `test_collate_const_suffix_pasting`) → `tests/test_token_pasting_float` →
     `tests/test_collate_hex_prefix_pasting` (touches how every number is lexed).
     After: files-appear-vanish
@@ -255,7 +255,7 @@ fails if a name is unknown.
     `exactPositionResolve` question to settle first, so it starts as a decision.
     Waits for: startup-command-line
 - (#15) <a id="correctness-by-cost"></a>**The other correctness bugs**; their order is not
-    known. Each has a `.suspended` note or a `18-known-bugs.adoc` entry,
+    known. Each has a `.suspended` note or a `19-known-bugs.adoc` entry,
     or says it has no repo home yet:
    b. <a id="relative-include-path"></a>**A relative `-I` in `.c-xrefrc` resolves against the working directory of the server process** —
       *no repo home yet* (`doc/c-xrefrc.man`), while a directory line resolves against
@@ -273,7 +273,7 @@ fails if a name is unknown.
       config's directory, not `cwd`, fixes both (Mac, session `05984816`, 2026-10-14).
       After: adr-0031
    g. <a id="unused-yacc-statics"></a>**GlobalUnused gives a false positive for statics in `.y` files** —
-      `18-known-bugs.adoc`.
+      `19-known-bugs.adoc`.
       After: token-pasting-trio
    h. <a id="push-by-name"></a>**Push by name when a name has several bindings** —
       `tests/test_browsing_push_by_name`. Needs the behaviour decided first.
@@ -413,7 +413,7 @@ Roadmap → Optimization has the baseline: a cold-start PUSH on ffmpeg, measured
 - (#95) <a id="extract-typing-ladder"></a>**Extract gets its types right, in this sequence** — *no repo home yet.*
     Each step starts from a red test.
     1. Put Extract Variable's declaration before the statement: see "Extract Variable puts
-       the declaration in the wrong place for some statements" in `18-known-bugs.adoc`.
+       the declaration in the wrong place for some statements" in `19-known-bugs.adoc`.
     2. Keep `volatile`, `restrict` and `_Atomic`, and the qualifiers on a pointer (`char *const`).
        The grammar maps them to QualifierNone (`src/c_parser.y`).
     3. Extract Predicate, a `bool`. It needs a marker for an expression, since
@@ -455,7 +455,7 @@ Roadmap → Optimization has the baseline: a cold-start PUSH on ffmpeg, measured
     2026-09-24 as a deliberate stopgap (`c-xref-project-remove-references-and-restart`,
     `editors/emacs/c-xref.el`), because discarding the database is the standing remedy for
     two unrelated symptoms: shadow occurrences after behind-the-back disk changes, and a
-    stale snapshot outliving a visibility fix (both in `doc/docs/18-known-bugs.adoc`). The
+    stale snapshot outliving a visibility fix (both in `doc/docs/19-known-bugs.adoc`). The
     real work is making the database not need discarding — behind-the-back detection and
     entry refresh are probably most of it,
     and item 22 dissolves another part. Remove the entry when they land, and check the
@@ -567,7 +567,7 @@ Roadmap → Optimization has the baseline: a cold-start PUSH on ffmpeg, measured
     default. Then: expand defaults, report an unbound name, read the fragment before the
     environment, and ignore the personal options in a config, with a warning.
     After: project-extent
-- (#28) <a id="chapter-17-hygiene"></a>**Chapter 17 hygiene, opportunistically** — incremental `cxfile.c` cleanup,
+- (#28) <a id="chapter-18-hygiene"></a>**Chapter 18 hygiene, opportunistically** — incremental `cxfile.c` cleanup,
     hashtab → hashlist, split the editor module. Also "tags" in the elisp, the last of
     the old wording: two docstrings in `c-xref.el` say the search "inspects the tags".
     After: parse-all
@@ -577,7 +577,7 @@ Roadmap → Optimization has the baseline: a cold-start PUSH on ffmpeg, measured
     now sit together at its top, under section comments. The plan in §17.2 is older than
     that, and says 2353 lines, so check it against the code first (WSL, session
     `d25255b8`, 2026-10-22).
-    After: chapter-17-hygiene
+    After: chapter-18-hygiene
 - (#29) <a id="dump-reference-database"></a>**Dump Reference Database** — `-dump=knowledge` answers from the
     in-memory table (`src/dump.c`), one record per fact. The selection names which facts,
     so a new kind of fact never changes the answer for an old one. Left are selections for
@@ -664,7 +664,7 @@ implementation, and are noted in `cu-prerequisites`, `out-of-date`, `time-budget
     asks too, instead of truncating. `MAX_INCLUDE_WALK_FILES` (256), where
     `collectCUsIncluding()` silently walks no further up, goes with it, since the two
     limits move together. Fixes "A refactoring can see a truncated reference set" in
-    `18-known-bugs.adoc`, 13 of 25 occurrences on ffmpeg.
+    `19-known-bugs.adoc`, 13 of 25 occurrences on ffmpeg.
     Waits for: adr-0035
 - (#35) <a id="cu-prerequisites"></a>**A CU's prerequisites** — the CU, its include closure and the project
     config, put together where `out-of-date` uses them, the CU first. `Prerequisites`
@@ -809,7 +809,7 @@ Mac (session `05984816`), 2026-10-07.
     After: refactoring-catalogue
 - (#73) <a id="refactoring-catalogue"></a>**Every known refactoring, with its status** — a list,
     one row per refactoring, done, planned or left out, linking to its design in
-    `doc/docs/11-planned-features.adoc` and its recipe in `19-refactoring-recipes.adoc`.
+    `doc/docs/11-planned-features.adoc` and its recipe in `20-refactoring-recipes.adoc`.
     It shows how many of them c-xrefactory can do, so probably in the user manual or the
     README. *No repo home yet.*
     After: customize-names

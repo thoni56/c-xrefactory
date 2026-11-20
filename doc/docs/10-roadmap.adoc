@@ -3,7 +3,7 @@
 This chapter records where `c-xrefactory` is going — the architectural direction and the
 feature vision. The mechanisms behind the "done" items live in their home chapters
 (<<06-principles.adoc#,Principles>>, <<08-algorithms.adoc#,Algorithms>>); implementation
-detail is in <<17-major-codebase-improvements.adoc#,Major Codebase Improvements>>.
+detail is in <<18-major-codebase-improvements.adoc#,Major Codebase Improvements>>.
 
 === Guiding Principles
 
@@ -105,7 +105,7 @@ The ladder is still climbed out of order. Process start does no project work sin
 `c9840fe7`, but project setup happens in the first request that names a file, whatever
 that request is, rather than in the future `-openproject`, and the config is read again for every
 pass — see <<06-principles.adoc#,Principles>> (Initialization). The lifetime partition
-that fixes it is in <<17-major-codebase-improvements.adoc#,Major Codebase Improvements>>
+that fixes it is in <<18-major-codebase-improvements.adoc#,Major Codebase Improvements>>
 (Replace Global `options` with Typed Requests).
 
 ==== Done
@@ -134,7 +134,7 @@ that fixes it is in <<17-major-codebase-improvements.adoc#,Major Codebase Improv
 
 |Partition `options` by lifetime
 |Session, Project and Request with one owner each, and a pure `parseCommandLine()` that
- opens no files and flips no flags. Chapter 17.3. It gates the three rows below, so it
+ opens no files and flips no flags. Chapter 18.3. It gates the three rows below, so it
  comes first even though it reads last.
 
 |The client stops sending `-p`

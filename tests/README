@@ -16,4 +16,4 @@ directory.
 
 The tests can be run in parallel, like with 'make -j', which is what
 'make ci' does. A few have been seen to fail now and then in a
-parallel run, see "Parallel runs" in doc/docs/15-development-environment.adoc.
+parallel run, see "Parallel runs" in doc/docs/16-development-environment.adoc.

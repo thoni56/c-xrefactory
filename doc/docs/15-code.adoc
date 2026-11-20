@@ -308,7 +308,7 @@ extract operations and similar.
 
 NOTE: The global-variable communication channel is targeted for removal; see "Replace
 Global `options` with Typed Requests" in
-link:17-major-codebase-improvements.adoc[Chapter 17].
+link:18-major-codebase-improvements.adoc[Chapter 18].
 
 Findings:
 
@@ -356,13 +356,13 @@ Two structures currently hold this information; the main one is `parsedInfo`.
 
 NOTE: `parsedInfo` is one of the structures targeted for unification under
 "Replace Global `options` with Typed Requests" in
-link:17-major-codebase-improvements.adoc[Chapter 17].
+link:18-major-codebase-improvements.adoc[Chapter 18].
 
 === Reference Database
 
 See the **Cxref** component (in-memory reference tables and symbol resolution) and the **Cxfile** component (on-disk database format and reading) in the <<12-components.adoc#,Components>> chapter.
 
-NOTE: The architectural direction for `cxfile.c` is documented in link:17-major-codebase-improvements.adoc[Chapter 17: Incremental cxfile.c Cleanup]. The high-level "Memory as Truth" vision is in link:10-roadmap.adoc[Chapter 10: Roadmap].
+NOTE: The architectural direction for `cxfile.c` is documented in link:18-major-codebase-improvements.adoc[Chapter 18: Incremental cxfile.c Cleanup]. The high-level "Memory as Truth" vision is in link:10-roadmap.adoc[Chapter 10: Roadmap].
 
 === Editor Plugin
 
@@ -450,13 +450,13 @@ process).
 
 NOTE: Refactorings used to spawn a separate `-refactory` process per operation;
 that mechanism was removed in 2026-03 — all refactorings now run as server
-operations. See link:21-archive.adoc[Archive] for the historical two-process model.
+operations. See link:22-archive.adoc[Archive] for the historical two-process model.
 
 NOTE: Some refactoring state still lives in dedicated structures inherited from the
 two-process era — e.g. `refactoring_options`, a separate copy of the options struct
 used only during refactoring. Folding these into a unified options model is covered
 in "Replace Global `options` with Typed Requests" in
-link:17-major-codebase-improvements.adoc[Chapter 17].
+link:18-major-codebase-improvements.adoc[Chapter 18].
 
 
 ==== Protocol

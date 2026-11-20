@@ -1,0 +1,170 @@
+[[protocol]]
+== The Editor Protocol
+
+This chapter describes how the editor and the server talk to each other. The protocol was
+inherited, not designed, and parts of it only had a meaning in someone's head. Here it is
+written down as it is today, with its invariants numbered, so that a change can say which
+one it changes.
+
+It is a draft. Where something is not known, it says so.
+
+=== Transport
+
+The client starts one server per project
+(link:/workspace/1/decisions/C-xrefactory#21[ADR-0021]):
+
+----
+c-xref -o <answer file> -errors -server
+----
+
+A request is a list of options, the same as on the command line, written to the server's
+standard input and ended by `end-of-options` and an empty line. It typically holds
+
+* the operation, e.g. `-browse-push`,
+* `-preload <file> <tmp file>` for each modified buffer (see <<protocol-held-files>>),
+* `-cursor=<offset>` and possibly `-mark=<offset>`,
+* the file the request is about,
+* `-p <project>`.
+
+The server writes its answer to the answer file, as tagged records such as `<goto>` and
+`<position-lc>`, and then prints `<sync>` on its standard output. The client waits for
+that, reads the answer file and acts on it. While a request runs, the standard output also
+carries progress and log records (`PPC_LOG`).
+
+The original description of the transport, with an example, is `doc/c-xrefserver.md`
+(published as "Server Protocol"). Setting `c-xref-debug-mode` in Emacs shows every request
+and answer in `*Messages*`.
+
+The server reads the next request only when it has answered the last one. Nothing reaches
+the client between requests.
+
+=== Requests
+
+* `-getproject <file>` is sent before each operation that needs a project. The first one
+  binds the server to the project the file belongs to; later ones only answer whether the
+  file is in it. link:/workspace/1/decisions/C-xrefactory#30[ADR-0030] decides to split
+  the two.
+* The operations: browsing, searching, completion, refactorings and so on. Browsing
+  continuations (next, previous, pop) are sent without a `-getproject` first.
+* Some operations ask the user something halfway, and continue with a request of their
+  own, e.g. `-continuerefactoring`.
+* `-about` and `-exit`.
+
+[[protocol-held-files]]
+=== Held Files
+
+A file whose buffer is modified in the editor is _held_: the server uses the editor's
+content instead of the disk's. The client writes the buffer to a tmp file and sends
+`-preload <file> <tmp file>`. It keeps the tmp file between requests and writes it again
+only when the buffer has changed.
+
+The state of one file, as the server sees it:
+
+----
+                -preload, new tmp file
+  on disk  ─────────────────────────────▶  held (token T)
+     ▲                                       │    │
+     │                 tmp file rewritten    │    │  same tmp file,
+     │              ┌────────────────────────┘    │  unchanged
+     │              ▼                             ▼
+     │         held (token T')  ── a change ──▶ (stays held)
+     │              │
+     └──────────────┘
+       request without -preload: released
+----
+
+[cols="1,2"]
+|===
+|Message |What happens
+
+|`-preload` of a file not held
+|The file is held, with the token of the tmp file (its mtime and size).
+
+|`-preload` with the tmp file unchanged
+|Nothing. The file stays held.
+
+|`-preload` with the tmp file rewritten
+|The file is held with the new token. It is a change, and the CUs that include it are
+out of date (link:/workspace/1/decisions/C-xrefactory#35[ADR-0035],
+link:/workspace/1/decisions/C-xrefactory#36[ADR-0036]).
+
+|A request without `-preload` of a held file
+|The file is released, and the disk is current again. A CU is built again from disk. A
+header gets the disk's token, which is a change for the CUs that include it. A file that
+is not on disk is marked deleted.
+|===
+
+The server also keeps buffers that are not held: disk caches, read during a parse and
+freed at the end of each request, and buffers a refactoring has edited.
+
+Not known yet: whether the server ever creates or drops a held buffer on its own, e.g.
+for a refactoring, without the editor having said so.
+
+=== Invariants
+
+P1. Every request sends a `-preload` for every modified buffer that visits a file.
+    This includes `-getproject`, `-about`, Pop and the completion and menu requests.
+    _Client._ Pinned by `editors/emacs/tests/c-xref-preload-tests.el`.
+
+P2. A held file that a request does not send is released.
+    _Server._ Pinned by `tests/test_a_pop_keeps_a_held_header` (a request that sends it
+    keeps it) and `tests/test_browsing_after_closed_editorbuffer`.
+
+P3. A held file has changed when its tmp file's token has changed.
+    _Server._ Not quite true today: `openEditorBufferFromPreload()` compares only the
+    mtime, so new content written within one clock tick is missed.
+
+P4. Opening a project carries no `-preload`. It starts from the disk and the snapshot,
+    and the first request after it sends what the editor holds.
+    _Both._ Not true today: until the open is a request of its own (ADR-0030), the first
+    `-getproject` opens the project and carries the preloads. The server reads them before
+    it is bound, with the same result.
+
+P5. The server says something only in the answer to a request.
+    _Server._ Whatever it finds out between requests has nowhere to go (ADR-0030).
+
+P6. One request at a time. The server does not read the next request while it works on
+    one.
+
+P1 and P2 together mean that no request is free of side effects: a request that leaves a
+held file out releases it, and the next request that sends it makes it a change.
+
+=== Compared with LSP
+
+LSP describes the same thing with events. The editor says `didOpen`, `didChange` and
+`didClose`, and a request says nothing about documents it does not name.
+
+[cols="1,1,1"]
+|===
+| |c-xrefactory |LSP
+
+|What is held
+|Modified buffers
+|Open documents
+
+|How the server learns it
+|Every request restates the whole set
+|One event per change
+
+|A missing file in a request means
+|Released
+|Nothing
+
+|What a change is
+|A different tmp file token
+|A new version number
+
+|After a server restart
+|The next request restates everything
+|The client sends `didOpen` again for each open document
+|===
+
+Whether to move towards events is a question for an ADR of its own. One consequence to
+weigh is that a change could be analysed when it arrives, before any request asks for it.
+
+=== Known Gaps
+
+* P3 compares the mtime only.
+* A request from a buffer that does not visit a file, e.g. `*magit*`, names a file
+  `.../nil`.
+* Buffers a refactoring edits on the server are not described here yet.

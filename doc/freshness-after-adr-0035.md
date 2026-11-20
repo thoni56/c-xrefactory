@@ -3,7 +3,7 @@
 Mac, session `4839a129`, 2026-11-05, at `3ca09bc3`. An opinion on the direction after
 ADR-0035, and what follows for the include graph, for the WSL discussion. It replaces
 `doc/freshness-make-model-assessment.md`, whose assessment has been worked into ADR-0035,
-the backlog and the shape in `doc/docs/20-insights.adoc`. Its measurement is kept below,
+the backlog and the shape in `doc/docs/21-insights.adoc`. Its measurement is kept below,
 since ADR-0035 and the backlog cite it.
 
 ## The direction is right

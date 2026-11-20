@@ -599,12 +599,11 @@ This ensures that the server analyzes what the user sees in the editor, not the 
 [source,c]
 ----
 EditorBuffer {
-    char *name;                    // Original filename
+    char *fileName;                // Original filename
     char *preLoadedFromFile;       // Path to temp file with buffer content
     FileTimestamp modificationTime; // When buffer was last modified
     bool modified;                 // Content changed (by refactoring)
-    bool modifiedSinceLastQuasiSave;  // Dirty flag for quasi-save
-    bool preloadedThisRequest;     // Was this buffer preloaded on this request?
+    bool heldThisRequest;          // Did this request hold it (preload or edit)?
     ...
 }
 ----
@@ -626,51 +625,32 @@ Transient buffers::
   and `modified == false`. They are destroyed by `closeAllEditorBuffersIfClosable()` at the
   end of each request.
 
-==== Preload Protocol and Ghost Buffer Pruning
+==== Held Buffers and Their Release
 
-The Emacs client sends `-preload` for **all modified buffers** on **every request**. This
-is not an optimization — it is a protocol invariant that the server depends on:
-
-* **Presence of `-preload`:** "This buffer is modified in the editor; use this content."
-* **Absence of `-preload`:** "This buffer is no longer modified; the disk file is current."
-
-Every request means every one: Pop, Re-push, `-about`, the completion and menu requests,
-and `-getproject`, which the client sends before each operation that needs a project. A
-request that leaves a held buffer out releases it, and the next request that sends it
-makes it a change for every CU that includes it.
-
-Opening a project carries no `-preload` (ADR-0030). It starts from the disk and the
-snapshot, and the first request after it sends what the editor holds, so a held file that
-differs is a change, as after any restart. Until the open is a request of its own, the
-first `-getproject` opens the project and carries the preloads too. The server reads them before the project is bound, with the same result.
-
-The server uses this to detect when a user saves or closes a file:
+What the client sends, and what a held file is, is described in the chapter "The Editor
+Protocol". This is how the server carries it out in each request:
 
 [source]
 ----
 server() request loop:
   │
-  ├─ clearPreloadedThisRequestFlags()     ← reset all flags to false
-  ├─ initServer(pipedOptions)             ← parses options, sets flags on preloaded buffers
-  │   └─ openEditorBufferFromPreload()
-  │       └─ buffer->preloadedThisRequest = true
+  ├─ clearHeldThisRequestFlags()          ← no buffer is held yet
+  ├─ initServer(pipedOptions)             ← each -preload holds its buffer
+  │   └─ openEditorBufferFromPreload()      (a new tmp file mtime reloads it)
   │
-  └─ callServer()
-      └─ closeEditorBuffersNoLongerPreloaded()
-          FOR each editor buffer:
-            IF preLoadedFromFile != NULL AND NOT preloadedThisRequest:
-              removeReferenceableItemsForFile(buffer->fileNumber)  ← purge stale refs
-              deregisterEditorBuffer + freeEditorBuffer             ← close buffer
+  ├─ callServer()
+  │   ├─ closeEditorBuffersNoLongerHeld() ← a held buffer not sent is released:
+  │   │                                       a CU goes on the build list, from disk
+  │   │                                       a header gets the disk's token
+  │   │                                       a file not on disk is marked deleted
+  │   └─ removeReferencesOfChangedFiles(), build, answer
+  │
+  └─ closeAllEditorBuffersIfClosable()    ← disk caches are freed
 ----
 
-Without ghost buffer pruning, a stale preloaded buffer would persist indefinitely. The
-server would keep parsing from the old content even though the user saved the file and
-the disk version is newer.
-
-**Reference cleanup is essential:** Simply closing the buffer is not enough. The reference
-table still contains entries from the stale parse. `removeReferenceableItemsForFile()` must
-be called before closing the buffer, so that the next parse (from the disk file) populates
-the table with fresh references without duplicates.
+The release removes no references itself. A released header has the disk's token, so the
+removal sees it as changed, like any other change (ADR-0035). Without the release, the
+server would keep using the editor's old content after the user saved the file.
 
 **Navigation sessions are safe:** Sessions store `Reference` structs (position-based), not
 `EditorMarker` pointers. Closing a buffer does not create dangling pointers in the
@@ -892,7 +872,7 @@ Edits are found by their content::
 Direct parses::
   A refactoring that needs semantic information, e.g. a parameter's position or the
   region to extract, parses the buffer directly into the existing reference table, see
-  "Refactoring and the parsers" in <<14-code.adoc#,Code>>.
+  "Refactoring and the parsers" in <<15-code.adoc#,Code>>.
 
 ==== Interactive Dialogs
 
