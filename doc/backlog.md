@@ -196,6 +196,9 @@ fails if a name is unknown.
     `12-components`' Content Buffers, "Staleness Detection", compares `lastParsedMtime`
     with the buffer's modification time; that field is gone, and a change is found by
     its content token since ADR-0035/0036.
+    `bringHeldFilesUpToDate()` is named in `08-algorithms` ("Buffer-driven refresh" and the
+    call tree below it) and in `11-planned-features`' LSP Implementation Path, step 3; it
+    went in `86d9e9851`, when held CUs and siblings became one build list.
     After: freshness-docs
 
 ## 3. Correctness, by (quiet × cheap)
