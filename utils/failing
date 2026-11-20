@@ -1,5 +1,5 @@
 #!/bin/bash
-# List test directories that have an output file (indicating a failed test)
+# List test directories that indicate a fail, and say which tests have not passed with the latest binary
 
 # Find the root of the project (c-xrefactory)
 PROJECT_ROOT=$(git rev-parse --show-toplevel 2>/dev/null || echo "")
@@ -9,11 +9,7 @@ if [[ -z "$PROJECT_ROOT" || "$(basename "$PROJECT_ROOT")" != "c-xrefactory" ]]; 
 fi
 
 # Silence must mean that the tests passed with the c-xref there is now, however
-# they were run. A passed test leaves .passed (see OK in tests/Makefile.messages),
-# so a test without one newer than c-xref, its expected and its Makefile has not
-# passed since, e.g. when the run stopped before the system tests. Those are
-# said on stderr, with exit code 1. Slow tests are not in a quick run, so they
-# are left out.
+# they were run.
 CXREF="$PROJECT_ROOT/src/c-xref"
 MAX_NAMED=5
 unverified=()
