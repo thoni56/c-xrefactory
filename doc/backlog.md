@@ -443,6 +443,9 @@ Roadmap → Optimization has the baseline: a cold-start PUSH on ffmpeg, measured
     function returns a `bool` and the call site does the `return`. A real case:
     `editorbuffer.c:128`, the else-branch of `findOrCreateAndLoadEditorBufferForFile()`,
     which `loadAllOpenedEditorBuffers()` (`editor.c:290`) duplicates (WSL session d25255b8).
+    The same holds for a single `break` or `continue`, as long as it is the only kind of
+    jump: the call site does that jump instead. A real case: the empty check in
+    `case OP_BROWSE_NEXT` (`cxref.c:1755`), which ends with a `break`.
     After: output-parameter-to-return
 - (#97) <a id="rename-partial-in-broken-code"></a>**Rename in code that does not parse leaves occurrences behind** —
     with the cursor on a declaration the parser still saw, only that occurrence is renamed,
