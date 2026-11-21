@@ -308,7 +308,7 @@ It is set in only some of the places that change the table (`session-refresh-tim
 
 Items in `doc/backlog.md`:
 
-* *A macro body is limited* (`cap-is-a-question`). For a cursor in a macro body, `collectCompilationUnitsExpandingTheMacro()` parses at most 128 of the CUs that can expand it, and the rest stay unparsed without a question. Every CU the include walk finds is built. ADR-0032 makes a long build a question, and later a time budget (`time-budget`).
+* *A macro body is parsed again* (`cap-is-a-question`). For a cursor in a macro body, `collectCompilationUnitsExpandingTheMacro()` parses up to 128 of the CUs that can expand it, also when they are current. They are the request file's includers, so the build has already made them current, and the answer comes from the table.
 * *The goal is too small* (`request-target`). We run `make request.o`, but the answer is linked from more objects than that.
 * *The config is not an input of the build predicate* (`out-of-date`). Make's classic pitfall, changing `CFLAGS` and nothing being rebuilt, does not happen: a config change is found by its content token, also across a restart, and removes every reference and takes every CU's knowledge. But the predicate itself does not read the config.
 * *A missing include edge* (`scan-angle-includes`). The scan's edges are facts about each file now, but it records no `<...>` includes. A CU that reaches a changed header through such an include alone is not out of date, so its part of the header is missing without that being known.

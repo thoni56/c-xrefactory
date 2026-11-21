@@ -1,0 +1,12 @@
+CXREF -server
+-getproject CURDIR/node.h
+<sync>
+-browse-push  -cursor=24 CURDIR/node.h
+<sync>
+-menu-filter=0
+<sync>
+-browse-push  -cursor=24 CURDIR/node.h
+<sync>
+-menu-filter=0
+<sync>
+<exit>

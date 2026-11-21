@@ -667,11 +667,13 @@ implementation, and are noted in `cu-prerequisites`, `out-of-date`, `time-budget
     `index-based-sessions` removes it again.
     Goes with: index-based-sessions
     After: refactoring-session-kinds
-- (#107) <a id="cap-is-a-question"></a>**The limits that are left become a question** —
-    ADR-0032, amended 2026-11-03. Left: the macro-body path
-    (`collectCompilationUnitsExpandingTheMacro()`) still truncates at `MAX_CUS_TO_REPARSE`.
-    It goes, and a request asks first only where a measurement shows it is slow. Fixes "A refactoring can see a truncated reference set"
-    in `19-known-bugs.adoc`.
+- (#107) <a id="cap-is-a-question"></a>**The macro path parses CUs that are current** —
+    for a cursor in a macro body, `collectCompilationUnitsExpandingTheMacro()` parses up to
+    `MAX_CUS_TO_REPARSE` of the CUs that can expand it on every push. They are the request
+    file's includers, so the build has made them current and the answer comes from the
+    table: `test_every_cu_expanding_a_macro_is_parsed` gets 130 referents from 128 parses,
+    786 ms on a warm push (WSL, session `d25255b8`). Skipping the loop for current CUs is
+    probably enough (`cursor-parse-reuse`).
     Waits for: adr-0035
 - (#35) <a id="cu-prerequisites"></a>**A CU's prerequisites** — the CU, its include closure and the project
     config, put together where `out-of-date` uses them, the CU first. `Prerequisites`
