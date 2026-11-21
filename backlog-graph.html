@@ -52,6 +52,7 @@ flowchart BT
   included_c_file["§3 · 105 · Investigate: a `.c` file that another file includes"]
   newline_position["§3 · 71 · A `'\n'` lexem has the next line's number"]
   if_syntax_error_twice["§3 · 72 · A malformed `#if` is reported twice"]
+  server_waits_after_client_error["§3 · 122 · A server waiting for a confirmation after the client failed"]
   header_filtered_siblings["§4 · 16 · Header-filtered sibling parsing"]
   scan_angle_includes["§4 · 17 · Extend the lightweight scan to `#lt;...#gt;` includes"]
   lexing_cache["§4 · 18 · Lexing cache re-introduction"]
@@ -63,6 +64,7 @@ flowchart BT
   extract_out_locals_declared["§5 · 96 · Extract Function declares the locals it returns through out parameters"]
   inline_output_parameter["§5 · 118 · Inline Output Parameter"]
   output_parameter_to_return["§5 · 119 · Turn an output parameter into the return value"]
+  extract_guard_return["§5 · 121 · Extract Function lets a region out by `return #lt;constant#gt;;`"]
   rename_partial_in_broken_code["§5 · 97 · Rename in code that does not parse leaves occurrences behind"]
   remove_references_stopgap["§5 · 20 · Take the client's #quot;Remove References and Restart Server#quot; back out"]
   index_based_sessions["§5 · 22 · Index-based sessions"]
@@ -82,7 +84,7 @@ flowchart BT
   refactoring_help["§5 · 92 · The refactoring dialog's help describes what the dialog offers"]
   browser_for_c["§5 · 82 · The browser's Symbol Pane says which symbol each line is"]
   local_config_fragments["§5 · 27 · Local config fragments: the config names, the fragment binds"]
-  chapter_17_hygiene["§5 · 28 · Chapter 17 hygiene, opportunistically"]
+  chapter_18_hygiene["§5 · 28 · Chapter 18 hygiene, opportunistically"]
   macro_expansion_module["§5 · 76 · Extract the macro expansion module from `src/yylex.c`"]
   dump_reference_database["§5 · 29 · Dump Reference Database"]
   compile_commands["§5 · 30 · Read `-I` and `-D` from `compile_commands.json`"]
@@ -91,7 +93,7 @@ flowchart BT
   symbol_at_cursor_from_table["§7 · 113 · The symbol at the cursor is looked up in the table, not parsed for"]
   refactoring_session_kinds["§7 · 116 · The refactorings' push operations are session kinds"]
   session_refresh_time["§7 · 109 · A session refreshes a file by a time, not a flag"]
-  cap_is_a_question["§7 · 107 · The cap becomes a question for every request"]
+  cap_is_a_question["§7 · 107 · The limits that are left become a question"]
   cu_prerequisites["§7 · 35 · A CU's prerequisites"]
   out_of_date["§7 · 36 · The config as an input of `knowledgeIsOutOfDate()`"]
   request_target["§7 · 37 · What a request needs"]
@@ -165,12 +167,14 @@ flowchart BT
   completion_select_out_of_range -.-&gt; included_c_file
   include_bracket_from_macro -.-&gt; newline_position
   newline_position -.-&gt; if_syntax_error_twice
+  if_syntax_error_twice -.-&gt; server_waits_after_client_error
   request_target -.-&gt; header_filtered_siblings
   move_includes -.-&gt; move_to_new_module
   extract_array_used_after -.-&gt; extract_typing_ladder
   extract_typing_ladder -.-&gt; extract_out_locals_declared
   extract_out_locals_declared -.-&gt; inline_output_parameter
   inline_output_parameter -.-&gt; output_parameter_to_return
+  output_parameter_to_return -.-&gt; extract_guard_return
   rename_partial_in_broken_code -.-&gt; rename_leaves_sessions
   rename_leaves_sessions -.-&gt; refused_rename_references
   lsp_mode -.-&gt; lsp_implementation_path
@@ -184,8 +188,8 @@ flowchart BT
   retry_creating_request -.-&gt; refactoring_help
   refactoring_help -.-&gt; browser_for_c
   project_extent -.-&gt; local_config_fragments
-  parse_all -.-&gt; chapter_17_hygiene
-  chapter_17_hygiene -.-&gt; macro_expansion_module
+  parse_all -.-&gt; chapter_18_hygiene
+  chapter_18_hygiene -.-&gt; macro_expansion_module
   macro_expansion_module -.-&gt; dump_reference_database
   local_config_fragments -.-&gt; compile_commands
   dump_reference_database -.-&gt; yydebug_to_log
@@ -198,7 +202,7 @@ flowchart BT
   refactoring_catalogue -.-&gt; windows_build
   customize_names -.-&gt; refactoring_catalogue
   linkStyle 0,1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20,21,22,23,24,25,26 stroke:#333,stroke-width:2.5px
-  linkStyle 27,28,29,30,31,32,33,34,35,36,37,38,39,40,41,42,43,44,45,46,47,48,49,50,51,52,53,54,55,56,57,58,59,60,61,62,63,64,65,66,67,68,69,70,71,72,73,74,75,76,77,78,79 stroke:#aaa,stroke-width:1px
+  linkStyle 27,28,29,30,31,32,33,34,35,36,37,38,39,40,41,42,43,44,45,46,47,48,49,50,51,52,53,54,55,56,57,58,59,60,61,62,63,64,65,66,67,68,69,70,71,72,73,74,75,76,77,78,79,80,81 stroke:#aaa,stroke-width:1px
   class config_without_pass ready
   class defines_at_parse_start ready
   class side_effects_to_dispatcher ready
@@ -232,6 +236,7 @@ flowchart BT
   class included_c_file ready
   class newline_position ready
   class if_syntax_error_twice ready
+  class server_waits_after_client_error ready
   class header_filtered_siblings ready
   class scan_angle_includes blocked
   class lexing_cache blocked
@@ -243,6 +248,7 @@ flowchart BT
   class extract_out_locals_declared ready
   class inline_output_parameter ready
   class output_parameter_to_return ready
+  class extract_guard_return ready
   class rename_partial_in_broken_code ready
   class remove_references_stopgap ready
   class index_based_sessions ready
@@ -262,7 +268,7 @@ flowchart BT
   class refactoring_help ready
   class browser_for_c ready
   class local_config_fragments ready
-  class chapter_17_hygiene ready
+  class chapter_18_hygiene ready
   class macro_expansion_module ready
   class dump_reference_database ready
   class compile_commands ready
