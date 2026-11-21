@@ -657,14 +657,13 @@ implementation, and are noted in `cu-prerequisites`, `out-of-date`, `time-budget
     `index-based-sessions` removes it again.
     Goes with: index-based-sessions
     After: refactoring-session-kinds
-- (#107) <a id="cap-is-a-question"></a>**The cap becomes a question for every request** —
-    ADR-0032, amended 2026-11-03. `MAX_CUS_TO_REPARSE` stops capping the sibling list and
-    is where the question is asked, as `analyseAllOutOfDateCUs()` does, and the two build
-    lists become one. The macro-body path (`collectCompilationUnitsExpandingTheMacro()`)
-    asks too, instead of truncating. `MAX_INCLUDE_WALK_FILES` (256), where
-    `collectCUsIncluding()` silently walks no further up, goes with it, since the two
-    limits move together. Fixes "A refactoring can see a truncated reference set" in
-    `19-known-bugs.adoc`, 13 of 25 occurrences on ffmpeg.
+- (#107) <a id="cap-is-a-question"></a>**The limits that are left become a question** —
+    ADR-0032, amended 2026-11-03. The siblings are no longer capped (b264406d). Left:
+    the macro-body path (`collectCompilationUnitsExpandingTheMacro()`) still truncates at
+    `MAX_CUS_TO_REPARSE`, and `MAX_INCLUDE_WALK_FILES` (256) stops `collectCUsIncluding()`
+    silently walking further up. Both go, and a request asks first only where a
+    measurement shows it is slow. Fixes "A refactoring can see a truncated reference set"
+    in `19-known-bugs.adoc`.
     Waits for: adr-0035
 - (#35) <a id="cu-prerequisites"></a>**A CU's prerequisites** — the CU, its include closure and the project
     config, put together where `out-of-date` uses them, the CU first. `Prerequisites`

@@ -527,7 +527,7 @@ That is most of `server.c` today, and `callServer()` mixes it with setting up th
 
 |The goal
 |What a request needs, the backlog's `request-target`
-|No home yet. Today `collectCUsIncluding()` and the cap, inside the rebuild
+|No home yet. Today `collectCUsIncluding()`, inside the rebuild
 
 |Prerequisites
 |The include graph
