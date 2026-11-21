@@ -362,6 +362,13 @@ fails if a name is unknown.
     returns 0, `cppexp_yyparse()` adds "Syntax error on: `__has_include`"
     through `styyerror()` (`src/semact.c`). The second message says nothing more.
     After: newline-position
+- (#122) <a id="server-waits-after-client-error"></a>**A server waiting for a confirmation after the client failed** — *no repo home yet.*
+    `ppcWaitConfirmation()` (`src/ppc.c`) reads stdin until it gets `-continue` or `-cancel`.
+    If the client signals an error while it shows the question, nothing answers, and the
+    next request's options arrive where the server expects the answer. Find out what the
+    server does then, and pin it in a test. Found on WSL, session `d25255b8`, when the
+    question could open beside the minibuffer (fixed in the client).
+    After: if-syntax-error-twice
 
 ## 4. Performance, in strict dependency order
 
