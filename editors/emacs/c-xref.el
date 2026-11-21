@@ -4325,6 +4325,15 @@ This function also moves to the current reference.
     res
     ))
 
+(defun c-xref-get-search-completions (prefix)
+  "Return the names in the project that start with PREFIX.
+A search is over the whole project, so no file is sent, also not
+from the minibuffer, where completing calls this."
+  (setq c-xref-global-dispatch-data (c-xref-get-basic-server-dispatch-data 'c-xref-server-process))
+  (c-xref-send-data-to-process-and-dispatch
+   (format "\"-search=%s*\" -searchshortlist" prefix) c-xref-global-dispatch-data)
+  (cdr (assoc 'symbol-list c-xref-global-dispatch-data)))
+
 (defun c-xref-get-list-for-completions (ppp)
   (let ((res) (_prs))
     (setq res nil)
@@ -4358,10 +4367,7 @@ This function also moves to the current reference.
                 (eq type nil))
             (progn
               ;; list of completions
-              (setq lst (c-xref-list-to-alist
-                             (c-xref-get-search-results
-                              (format "%s*" str)
-                              (format "-searchshortlist -p \"%s\"" c-xref-active-project))))
+              (setq lst (c-xref-list-to-alist (c-xref-get-search-completions str)))
               (if (eq type t)
                   (setq res (all-completions str lst))
                 (setq res (try-completion str lst))
