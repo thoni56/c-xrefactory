@@ -254,7 +254,6 @@ int buildListCount(BuildList *list) {
     return list->count;
 }
 
-#define MAX_INCLUDE_WALK_FILES 256
 /* The CUs that reach a file, at any depth, in the include graph the request took
  * before anything was removed. Collect CU file numbers into the provided array,
  * deduplicating against entries already present. */
@@ -263,11 +262,8 @@ int collectCUsIncluding(Prerequisites *prerequisites, int fileNumber, int cuFile
     FileItem *fileItem = getFileItemWithFileNumber(fileNumber);
     log_debug("Looking for CUs that include '%s'", fileItem->name);
 
-    int includers[MAX_INCLUDE_WALK_FILES];
-    int includerCount = collectIncluderClosureOf(prerequisites, fileNumber, includers,
-                                                 MAX_INCLUDE_WALK_FILES);
-    if (includerCount > MAX_INCLUDE_WALK_FILES)
-        includerCount = MAX_INCLUDE_WALK_FILES;
+    int *includers = malloc(MAX_FILES * sizeof(int));
+    int includerCount = collectIncluderClosureOf(prerequisites, fileNumber, includers, MAX_FILES);
 
     for (int i = 0; i < includerCount; i++) {
         int includerFileNum = includers[i];
@@ -291,6 +287,7 @@ int collectCUsIncluding(Prerequisites *prerequisites, int fileNumber, int cuFile
     if (cuCount == 0)
         log_debug("No CUs found that include '%s'", fileItem->name);
 
+    free(includers);
     return cuCount;
 }
 
