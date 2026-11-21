@@ -122,6 +122,11 @@ To get this from the server in your own Emacs, set `c-xref-server-startup-option
 
     grep -o "is out of date: .*" /tmp/c-xref.log | sort | uniq -c
 
+Each request also logs its operation and how long it took to answer, e.g. `Request
+OP_BROWSE_PUSH answered in 137 ms`. This lists the requests by time, the slowest last:
+
+    grep -o "Request [A-Z_]* answered in [0-9]* ms" /tmp/c-xref.log | awk '{print $2, $5}' | sort -k2 -n
+
 ==== Arena Allocator Lifetime Violations
 
 The preprocessor macro expansion code uses arena allocators (`ppmMemory`, `macroBodyMemory`)

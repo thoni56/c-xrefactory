@@ -397,6 +397,12 @@ done:
     LEAVE();
 }
 
+static long millisecondsSince(struct timespec start) {
+    struct timespec now;
+    clock_gettime(CLOCK_MONOTONIC, &now);
+    return (now.tv_sec - start.tv_sec) * 1000 + (now.tv_nsec - start.tv_nsec) / 1000000;
+}
+
 void server(ArgumentsVector args) {
     ArgumentsVector pipedOptions;
 
@@ -409,6 +415,8 @@ void server(ArgumentsVector args) {
         deepCopyOptionsFromTo(&savedOptions, &options);
 
         pipedOptions = readOptionsFromPipe();
+        struct timespec requestStart;
+        clock_gettime(CLOCK_MONOTONIC, &requestStart);
         // TODO -o option on command line should catch also file not found
         openOutputFile(options.outputFileName);
         //&dumpArguments(nargc, nargv);
@@ -433,6 +441,8 @@ void server(ArgumentsVector args) {
         closeOutputFile();
         if (options.cxrefProtocol)
             ppcSynchronize();
+        log_info("Request %s answered in %ld ms", operationNamesTable[options.serverOperation],
+                 millisecondsSince(requestStart));
         log_trace("Server: Request answered");
     }
     LEAVE();
