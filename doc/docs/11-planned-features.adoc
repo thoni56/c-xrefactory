@@ -2,9 +2,9 @@
 
 This chapter documents planned user-facing features—new refactorings, navigation capabilities, and editor integrations. These represent functionality users will interact with directly.
 
-For internal architectural improvements and code quality work, see link:18-major-codebase-improvements.adoc[Chapter 18: Major Codebase Improvements].
+For internal architectural improvements and code quality work, see link:/workspace/1/documentation/C-xrefactory#major-codebase-improvements[Chapter 18: Major Codebase Improvements].
 
-For detailed specifications of refactoring operations (both existing and planned), see link:20-refactoring-recipes.adoc[Chapter 20: Refactoring Recipes].
+For detailed specifications of refactoring operations (both existing and planned), see link:/workspace/1/documentation/C-xrefactory#refactoring-recipes[Chapter 20: Refactoring Recipes].
 
 [[move-function-refactoring]]
 === Move Function Between Files
@@ -133,7 +133,7 @@ See the README for LSP client configuration examples. Basic setup:
 
 ==== Related Work
 
-* link:18-major-codebase-improvements.adoc[Chapter 18: Major Codebase Improvements] discusses the technical architecture
+* link:/workspace/1/documentation/C-xrefactory#major-codebase-improvements[Chapter 18: Major Codebase Improvements] discusses the technical architecture
 * Multi-file support requires include graph and on-demand parsing (foundational work described in Chapter 18)
 
 ==== Implementation Path
@@ -368,7 +368,7 @@ changes into the external files.
 The legacy `c-xrefactory` treated all parsed files equally — there was no distinction
 between "my code" and "code I depend on." This was acceptable when projects were
 self-contained, but with the modern include-path-based project scope (see
-link:06-principles.adoc[Principles, Project Scope]) the distinction matters.
+link:/workspace/1/documentation/C-xrefactory#principles[Principles, Project Scope]) the distinction matters.
 
 ==== Proposed Behaviour
 

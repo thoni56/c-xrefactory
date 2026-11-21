@@ -744,14 +744,14 @@ This allowed:
 
 ==== Architectural Lesson
 
-The workaround highlighted the underlying tension: **navigation and refactoring used different sources of truth**. The proper fix — eliminating `callXref()` from the refactoring path entirely — landed with server-side refactoring (link:10-roadmap.adoc[Chapter 10: Roadmap]).
+The workaround highlighted the underlying tension: **navigation and refactoring used different sources of truth**. The proper fix — eliminating `callXref()` from the refactoring path entirely — landed with server-side refactoring (link:/workspace/1/documentation/C-xrefactory#roadmap[Chapter 10: Roadmap]).
 
 === Stale File Refresh and Cross-File References (Historical)
 
 This section describes a refresh algorithm built around a function named
 `refreshStaleReferencesInSession()` that no longer exists in the source. The current
 refresh path is lazy session refresh via `needsBrowsingStackRefresh` and
-`updateSessionReferencesForFile`, described in link:08-algorithms.adoc[Chapter 8].
+`updateSessionReferencesForFile`, described in link:/workspace/1/documentation/C-xrefactory#algorithms[Chapter 8].
 The material is preserved here because its core insight — that
 `addReferenceableToBrowsingMenu` deduplicates by `(linkName, includeFileNumber, type)`
 and so cannot safely re-scan from disk during refresh — is still relevant. That
@@ -919,10 +919,10 @@ When you PUSH on a symbol, the navigation menu creation (`createSelectionMenuFor
 
 This dual-source approach allows navigation without full project parse while providing updated positions for modified files.
 
-NOTE: Client preloading behavior and stale file detection are now documented in link:12-components.adoc[Chapter 12: Components] under Server (Entry-Point Reparse) and Editor Extension (Preloading).
+NOTE: Client preloading behavior and stale file detection are now documented in link:/workspace/1/documentation/C-xrefactory#components[Chapter 12: Components] under Server (Entry-Point Reparse) and Editor Extension (Preloading).
 
 NOTE: Several sections describing pre-memory-as-truth behaviour have been moved to
-link:22-archive.adoc[Archive]:
+link:/workspace/1/documentation/C-xrefactory#archive[Archive]:
 
 * "Architectural Invariants" and "RefactoryMode Internally Calls XrefMode" — the
   invariants described a model where the disk database was the source of truth.
@@ -933,17 +933,17 @@ link:22-archive.adoc[Archive]:
 * "Stale File Refresh and Cross-File References" — describes
   `refreshStaleReferencesInSession()`, no longer in the source. Current refresh is
   lazy via `needsBrowsingStackRefresh` and `updateSessionReferencesForFile` (see
-  link:08-algorithms.adoc[Chapter 8]). The dedup-key insight from that section is
-  carried forward in link:22-archive.adoc#cu-reparse-header-staleness[a later investigation].
+  link:/workspace/1/documentation/C-xrefactory#algorithms[Chapter 8]). The dedup-key insight from that section is
+  carried forward in link:/workspace/1/documentation/C-xrefactory#cu-reparse-header-staleness[a later investigation].
 
 As of 2026-03, the in-memory reference table is authoritative — see
-link:06-principles.adoc[Principles].
+link:/workspace/1/documentation/C-xrefactory#principles[Principles].
 
 === Unified In-Memory Table Discovery (Historical)
 
 Date: 2025-01-25
 
-Investigation revealed that **both XrefMode and ServerMode use the same in-memory `ReferenceableItemTable`**. This is the key enabler for the incremental path to "Memory as Truth" (see link:10-roadmap.adoc[Chapter 10: Roadmap]).
+Investigation revealed that **both XrefMode and ServerMode use the same in-memory `ReferenceableItemTable`**. This is the key enabler for the incremental path to "Memory as Truth" (see link:/workspace/1/documentation/C-xrefactory#roadmap[Chapter 10: Roadmap]).
 
 `handleFoundSymbolReference()` in `cxref.c` handles references found during parsing. It calls `isMemberInReferenceableItemTable()` to check if a symbol exists; if not found, creates a new entry; if found, adds a reference to the existing entry. This same table is used by both modes — there is no separate "server table" vs "xref table".
 
