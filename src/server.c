@@ -96,10 +96,11 @@ static bool answeredWithoutReferences(ServerOperation operation) {
 
 /* -get answers from the locked project's variables. An input file only adds the
    ${__file} family of expansions to the value, so a request without one is
-   answerable rather than an error. */
+   answerable rather than an error. A search is over the whole project. */
 static bool toleratesMissingInputFile(ServerOperation operation) {
     return operation == OP_GET_ENV_VALUE
-        || operation == OP_DUMP;
+        || operation == OP_DUMP
+        || operation == OP_SEARCH;
 }
 
 
@@ -378,6 +379,11 @@ void callServer(ArgumentsVector baseArgs, ArgumentsVector requestArgs) {
      * before proceeding */
     if (projectContextInitialized && needsWholeProjectParsed(options.serverOperation))
         analyseAllOutOfDateCUs(baseArgs, prerequisites);
+
+    /* A build starts each CU from the project's options without the request's
+     * (initializeFileProcessing()), so the request gets its own back */
+    deepCopyOptionsFromTo(&savedOptions, &options);
+    processOptions(requestArgs, NULL);
 
     if (opensBrowsingSession(options.serverOperation))
         pushEmptySession(&browsingStack);

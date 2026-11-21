@@ -1,0 +1,7 @@
+"-search=sh*" -searchshortlist -p "CURDIR"
+end-of-options
+
+<sync>
+<symbol-list>
+ <str len=6>shared</str>
+</symbol-list>

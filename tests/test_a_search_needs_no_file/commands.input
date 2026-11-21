@@ -1,0 +1,6 @@
+CXREF -server
+-getproject CURDIR/a.c
+<sync>
+"-search=sh*" -searchshortlist -p "CURDIR"
+<sync>
+<exit>
