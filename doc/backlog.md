@@ -390,7 +390,9 @@ Roadmap → Optimization has the baseline: a cold-start PUSH on ffmpeg, measured
     the cold-start double progress bar.
     Measured on WSL, session `d25255b8`, 2026-11-06: in `tests/test_systemd`, 29 of about
     7000 include lines name the project's own headers with `<...>`, 20 of them
-    `<libudev.h>`. `tests/test_ffmpeg` includes its own headers quoted. cgreen's own
+    `<libudev.h>`. `tests/test_ffmpeg` includes its own headers quoted, except `doc/examples`,
+    which includes `<libavcodec/avcodec.h>`: 16 references to `avcodec_open2` are missed there
+    (WSL, session `d25255b8`, 2026-11-22). cgreen's own
     sources are the large case, `<cgreen/...>` throughout. Resolving `<...>` against the
     `-I` directories only, not the compiler's, might leave the system headers out and
     lift the block.
