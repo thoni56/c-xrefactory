@@ -368,7 +368,8 @@ void callServer(ArgumentsVector baseArgs, ArgumentsVector requestArgs) {
 
     /* Sibling CUs that share headers with the request file but are out of date,
      * e.g. on a cold start */
-    if (projectContextInitialized && hasInputFile && !answeredWithoutReferences(options.serverOperation))
+    if (projectContextInitialized && hasInputFile && !answeredWithoutReferences(options.serverOperation)
+        && !needsWholeProjectParsed(options.serverOperation))
         collectSiblingCUs(buildList, prerequisites, requestFileNumber);
 
     stripRequestCU(buildList, requestFileNumber);
