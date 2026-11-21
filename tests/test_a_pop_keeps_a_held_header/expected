@@ -1,6 +1,6 @@
 'CURDIR/a.c' is out of date: there is no knowledge of it
 'CURDIR/b.c' is out of date: there is no knowledge of it
-Siblings: 1 to build, 0 skipped (current), 0 skipped (cap 128)
+Siblings: 1 to build, 0 skipped (current)
 Building 1 CU(s)
-Siblings: 0 to build, 1 skipped (current), 0 skipped (cap 128)
-Siblings: 0 to build, 1 skipped (current), 0 skipped (cap 128)
+Siblings: 0 to build, 1 skipped (current)
+Siblings: 0 to build, 1 skipped (current)

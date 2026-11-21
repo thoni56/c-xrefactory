@@ -1,0 +1,3 @@
+-browse-push -cursor=41 CURDIR/main.c
+<progress>Analysing 130 files... 129 remaining</progress>
+-browse-push -cursor=41 CURDIR/main.c

@@ -1,4 +1,4 @@
 'CURDIR/a.c' is out of date: there is no knowledge of it
-Siblings: 0 to build, 0 skipped (current), 0 skipped (cap 128)
+Siblings: 0 to build, 0 skipped (current)
 'CURDIR/z.c' is out of date: there is no knowledge of it
-Siblings: 0 to build, 0 skipped (current), 0 skipped (cap 128)
+Siblings: 0 to build, 0 skipped (current)

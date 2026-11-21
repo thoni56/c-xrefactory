@@ -1,7 +1,7 @@
 'CURDIR/a.c' is out of date
 'CURDIR/b.c' is out of date
-Siblings: 1 to build, 0 skipped (current), 0 skipped (cap 128)
+Siblings: 1 to build, 0 skipped (current)
 'CURDIR/a.c' is out of date
 'CURDIR/b.c' is out of date
-Siblings: 1 to build, 0 skipped (current), 0 skipped (cap 128)
-Siblings: 0 to build, 1 skipped (current), 0 skipped (cap 128)
+Siblings: 1 to build, 0 skipped (current)
+Siblings: 0 to build, 1 skipped (current)

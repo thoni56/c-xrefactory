@@ -293,7 +293,7 @@ void callServer(ArgumentsVector baseArgs, ArgumentsVector requestArgs) {
 
     loadAllOpenedEditorBuffers();
 
-    BuildList *buildList = newBuildList(MAX_CUS_TO_REPARSE);
+    BuildList *buildList = newBuildList(MAX_FILES);
 
     /* Close preloaded buffers that the client no longer sends - the user has saved
      * and/or closed the file in the editor. Without this, the server would keep parsing

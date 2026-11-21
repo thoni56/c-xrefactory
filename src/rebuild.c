@@ -145,8 +145,7 @@ void collectSiblingCUs(BuildList *list, Prerequisites *prerequisites, int reques
     free(headers);
     free(asked);
 
-    log_info("Siblings: %d to build, %d skipped (current), %d skipped (cap %d)", list->count,
-             skippedCurrent, list->skippedCapped, list->capacity);
+    log_info("Siblings: %d to build, %d skipped (current)", list->count, skippedCurrent);
 }
 
 /* For an operation on a name: every CU in the project that is out of date */

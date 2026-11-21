@@ -1,7 +1,0 @@
-.c-xrefrc
-*buffer
-output
-output.tmp
-log
-*.log
-sibling*.c
