@@ -1957,10 +1957,18 @@ The server holds a modified buffer only as long as each request sends it."
 
 
 
+(defun c-xref-caller-window ()
+  "The window a request is made from.
+From the minibuffer, e.g. when completing, it is the window the minibuffer
+was entered from, since a dialog cannot be opened beside the minibuffer."
+  (if (window-minibuffer-p (selected-window))
+      (or (minibuffer-selected-window) (selected-window))
+    (selected-window)))
+
 (defun c-xref-get-basic-server-dispatch-data (proc)
   (let ((res))
     (setq res (cons (cons 'dummy-parameter-to-make-cdr-in-memory nil)
-                            (cons (cons 'caller-window (selected-window))
+                            (cons (cons 'caller-window (c-xref-caller-window))
                                       (cons (cons 'process proc)
                                                 (cons (cons 'frame-id (c-xref-get-this-frame-id))
                                                       nil)))))

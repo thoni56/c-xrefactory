@@ -26,4 +26,15 @@
           (should-not (string-match-p "\"nil\"\\|-cursor=" c-xref-test-sent)))
       (delete-directory dir t))))
 
+;; A search that needs many files analysed asks first, also while completing
+(ert-deftest c-xref-a-question-while-completing-is-shown-beside-the-minibuffer ()
+  (let ((c-window (selected-window)))
+    (cl-letf (((symbol-function 'minibuffer-selected-window) (lambda () c-window))
+              ((symbol-function 'c-xref-modal-dialog-loop) #'ignore))
+      (with-selected-window (minibuffer-window)
+        (with-temp-buffer
+          (let ((dispatch-data (c-xref-get-basic-server-dispatch-data 'c-xref-server-process)))
+            (should (eq (cdr (assoc 'caller-window dispatch-data)) c-window))
+            (c-xref-yes-or-no-window "Analyse all before search?" t dispatch-data)))))))
+
 ;;; c-xref-search-completion-tests.el ends here
