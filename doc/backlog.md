@@ -710,7 +710,7 @@ implementation, and are noted in `cu-prerequisites`, `out-of-date`, `time-budget
     and the macro body need the parse.
     After: request-through-includers
 - (#40) <a id="time-budget"></a>**A time budget instead of the count** — the count where
-    `cap-is-a-question` asks becomes a time budget, and the question gets an estimate. Browsing remembers a "no" for the session, an operation that edits
+    `needsConfirmationToAnalyse()` asks becomes a time budget, and the question gets an estimate. Browsing remembers a "no" for the session, an operation that edits
     or works on a name is cancelled by it. Touches the client's question. Open: does a remembered "no" stop parsing, or only the asking, so
     that each request still parses a budget's worth? Under ADR-0035 partial work adds up,
     so the second is safe.
@@ -721,7 +721,7 @@ implementation, and are noted in `cu-prerequisites`, `out-of-date`, `time-budget
     The ask-or-not decision (`needsConfirmationToAnalyse()`) takes the budget and is
     unit-tested on both sides of it. The budget is a user setting, so system tests use 0
     (always asks) and unlimited (never asks), and none sit near the boundary.
-    After: cap-is-a-question
+    After: out-of-date
 - (#108) <a id="variant-b"></a>**A CU that stops emitting into an unchanged header leaves its references there** —
     what a CU emits into a header is the union over its passes, and it shrinks when the
     preprocessor state on the way in changes: the CU itself, or a header included before
