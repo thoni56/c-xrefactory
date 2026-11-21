@@ -381,7 +381,8 @@ Roadmap → Optimization has the baseline: a cold-start PUSH on ffmpeg, measured
     operation, and the symbol is known only from the cursor parse. Looking the cursor up
     in the table (`cursor-parse-reuse`) gives the symbol first, when the request CU is
     current. It narrows what `request-target` widens: the reach of the symbol, not of the
-    request file's closure.
+    request file's closure. A CU that includes the declaring file only with `<...>` is
+    then missed, also when another header brings it in today (`scan-angle-includes`).
     Goes with: cursor-parse-reuse
     After: request-target
 - (#17) <a id="scan-angle-includes"></a>**Extend the lightweight scan to `<...>` includes** — blocked on header-filtered
@@ -665,11 +666,9 @@ implementation, and are noted in `cu-prerequisites`, `out-of-date`, `time-budget
     Goes with: index-based-sessions
     After: refactoring-session-kinds
 - (#107) <a id="cap-is-a-question"></a>**The limits that are left become a question** —
-    ADR-0032, amended 2026-11-03. The siblings are no longer capped (b264406d). Left:
-    the macro-body path (`collectCompilationUnitsExpandingTheMacro()`) still truncates at
-    `MAX_CUS_TO_REPARSE`, and `MAX_INCLUDE_WALK_FILES` (256) stops `collectCUsIncluding()`
-    silently walking further up. Both go, and a request asks first only where a
-    measurement shows it is slow. Fixes "A refactoring can see a truncated reference set"
+    ADR-0032, amended 2026-11-03. Left: the macro-body path
+    (`collectCompilationUnitsExpandingTheMacro()`) still truncates at `MAX_CUS_TO_REPARSE`.
+    It goes, and a request asks first only where a measurement shows it is slow. Fixes "A refactoring can see a truncated reference set"
     in `19-known-bugs.adoc`.
     Waits for: adr-0035
 - (#35) <a id="cu-prerequisites"></a>**A CU's prerequisites** — the CU, its include closure and the project

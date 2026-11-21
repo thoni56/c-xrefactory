@@ -33,33 +33,19 @@ The yacc parser creates a different scope or symbol context when parsing C code 
 
 *Symptom:* on a large project, a rename rewrites some occurrences and leaves the rest, with no warning. The definition is found correctly, so nothing looks wrong.
 
-*Cause:* `collectCUsIncluding()` (`src/rebuild.c`) stops widening the reverse-include frontier at `MAX_INCLUDE_WALK_FILES` (256). A refactoring push is in `needsReferenceDatabase` but not in `needsWholeProjectParsed`, so it takes whatever entry refresh has parsed. Past the limit that is a subset. The cap of 128 CUs that also applied is gone.
+*Cause:* for a cursor in a macro body, `collectCompilationUnitsExpandingTheMacro()` (`src/server.c`) parses at most `MAX_CUS_TO_REPARSE` (128) of the CUs that can expand the macro. A refactoring push is in `needsReferenceDatabase` but not in `needsWholeProjectParsed`, so it takes whatever those give. Past the limit that is a subset. The cap on the siblings and the limit on the include walk are gone.
 
-*Measured 2026-09-22*, with both limits, on `tests/test_ffmpeg`, one cold `-browse-push` on `avcodec_open2` where it is declared in `avcodec.h`, which 713 `.c` files include:
+*When it bites:* probably only when more than 128 CUs include the file that defines the macro, and the cursor is in its body.
 
-[cols="1,1,1",options="header"]
-|===
-|  |caps 128 / 256 |caps 4096 / 8192
-
-|references found |*13* |*25*
-|wall clock |23.3 s |256 s
-|peak RSS |28.5 MB |91.6 MB
-|goto answer |`utils.c:542` |identical
-|===
-
-So a rename there rewrites 13 of 25 occurrences. Browsing survives a truncated set; rewriting does not.
-
-*When it bites:* only when more than 256 files (transitively) include one header. c-xrefactory itself cannot reach it — 79 CUs in `src`, worst header fan-in `log.h` at 39. systemd (642 CUs) and ffmpeg (2616) can.
-
-*Why the limits existed:* removing the lexem-stream cache (ADR-0012) took a full ffmpeg parse from 1-2 minutes to 25, and the limits bound that. A request now builds every CU the walk finds.
+*Why the limits existed:* removing the lexem-stream cache (ADR-0012) took a full ffmpeg parse from 1-2 minutes to 25, and the limits bound that. A request now builds every CU the include walk finds.
 
 *Direction:* put the refactoring pushes in `needsWholeProjectParsed` so they ask like search does — the parse-all there is uncapped and counts the CUs that are out of date. Two things that needs: declining must *abort* the refactoring, where today `if (!needsConfirmationToAnalyse(outOfDateCUs) || ppcWaitConfirmation(msg)) { ...parse... }` has no else and simply proceeds; and `parseAllPromptFor()` ends in `default: assert(0)`, so each added operation needs its own prompt word. It applies to parameter manipulation as much as to rename.
 
-*Workaround:* none. The walk should stop at the same includers every time, so re-issuing the push probably does not help.
+*Workaround:* none. The macro path should pick the same CUs every time, so re-issuing the push probably does not help.
 
 === Stale sessions after POP
 
-Tracked under "Known Limitations" in link:10-roadmap.adoc[Chapter 10: Roadmap], with the proposed dissolve (index-based sessions).
+Tracked under "Known Limitations" in link:/workspace/1/documentation/C-xrefactory#roadmap[Chapter 10: Roadmap], with the proposed dissolve (index-based sessions).
 
 === Header static: prototype and definition are two symbols
 

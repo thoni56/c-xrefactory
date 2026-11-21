@@ -308,7 +308,7 @@ It is set in only some of the places that change the table (`session-refresh-tim
 
 Items in `doc/backlog.md`:
 
-* *The include walk is limited* (`cap-is-a-question`). `collectCUsIncluding()` walks at most 256 includers up from a header, and the CUs beyond them stay out of date without a question. Every CU it finds is built. ADR-0032 makes a long build a question, and later a time budget (`time-budget`).
+* *A macro body is limited* (`cap-is-a-question`). For a cursor in a macro body, `collectCompilationUnitsExpandingTheMacro()` parses at most 128 of the CUs that can expand it, and the rest stay unparsed without a question. Every CU the include walk finds is built. ADR-0032 makes a long build a question, and later a time budget (`time-budget`).
 * *The goal is too small* (`request-target`). We run `make request.o`, but the answer is linked from more objects than that.
 * *The config is not an input of the build predicate* (`out-of-date`). Make's classic pitfall, changing `CFLAGS` and nothing being rebuilt, does not happen: a config change is found by its content token, also across a restart, and removes every reference and takes every CU's knowledge. But the predicate itself does not read the config.
 * *A missing include edge* (`scan-angle-includes`). The scan's edges are facts about each file now, but it records no `<...>` includes. A CU that reaches a changed header through such an include alone is not out of date, so its part of the header is missing without that being known.
@@ -483,9 +483,9 @@ defines the symbol being navigated to.
 
 Pass 3 follows includes from a position. Some operations have no position to start
 from, or are about the whole project by definition, so no include-based subset can make
-their answer complete. For those, after Pass 3, the server counts the CUs that are
-out of date. Within the cap (`MAX_CUS_TO_REPARSE`) it parses them without asking. Above
-it, it first asks "N of M files need analysing. Analyse all before ...?" (see Blocking
+their answer complete. For those, the server skips Pass 3 and counts the CUs that are
+out of date. Up to `MAX_CUS_TO_REPARSE` (128) it parses them without asking. Above
+that, it first asks "N of M files need analysing. Analyse all before ...?" (see Blocking
 confirmation under Interactive Dialogs below). Before parsing, it strips each header whose
 includers are all among them. The snapshot is saved after every 100 CUs, so that progress
 survives an interrupt or a crash. That is a save interval, not a limit.
