@@ -82,6 +82,10 @@ void addScannedInclude(int includerFileNumber, int includedFileNumber) {
     includer->scannedIncludes[includer->scannedIncludeCount++] = includedFileNumber;
 }
 
+bool hasBeenScanned(int fileNumber) {
+    return !contentTokenIsMissing(getFileItemWithFileNumber(fileNumber)->scanToken);
+}
+
 /* What the scan finds replaces what it found before */
 void startScanOf(int fileNumber, ContentToken scanToken) {
     FileItem *fileItem = getFileItemWithFileNumber(fileNumber);

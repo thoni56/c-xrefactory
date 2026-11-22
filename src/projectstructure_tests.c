@@ -70,8 +70,6 @@ static void given_cu_without_includes(char *path) {
     expect(closeFile);
 }
 
-static FileItem anyFileItem;
-
 static void given_include_resolves_when(bool alreadyScanned, char *includeName, char *dir,
                                         char *resolvedPath, int includedFileNum, int includerFileNum) {
     expect(directoryName_static, will_return(dir));
@@ -83,9 +81,8 @@ static void given_include_resolves_when(bool alreadyScanned, char *includeName, 
            will_return(includedFileNum));
     expect(addScannedInclude, when(includerFileNumber, is_equal_to(includerFileNum)),
            when(includedFileNumber, is_equal_to(includedFileNum)));
-    expect(getFileItemWithFileNumber, when(fileNumber, is_equal_to(includedFileNum)),
-           will_return(&anyFileItem));
-    expect(contentTokenIsMissing, will_return(!alreadyScanned));
+    expect(hasBeenScanned, when(fileNumber, is_equal_to(includedFileNum)),
+           will_return(alreadyScanned));
 }
 
 /* A header seen for the first time, which the scan then also scans */
@@ -102,8 +99,7 @@ static void given_include_resolves_to_scanned(char *includeName, char *dir, char
 
 
 static void given_header_with_content(char *path, char *content) {
-    expect(getFileItemWithFileNumber, will_return(&anyFileItem));
-    expect(contentTokenIsMissing, will_return(true));
+    expect(hasBeenScanned, will_return(false));
     given_no_buffer_held_for(path);
     expect(openFile, when(fileName, is_equal_to_string(path)),
            will_return((FILE *)1));
@@ -116,8 +112,7 @@ static void given_header_with_content(char *path, char *content) {
 
 static void given_header_without_includes(char *path) {
     (void)path; /* order of header scanning is not guaranteed */
-    expect(getFileItemWithFileNumber, will_return(&anyFileItem));
-    expect(contentTokenIsMissing, will_return(true));
+    expect(hasBeenScanned, will_return(false));
     expect(getOpenedAndLoadedEditorBuffer, will_return(NULL));
     expect(openFile, will_return((FILE *)1));
     expect(startScanOf);
@@ -363,9 +358,7 @@ Ensure(ProjectStructure, scans_a_header_two_compilation_units_include_only_once)
     given_header_without_includes("/project/shared.h");
     expect(addFileNameToFileTable, when(fileName, is_equal_to_string("/project/shared.h")),
            will_return(3));
-    expect(getFileItemWithFileNumber, when(fileNumber, is_equal_to(3)),
-           will_return(&anyFileItem));
-    expect(contentTokenIsMissing, will_return(false));
+    expect(hasBeenScanned, when(fileNumber, is_equal_to(3)), will_return(true));
 
     scanProjectForFilesAndIncludes("/project", NULL, NULL);
 }
@@ -459,9 +452,7 @@ Ensure(ProjectStructure, lightweight_scan_prefers_includer_dir_over_includeDirs)
            will_return(2));
     expect(addScannedInclude, when(includerFileNumber, is_equal_to(1)),
            when(includedFileNumber, is_equal_to(2)));
-    expect(getFileItemWithFileNumber, when(fileNumber, is_equal_to(2)),
-           will_return(&anyFileItem));
-    expect(contentTokenIsMissing, will_return(true));
+    expect(hasBeenScanned, when(fileNumber, is_equal_to(2)), will_return(false));
 
     /* Phase 2: transitive scan of the discovered header */
     expect(addFileNameToFileTable, when(fileName, is_equal_to_string("/project/util.h")),
@@ -509,9 +500,7 @@ Ensure(ProjectStructure, lightweight_scan_resolves_include_via_includeDirs_when_
            will_return(2));
     expect(addScannedInclude, when(includerFileNumber, is_equal_to(1)),
            when(includedFileNumber, is_equal_to(2)));
-    expect(getFileItemWithFileNumber, when(fileNumber, is_equal_to(2)),
-           will_return(&anyFileItem));
-    expect(contentTokenIsMissing, will_return(true));
+    expect(hasBeenScanned, when(fileNumber, is_equal_to(2)), will_return(false));
 
     /* Phase 2: transitive scan of the discovered header */
     expect(addFileNameToFileTable, when(fileName, is_equal_to_string("/project/lib/util.h")),
@@ -680,17 +669,17 @@ static void given_one_file_in_the_table(FileItem *fileItem) {
 }
 
 void given_a_scanned_file_whose_content_is_unchanged(void) {
-    expect(contentTokenIsMissing, will_return(false));
+    expect(hasBeenScanned, will_return(true));
     expect(contentTokensAreSame, will_return(true));
 }
 
 void given_a_scanned_file_whose_content_has_changed(void) {
-    expect(contentTokenIsMissing, will_return(false));
+    expect(hasBeenScanned, will_return(true));
     expect(contentTokensAreSame, will_return(false));
 }
 
 void given_a_file_the_scan_never_read(void) {
-    expect(contentTokenIsMissing, will_return(true));
+    expect(hasBeenScanned, will_return(false));
     never_expect(contentTokensAreSame);
 }
 

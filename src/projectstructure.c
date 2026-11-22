@@ -50,8 +50,7 @@ static StringList *addIncludeOnLine(char *line, const char *filePath, int includ
             strcpy(resolvedPath, resolved);
             int includedFileNumber = addFileNameToFileTable(resolvedPath);
             addScannedInclude(includerFileNumber, includedFileNumber);
-            FileItem *includedItem = getFileItemWithFileNumber(includedFileNumber);
-            if (contentTokenIsMissing(includedItem->scanToken))
+            if (!hasBeenScanned(includedFileNumber))
                 discovered = newStringList(strdup(resolvedPath), discovered);
         }
     }
@@ -173,8 +172,7 @@ static void scanDiscoveredHeaders(StringList *worklist, StringList *includeDirs)
         current->next = NULL;
 
         int headerFileNumber = addFileNameToFileTable(current->string);
-        FileItem *headerItem = getFileItemWithFileNumber(headerFileNumber);
-        if (contentTokenIsMissing(headerItem->scanToken)) {
+        if (!hasBeenScanned(headerFileNumber)) {
             StringList *newHeaders = scanFileForIncludes(current->string, headerFileNumber, includeDirs);
             prependAllHeadersToWorklist(&worklist, newHeaders);
         }
@@ -212,7 +210,7 @@ void rescanChangedFiles(StringList *includeDirs) {
     StringList *worklist = NULL;
     for (int i = getNextExistingFileNumber(0); i != -1; i = getNextExistingFileNumber(i + 1)) {
         FileItem *fileItem = getFileItemWithFileNumber(i);
-        if (contentTokenIsMissing(fileItem->scanToken))
+        if (!hasBeenScanned(i))
             continue;
         if (contentTokensAreSame(editorContentTokenOf(fileItem->name), fileItem->scanToken))
             continue;
