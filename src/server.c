@@ -327,8 +327,8 @@ static void removeReferences(bool configChanged, Prerequisites *prerequisites) {
     removeReferencesOfChangedFiles(prerequisites);
 }
 
-static void collectGoal(BuildList *buildList, bool projectWasOpen, bool hasInputFile,
-                        Prerequisites *prerequisites) {
+static void collectGoal(BuildList *buildList, BuildList *wholeProject, bool projectWasOpen,
+                        bool hasInputFile, Prerequisites *prerequisites) {
     /* The held CUs that are out of date are in every operation's goal, so all
      * operations see what is in the editor, but only in a project that was open already */
     if (projectWasOpen)
@@ -347,6 +347,10 @@ static void collectGoal(BuildList *buildList, bool projectWasOpen, bool hasInput
     if (projectContextInitialized && hasInputFile && !answeredWithoutReferences(options.serverOperation)
         && !needsWholeProjectParsed(options.serverOperation))
         collectSiblingCUs(buildList, prerequisites, requestFileNumber);
+
+    /* An operation on a name: every other CU that is out of date, built after asking */
+    if (projectContextInitialized && needsWholeProjectParsed(options.serverOperation))
+        collectOutOfDateCUsNotIn(wholeProject, buildList, prerequisites);
 }
 
 /* Above the budget the user is asked */
@@ -408,27 +412,21 @@ void callServer(ArgumentsVector startupOptions, ArgumentsVector requestOptions) 
     removeReferences(configChanged, prerequisites);
 
     /* GOAL */
-    collectGoal(buildList, projectWasOpen, hasInputFile, prerequisites);
+    BuildList *wholeProject = newBuildList(MAX_FILES);
+    collectGoal(buildList, wholeProject, projectWasOpen, hasInputFile, prerequisites);
 
     /* Another REMOVE... */
     stripRequestCU(buildList, requestFileNumber);
 
     /* BUILD */
     buildKnowledgeOfAll(buildList, startupOptions);
-
-    /* Completeness for name-based operations: if CUs are out of date, ask user
-     * before proceeding */
-    if (projectContextInitialized && needsWholeProjectParsed(options.serverOperation)) {
-        BuildList *list = newBuildList(MAX_FILES);
-        collectOutOfDateCUs(list, prerequisites);
-        buildAfterAsking(startupOptions, list);
-        freeBuildList(list);
-    }
+    buildAfterAsking(startupOptions, wholeProject);
 
     /* ANSWER */
     parseForTheAnswer(startupOptions, requestOptions, hasInputFile, prerequisites);
 
     freePrerequisites(prerequisites);
+    freeBuildList(wholeProject);
     freeBuildList(buildList);
     LEAVE();
 }

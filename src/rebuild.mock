@@ -45,10 +45,6 @@ void stripRequestCU(BuildList *list, int requestFileNumber) {
     mock(list, requestFileNumber);
 }
 
-void collectOutOfDateCUs(BuildList *list, Prerequisites *prerequisites) {
-    mock(list, prerequisites);
-}
-
 void collectOutOfDateCUsNotIn(BuildList *list, BuildList *other, Prerequisites *prerequisites) {
     mock(list, other, prerequisites);
 }

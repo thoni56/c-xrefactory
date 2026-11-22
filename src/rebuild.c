@@ -148,15 +148,6 @@ void collectSiblingCUs(BuildList *list, Prerequisites *prerequisites, int reques
     log_info("Siblings: %d to build, %d skipped (current)", list->count, skippedCurrent);
 }
 
-/* For an operation on a name: every CU in the project that is out of date */
-void collectOutOfDateCUs(BuildList *list, Prerequisites *prerequisites) {
-    for (int i = getNextExistingFileNumber(0); i != -1; i = getNextExistingFileNumber(i + 1)) {
-        FileItem *fileItem = getFileItemWithFileNumber(i);
-        if (isCompilationUnit(fileItem->name) && !fileItem->isDeleted && knowledgeIsOutOfDate(prerequisites, i))
-            addToBuildList(list, i);
-    }
-}
-
 /* The CUs out of date that are not on the other list */
 void collectOutOfDateCUsNotIn(BuildList *list, BuildList *other, Prerequisites *prerequisites) {
     for (int i = getNextExistingFileNumber(0); i != -1; i = getNextExistingFileNumber(i + 1)) {
