@@ -327,8 +327,22 @@ static bool findChangedFiles(BuildList *buildList, ArgumentsVector baseArgs, Arg
     return configChanged;
 }
 
-void callServer(ArgumentsVector baseArgs, ArgumentsVector requestArgs) {
+static Prerequisites *scanIncludesOfChangedFiles(bool configChanged) {
+    /* The first request, or a config change, scans
+       everything, otherwise the changed files are rescanned */
     static bool scanDone = false;
+    if (projectContextInitialized) {
+        if (!scanDone || configChanged) {
+            scanProjectStructure();
+            scanDone = true;
+        } else {
+            rescanChangedFiles(options.includeDirs);
+        }
+    }
+    return collectPrerequisites();
+}
+
+void callServer(ArgumentsVector baseArgs, ArgumentsVector requestArgs) {
 
     ENTER();
 
@@ -347,21 +361,8 @@ void callServer(ArgumentsVector baseArgs, ArgumentsVector requestArgs) {
     BuildList *buildList = newBuildList(MAX_FILES);
     bool configChanged = findChangedFiles(buildList, baseArgs, requestArgs);
 
-    /* CONFIG-CHANGE-AWARE SCAN.
-     * First request: !scanDone triggers the scan.
-     * Config change: re-reads .c-xrefrc (updates options.includeDirs and
-     * savedOptions), then re-runs scan with new include dirs. */
-    if (projectContextInitialized) {
-        if (!scanDone || configChanged) {
-            scanProjectStructure();
-            scanDone = true;
-        } else {
-            /* The include graph is collected from what the scan found */
-            rescanChangedFiles(options.includeDirs);
-        }
-    }
-
-    Prerequisites *prerequisites = collectPrerequisites();
+    /* SCAN INCLUDES OF CHANGED FILES */
+    Prerequisites *prerequisites = scanIncludesOfChangedFiles(configChanged);
     if (configChanged) {
         /* A config change is a change of every file (ADR-0035) */
         removeAllReferencesExceptIncludes();
