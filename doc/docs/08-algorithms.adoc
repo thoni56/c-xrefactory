@@ -213,6 +213,14 @@ Names only, so that the list stays true when the code moves, and so that it show
 |===
 |Step |What it does |Line
 
+|`prepareInputFileForRequest()`
+|Takes the file the request names.
+|goal
+
+|`setUpProjectIfNew()`
+|Once: finds the project and loads the snapshot.
+|_Setup Ladder_
+
 |`loadAllOpenedEditorBuffers()`
 |Reads the buffers the client sent, the content of a held file.
 |changed
@@ -220,14 +228,6 @@ Names only, so that the list stays true when the code moves, and so that it show
 |`closeEditorBuffersNoLongerHeld()`
 |Closes a buffer the client no longer sends, and puts its CU on the build list.
 |changed, build
-
-|`prepareInputFileForRequest()`
-|Opens the file the request names.
-|goal
-
-|`initializeProjectContext()`, `loadSnapshotFromStore()`
-|Once: finds the project and loads the snapshot.
-|_Setup Ladder_
 
 |`isProjectConfigChanged()`, `reloadProjectConfig()`, `removeAllReferencesExceptIncludes()`, `markAllCompilationUnitsStale()`
 |A config change is a change of every file.

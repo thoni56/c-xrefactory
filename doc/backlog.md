@@ -456,6 +456,9 @@ Roadmap → Optimization has the baseline: a cold-start PUSH on ffmpeg, measured
     The same holds for a single `break` or `continue`, as long as it is the only kind of
     jump: the call site does that jump instead. A real case: the empty check in
     `case OP_BROWSE_NEXT` (`cxref.c:1755`), which ends with a `break`.
+    And for a `goto` to a label outside the region. A real case: `setUpProjectIfNew()`
+    in `src/server.c`, extracted from `callServer()`, whose failure did `goto done`
+    (WSL, session `d25255b8`, 2026-11-22).
     After: output-parameter-to-return
 - (#123) <a id="inline-variable"></a>**Inline Variable** — replaces each use of a local assigned once with
     its initializer and removes the declaration. 11-planned-features → Inline Variable.
