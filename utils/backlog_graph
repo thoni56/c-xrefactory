@@ -253,6 +253,30 @@ def page_of(text):
     return PAGE.format(graph=html.escape(graph_of(text), quote=False))
 
 
+def loops_in(items):
+    """Each loop once, in the order it is walked from the item that comes first in the file"""
+    loops = []
+    seen = set()
+    done = set()
+
+    def walk(slug, path):
+        if slug in done or slug not in items:
+            return
+        if slug in path:
+            loop = path[path.index(slug):]
+            if len(loop) > 1 and frozenset(loop) not in seen:
+                seen.add(frozenset(loop))
+                loops.append(loop)
+            return
+        for other in items[slug]['waits'] + items[slug]['after']:
+            walk(other, path + [slug])
+        done.add(slug)
+
+    for slug in items:
+        walk(slug, [])
+    return loops
+
+
 def problems_in(path, text):
     sections, items, foundation = read_backlog(text.split('\n'))
     known = set(items) | {done['slug'] for done in foundation}
@@ -280,6 +304,10 @@ def problems_in(path, text):
         for other in item['goes_with']:
             if other not in known:
                 found.append(f"{path}: {item['slug']} goes with {other}, which is not in the backlog")
+    # A loop has no order, whether it goes through Waits for or After
+    for loop in loops_in(items):
+        names = ', '.join(loop[:-1]) + ' and ' + loop[-1]
+        found.append(f"{path}: {names} come after or wait for each other in a loop")
     # A number, once given, stays with its item, so two items cannot share one
     by_number = {}
     for item in items.values():

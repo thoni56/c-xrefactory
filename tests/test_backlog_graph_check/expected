@@ -12,3 +12,5 @@ two afters: exit=1
 parent.md: second-item waits for first-item, which is split into parts, so name one of them
 parent.md: second-item comes after first-item, which is split into parts, so name one of them
 an item with parts: exit=1
+cycle.md: first-item, third-item and second-item come after or wait for each other in a loop
+a loop: exit=1
