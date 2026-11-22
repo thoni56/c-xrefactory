@@ -484,6 +484,17 @@ faces and highlighting in buffers created by C-xrefactory.
 (define-key c-xref-project-menu [c-xref-prj-new] '("New" .
                                                                                            c-xref-project-new))
 
+;; Every definition is also a declaration, so Declarations finds the definitions too.
+;; Neither finds local variables or parameters. Entries show in reverse order.
+(defvar c-xref-search-menu (make-sparse-keymap "Search"))
+(fset 'c-xref-search-menu (symbol-value 'c-xref-search-menu))
+(define-key c-xref-search-menu [c-xref-search-symbol]
+  '(menu-item "Declarations" c-xref-search-symbol
+              :help "Search the declarations, definitions included, of symbols visible outside a function"))
+(define-key c-xref-search-menu [c-xref-search-def]
+  '(menu-item "Definitions" c-xref-search-definition
+              :help "Search the definitions in the project, of symbols visible outside a function"))
+
 (defvar c-xref-unused-menu (make-sparse-keymap "Unused Symbols Menu"))
 (fset 'c-xref-unused-menu (symbol-value 'c-xref-unused-menu))
 (define-key c-xref-unused-menu [c-xref-dm-globals] '("... in Project" . c-xref-push-global-unused-symbols))
@@ -512,8 +523,7 @@ faces and highlighting in buffers created by C-xrefactory.
 ;;(define-key c-xref-menu [c-xref-set-target] '("Set Target for Next Move" . c-xref-set-moving-target-position))
 (define-key c-xref-menu [c-xref-refactor] '("Refactor" . c-xref-refactor))
 (define-key c-xref-menu [separator-buffers4] '("--"))
-(define-key c-xref-menu [c-xref-search-symbol] '("Search Symbol" . c-xref-search-symbol))
-(define-key c-xref-menu [c-xref-search-def] '("Search Definition" . c-xref-search-definition))
+(define-key c-xref-menu [c-xref-search-menu] '("Search" . c-xref-search-menu))
 (define-key c-xref-menu [c-xref-dm-menu] '("Unused Symbols" . c-xref-unused-menu))
 (define-key c-xref-menu [c-xref-sb-menu] '("Browsing" . c-xref-sb-menu))
 (define-key c-xref-menu [c-xref-peek-menu] '("Peek" . c-xref-peek-menu))

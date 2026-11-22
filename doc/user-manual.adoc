@@ -182,13 +182,15 @@ Use it when you:
 * Can't remember a symbol's exact name
 * Want to find symbols from libraries
 
-There are two search operations available from the menu:
-
-*Search Symbol*:: Finds all symbols whose name matches the pattern — functions, variables, types, macros, and any other symbol visible outside a function.
+There are two search operations, under Search in the menu.
+Both find functions, variables, types, macros, and any other symbol visible outside a function whose name matches the pattern.
 Local variables and parameters are not included, use Push on one instead.
 
-*Search Definition*:: Finds only symbols that have a definition within the project.
-Symbols that are merely used but not defined (e.g. called from an external library) are excluded.
+*Definitions*:: Finds the definitions within the project.
+Symbols that are only declared, e.g. functions from an external library, are excluded.
+
+*Declarations*:: Finds the declarations, and since every definition is also a declaration, the definitions too.
+A function with a prototype in a header is listed twice, once for the prototype and once for the definition.
 
 === Navigating Results
 
@@ -310,7 +312,7 @@ It is also in the *C-xref* menu.
 
 |kbd:[F6] |Push This Symbol and Goto Definition
 |kbd:[C-F6] |Push This Symbol and Display Browser
-|kbd:[M-F6] |Search Definition
+|kbd:[M-F6] |Search Definitions
 |kbd:[F5] |Pop Symbol and Return
 |kbd:[C-F5] |Re-push Popped Symbol
 |kbd:[F3] |Previous Reference
@@ -334,7 +336,7 @@ Cursor on symbol → Refactor → Rename Symbol → enter new name
 Select the code → Refactor → Extract Function → name the new function
 
 *Find all globals starting with "config":*
-Search Symbol → enter `config*` → browse results
+Search → Declarations → enter `config*` → browse results
 
 *Find out why references are missing:*
 kbd:[M-g n] → read the message → add the missing `-I` or `-D` to `.c-xrefrc`

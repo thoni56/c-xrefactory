@@ -4388,7 +4388,7 @@ from the minibuffer, where completing calls this."
 (defun c-xref-get-search-string ()
   (let ((sstr) (sym) (_poin) (_table))
     (setq sym (c-xref-get-identifier-on-point))
-    (setq sstr (completing-read "Expression to search (-help for help): "
+    (setq sstr (completing-read "Expression to search, not locals (-help for help): "
                                                 'c-xref-symbols-completionfun nil nil sym))
     (while (equal sstr "-help")
       (progn
@@ -4417,8 +4417,11 @@ wildcard characters '*', '?' or '[' then C-xrefactory reports all
 symbols containing the entered string. For example, entering
 'get' as the expression is equivalent to entering '*get*'.
 
+Local variables and parameters are not included.  Use Push on one
+to see its references.
+
 " nil nil)
-            (setq sstr (completing-read "Expression to search (-help for help): "
+            (setq sstr (completing-read "Expression to search, not locals (-help for help): "
                                                     'c-xref-symbols-completionfun nil nil sym))
             ))
     sstr
@@ -4511,13 +4514,13 @@ symbols containing the entered string. For example, entering
   )
 
 (defun c-xref-search-symbol ()
-  "Search for string(s) amongst references.
+  "Search the declarations of symbols in the project.
 
-This function asks for strings to search, then it inspects the
-references in the active project looking for symbols containing
-the given string(s). For each such symbol it displays the symbol
-name together with its definition location.  Strings are matched
-against the full symbol name.
+This function asks for strings to search, then it looks for
+symbols containing the given string(s), and displays each
+declaration of them with its location.  Every definition is also
+a declaration, so the definitions are included.  Local variables
+and parameters are not.
 "
   (interactive "")
   (let ((sym) (syms) (line) (col))
@@ -4534,14 +4537,13 @@ against the full symbol name.
     ))
 
 (defun c-xref-search-definition ()
-  "Search for a symbol defined in the project.
+  "Search the definitions of symbols in the project.
 
-This function asks for strings to search, then it inspects the
-tags of the active project looking for symbols containing the
-given string(s). For each such symbol it displays the symbol name
-together with its definition location.  When looking for a symbol
-only the symbol name (the identifier) is checked against the
-given string(s).
+This function asks for strings to search, then it looks for
+symbols containing the given string(s), and displays each
+definition of them with its location.  Symbols that are only
+declared, e.g. functions from a library, are not included, and
+neither are local variables and parameters.
 
 "
   (interactive "")
@@ -5244,7 +5246,7 @@ KEYS:
 
   F6      Push This Symbol and Goto Definition
   C-F6    Push This Symbol and Display Browser
-  M-F6    Search Definition
+  M-F6    Search Definitions
   F5      Pop Symbol and Return
   C-F5    Re-push Popped Symbol
   F3, F4  Previous and Next Reference
