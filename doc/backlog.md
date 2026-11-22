@@ -718,6 +718,15 @@ implementation, and are noted in `cu-prerequisites`, `out-of-date`, `time-budget
     first: a first request whose answer reads a held CU that is not a sibling (WSL,
     session `d25255b8`, 2026-11-22).
     After: request-target
+- (#125) <a id="whole-project-goal"></a>**An operation on a name has the whole project as its goal** —
+    today the reach goal is built first, and the whole project is then what is still out of
+    date, collected, asked about and built in `analyseAllOutOfDateCUs()`. So the goal depends
+    on the build. As one list, collected with the goal, the build asks once. The count in
+    the question then includes the out-of-date held CUs, and a "no" leaves them unbuilt,
+    where today they are always built. Decide first whether the held CUs are built
+    whatever the answer, then a red test (WSL, session `d25255b8`, 2026-11-22).
+    Goes with: time-budget
+    After: held-cus-on-first-request
 - (#54) <a id="request-through-includers"></a>**A request in a header is parsed through its includers** —
     never on its own (ADR-0032, amended 2026-10-11), as for a macro body. No includer
     gives a message saying that no compilation unit includes the file. Includers that
