@@ -740,10 +740,9 @@ implementation, and are noted in `cu-prerequisites`, `out-of-date`, `time-budget
     the question then includes the out-of-date held CUs, and a "no" leaves them unbuilt,
     where today they are always built. Decide first whether the held CUs are built
     whatever the answer, then a red test (WSL, session `d25255b8`, 2026-11-22).
-    A search from a file builds its request CU in the whole-project build, and
-    `processFile()` then parses it again, since `OP_SEARCH` is in
-    `requiresProcessingInputFile()`. Taken out, the request is built with the reach goal
-    instead, once and before the question: `test_a_search_from_a_file_asks_before_analysing_its_siblings`
+    A search from a file builds its request CU in the whole-project build, since `OP_SEARCH`
+    is in `requiresProcessingInputFile()` (`processFile()` opens it, but does not parse it).
+    Taken out, the request is built with the reach goal instead, before the question: `test_a_search_from_a_file_asks_before_analysing_its_siblings`
     asks about 130 of 131, `test_a_config_change_is_reloaded_once` shows two progress runs.
     Goes with: time-budget
     After: held-cus-on-first-request
