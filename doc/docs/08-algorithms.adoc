@@ -275,7 +275,10 @@ A step on more than one line does more than its name says, and is where to look 
 * `markAllCompilationUnitsStale()` is part of the removal, as a changed CU loses its knowledge time when its references are removed. It goes with `out-of-date`. "Stale" is the word from before ADR-0035.
 * `collectOutOfDateHeldCUs()` widens the goal by the held files, which the goal line does not name, and only in a project that was open already (`held-cus-on-first-request`).
 * `collectRequestCUForStripping()` does not collect, and `stripRequestCU()` is a second removal, beside the remove line, for the cursor parse (`cursor-parse-reuse`).
-* An operation on a name has its goal on two lists, since the question does not count what the reach builds, the held CUs among them (`whole-project-goal`).
+* An operation on a name builds two lists (`whole-project-goal`).
+  First `buildList`, without a question. It has the held CUs that are out of date.
+  Then `wholeProject`, the other CUs that are out of date.
+  The question counts only `wholeProject`.
 * `processFile()` says nothing about what it does.
 
 Traced on WSL, session `d25255b8`, 2026-11-22.

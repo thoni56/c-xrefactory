@@ -737,11 +737,12 @@ implementation, and are noted in `cu-prerequisites`, `out-of-date`, `time-budget
     2026-11-22).
     Waits for: index-based-sessions
 - (#125) <a id="whole-project-goal"></a>**An operation on a name asks about its whole goal** —
-    its goal is collected with the rest, but on two lists: the reach, which is built
-    whatever the answer, and every other CU that is out of date
-    (`collectOutOfDateCUsNotIn()`), which the question counts. As one list the build asks
-    once, the count includes the out-of-date held CUs, and a "no" leaves them unbuilt.
-    Which it is depends on what the held CUs are for (WSL, session `d25255b8`, 2026-11-22).
+    the goal is on two lists. `buildList` is built without a question,
+    and has the held CUs that are out of date. `wholeProject` has the other
+    CUs that are out of date (`collectOutOfDateCUsNotIn()`), and the question counts only those.
+    With one list, the question counts the held CUs too, and a "no" leaves
+    them unbuilt. Which is right depends on why the held CUs are built (WSL, session
+    `d25255b8`, 2026-11-22).
     A search from a file builds its request CU on the second list, since `OP_SEARCH`
     is in `requiresProcessingInputFile()` (`processFile()` opens it, but does not parse it).
     Taken out, the request is built with the reach instead, before the question: `test_a_search_from_a_file_asks_before_analysing_its_siblings`

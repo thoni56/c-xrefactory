@@ -146,6 +146,19 @@ contradicts".
 Older staleness that the change did not cause is not this pass's job, it is backlog
 item `docs-audit`.
 
+## Write simply
+
+In explanations, the docs and the backlog, follow the main rules of Simplified Technical
+English (ASD-STE100):
+
+- One topic per sentence. At most 20 words in an instruction, 25 in a description.
+- Subject first, active voice, no stacked clauses.
+- One name for one thing. Name the function, list or variable, not a description of it.
+- An example names concrete things: which list, which file, what number.
+
+A sentence that puts two lists, a condition and an example together is hard to follow,
+even when each part is right.
+
 ## Trace the history before a decision
 
 When a question or a change touches existing behaviour, find out what that behaviour
