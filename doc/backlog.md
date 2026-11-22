@@ -747,6 +747,13 @@ implementation, and are noted in `cu-prerequisites`, `out-of-date`, `time-budget
     asks about 130 of 131, `test_a_config_change_is_reloaded_once` shows two progress runs.
     Goes with: time-budget
     After: held-cus-on-first-request
+- (#127) <a id="modules-follow-the-shape"></a>**Modules follow the lines of the shape** —
+    `callServer()` calls one function for each line ("A Request, Step by Step" in
+    `08-algorithms`), and what each of them calls shows the modules it uses. `rebuild.c`
+    holds three lines, the removal, the goal and the build. `projectstructure.c` is discover and
+    scan, and `freshness.c` the prerequisites that the rest read. Look at it once the goal
+    is one step (WSL, session `d25255b8`, 2026-11-22).
+    After: whole-project-goal
 - (#54) <a id="request-through-includers"></a>**A request in a header is parsed through its includers** —
     never on its own (ADR-0032, amended 2026-10-11), as for a macro body. No includer
     gives a message saying that no compilation unit includes the file. Includers that
