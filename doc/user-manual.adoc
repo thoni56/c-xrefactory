@@ -184,7 +184,8 @@ Use it when you:
 
 There are two search operations available from the menu:
 
-*Search Symbol*:: Finds all symbols whose name matches the pattern — functions, variables, types, macros, and any other symbol known to c-xrefactory.
+*Search Symbol*:: Finds all symbols whose name matches the pattern — functions, variables, types, macros, and any other symbol visible outside a function.
+Local variables and parameters are not included, use Push on one instead.
 
 *Search Definition*:: Finds only symbols that have a definition within the project.
 Symbols that are merely used but not defined (e.g. called from an external library) are excluded.
