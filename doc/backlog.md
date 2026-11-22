@@ -680,6 +680,8 @@ implementation, and are noted in `cu-prerequisites`, `out-of-date`, `time-budget
     table: `test_every_cu_expanding_a_macro_is_parsed` gets 130 referents from 128 parses,
     786 ms on a warm push (WSL, session `d25255b8`). Skipping the loop for current CUs is
     probably enough (`cursor-parse-reuse`).
+    A datapoint: a cold avcodec push builds 2515 CUs and the first next 34 more, all `.c` files and
+    many included by another `.c`, with the same answer (WSL, session `d25255b8`, f32fbc69).
     Waits for: adr-0035
 - (#35) <a id="cu-prerequisites"></a>**A CU's prerequisites** — the CU, its include closure and the project
     config, put together where `out-of-date` uses them, the CU first. `Prerequisites`

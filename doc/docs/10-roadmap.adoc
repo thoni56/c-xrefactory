@@ -176,6 +176,65 @@ row above that fixes it lands.
 * link:/workspace/1/decisions/C-xrefactory#22[ADR-0022] — lightweight file-structure scanning
 * link:/workspace/1/decisions/C-xrefactory#27[ADR-0027] — identifiers in a macro body
 
+=== Convergence: Freshness as Make
+
+Memory as Truth settled where the knowledge is, and the Setup Ladder when each thing is
+bound. This convergence settles what a request brings up to date before it answers.
+A compilation unit is built when it is out of date with its prerequisites, as in make, and
+a file has changed when its content is different.
+The request converges to the shape in link:/workspace/1/documentation/C-xrefactory#algorithms[Algorithms]
+("The Shape It Converges To").
+
+*Done when* every step of a request belongs to a line of the shape, and the answer on a
+real project is complete, except for the gaps listed under Remaining.
+What a request costs is not part of it, that is Optimization.
+
+==== Done
+
+* *Freshness is make* — a CU is built when its knowledge is older than a prerequisite,
+  its include closure or the config (link:/workspace/1/decisions/C-xrefactory#32[ADR-0032]).
+* *Remove on change* — a file's references are removed when its content changes, and the
+  left-behind mark is gone (link:/workspace/1/decisions/C-xrefactory#35[ADR-0035]).
+* *Change is difference* — a file has changed when its content token differs, a held
+  buffer's as well as a file on disk (link:/workspace/1/decisions/C-xrefactory#36[ADR-0036]).
+* *The include edges are inputs* — a request takes the include graph from the scan's edges
+  and the parse's include references.
+* *No caps on the goal* — the sibling cap and the include walk's limit are gone, and a
+  request on a name asks before analysing the whole project.
+* *The scan reads every header it has not read* — also one the file table knew before the
+  scan, e.g. the request file.
+
+==== Remaining
+
+[cols="1,2",options="header"]
+|===
+|Work |Notes / dependency
+
+|`<...>` includes
+|The scan does not record them, so a project that includes its own headers that way
+ misses CUs that were never parsed (ffmpeg's `doc/examples`). The reach of the symbol
+ comes first, so that system headers do not pull in every CU. Backlog `header-filtered-siblings`,
+ then `scan-angle-includes`.
+
+|A CU that stops emitting into an unchanged header
+|Its references stay in the header, since nothing about the header changed. Backlog `variant-b`.
+
+|A request in a header goes through its includers
+|Never on its own, and with no includer the message says so. Backlog `request-through-includers`.
+
+|References in `wrap()` macros
+|Six references in ffmpeg's `neontest` and `w64xmmtest` were not found. Not checked yet,
+ so it may be a gap or not.
+|===
+
+The rest of backlog section 7 is cost or structure, and does not keep this open.
+
+==== Decisions that shaped this direction
+
+* link:/workspace/1/decisions/C-xrefactory#32[ADR-0032] — knowledge is rebuilt like make rebuilds targets
+* link:/workspace/1/decisions/C-xrefactory#35[ADR-0035] — a file's references are removed when its content changes
+* link:/workspace/1/decisions/C-xrefactory#36[ADR-0036] — a change is a difference, and the server orders what it saw
+
 === Optimization
 
 Once the core architectural path (lightweight scan, entry refresh, memory-as-truth) is functional, targeted optimizations can reduce cold-start latency and improve responsiveness on large projects.
