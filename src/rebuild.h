@@ -19,7 +19,7 @@ extern int collectCUsIncluding(Prerequisites *prerequisites, int fileNumber, int
 
 extern void collectOutOfDateHeldCUs(BuildList *list, Prerequisites *prerequisites);
 extern void collectSiblingCUs(BuildList *list, Prerequisites *prerequisites, int requestFileNumber);
-extern void buildKnowledgeOfAll(BuildList *list, ArgumentsVector baseArgs);
+extern void buildKnowledgeOfAll(BuildList *list, ArgumentsVector startupOptions);
 extern void collectRequestCUForStripping(BuildList *list, Prerequisites *prerequisites, int requestFileNumber);
 extern void collectRequestCUToBuild(BuildList *list, Prerequisites *prerequisites, int requestFileNumber);
 extern void stripRequestCU(BuildList *list, int requestFileNumber);

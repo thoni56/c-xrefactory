@@ -41,7 +41,7 @@ BeforeEach(Rebuild) {
 AfterEach(Rebuild) {}
 
 
-static ArgumentsVector baseArgs = {.argc = 0, .argv = NULL};
+static ArgumentsVector startupOptions = {.argc = 0, .argv = NULL};
 static FileTimestamp contentTime = {.tv_sec = 1234, .tv_nsec = 5678};
 
 static BuildList *buildListOf(int fileNumber) {
@@ -81,7 +81,7 @@ Ensure(Rebuild, builds_every_cu_on_the_list_in_its_order) {
     BuildList *list = newBuildList(MAX_CUS_TO_REPARSE);
     addToBuildList(list, 1);
     addToBuildList(list, 2);
-    buildKnowledgeOfAll(list, baseArgs);
+    buildKnowledgeOfAll(list, startupOptions);
     freeBuildList(list);
 }
 
@@ -107,7 +107,7 @@ Ensure(Rebuild, removes_the_old_references_of_a_cu_before_it_is_parsed) {
     always_expect(numberOfPasses, will_return(1));
 
     BuildList *list = buildListOf(42);
-    buildKnowledgeOfAll(list, baseArgs);
+    buildKnowledgeOfAll(list, startupOptions);
     freeBuildList(list);
 
     assert_that(referencesRemovedBeforeTheParse);
@@ -129,7 +129,7 @@ Ensure(Rebuild, a_built_cu_knows_it_was_built_from_what_it_had_when_the_parse_st
 
     FileTimestamp before = fileTimestampNow();
     BuildList *list = buildListOf(42);
-    buildKnowledgeOfAll(list, baseArgs);
+    buildKnowledgeOfAll(list, startupOptions);
     freeBuildList(list);
 
     assert_false(fileTimestampIsLessThan(fileItem.knowledgeTime, before));
@@ -144,7 +144,7 @@ Ensure(Rebuild, a_cu_that_did_not_parse_has_no_knowledge) {
     always_expect(numberOfPasses, will_return(1));
 
     BuildList *list = buildListOf(42);
-    buildKnowledgeOfAll(list, baseArgs);
+    buildKnowledgeOfAll(list, startupOptions);
     freeBuildList(list);
 
     assert_that(fileTimestampIsZero(fileItem.knowledgeTime));
@@ -159,7 +159,7 @@ Ensure(Rebuild, a_cu_gone_from_disk_is_forgotten_not_parsed) {
     never_expect(parseToCreateReferences);
 
     BuildList *list = buildListOf(42);
-    buildKnowledgeOfAll(list, baseArgs);
+    buildKnowledgeOfAll(list, startupOptions);
     freeBuildList(list);
 }
 
@@ -179,7 +179,7 @@ Ensure(Rebuild, does_not_see_the_cursor_of_the_request) {
     always_expect(numberOfPasses, will_return(1));
 
     BuildList *list = buildListOf(42);
-    buildKnowledgeOfAll(list, baseArgs);
+    buildKnowledgeOfAll(list, startupOptions);
     freeBuildList(list);
 
     assert_that(cursorOffsetDuringTheParse, is_equal_to(NO_CURSOR_OFFSET));
@@ -193,7 +193,7 @@ Ensure(Rebuild, a_built_cu_has_its_browsing_stack_refreshed) {
     always_expect(numberOfPasses, will_return(1));
 
     BuildList *list = buildListOf(42);
-    buildKnowledgeOfAll(list, baseArgs);
+    buildKnowledgeOfAll(list, startupOptions);
     freeBuildList(list);
 
     assert_that(fileItem.needsBrowsingStackRefresh);

@@ -10,8 +10,10 @@ void mainTaskEntryInitialisations(ArgumentsVector args, StringList **operands) {
   mock(args.argc, args.argv, operands);
 }
 
-bool initializeProjectContext(char *fileName, ArgumentsVector baseArgs, ArgumentsVector requestArgs) {
-  return (bool)mock(fileName, baseArgs.argc, baseArgs.argv, requestArgs.argc, requestArgs.argv);
+bool initializeProjectContext(char *fileName, ArgumentsVector startupOptions,
+                              ArgumentsVector requestOptions) {
+  return (bool)mock(fileName, startupOptions.argc, startupOptions.argv,
+                    requestOptions.argc, requestOptions.argv);
 }
 
 bool initializeFileProcessing(ArgumentsVector args, ArgumentsVector nargs, char *fileName) {
@@ -38,7 +40,7 @@ bool isProjectConfigChanged(void) {
     return (bool)mock();
 }
 
-void reloadProjectConfig(ArgumentsVector baseArgs, ArgumentsVector requestArgs) {
+void reloadProjectConfig(ArgumentsVector startupOptions, ArgumentsVector requestOptions) {
     mock();
 }
 

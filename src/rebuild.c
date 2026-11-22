@@ -324,7 +324,7 @@ void collectOutOfDateHeldCUs(BuildList *list, Prerequisites *prerequisites) {
  * discovery, options, checkpoint) with multi-pass support.  Saves and
  * restores REQUEST-level option fields that initOptions() inside
  * initializeFileProcessing would otherwise wipe. */
-static bool parseFileWithFullInit(char *fileName, ArgumentsVector baseArgs) {
+static bool parseFileWithFullInit(char *fileName, ArgumentsVector startupOptions) {
     bool parsed = false;
     int savedCursorOffset = options.cursorOffset;
     int savedIndex = options.index;
@@ -337,7 +337,7 @@ static bool parseFileWithFullInit(char *fileName, ArgumentsVector baseArgs) {
     ArgumentsVector emptyArgs = {.argc = 0, .argv = NULL};
     silenceMessages();
     for (currentPass = 1; currentPass <= numberOfPasses(); currentPass++) {
-        if (initializeFileProcessing(baseArgs, emptyArgs, fileName)) {
+        if (initializeFileProcessing(startupOptions, emptyArgs, fileName)) {
             options.cursorOffset = NO_CURSOR_OFFSET;
             parseToCreateReferences(fileName);
             parsed = true;
@@ -358,7 +358,7 @@ static bool parseFileWithFullInit(char *fileName, ArgumentsVector baseArgs) {
     return parsed;
 }
 
-static void buildKnowledgeOfCU(int fileNumber, ArgumentsVector baseArgs) {
+static void buildKnowledgeOfCU(int fileNumber, ArgumentsVector startupOptions) {
     FileItem *fileItem = getFileItemWithFileNumber(fileNumber);
     char *fileName = fileItem->name;
     if (!editorFileExists(fileName)) {
@@ -369,12 +369,12 @@ static void buildKnowledgeOfCU(int fileNumber, ArgumentsVector baseArgs) {
     /* Taken before the content is read, so an edit during the parse makes the
      * knowledge out of date. */
     FileTimestamp knowledgeTime = fileTimestampNow();
-    bool parsed = parseFileWithFullInit(fileName, baseArgs);
+    bool parsed = parseFileWithFullInit(fileName, startupOptions);
     if (parsed)
         fileItem->knowledgeTime = knowledgeTime;
 }
 
-void buildKnowledgeOfAll(BuildList *list, ArgumentsVector baseArgs) {
+void buildKnowledgeOfAll(BuildList *list, ArgumentsVector startupOptions) {
     if (list->count == 0)
         return;
 
@@ -383,7 +383,7 @@ void buildKnowledgeOfAll(BuildList *list, ArgumentsVector baseArgs) {
         setupProgress(list);
 
     for (int i = 0; i < list->count; i++) {
-        buildKnowledgeOfCU(list->fileNumbers[i], baseArgs);
+        buildKnowledgeOfCU(list->fileNumbers[i], startupOptions);
         getFileItemWithFileNumber(list->fileNumbers[i])->needsBrowsingStackRefresh = true;
         if (options.cxrefProtocol)
             writeProgressInformation(list->count - i - 1);

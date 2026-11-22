@@ -28,9 +28,9 @@ void collectSiblingCUs(BuildList *list, Prerequisites *prerequisites, int reques
     mock(list, prerequisites, requestFileNumber);
 }
 
-void buildKnowledgeOfAll(BuildList *list, ArgumentsVector baseArgs_) {
-    ArgumentsVector *baseArgs = &baseArgs_;
-    mock(list, baseArgs);
+void buildKnowledgeOfAll(BuildList *list, ArgumentsVector startupOptions_) {
+    ArgumentsVector *startupOptions = &startupOptions_;
+    mock(list, startupOptions);
 }
 
 void collectRequestCUForStripping(BuildList *list, Prerequisites *prerequisites, int requestFileNumber) {

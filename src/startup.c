@@ -430,7 +430,7 @@ void startCompilationUnitForPass(int pass) {
     initializationsPerInvocation();
 }
 
-static void loadProjectSettings(ArgumentsVector baseArgs, ArgumentsVector requestArgs,
+static void loadProjectSettings(ArgumentsVector startupOptions, ArgumentsVector requestOptions,
                                 char projectConfigFileName[]) {
     StringList *tmpIncludeDirs;
     /* === PHASE 2: Options File Processing === */
@@ -446,13 +446,13 @@ static void loadProjectSettings(ArgumentsVector baseArgs, ArgumentsVector reques
                      * save/restore them (see startup loop in server.c). */
 
     /* Process options in specific order: command line, request args, .c-xrefrc */
-    processOptions(baseArgs, NULL);   /* command line opts */
+    processOptions(startupOptions, NULL);   /* command line opts */
     /* piped options (no include or define options)
        must be before .xrefrc file options, but, the s_cachedOptions
        must be set after .c-xrefrc file, but s_cachedOptions can't contain
        piped options, !!! berk.
     */
-    processOptions(requestArgs, NULL);
+    processOptions(requestOptions, NULL);
     reInitCwd(projectConfigFileName);
 
     tmpIncludeDirs = options.includeDirs;
@@ -497,7 +497,7 @@ static void loadProjectSettings(ArgumentsVector baseArgs, ArgumentsVector reques
 
     LIST_APPEND(StringList, options.includeDirs, tmpIncludeDirs);
 
-    processOptions(requestArgs, NULL);
+    processOptions(requestOptions, NULL);
 
     /* Apply convention-based db path for auto-detected projects (after all options processed) */
     applyConventionBasedDatabasePath();
@@ -532,9 +532,9 @@ bool isProjectConfigChanged(void) {
  * and savedOptions so subsequent requests and reparsing see the new settings.
  * Safe to call mid-request: file table, requestFileNumber, and
  * detectedProjectRoot are not affected by loadProjectSettings(). */
-void reloadProjectConfig(ArgumentsVector baseArgs, ArgumentsVector requestArgs) {
+void reloadProjectConfig(ArgumentsVector startupOptions, ArgumentsVector requestOptions) {
     log_info("Config file '%s' changed, reloading project settings", previousProjectConfigurationFile);
-    loadProjectSettings(baseArgs, requestArgs, previousProjectConfigurationFile);
+    loadProjectSettings(startupOptions, requestOptions, previousProjectConfigurationFile);
 }
 
 /* Initialize project context: discover project, load options, interrogate compiler, and
@@ -544,7 +544,8 @@ void reloadProjectConfig(ArgumentsVector baseArgs, ArgumentsVector requestArgs) 
  * Phase 1 (project discovery) is done inline, phases 2-4 delegate to
  * loadProjectSettings() which is shared with initializeFileProcessing.
  */
-bool initializeProjectContext(char *fileName, ArgumentsVector baseArgs, ArgumentsVector requestArgs) {
+bool initializeProjectContext(char *fileName, ArgumentsVector startupOptions,
+                              ArgumentsVector requestOptions) {
     char projectConfigFileName[MAX_FILE_NAME_SIZE];
 
     /* === PHASE 1: Project Discovery === */
@@ -558,7 +559,7 @@ bool initializeProjectContext(char *fileName, ArgumentsVector baseArgs, Argument
     initAllInputs();
 
     /* === PHASES 2-4: Options, compiler interrogation, checkpoint === */
-    loadProjectSettings(baseArgs, requestArgs, projectConfigFileName);
+    loadProjectSettings(startupOptions, requestOptions, projectConfigFileName);
 
     strcpy(previousProjectConfigurationFile, projectConfigFileName);
     previousPass = currentPass;
@@ -579,7 +580,8 @@ static void applyCurrentPassOptions(void) {
  * 4. Memory checkpointing - cache expensive discoveries for same-project files
  * 5. Input setup - finally calls computeAndOpenInputFile() -> initInput()
  */
-bool initializeFileProcessing(ArgumentsVector baseArgs, ArgumentsVector requestArgs, char *fileName) {
+bool initializeFileProcessing(ArgumentsVector startupOptions, ArgumentsVector requestOptions,
+                              char *fileName) {
     char projectConfigFileName[MAX_FILE_NAME_SIZE];
     bool inputOpened;
 
@@ -612,7 +614,7 @@ bool initializeFileProcessing(ArgumentsVector baseArgs, ArgumentsVector requestA
         || strcmp(previousProjectConfigurationFile, projectConfigFileName) != 0 /* or a different project */
     ) {
         /* === PHASE 2-4: Options reading, compiler discovery, memory checkpointing === */
-        loadProjectSettings(baseArgs, requestArgs, projectConfigFileName);
+        loadProjectSettings(startupOptions, requestOptions, projectConfigFileName);
 
         /* Before the input is opened: a -D is lexed through the same input */
         applyCurrentPassOptions();
@@ -631,7 +633,7 @@ bool initializeFileProcessing(ArgumentsVector baseArgs, ArgumentsVector requestA
         restoreCheckpoint(&projectBaseline); /* Skip phases 2-3, restore cached compiler discovery */
 
         deepCopyOptionsFromTo(&savedOptions, &options);
-        processOptions(requestArgs, NULL); /* no include or define options */
+        processOptions(requestOptions, NULL); /* no include or define options */
         applyCurrentPassOptions();
         inputOpened = computeAndOpenInputFile(fileName); /* Phase 5 only */
     }

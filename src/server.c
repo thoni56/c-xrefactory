@@ -210,13 +210,13 @@ protected void singlePass(ArgumentsVector args, ArgumentsVector nargs, Prerequis
     }
 }
 
-static void processFile(ArgumentsVector baseArgs, ArgumentsVector requestArgs,
+static void processFile(ArgumentsVector startupOptions, ArgumentsVector requestOptions,
                         Prerequisites *prerequisites) {
     FileItem *fileItem = getFileItemWithFileNumber(requestFileNumber);
 
     for (currentPass=1; currentPass <= numberOfPasses(); currentPass++) {
         assert(fileItem->name!=NULL);
-        singlePass(baseArgs, requestArgs, prerequisites, fileItem->name);
+        singlePass(startupOptions, requestOptions, prerequisites, fileItem->name);
         if (completionStringServed && !opensBrowsingSession(options.serverOperation))
             break;
     }
@@ -262,12 +262,12 @@ static int countCompilationUnits(void) {
     return count;
 }
 
-static bool setUpProjectIfNew(ArgumentsVector baseArgs, ArgumentsVector requestArgs) {
+static bool setUpProjectIfNew(ArgumentsVector startupOptions, ArgumentsVector requestOptions) {
     if (projectContextInitialized)
         return true;
 
     bool initialized = initializeProjectContext(getFileItemWithFileNumber(requestFileNumber)->name,
-                                                baseArgs, requestArgs);
+                                                startupOptions, requestOptions);
     if (!initialized) {
         /* No project configuration found - c-xrefactory cannot operate.
          * OP_GET_PROJECT answers that itself; other operations need an
@@ -281,7 +281,8 @@ static bool setUpProjectIfNew(ArgumentsVector baseArgs, ArgumentsVector requestA
     return true;
 }
 
-static bool findChangedFiles(BuildList *buildList, ArgumentsVector baseArgs, ArgumentsVector requestArgs) {
+static bool findChangedFiles(BuildList *buildList, ArgumentsVector startupOptions,
+                             ArgumentsVector requestOptions) {
     loadAllOpenedEditorBuffers();
 
     /* Close preloaded buffers that the client no longer sends - the user has saved
@@ -294,7 +295,7 @@ static bool findChangedFiles(BuildList *buildList, ArgumentsVector baseArgs, Arg
         /* A project is only found with its root, see applyConventionBasedDatabasePath() */
         assert(options.detectedProjectRoot[0] != '\0');
         if (isProjectConfigChanged()) {
-            reloadProjectConfig(baseArgs, requestArgs);
+            reloadProjectConfig(startupOptions, requestOptions);
             configChanged = true;
         }
     }
@@ -358,32 +359,32 @@ static bool okToAnalyse(int outOfDateCUs) {
     return ppcWaitConfirmation(msg);
 }
 
-static void buildAfterAsking(ArgumentsVector baseArgs, BuildList *list) {
+static void buildAfterAsking(ArgumentsVector startupOptions, BuildList *list) {
     int outOfDateCUs = buildListCount(list);
     if (okToAnalyse(outOfDateCUs))
-        buildKnowledgeOfAll(list, baseArgs);
+        buildKnowledgeOfAll(list, startupOptions);
 }
 
-static void parseForTheAnswer(ArgumentsVector baseArgs, ArgumentsVector requestArgs, bool hasInputFile,
-                         Prerequisites *prerequisites) {
+static void parseForTheAnswer(ArgumentsVector startupOptions, ArgumentsVector requestOptions,
+                              bool hasInputFile, Prerequisites *prerequisites) {
     /* A build starts each CU from the project's options without the request's
      * (initializeFileProcessing()), so the request gets its own back */
     deepCopyOptionsFromTo(&savedOptions, &options);
-    processOptions(requestArgs, NULL);
+    processOptions(requestOptions, NULL);
 
     if (opensBrowsingSession(options.serverOperation))
         pushEmptySession(&browsingStack);
 
     if (requiresProcessingInputFile(options.serverOperation)) {
         if (hasInputFile) {
-            processFile(baseArgs, requestArgs, prerequisites);
+            processFile(startupOptions, requestOptions, prerequisites);
         } else if (options.serverOperation != OP_SEARCH) {
             errorMessage(ERR_ST, "No input file");
         }
     }
 }
 
-void callServer(ArgumentsVector baseArgs, ArgumentsVector requestArgs) {
+void callServer(ArgumentsVector startupOptions, ArgumentsVector requestOptions) {
 
     ENTER();
 
@@ -391,14 +392,14 @@ void callServer(ArgumentsVector baseArgs, ArgumentsVector requestArgs) {
     bool hasInputFile = prepareInputFileForRequest();
 
     /* SETUP */
-    if (hasInputFile && !setUpProjectIfNew(baseArgs, requestArgs)) {
+    if (hasInputFile && !setUpProjectIfNew(startupOptions, requestOptions)) {
         LEAVE();
         return;
     }
 
     /* CHANGED */
     BuildList *buildList = newBuildList(MAX_FILES);
-    bool configChanged = findChangedFiles(buildList, baseArgs, requestArgs);
+    bool configChanged = findChangedFiles(buildList, startupOptions, requestOptions);
 
     /* DISCOVER + SCAN */
     Prerequisites *prerequisites = scanIncludesOfChangedFiles(configChanged);
@@ -413,19 +414,19 @@ void callServer(ArgumentsVector baseArgs, ArgumentsVector requestArgs) {
     stripRequestCU(buildList, requestFileNumber);
 
     /* BUILD */
-    buildKnowledgeOfAll(buildList, baseArgs);
+    buildKnowledgeOfAll(buildList, startupOptions);
 
     /* Completeness for name-based operations: if CUs are out of date, ask user
      * before proceeding */
     if (projectContextInitialized && needsWholeProjectParsed(options.serverOperation)) {
         BuildList *list = newBuildList(MAX_FILES);
         collectOutOfDateCUs(list, prerequisites);
-        buildAfterAsking(baseArgs, list);
+        buildAfterAsking(startupOptions, list);
         freeBuildList(list);
     }
 
     /* ANSWER */
-    parseForTheAnswer(baseArgs, requestArgs, hasInputFile, prerequisites);
+    parseForTheAnswer(startupOptions, requestOptions, hasInputFile, prerequisites);
 
     freePrerequisites(prerequisites);
     freeBuildList(buildList);

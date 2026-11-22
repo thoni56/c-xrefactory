@@ -144,7 +144,7 @@ static void pushReferences(EditorMarker *point, ServerOperation operation, char 
 }
 
 static void safetyCheck(EditorMarker *point) {
-    ArgumentsVector baseArgs = {
+    ArgumentsVector startupOptions = {
         .argc = argumentCount(serverDefaultArguments),
         .argv = serverDefaultArguments
     };
@@ -152,7 +152,7 @@ static void safetyCheck(EditorMarker *point) {
     removeReferencesOfChangedFiles(prerequisites);
     BuildList *buildList = newBuildList(MAX_CUS_TO_REPARSE);
     collectOutOfDateHeldCUs(buildList, prerequisites);
-    buildKnowledgeOfAll(buildList, baseArgs);
+    buildKnowledgeOfAll(buildList, startupOptions);
     freeBuildList(buildList);
     freePrerequisites(prerequisites);
     pushReferences(point, OP_INTERNAL_SAFETY_CHECK, NULL, 0);

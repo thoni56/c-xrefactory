@@ -195,7 +195,7 @@ bool ppcWaitConfirmation(char *message) {
     ppcSynchronize();
 
     /* Read the response directly from stdin without using readOptionsFromPipe,
-     * which would overwrite the static optMemory buffer and clobber requestArgs. */
+     * which would overwrite the static optMemory buffer and clobber requestOptions. */
     char line[MAX_OPTION_LEN];
     bool confirmed = false;
 

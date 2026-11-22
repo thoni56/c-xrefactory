@@ -22,7 +22,8 @@ extern void initializeCoreSubsystems(void);
 extern void totalTaskEntryInitialisations(void);
 extern void mainTaskEntryInitialisations(ArgumentsVector args, StringList **operands);
 
-extern bool initializeProjectContext(char *fileName, ArgumentsVector baseArgs, ArgumentsVector requestArgs);
+extern bool initializeProjectContext(char *fileName, ArgumentsVector startupOptions,
+                                     ArgumentsVector requestOptions);
 extern bool initializeFileProcessing(ArgumentsVector args, ArgumentsVector nargs, char *fileName);
 extern void startCompilationUnit(void);
 
@@ -32,6 +33,6 @@ extern void startCompilationUnitForPass(int pass);
 
 /* Config-change detection: re-run scan when .c-xrefrc is edited mid-session */
 extern bool isProjectConfigChanged(void);
-extern void reloadProjectConfig(ArgumentsVector baseArgs, ArgumentsVector requestArgs);
+extern void reloadProjectConfig(ArgumentsVector startupOptions, ArgumentsVector requestOptions);
 
 #endif

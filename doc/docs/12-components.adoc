@@ -164,7 +164,7 @@ Operations are classified by what they need:
 [source,c]
 ----
 void server(ArgumentsVector args);       // Infinite request loop
-void callServer(ArgumentsVector baseArgs, ArgumentsVector requestArgs);  // Single request dispatch
+void callServer(ArgumentsVector startupOptions, ArgumentsVector requestOptions);  // Single request dispatch
 void initServer(ArgumentsVector args);   // Per-request initialization
 ----
 
