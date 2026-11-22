@@ -506,6 +506,14 @@ Roadmap → Optimization has the baseline: a cold-start PUSH on ffmpeg, measured
     Before the request chain (`symbol-at-cursor-from-table`, `cursor-parse-reuse`,
     `header-filtered-siblings`), since it decides what a push sees once those change what
     is built, and it makes `session-refresh-time` unnecessary.
+    Design input: a session's reach is the reach of its symbol, the same CUs a rename of
+    it needs. The goal of a Next or Previous is the out-of-date CUs in that reach. Today
+    `-browse-next` sends the current buffer, so `collectGoal()` builds that buffer's
+    siblings and the held CUs, which the answer does not read. A file in the symbol's reach
+    that changed on disk loses its references, and nothing builds it. Next is one of the
+    operations that must be fastest, and a small goal is what makes it fast. The same
+    reach answers `held-cus-on-first-request` and is what `header-filtered-siblings` needs
+    (WSL, session `d25255b8`, 2026-11-22).
     After: request-target
 - (#110) <a id="rename-leaves-sessions"></a>**A rename leaves its safety-check sessions on the browsing stack** —
     seen on WSL, session `d25255b8`, 2026-11-06, build 1.10.0-105-g86971. Push on a
