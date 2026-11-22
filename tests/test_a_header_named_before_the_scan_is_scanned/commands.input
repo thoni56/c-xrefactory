@@ -1,0 +1,10 @@
+CXREF -server
+-getproject CURDIR/p.h
+<sync>
+-browse-push -cursor=18 CURDIR/p.h
+<sync>
+-browse-next CURDIR/p.h
+<sync>
+-browse-next CURDIR/p.h
+<sync>
+<exit>

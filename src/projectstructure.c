@@ -48,10 +48,10 @@ static StringList *addIncludeOnLine(char *line, const char *filePath, int includ
              * normalizeFileName_static can clobber it. */
             char resolvedPath[MAX_FILE_NAME_SIZE];
             strcpy(resolvedPath, resolved);
-            bool alreadyKnown = existsInFileTable(resolvedPath);
             int includedFileNumber = addFileNameToFileTable(resolvedPath);
             addScannedInclude(includerFileNumber, includedFileNumber);
-            if (!alreadyKnown)
+            FileItem *includedItem = getFileItemWithFileNumber(includedFileNumber);
+            if (contentTokenIsMissing(includedItem->scanToken))
                 discovered = newStringList(strdup(resolvedPath), discovered);
         }
     }
@@ -173,8 +173,11 @@ static void scanDiscoveredHeaders(StringList *worklist, StringList *includeDirs)
         current->next = NULL;
 
         int headerFileNumber = addFileNameToFileTable(current->string);
-        StringList *newHeaders = scanFileForIncludes(current->string, headerFileNumber, includeDirs);
-        prependAllHeadersToWorklist(&worklist, newHeaders);
+        FileItem *headerItem = getFileItemWithFileNumber(headerFileNumber);
+        if (contentTokenIsMissing(headerItem->scanToken)) {
+            StringList *newHeaders = scanFileForIncludes(current->string, headerFileNumber, includeDirs);
+            prependAllHeadersToWorklist(&worklist, newHeaders);
+        }
         freeStringList(current);
     }
 }
