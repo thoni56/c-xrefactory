@@ -506,7 +506,7 @@ Roadmap → Optimization has the baseline: a cold-start PUSH on ffmpeg, measured
     Before the request chain (`symbol-at-cursor-from-table`, `cursor-parse-reuse`,
     `header-filtered-siblings`), since it decides what a push sees once those change what
     is built, and it makes `session-refresh-time` unnecessary.
-    After: whole-project-goal
+    After: request-target
 - (#110) <a id="rename-leaves-sessions"></a>**A rename leaves its safety-check sessions on the browsing stack** —
     seen on WSL, session `d25255b8`, 2026-11-06, build 1.10.0-105-g86971. Push on a
     symbol, Next to a parameter, Rename it, then Pop: it says "Conflicting References",
@@ -736,19 +736,18 @@ implementation, and are noted in `cu-prerequisites`, `out-of-date`, `time-budget
     for the sessions, or go, and `projectWasOpen` with them (WSL, session `d25255b8`,
     2026-11-22).
     Waits for: index-based-sessions
-- (#125) <a id="whole-project-goal"></a>**An operation on a name has the whole project as its goal** —
-    today the reach goal is built first, and the whole project is then what is still out of
-    date, collected, asked about and built in `analyseAllOutOfDateCUs()`. So the goal depends
-    on the build. As one list, collected with the goal, the build asks once. The count in
-    the question then includes the out-of-date held CUs, and a "no" leaves them unbuilt,
-    where today they are always built. Decide first whether the held CUs are built
-    whatever the answer, then a red test (WSL, session `d25255b8`, 2026-11-22).
-    A search from a file builds its request CU in the whole-project build, since `OP_SEARCH`
+- (#125) <a id="whole-project-goal"></a>**An operation on a name asks about its whole goal** —
+    its goal is collected with the rest, but on two lists: the reach, which is built
+    whatever the answer, and every other CU that is out of date
+    (`collectOutOfDateCUsNotIn()`), which the question counts. As one list the build asks
+    once, the count includes the out-of-date held CUs, and a "no" leaves them unbuilt.
+    Which it is depends on what the held CUs are for (WSL, session `d25255b8`, 2026-11-22).
+    A search from a file builds its request CU on the second list, since `OP_SEARCH`
     is in `requiresProcessingInputFile()` (`processFile()` opens it, but does not parse it).
-    Taken out, the request is built with the reach goal instead, before the question: `test_a_search_from_a_file_asks_before_analysing_its_siblings`
+    Taken out, the request is built with the reach instead, before the question: `test_a_search_from_a_file_asks_before_analysing_its_siblings`
     asks about 130 of 131, `test_a_config_change_is_reloaded_once` shows two progress runs.
     Goes with: time-budget
-    After: request-target
+    Waits for: held-cus-on-first-request
 - (#127) <a id="modules-follow-the-shape"></a>**Modules follow the lines of the shape** —
     `callServer()` calls one function for each line ("A Request, Step by Step" in
     `08-algorithms`), and what each of them calls shows the modules it uses. `rebuild.c`

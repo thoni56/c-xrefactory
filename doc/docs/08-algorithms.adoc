@@ -243,6 +243,7 @@ Then the references of the changed files (`removeReferencesOfChangedFiles()`).
 |Held CUs that are out of date, in a project that was open already (`collectOutOfDateHeldCUs()`).
 The request CU, if it is out of date (`collectRequestCUForStripping()`, `collectRequestCUToBuild()`). The first does not build it, since the operation parses it.
 The CUs that reach the request file, unless the operation is on a name (`collectSiblingCUs()`).
+An operation on a name: every other CU that is out of date, on a list of its own (`collectOutOfDateCUsNotIn()`).
 |goal
 
 |`stripRequestCU()`
@@ -253,9 +254,9 @@ The CUs that reach the request file, unless the operation is on a name (`collect
 |Builds the build list.
 |build
 
-|`collectOutOfDateCUs()`, `buildAfterAsking()`
-|An operation on a name: every CU still out of date, asking above the budget (`okToAnalyse()`).
-|goal, build
+|`buildAfterAsking()`
+|An operation on a name: builds the rest of the goal, asking above the budget (`okToAnalyse()`).
+|build
 
 |`parseForTheAnswer()`
 |The request gets its own options back after the build (`deepCopyOptionsFromTo()`, `processOptions()`).
@@ -274,7 +275,7 @@ A step on more than one line does more than its name says, and is where to look 
 * `markAllCompilationUnitsStale()` is part of the removal, as a changed CU loses its knowledge time when its references are removed. It goes with `out-of-date`. "Stale" is the word from before ADR-0035.
 * `collectOutOfDateHeldCUs()` widens the goal by the held files, which the goal line does not name, and only in a project that was open already (`held-cus-on-first-request`).
 * `collectRequestCUForStripping()` does not collect, and `stripRequestCU()` is a second removal, beside the remove line, for the cursor parse (`cursor-parse-reuse`).
-* An operation on a name gets its goal after the build, as what is still out of date (`whole-project-goal`).
+* An operation on a name has its goal on two lists, since the question does not count what the reach builds, the held CUs among them (`whole-project-goal`).
 * `processFile()` says nothing about what it does.
 
 Traced on WSL, session `d25255b8`, 2026-11-22.
