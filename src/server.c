@@ -364,6 +364,25 @@ static void buildAfterAsking(ArgumentsVector baseArgs, BuildList *list) {
         buildKnowledgeOfAll(list, baseArgs);
 }
 
+static void parseForTheAnswer(ArgumentsVector baseArgs, ArgumentsVector requestArgs, bool hasInputFile,
+                         Prerequisites *prerequisites) {
+    /* A build starts each CU from the project's options without the request's
+     * (initializeFileProcessing()), so the request gets its own back */
+    deepCopyOptionsFromTo(&savedOptions, &options);
+    processOptions(requestArgs, NULL);
+
+    if (opensBrowsingSession(options.serverOperation))
+        pushEmptySession(&browsingStack);
+
+    if (requiresProcessingInputFile(options.serverOperation)) {
+        if (hasInputFile) {
+            processFile(baseArgs, requestArgs, prerequisites);
+        } else if (options.serverOperation != OP_SEARCH) {
+            errorMessage(ERR_ST, "No input file");
+        }
+    }
+}
+
 void callServer(ArgumentsVector baseArgs, ArgumentsVector requestArgs) {
 
     ENTER();
@@ -393,6 +412,7 @@ void callServer(ArgumentsVector baseArgs, ArgumentsVector requestArgs) {
     /* Another REMOVE... */
     stripRequestCU(buildList, requestFileNumber);
 
+    /* BUILD */
     buildKnowledgeOfAll(buildList, baseArgs);
 
     /* Completeness for name-based operations: if CUs are out of date, ask user
@@ -404,21 +424,9 @@ void callServer(ArgumentsVector baseArgs, ArgumentsVector requestArgs) {
         freeBuildList(list);
     }
 
-    /* A build starts each CU from the project's options without the request's
-     * (initializeFileProcessing()), so the request gets its own back */
-    deepCopyOptionsFromTo(&savedOptions, &options);
-    processOptions(requestArgs, NULL);
+    /* ANSWER */
+    parseForTheAnswer(baseArgs, requestArgs, hasInputFile, prerequisites);
 
-    if (opensBrowsingSession(options.serverOperation))
-        pushEmptySession(&browsingStack);
-
-    if (requiresProcessingInputFile(options.serverOperation)) {
-        if (hasInputFile) {
-            processFile(baseArgs, requestArgs, prerequisites);
-        } else if (options.serverOperation != OP_SEARCH) {
-            errorMessage(ERR_ST, "No input file");
-        }
-    }
     freePrerequisites(prerequisites);
     freeBuildList(buildList);
     LEAVE();
