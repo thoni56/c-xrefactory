@@ -311,6 +311,17 @@ void callServer(ArgumentsVector baseArgs, ArgumentsVector requestArgs) {
 
     ENTER();
 
+    /* Held files are brought up to date only in a project that was open already */
+    bool projectWasOpen = projectContextInitialized;
+
+    bool hasInputFile = prepareInputFileForRequest();
+
+    /* Setup project? */
+    if (hasInputFile && !setUpProjectIfNew(baseArgs, requestArgs)) {
+        LEAVE();
+        return;
+    }
+
     loadAllOpenedEditorBuffers();
 
     BuildList *buildList = newBuildList(MAX_FILES);
@@ -319,15 +330,6 @@ void callServer(ArgumentsVector baseArgs, ArgumentsVector requestArgs) {
      * and/or closed the file in the editor. Without this, the server would keep parsing
      * from preloaded content the client has dropped. */
     closeEditorBuffersNoLongerHeld(buildList);
-
-    /* Held files are brought up to date only in a project that was open already */
-    bool projectWasOpen = projectContextInitialized;
-
-    bool hasInputFile = prepareInputFileForRequest();
-
-    if (hasInputFile && !setUpProjectIfNew(baseArgs, requestArgs)) {
-        goto done;
-    }
 
     /* CONFIG-CHANGE-AWARE SCAN.
      * First request: !scanDone triggers the scan.
@@ -403,8 +405,6 @@ void callServer(ArgumentsVector baseArgs, ArgumentsVector requestArgs) {
         }
     }
     freePrerequisites(prerequisites);
-
-done:
     freeBuildList(buildList);
     LEAVE();
 }
