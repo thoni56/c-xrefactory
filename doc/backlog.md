@@ -723,16 +723,15 @@ implementation, and are noted in `cu-prerequisites`, `out-of-date`, `time-budget
     includes (`scan-angle-includes`), so for a project that includes its own headers that
     way, reach misses CUs never parsed.
     Waits for: adr-0032
-- (#124) <a id="held-cus-on-first-request"></a>**The held CUs are in the goal also on the first request** —
-    `collectGoal()` collects the out-of-date held CUs only if `projectWasOpen`. The client
-    sends every modified buffer with every request, the first one too. The guard is left
-    from when the held files were reparsed above the setup, where a first request has no
-    project yet, and 49cbdf6c kept it when that moved below the setup. So on a first
-    request a held CU outside the request's reach is not built. With
-    `projectContextInitialized` after the setup, `projectWasOpen` goes. Needs a red test
-    first: a first request whose answer reads a held CU that is not a sibling (WSL,
-    session `d25255b8`, 2026-11-22).
-    After: request-target
+- (#124) <a id="held-cus-on-first-request"></a>**The held CUs in the goal are there for the sessions** —
+    `collectGoal()` collects the out-of-date held CUs for every operation, but only if
+    `projectWasOpen`. What reads them outside the request's reach is the refresh of the
+    session on top of the browsing stack, since a session walks a copy of its references.
+    A first request has no session, so there is nothing to keep fresh, and no test fails
+    on the guard. Once a session reads the table, the held CUs either belong to a goal
+    for the sessions, or go, and `projectWasOpen` with them (WSL, session `d25255b8`,
+    2026-11-22).
+    Waits for: index-based-sessions
 - (#125) <a id="whole-project-goal"></a>**An operation on a name has the whole project as its goal** —
     today the reach goal is built first, and the whole project is then what is still out of
     date, collected, asked about and built in `analyseAllOutOfDateCUs()`. So the goal depends
