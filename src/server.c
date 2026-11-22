@@ -358,6 +358,7 @@ static void collectGoal(BuildList *buildList, bool projectWasOpen, bool hasInput
         collectSiblingCUs(buildList, prerequisites, requestFileNumber);
 }
 
+/* Above the budget the user is asked */
 static bool okToAnalyse(int outOfDateCUs) {
     if (!needsConfirmationToAnalyseThatMany(outOfDateCUs))
         return true;
