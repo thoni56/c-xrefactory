@@ -501,9 +501,12 @@ Roadmap → Optimization has the baseline: a cold-start PUSH on ffmpeg, measured
     Goes with: index-based-sessions
 
 - (#22) <a id="index-based-sessions"></a>**Index-based sessions** — dissolves stale-POP *and* lets an answer grow while you
-    work. Roadmap → Memory as Truth → Remaining. Depends only on entry refresh, which is
-    done.
-    Waits for: entry-refresh
+    work. Roadmap → Memory as Truth → Remaining. Starts with a design: what a session
+    holds, what Next, Previous and Pop read, and when a position in it is out of date.
+    Before the request chain (`symbol-at-cursor-from-table`, `cursor-parse-reuse`,
+    `header-filtered-siblings`), since it decides what a push sees once those change what
+    is built, and it makes `session-refresh-time` unnecessary.
+    After: whole-project-goal
 - (#110) <a id="rename-leaves-sessions"></a>**A rename leaves its safety-check sessions on the browsing stack** —
     seen on WSL, session `d25255b8`, 2026-11-06, build 1.10.0-105-g86971. Push on a
     symbol, Next to a parameter, Rename it, then Pop: it says "Conflicting References",
@@ -663,6 +666,7 @@ implementation, and are noted in `cu-prerequisites`, `out-of-date`, `time-budget
     parameters, the bounds and the move target parse once, without a pass. Each needs a
     test where its answer depends on a pass first, and with the second loop, "parse this
     buffer in every pass" can become one function (WSL, session `d25255b8`, 2026-11-17).
+    After: index-based-sessions
 - (#113) <a id="symbol-at-cursor-from-table"></a>**The symbol at the cursor is looked up in the table, not parsed for** —
     a push, browsing or for a refactoring, parses the request file only to find what is at
     the cursor (`cxref.c:328`), although the refresh has just built its references. The
