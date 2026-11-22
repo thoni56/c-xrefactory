@@ -361,3 +361,23 @@ Ensure(Rebuild, keeps_the_references_of_a_header_that_does_not_include_a_changed
 
     assert_that(fileTimestampIsZero(other.noticeTime));
 }
+
+/* An operation on a name builds the whole project after the reach, so what the
+ * reach builds is not collected again */
+Ensure(Rebuild, collects_the_out_of_date_cus_that_are_not_on_the_other_list) {
+    FileItem fileItem = {.name = "source.c"};
+    expect(getNextExistingFileNumber, will_return(1));
+    expect(getNextExistingFileNumber, will_return(2));
+    expect(getNextExistingFileNumber, will_return(-1));
+    always_expect(getFileItemWithFileNumber, will_return(&fileItem));
+    always_expect(isCompilationUnit, will_return(true));
+    always_expect(knowledgeIsOutOfDate, will_return(true));
+    BuildList *reach = buildListOf(1);
+    BuildList *wholeProject = newBuildList(MAX_CUS_TO_REPARSE);
+
+    collectOutOfDateCUsNotIn(wholeProject, reach, NULL);
+
+    assert_that(buildListCount(wholeProject), is_equal_to(1));
+    freeBuildList(wholeProject);
+    freeBuildList(reach);
+}

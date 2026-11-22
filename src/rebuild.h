@@ -24,6 +24,7 @@ extern void collectRequestCUForStripping(BuildList *list, Prerequisites *prerequ
 extern void collectRequestCUToBuild(BuildList *list, Prerequisites *prerequisites, int requestFileNumber);
 extern void stripRequestCU(BuildList *list, int requestFileNumber);
 extern void collectOutOfDateCUs(BuildList *list, Prerequisites *prerequisites);
+extern void collectOutOfDateCUsNotIn(BuildList *list, BuildList *other, Prerequisites *prerequisites);
 extern int buildListCount(BuildList *list);
 
 /* A file's references are removed when its content changes (ADR-0035) */

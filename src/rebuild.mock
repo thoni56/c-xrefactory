@@ -49,6 +49,10 @@ void collectOutOfDateCUs(BuildList *list, Prerequisites *prerequisites) {
     mock(list, prerequisites);
 }
 
+void collectOutOfDateCUsNotIn(BuildList *list, BuildList *other, Prerequisites *prerequisites) {
+    mock(list, other, prerequisites);
+}
+
 
 void removeReferencesOfChangedFiles(Prerequisites *prerequisites) {
     mock(prerequisites);

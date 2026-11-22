@@ -157,6 +157,16 @@ void collectOutOfDateCUs(BuildList *list, Prerequisites *prerequisites) {
     }
 }
 
+/* The CUs out of date that are not on the other list */
+void collectOutOfDateCUsNotIn(BuildList *list, BuildList *other, Prerequisites *prerequisites) {
+    for (int i = getNextExistingFileNumber(0); i != -1; i = getNextExistingFileNumber(i + 1)) {
+        FileItem *fileItem = getFileItemWithFileNumber(i);
+        if (!other->built[i] && isCompilationUnit(fileItem->name) && !fileItem->isDeleted
+            && knowledgeIsOutOfDate(prerequisites, i))
+            addToBuildList(list, i);
+    }
+}
+
 void markAllCompilationUnitsStale(void) {
     for (int i = getNextExistingFileNumber(0); i != -1; i = getNextExistingFileNumber(i + 1)) {
         FileItem *fileItem = getFileItemWithFileNumber(i);
