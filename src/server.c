@@ -342,36 +342,19 @@ static Prerequisites *scanIncludesOfChangedFiles(bool configChanged) {
     return collectPrerequisites();
 }
 
-void callServer(ArgumentsVector baseArgs, ArgumentsVector requestArgs) {
-
-    ENTER();
-
-    /* Held files are brought up to date only in a project that was open already */
-    bool projectWasOpen = projectContextInitialized;
-
-    bool hasInputFile = prepareInputFileForRequest();
-
-    /* SETUP PROJECT? */
-    if (hasInputFile && !setUpProjectIfNew(baseArgs, requestArgs)) {
-        LEAVE();
-        return;
-    }
-
-    /* FIND CHANGED FILES */
-    BuildList *buildList = newBuildList(MAX_FILES);
-    bool configChanged = findChangedFiles(buildList, baseArgs, requestArgs);
-
-    /* SCAN INCLUDES OF CHANGED FILES */
-    Prerequisites *prerequisites = scanIncludesOfChangedFiles(configChanged);
+static void removeReferences(bool configChanged, Prerequisites *prerequisites) {
     if (configChanged) {
         /* A config change is a change of every file (ADR-0035) */
         removeAllReferencesExceptIncludes();
         markAllCompilationUnitsStale();
     }
     removeReferencesOfChangedFiles(prerequisites);
+}
 
-    /* Stale preloaded files are built before dispatching the operation, so all
-     * operations see fresh in-memory references */
+static void collectGoal(BuildList *buildList, bool projectWasOpen, bool hasInputFile,
+                        Prerequisites *prerequisites) {
+    /* The held CUs that are out of date are in every operation's goal, so all
+     * operations see what is in the editor, but only in a project that was open already */
     if (projectWasOpen)
         collectOutOfDateHeldCUs(buildList, prerequisites);
 
@@ -388,7 +371,35 @@ void callServer(ArgumentsVector baseArgs, ArgumentsVector requestArgs) {
     if (projectContextInitialized && hasInputFile && !answeredWithoutReferences(options.serverOperation)
         && !needsWholeProjectParsed(options.serverOperation))
         collectSiblingCUs(buildList, prerequisites, requestFileNumber);
+}
 
+void callServer(ArgumentsVector baseArgs, ArgumentsVector requestArgs) {
+
+    ENTER();
+
+    bool projectWasOpen = projectContextInitialized;
+    bool hasInputFile = prepareInputFileForRequest();
+
+    /* SETUP */
+    if (hasInputFile && !setUpProjectIfNew(baseArgs, requestArgs)) {
+        LEAVE();
+        return;
+    }
+
+    /* CHANGED */
+    BuildList *buildList = newBuildList(MAX_FILES);
+    bool configChanged = findChangedFiles(buildList, baseArgs, requestArgs);
+
+    /* DISCOVER + SCAN */
+    Prerequisites *prerequisites = scanIncludesOfChangedFiles(configChanged);
+
+    /* REMOVE */
+    removeReferences(configChanged, prerequisites);
+
+    /* GOAL */
+    collectGoal(buildList, projectWasOpen, hasInputFile, prerequisites);
+
+    /* Another REMOVE... */
     stripRequestCU(buildList, requestFileNumber);
 
     buildKnowledgeOfAll(buildList, baseArgs);
