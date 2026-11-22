@@ -80,7 +80,7 @@ static const char *parseAllPromptFor(ServerOperation operation) {
 
 static bool requiresProcessingInputFile(ServerOperation operation) {
     return operation==OP_COMPLETION
-           || operation==OP_SEARCH
+           || operation == OP_SEARCH
            || opensBrowsingSession(operation)
         ;
 }
@@ -93,16 +93,6 @@ static bool answeredWithoutReferences(ServerOperation operation) {
         || operation == OP_GET_ENV_VALUE
         || operation == OP_DUMP;     /* shows the table as it is, refreshing would change it */
 }
-
-/* -get answers from the locked project's variables. An input file only adds the
-   ${__file} family of expansions to the value, so a request without one is
-   answerable rather than an error. A search is over the whole project. */
-static bool toleratesMissingInputFile(ServerOperation operation) {
-    return operation == OP_GET_ENV_VALUE
-        || operation == OP_DUMP
-        || operation == OP_SEARCH;
-}
-
 
 /* The identifiers in a macro body are only code once some compilation unit
  * expands the macro. A CU can only expand it if it includes the file defining
@@ -425,7 +415,7 @@ void callServer(ArgumentsVector baseArgs, ArgumentsVector requestArgs) {
     if (requiresProcessingInputFile(options.serverOperation)) {
         if (hasInputFile) {
             processFile(baseArgs, requestArgs, prerequisites);
-        } else if (!toleratesMissingInputFile(options.serverOperation)) {
+        } else if (options.serverOperation != OP_SEARCH) {
             errorMessage(ERR_ST, "No input file");
         }
     }
