@@ -258,7 +258,7 @@ static void scanProjectStructure() {
 }
 
 /* Analysing within the cap is not worth a question (ADR-0032, time budget) */
-protected bool needsConfirmationToAnalyse(int outOfDateCUs) {
+protected bool needsConfirmationToAnalyseThatMany(int outOfDateCUs) {
     return outOfDateCUs > MAX_CUS_TO_REPARSE;
 }
 
@@ -270,21 +270,6 @@ static int countCompilationUnits(void) {
             count++;
     }
     return count;
-}
-
-static void analyseAllOutOfDateCUs(ArgumentsVector baseArgs, Prerequisites *prerequisites) {
-    BuildList *list = newBuildList(MAX_FILES);
-    collectOutOfDateCUs(list, prerequisites);
-    int outOfDateCUs = buildListCount(list);
-    if (outOfDateCUs > 0) {
-        char msg[TMP_STRING_SIZE];
-        sprintf(msg, "%d of %d files need analysing. Analyse all before %s?", outOfDateCUs,
-                countCompilationUnits(), parseAllPromptFor(options.serverOperation));
-        if (!needsConfirmationToAnalyse(outOfDateCUs) || ppcWaitConfirmation(msg)) {
-            buildKnowledgeOfAll(list, baseArgs);
-        }
-    }
-    freeBuildList(list);
 }
 
 static bool setUpProjectIfNew(ArgumentsVector baseArgs, ArgumentsVector requestArgs) {
@@ -373,6 +358,21 @@ static void collectGoal(BuildList *buildList, bool projectWasOpen, bool hasInput
         collectSiblingCUs(buildList, prerequisites, requestFileNumber);
 }
 
+static bool okToAnalyse(int outOfDateCUs) {
+    if (!needsConfirmationToAnalyseThatMany(outOfDateCUs))
+        return true;
+    char msg[TMP_STRING_SIZE];
+    sprintf(msg, "%d of %d files need analysing. Analyse all before %s?", outOfDateCUs,
+            countCompilationUnits(), parseAllPromptFor(options.serverOperation));
+    return ppcWaitConfirmation(msg);
+}
+
+static void buildAfterAsking(ArgumentsVector baseArgs, BuildList *list) {
+    int outOfDateCUs = buildListCount(list);
+    if (okToAnalyse(outOfDateCUs))
+        buildKnowledgeOfAll(list, baseArgs);
+}
+
 void callServer(ArgumentsVector baseArgs, ArgumentsVector requestArgs) {
 
     ENTER();
@@ -406,8 +406,12 @@ void callServer(ArgumentsVector baseArgs, ArgumentsVector requestArgs) {
 
     /* Completeness for name-based operations: if CUs are out of date, ask user
      * before proceeding */
-    if (projectContextInitialized && needsWholeProjectParsed(options.serverOperation))
-        analyseAllOutOfDateCUs(baseArgs, prerequisites);
+    if (projectContextInitialized && needsWholeProjectParsed(options.serverOperation)) {
+        BuildList *list = newBuildList(MAX_FILES);
+        collectOutOfDateCUs(list, prerequisites);
+        buildAfterAsking(baseArgs, list);
+        freeBuildList(list);
+    }
 
     /* A build starts each CU from the project's options without the request's
      * (initializeFileProcessing()), so the request gets its own back */
