@@ -1,0 +1,5 @@
+-search=a_value CURDIR/a.c
+<progress>Analysing 2 files... 1 remaining</progress>
+-search=a_value CURDIR/a.c
+<progress>Analysing 2 files... 1 remaining</progress>
+-search=a_value CURDIR/a.c

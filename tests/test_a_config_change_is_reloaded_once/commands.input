@@ -1,0 +1,11 @@
+CXREF -server
+-getproject CURDIR/a.c
+<sync>
+-search=a_value CURDIR/a.c
+<sync>
+!cp c-xrefrc.with_feature .c-xrefrc
+-search=a_value CURDIR/a.c
+<sync>
+-search=a_value CURDIR/a.c
+<sync>
+<exit>

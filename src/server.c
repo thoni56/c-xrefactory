@@ -306,6 +306,27 @@ static bool setUpProjectIfNew(ArgumentsVector baseArgs, ArgumentsVector requestA
     return true;
 }
 
+static bool findChangedFiles(BuildList *buildList, ArgumentsVector baseArgs, ArgumentsVector requestArgs) {
+    loadAllOpenedEditorBuffers();
+
+    /* Close preloaded buffers that the client no longer sends - the user has saved
+     * and/or closed the file in the editor. Without this, the server would keep parsing
+     * from preloaded content the client has dropped. */
+    closeEditorBuffersNoLongerHeld(buildList);
+
+    bool configChanged = false;
+    if (projectContextInitialized) {
+        /* A project is only found with its root, see applyConventionBasedDatabasePath() */
+        assert(options.detectedProjectRoot[0] != '\0');
+        if (isProjectConfigChanged()) {
+            reloadProjectConfig(baseArgs, requestArgs);
+            configChanged = true;
+        }
+    }
+
+    return configChanged;
+}
+
 void callServer(ArgumentsVector baseArgs, ArgumentsVector requestArgs) {
     static bool scanDone = false;
 
@@ -316,35 +337,21 @@ void callServer(ArgumentsVector baseArgs, ArgumentsVector requestArgs) {
 
     bool hasInputFile = prepareInputFileForRequest();
 
-    /* Setup project? */
+    /* SETUP PROJECT? */
     if (hasInputFile && !setUpProjectIfNew(baseArgs, requestArgs)) {
         LEAVE();
         return;
     }
 
-    loadAllOpenedEditorBuffers();
-
+    /* FIND CHANGED FILES */
     BuildList *buildList = newBuildList(MAX_FILES);
-
-    /* Close preloaded buffers that the client no longer sends - the user has saved
-     * and/or closed the file in the editor. Without this, the server would keep parsing
-     * from preloaded content the client has dropped. */
-    closeEditorBuffersNoLongerHeld(buildList);
+    bool configChanged = findChangedFiles(buildList, baseArgs, requestArgs);
 
     /* CONFIG-CHANGE-AWARE SCAN.
      * First request: !scanDone triggers the scan.
      * Config change: re-reads .c-xrefrc (updates options.includeDirs and
      * savedOptions), then re-runs scan with new include dirs. */
     if (projectContextInitialized) {
-        /* A project is only found with its root, see applyConventionBasedDatabasePath() */
-        assert(options.detectedProjectRoot[0] != '\0');
-        bool configChanged = isProjectConfigChanged();
-        if (configChanged) {
-            reloadProjectConfig(baseArgs, requestArgs);
-            /* A config change is a change of every file (ADR-0035) */
-            removeAllReferencesExceptIncludes();
-            markAllCompilationUnitsStale();
-        }
         if (!scanDone || configChanged) {
             scanProjectStructure();
             scanDone = true;
@@ -355,9 +362,11 @@ void callServer(ArgumentsVector baseArgs, ArgumentsVector requestArgs) {
     }
 
     Prerequisites *prerequisites = collectPrerequisites();
-
-    /* After the include graph is collected, since a header's references
-     * include its own include references */
+    if (configChanged) {
+        /* A config change is a change of every file (ADR-0035) */
+        removeAllReferencesExceptIncludes();
+        markAllCompilationUnitsStale();
+    }
     removeReferencesOfChangedFiles(prerequisites);
 
     /* Stale preloaded files are built before dispatching the operation, so all
