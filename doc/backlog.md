@@ -475,6 +475,12 @@ Roadmap → Optimization has the baseline: a cold-start PUSH on ffmpeg, measured
     And `okToAnalyse()` in `src/server.c`, where the extracted `bool` was returned
     directly instead of through its local.
     After: extract-guard-return
+- (#126) <a id="rename-keeps-alignment"></a>**Rename Symbol leaves the lines aligned to the old name** —
+    renaming a function whose signature goes over several lines leaves the continuation
+    lines aligned to the old name. Extract Function ends with a Rename from its generated
+    name, so every extracted function with a long parameter list gets it, e.g.
+    `parseForTheAnswer()` in `src/server.c` (WSL session d25255b8, 2026-11-22).
+    After: inline-variable
 - (#97) <a id="rename-partial-in-broken-code"></a>**Rename in code that does not parse leaves occurrences behind** —
     with the cursor on a declaration the parser still saw, only that occurrence is renamed,
     with no warning. On a use it refuses, see `tests/test_rename_in_code_that_does_not_parse`,
