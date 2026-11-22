@@ -4386,13 +4386,13 @@ from the minibuffer, where completing calls this."
     ))
 
 (defun c-xref-get-search-string ()
-  (let ((sstr) (sym) (_poin) (_table))
-    (setq sym (c-xref-get-identifier-on-point))
-    (setq sstr (completing-read "Expression to search, not locals (-help for help): "
-                                                'c-xref-symbols-completionfun nil nil sym))
+  (let* ((sym (c-xref-get-identifier-on-point))
+         (ask (lambda ()
+                (completing-read "Expression to search, not locals (-help for help): "
+                                 'c-xref-symbols-completionfun nil nil sym)))
+         (sstr (funcall ask)))
     (while (equal sstr "-help")
-      (progn
-            (c-xref-interactive-help  "
+      (c-xref-interactive-help  "
 C-xrefactory search expressions are similar to standard shell
 expressions.  They are composed from a sequence of characters
 possibly containing wildcard characters.  The following wildcards
@@ -4421,11 +4421,8 @@ Local variables and parameters are not included.  Use Push on one
 to see its references.
 
 " nil nil)
-            (setq sstr (completing-read "Expression to search, not locals (-help for help): "
-                                                    'c-xref-symbols-completionfun nil nil sym))
-            ))
-    sstr
-    ))
+      (setq sstr (funcall ask)))
+    sstr))
 
 (defun c-xref-interactive-search-escape (_event)
   (interactive "i")
