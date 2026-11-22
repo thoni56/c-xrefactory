@@ -225,6 +225,11 @@ What a request costs is not part of it, that is Optimization.
 |References in `wrap()` macros
 |Six references in ffmpeg's `neontest` and `w64xmmtest` were not found. Not checked yet,
  so it may be a gap or not.
+
+|Steps on more than one line
+|The steps of a request that do more than one line's job, listed in
+ link:/workspace/1/documentation/C-xrefactory#algorithms[Algorithms] ("A Request, Step by Step").
+ Backlog `held-cus-on-first-request`, `whole-project-goal` and `cursor-parse-reuse`.
 |===
 
 The rest of backlog section 7 is cost or structure, and does not keep this open.
