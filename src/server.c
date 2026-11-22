@@ -287,6 +287,25 @@ static void analyseAllOutOfDateCUs(ArgumentsVector baseArgs, Prerequisites *prer
     freeBuildList(list);
 }
 
+static bool setUpProjectIfNew(ArgumentsVector baseArgs, ArgumentsVector requestArgs) {
+    if (projectContextInitialized)
+        return true;
+
+    bool initialized = initializeProjectContext(getFileItemWithFileNumber(requestFileNumber)->name,
+                                                baseArgs, requestArgs);
+    if (!initialized) {
+        /* No project configuration found - c-xrefactory cannot operate.
+         * OP_GET_PROJECT answers that itself; other operations need an
+         * explicit message. */
+        if (options.serverOperation != OP_GET_PROJECT)
+            errorMessage(ERR_ST, "No project configuration (.c-xrefrc) found for this file");
+        return false;
+    }
+    loadSnapshotFromStore();
+    projectContextInitialized = true;
+    return true;
+}
+
 void callServer(ArgumentsVector baseArgs, ArgumentsVector requestArgs) {
     static bool scanDone = false;
 
@@ -306,22 +325,8 @@ void callServer(ArgumentsVector baseArgs, ArgumentsVector requestArgs) {
 
     bool hasInputFile = prepareInputFileForRequest();
 
-    /* ONE-TIME: project identity + snapshot load */
-    if (!projectContextInitialized && hasInputFile) {
-        bool initialized = initializeProjectContext(
-            getFileItemWithFileNumber(requestFileNumber)->name, baseArgs, requestArgs);
-
-        if (initialized) {
-            loadSnapshotFromStore();
-            projectContextInitialized = true;
-        } else {
-            /* No project configuration found - c-xrefactory cannot operate.
-             * OP_GET_PROJECT answers that itself; other operations need an
-             * explicit message. */
-            if (options.serverOperation != OP_GET_PROJECT)
-                errorMessage(ERR_ST, "No project configuration (.c-xrefrc) found for this file");
-            goto done;
-        }
+    if (hasInputFile && !setUpProjectIfNew(baseArgs, requestArgs)) {
+        goto done;
     }
 
     /* CONFIG-CHANGE-AWARE SCAN.
