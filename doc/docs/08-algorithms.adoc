@@ -204,6 +204,98 @@ That is safe because the CUs reaching it are out of date, and the next goal that
 A goal that is smaller than what the answer reads gives an answer that is incomplete without that being known (`request-target`).
 The shape was first written down on the Mac, session `4839a129`, with the removal last, as a sweep.
 
+==== A Request, Step by Step
+
+What `callServer()` does with every request today, in order, with the line of the shape each step belongs to.
+Names only, so that the list stays true when the code moves, and so that it shows whether the names say what happens.
+
+[cols="3,4,1",options="header"]
+|===
+|Step |What it does |Line
+
+|`loadAllOpenedEditorBuffers()`
+|Reads the buffers the client sent, the content of a held file.
+|changed
+
+|`closeEditorBuffersNoLongerHeld()`
+|Closes a buffer the client no longer sends, and puts its CU on the build list.
+|changed, build
+
+|`prepareInputFileForRequest()`
+|Opens the file the request names.
+|goal
+
+|`initializeProjectContext()`, `loadSnapshotFromStore()`
+|Once: finds the project and loads the snapshot.
+|_Setup Ladder_
+
+|`isProjectConfigChanged()`, `reloadProjectConfig()`, `removeAllReferencesExceptIncludes()`, `markAllCompilationUnitsStale()`
+|A config change is a change of every file.
+|changed, remove, build
+
+|`scanProjectStructure()`
+|First request, or a config change: walks the project and scans every file.
+|discover, scan
+
+|`rescanChangedFiles()`
+|Every other request: scans the files that changed.
+|changed, scan
+
+|`collectPrerequisites()`
+|The include graph, from the scan's edges and the parse's include references.
+|scan
+
+|`removeReferencesOfChangedFiles()`
+|Removes the references of the changed files.
+|remove
+
+|`collectOutOfDateHeldCUs()`
+|Held CUs that are out of date go on the build list, also outside the goal.
+|goal, build
+
+|`collectRequestCUForStripping()`, `collectRequestCUToBuild()`
+|The request CU, if it is out of date. The first does not build it, since the operation parses it.
+|goal
+
+|`collectSiblingCUs()`
+|The CUs that reach the request file, unless the operation is on a name.
+|goal
+
+|`stripRequestCU()`
+|Removes the request CU's references, which the operation's parse puts back.
+|remove
+
+|`buildKnowledgeOfAll()`
+|Builds the build list.
+|build
+
+|`analyseAllOutOfDateCUs()`
+|An operation on a name: every out-of-date CU, asking above the budget.
+|goal, build
+
+|`deepCopyOptionsFromTo()`, `processOptions()`
+|The request gets its own options back after the build.
+|_Setup Ladder_
+
+|`pushEmptySession()`, `processFile()`
+|Parses the request file once for each pass, for the cursor, and in a macro body the CUs expanding it.
+|answer
+
+|`answerEditorAction()`
+|Answers, after `callServer()` returns.
+|answer
+|===
+
+A step on more than one line does more than its name says, and is where to look first:
+
+* `closeEditorBuffersNoLongerHeld()` also decides a build, past the build predicate.
+* `markAllCompilationUnitsStale()` is the build predicate's job, and goes with `out-of-date`. "Stale" is the word from before ADR-0035.
+* `collectOutOfDateHeldCUs()` widens the goal by the held files, which the goal line does not name.
+* `collectRequestCUForStripping()` does not collect, and `stripRequestCU()` is a second removal, beside the remove line, for the cursor parse (`cursor-parse-reuse`).
+* `processFile()` says nothing about what it does.
+
+Traced on WSL, session `d25255b8`, 2026-11-22.
+
 ==== What the Server Knows About a File
 
 Knowing a file is several facts, kept in different places, and a change has to reach each of them.
