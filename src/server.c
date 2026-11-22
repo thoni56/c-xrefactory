@@ -425,7 +425,6 @@ void callServer(ArgumentsVector baseArgs, ArgumentsVector requestArgs) {
     if (requiresProcessingInputFile(options.serverOperation)) {
         if (hasInputFile) {
             processFile(baseArgs, requestArgs, prerequisites);
-            projectContextInitialized = true;
         } else if (!toleratesMissingInputFile(options.serverOperation)) {
             errorMessage(ERR_ST, "No input file");
         }
