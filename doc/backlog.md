@@ -457,6 +457,12 @@ Roadmap → Optimization has the baseline: a cold-start PUSH on ffmpeg, measured
     jump: the call site does that jump instead. A real case: the empty check in
     `case OP_BROWSE_NEXT` (`cxref.c:1755`), which ends with a `break`.
     After: output-parameter-to-return
+- (#123) <a id="inline-variable"></a>**Inline Variable** — replaces each use of a local assigned once with
+    its initializer and removes the declaration. 11-planned-features → Inline Variable.
+    A real case: `hasBeenScanned()` in `src/projectstructure.c`, where a variable extracted from an
+    `if` and a `FileItem *` from `getFileItemWithFileNumber()` were both inlined by hand
+    (WSL session d25255b8, 2026-11-22).
+    After: extract-guard-return
 - (#97) <a id="rename-partial-in-broken-code"></a>**Rename in code that does not parse leaves occurrences behind** —
     with the cursor on a declaration the parser still saw, only that occurrence is renamed,
     with no warning. On a use it refuses, see `tests/test_rename_in_code_that_does_not_parse`,
