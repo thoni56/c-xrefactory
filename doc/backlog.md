@@ -429,6 +429,8 @@ Roadmap → Optimization has the baseline: a cold-start PUSH on ffmpeg, measured
     3. Extract Predicate, a `bool`. It needs a marker for an expression, since
        `putRegionMarker()` (`src/lexer.c`) wraps the region in braces and a marked
        expression no longer parses.
+       A region of statements that assigns a `bool` used after it already gives a `bool`
+       function, e.g. `okToAnalyse()` in `src/server.c` (WSL session d25255b8, 2026-11-22).
     4. Deduce the type of the expression. `prettyPrintType()` (`src/misc.c`) can print it.
     5. Extract an Expression as a Function. Today that gives a void function and a
        statement call, and `isInExpression` (`src/extract.c`) is read but never set.
@@ -465,6 +467,8 @@ Roadmap → Optimization has the baseline: a cold-start PUSH on ffmpeg, measured
     A real case: `hasBeenScanned()` in `src/projectstructure.c`, where a variable extracted from an
     `if` and a `FileItem *` from `getFileItemWithFileNumber()` were both inlined by hand
     (WSL session d25255b8, 2026-11-22).
+    And `okToAnalyse()` in `src/server.c`, where the extracted `bool` was returned
+    directly instead of through its local.
     After: extract-guard-return
 - (#97) <a id="rename-partial-in-broken-code"></a>**Rename in code that does not parse leaves occurrences behind** —
     with the cursor on a declaration the parser still saw, only that occurrence is renamed,
