@@ -98,6 +98,23 @@ Ensure(FileTable, a_scan_of_a_file_starts_over_and_is_stamped) {
     assert_that(includer.scanToken.hash, is_equal_to(42));
 }
 
+Ensure(FileTable, a_file_never_scanned_has_not_been_scanned) {
+    FileItem item = {"header.h"};
+    int fileNumber = addFileItemToFileTable(&item);
+
+    assert_that(hasBeenScanned(fileNumber), is_false);
+}
+
+Ensure(FileTable, a_file_has_been_scanned_once_its_scan_started) {
+    FileItem item = {"header.h"};
+    int fileNumber = addFileItemToFileTable(&item);
+    ContentToken scanToken = {.hash = 42};
+
+    startScanOf(fileNumber, scanToken);
+
+    assert_that(hasBeenScanned(fileNumber), is_true);
+}
+
 /* The parse's references belong to the content it read, so a file it reads
  * first is seen as it read it (ADR-0036) */
 Ensure(FileTable, a_file_read_before_it_was_seen_is_seen_as_read) {
