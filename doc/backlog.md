@@ -805,7 +805,9 @@ What ADR-0024's CreateMode reduces to once the priming is a request rather than 
 answering `-continue`. A refactoring only changes what has been parsed: a Delete
 Parameter on `saveReferencesToStore` left `src/cxfile.mock` behind, and the unit build
 did not compile (Mac, session `3af59d00`, 2026-09-25). No test pins that a refactoring
-reaches a mock.
+reaches a mock. A Move Function of a `static` function to another module makes it extern,
+and that needs a new mock in the target's `.mock`, but only in a project with Cgreen
+mocks (`popSession()`, WSL, session `d25255b8`, 2026-11-23).
 If a user asks for it, it should say how long it will take. `src/progress.c` already
 keeps `timeZero` and a monotonic clock, and the parse loops count down, so what is
 missing is the division and a format like "4 min left". Decide the unit first: CUs are
