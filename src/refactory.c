@@ -425,7 +425,12 @@ static bool makeSafetyCheckAndUndo(EditorMarker *point, EditorMarkerList **occs,
     SAFETY_CHECK_GET_SYM_LISTS(refs, origrefs, newrefs, diffrefs, pbflag);
     assert(origrefs != NULL && newrefs != NULL && diffrefs != NULL);
 
-    return handleSafetyCheckDifferenceLists(diff1, diff2, diffrefs);
+    if (!handleSafetyCheckDifferenceLists(diff1, diff2, diffrefs))
+        return false;
+    /* No conflicts, so the three sessions go and the browsing stack is as before the rename */
+    for (int i = 0; i < 3; i++)
+        popReferenceOnly();
+    return true;
 }
 
 typedef struct collateSearch {

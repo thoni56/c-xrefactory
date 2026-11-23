@@ -1,0 +1,65 @@
+CXREF -server -o server-buffer
+-getproject CURDIR/main.c
+end-of-options
+
+<sync>
+<set-info len=<n>>CURDIR</set-info>
+-browse-push -cursor=87 CURDIR/main.c
+end-of-options
+
+<sync>
+<goto>
+ <position-lc line=1 col=11 len=<n>>CURDIR/main.c</position-lc>
+</goto>
+-rfct-rename -renameto=number -mark=21 -cursor=21 CURDIR/main.c
+end-of-options
+
+<sync>
+<goto>
+ <position-off off=20 len=<n>>CURDIR/main.c</position-off>
+</goto>
+<precheck len=<n>> value)</precheck>
+<goto>
+ <position-off off=40 len=<n>>CURDIR/main.c</position-off>
+</goto>
+<precheck len=<n>> value </precheck>
+<goto>
+ <position-off off=48 len=<n>>CURDIR/main.c</position-off>
+</goto>
+<precheck len=<n>> value;</precheck>
+<goto>
+ <position-off off=21 len=<n>>CURDIR/main.c</position-off>
+</goto>
+<goto>
+ <position-off off=21 len=<n>>CURDIR/main.c</position-off>
+</goto>
+<replacement>
+ <str len=<n>>value</str>  <str len=<n>>number</str>
+</replacement>
+<goto>
+ <position-off off=42 len=<n>>CURDIR/main.c</position-off>
+</goto>
+<replacement>
+ <str len=<n>>value</str>  <str len=<n>>number</str>
+</replacement>
+<goto>
+ <position-off off=51 len=<n>>CURDIR/main.c</position-off>
+</goto>
+<replacement>
+ <str len=<n>>value</str>  <str len=<n>>number</str>
+</replacement>
+<goto>
+ <position-off off=21 len=<n>>CURDIR/main.c</position-off>
+</goto>
+shell: cp CURDIR/main.c.renamed CURDIR/main.c
+-browse-pop
+end-of-options
+
+<sync>
+<goto>
+ <position-lc line=6 col=11 len=<n>>CURDIR/main.c</position-lc>
+</goto>
+<bottom-information len=<n>>stack is now empty</bottom-information>
+-exit
+end-of-options
+

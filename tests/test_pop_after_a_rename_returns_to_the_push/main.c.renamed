@@ -1,0 +1,7 @@
+static int twice(int number) {
+    return number + number;
+}
+
+int main(void) {
+    return twice(21);
+}

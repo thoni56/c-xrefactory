@@ -689,15 +689,16 @@ reach answers `held-cus-on-first-request` and is what `header-filtered-siblings`
 
 After: request-target
 
-### (#110) A rename leaves its safety-check sessions on the browsing stack `rename-leaves-sessions`
+### (#110) A rename with conflicts leaves more than "Conflicting References" on the browsing stack `rename-leaves-sessions`
 
-Seen on WSL, session `d25255b8`, 2026-11-06, build 1.10.0-105-g86971. Push on a
-symbol, Next to a parameter, Rename it, then Pop: it says "Conflicting References",
-then "No reference". Popping again gives the renamed parameter's session, and once
-more the session you started in. `makeSafetyCheckAndUndo()` (`src/refactory.c`)
-pushes the "Conflicting References" session and `safetyCheck()` the symbol's own,
-and a rename without conflicts pops neither. Write the test first: a rename from
-inside a session, then a Pop that lands in that session.
+A rename with conflicts shows "Conflicting References" (`diffrefs`). Under it are two more
+sessions: the rename's references (`origrefs`, from `getReferences()`) and the session of the
+request parse. One Pop should go from "Conflicting References" to the session you were in.
+Without conflicts it does (`test_pop_after_a_rename_returns_to_the_push`):
+`makeSafetyCheckAndUndo()` pops its three sessions, and the `OP_REFACTORY` case in
+`src/cxref.c` pops the request's. Write the test first: the same rename to a name that
+conflicts. The other refactorings may leave sessions too, not checked
+(WSL, session `d25255b8`, 2026-11-23).
 
 After: rename-partial-in-broken-code
 
@@ -1051,6 +1052,9 @@ operation with a cursor parses the request file, and in a macro body every CU th
 expands it. ADR-0032 says to reuse the references when the knowledge is current,
 which needs a lookup of the reference at a position in the table. Completion, extract
 and the macro body need the parse.
+A refactoring parses the request file at the cursor too (`processFile()`), into the session
+`parseForTheAnswer()` pushes for `OP_REFACTORY`. A rename does not read that session. It
+parses the buffer again in `pushReferences()` (WSL, session `d25255b8`, 2026-11-23).
 
 After: request-through-includers
 

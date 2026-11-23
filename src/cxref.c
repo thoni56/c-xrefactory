@@ -1818,9 +1818,14 @@ void answerEditorAction(void) {
         deleteEntryFromSessionStack(browsingStack.top);
         break;
 
-    case OP_REFACTORY:
+    case OP_REFACTORY: {
+        SessionStackEntry *requestSession = browsingStack.top;
         serverPerformRefactoring();
+        /* The session of the request parse. A refactoring pushes sessions of its own */
+        if (browsingStack.top == requestSession)
+            popReferenceOnly();
         break;
+    }
 
         /* INTERNAL */
     case OP_INTERNAL_PUSH_FOR_ARGUMENT_MANIPULATION: {
