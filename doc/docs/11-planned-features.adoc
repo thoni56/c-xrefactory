@@ -59,6 +59,9 @@ Macros and types defined in the source `.c` have the same problem, and belong wi
 
 **Smarter header placement**: Automatically find the right location in header files
   based on existing declarations and dependencies.
+  Today the declaration goes last. The target's neighbours in the `.c` say more: put the
+  declaration before that of the function after the target. If that has none, put it after
+  that of the function before the target. Only if neither has one does it go last.
 
 **Preview**: Show what will be changed before applying the refactoring.
 
