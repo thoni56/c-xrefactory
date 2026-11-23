@@ -53,10 +53,6 @@ static void initLogging(ArgumentsVector args) {
 
     /* Always log errors and above to console */
     log_set_level(console_level);
-
-    /* Should we log the arguments? */
-    if (true)
-        logCommands(args);
 }
 
 /* Which program to be is known from the command line alone, before any options are processed */
@@ -102,6 +98,8 @@ int main(int argc, char *argv[]) {
         totalTaskEntryInitialisations();
         StringList *operands = NULL;
         mainTaskEntryInitialisations(args, &operands);
+        /* Known only now that the options are processed, and it marks where a run starts */
+        logCommands(args);
         if (operands != NULL) {
             fprintf(stderr, "-server takes no file, a request names its own: %s\n",
                     operands->string);

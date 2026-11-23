@@ -1,0 +1,4 @@
+CXREF -server -commandlog=commands.log
+-getproject CURDIR/a.c
+<sync>
+<exit>

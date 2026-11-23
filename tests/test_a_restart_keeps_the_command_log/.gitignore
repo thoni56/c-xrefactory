@@ -1,0 +1,8 @@
+.c-xrefrc
+.c-xref
+*buffer
+output
+output.tmp
+log
+*.log
+commands.log

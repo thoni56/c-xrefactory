@@ -27,7 +27,8 @@ void logCommands(ArgumentsVector args) {
         return;
 
     if (commandsLogfile == NULL)
-        commandsLogfile = openFile(options.commandlog, "w");
+        /* Appended, so that a restart keeps the requests of the run before it */
+        commandsLogfile = openFile(options.commandlog, "a");
 
     char cwd[MAX_FILE_NAME_SIZE];
     getCwd(cwd, sizeof(cwd));
