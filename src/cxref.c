@@ -769,10 +769,6 @@ static void gotoReferenceWithIndex(int referenceIndex) {
     gotoCurrentReference(sessionStackEntry);
 }
 
-static void popSession(void) {
-    browsingStack.top = browsingStack.top->previous;
-}
-
 static void popAndFreeSession(void) {
     popSession();
     freePoppedSessionStackEntries(&browsingStack);

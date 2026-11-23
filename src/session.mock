@@ -28,6 +28,10 @@ void pushEmptySession(SessionStack *stack) {
     mock(stack);
 }
 
+void popSession(void) {
+    mock();
+}
+
 SessionStackEntry *getSessionEntryForOperation(ServerOperation operation) {
     return (SessionStackEntry *)mock(operation);
 }

@@ -58,6 +58,7 @@ extern void freePoppedSessionStackEntries(SessionStack *stack);
 extern SessionStackEntry *getNextTopStackItem(SessionStack *stack);
 extern void freeOldCompletionStackEntries(SessionStack *stack);
 extern void pushEmptySession(SessionStack *stack);
+extern void popSession(void);
 
 extern SessionStackEntry *getSessionEntryForOperation(ServerOperation operation);
 

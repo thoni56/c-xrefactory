@@ -91,6 +91,10 @@ void freeOldCompletionStackEntries(SessionStack *stack) {
     deleteSessionStackEntry(stack, entry);
 }
 
+void popSession(void) {
+    browsingStack.top = browsingStack.top->previous;
+}
+
 void pushEmptySession(SessionStack *stack) {
     SessionStackEntry *entry;
     freePoppedSessionStackEntries(stack);
