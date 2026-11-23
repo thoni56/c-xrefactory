@@ -712,6 +712,20 @@ refuses, then a push on the old name, which should find its references
 
 After: rename-leaves-sessions
 
+### (#128) A refactoring edits a buffer whose file changed on disk `refactoring-stale-buffer`
+
+The client preloads only modified buffers, so for an unmodified open file the server
+reads the disk and computes the edits for the disk's text. The client applies them to
+the buffer. If the file changed on disk, the buffer is stale, and two things guard it
+by accident. The precheck (`c-xref-server-dispatch-precheck`) fails if the offsets have
+moved. Otherwise Emacs asks "changed on disk; really edit the buffer?" at the first
+replacement. There `r` is right, `n` stops the refactoring halfway, and `y` edits the
+stale text, so a save loses the change on disk. The client should check every buffer a
+refactoring will edit before the request (`verify-visited-file-modtime`), and revert it
+or refuse (WSL, session `d25255b8`, 2026-11-23).
+
+After: refused-rename-references
+
 ### (#24) Retry the request that created the project `retry-creating-request`
 
 Small, and it becomes first contact
