@@ -1,0 +1,7 @@
+#include "stack.h"
+
+void popSession(void) {
+}
+
+void popSession(void) {
+}

@@ -1,0 +1,146 @@
+CXREF -server -o server-buffer
+-getproject CURDIR/user.c
+end-of-options
+
+<sync>
+<set-info len=<n>>CURDIR</set-info>
+-rfct-rename -renameto=popSession -mark=42 -cursor=42 CURDIR/user.c
+end-of-options
+
+<sync>
+<goto>
+ <position-off off=24 len=<n>>CURDIR/stack.c</position-off>
+</goto>
+<precheck len=<n>> popOnly(</precheck>
+<goto>
+ <position-off off=4 len=<n>>CURDIR/stack.h</position-off>
+</goto>
+<precheck len=<n>> popOnly(</precheck>
+<goto>
+ <position-off off=41 len=<n>>CURDIR/user.c</position-off>
+</goto>
+<precheck len=<n>> popOnly(</precheck>
+<goto>
+ <position-off off=74 len=<n>>CURDIR/user.c</position-off>
+</goto>
+<precheck len=<n>> popOnly(</precheck>
+<goto>
+ <position-off off=42 len=<n>>CURDIR/user.c</position-off>
+</goto>
+<display-resolution len=<n> mtype=1 continue=1>These references may be misinterpreted after refactoring</display-resolution>
+-continuerefactoring
+end-of-options
+
+<sync>
+<ask-confirmation len=<n>>The refactoring may change program behaviour, really continue?</ask-confirmation>
+<goto>
+ <position-off off=25 len=<n>>CURDIR/stack.c</position-off>
+</goto>
+<replacement>
+ <str len=<n>>popOnly</str>  <str len=<n>>popSession</str>
+</replacement>
+<goto>
+ <position-off off=5 len=<n>>CURDIR/stack.h</position-off>
+</goto>
+<replacement>
+ <str len=<n>>popOnly</str>  <str len=<n>>popSession</str>
+</replacement>
+<goto>
+ <position-off off=42 len=<n>>CURDIR/user.c</position-off>
+</goto>
+<replacement>
+ <str len=<n>>popOnly</str>  <str len=<n>>popSession</str>
+</replacement>
+<goto>
+ <position-off off=78 len=<n>>CURDIR/user.c</position-off>
+</goto>
+<replacement>
+ <str len=<n>>popOnly</str>  <str len=<n>>popSession</str>
+</replacement>
+<goto>
+ <position-off off=42 len=<n>>CURDIR/user.c</position-off>
+</goto>
+-rfct-add-param -parameter=1 "-rfct-parameter-name=int n" -rfct-parameter-value=0 -preload CURDIR/stack.h CURDIR/stack.h.renamed -preload CURDIR/stack.c CURDIR/stack.c.renamed -preload CURDIR/user.c CURDIR/user.c.renamed -cursor=52 CURDIR/stack.c
+end-of-options
+
+<sync>
+<goto>
+ <position-off off=52 len=<n>>CURDIR/stack.c</position-off>
+</goto>
+<goto>
+ <position-off off=36 len=<n>>CURDIR/stack.c</position-off>
+</goto>
+<replacement>
+ <str len=<n>>void</str>  <str len=<n>>int n</str>
+</replacement>
+<goto>
+ <position-off off=64 len=<n>>CURDIR/stack.c</position-off>
+</goto>
+<replacement>
+ <str len=<n>>void</str>  <str len=<n>>int n</str>
+</replacement>
+<goto>
+ <position-off off=16 len=<n>>CURDIR/stack.h</position-off>
+</goto>
+<replacement>
+ <str len=<n>>void</str>  <str len=<n>>int n</str>
+</replacement>
+<goto>
+ <position-off off=40 len=<n>>CURDIR/stack.h</position-off>
+</goto>
+<replacement>
+ <str len=<n>>void</str>  <str len=<n>>int n</str>
+</replacement>
+<goto>
+ <position-off off=53 len=<n>>CURDIR/user.c</position-off>
+</goto>
+<replacement>
+ <str len=<n>></str>  <str len=<n>>0</str>
+</replacement>
+<goto>
+ <position-off off=72 len=<n>>CURDIR/user.c</position-off>
+</goto>
+<replacement>
+ <str len=<n>></str>  <str len=<n>>0</str>
+</replacement>
+<goto>
+ <position-off off=91 len=<n>>CURDIR/user.c</position-off>
+</goto>
+<replacement>
+ <str len=<n>></str>  <str len=<n>>0</str>
+</replacement>
+<goto>
+ <position-off off=53 len=<n>>CURDIR/stack.c</position-off>
+</goto>
+<undo>
+-rfct-add-param -parameter=1 "-rfct-parameter-name=int n" -rfct-parameter-value=0 -cursor=49 CURDIR/stack.c
+end-of-options
+
+<sync>
+<goto>
+ <position-off off=49 len=<n>>CURDIR/stack.c</position-off>
+</goto>
+<goto>
+ <position-off off=60 len=<n>>CURDIR/stack.c</position-off>
+</goto>
+<replacement>
+ <str len=<n>>void</str>  <str len=<n>>int n</str>
+</replacement>
+<goto>
+ <position-off off=36 len=<n>>CURDIR/stack.h</position-off>
+</goto>
+<replacement>
+ <str len=<n>>void</str>  <str len=<n>>int n</str>
+</replacement>
+<goto>
+ <position-off off=68 len=<n>>CURDIR/user.c</position-off>
+</goto>
+<replacement>
+ <str len=<n>></str>  <str len=<n>>0</str>
+</replacement>
+<goto>
+ <position-off off=49 len=<n>>CURDIR/stack.c</position-off>
+</goto>
+-exit
+end-of-options
+

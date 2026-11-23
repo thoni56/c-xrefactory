@@ -702,17 +702,21 @@ conflicts. The other refactorings may leave sessions too, not checked
 
 After: rename-partial-in-broken-code
 
-### (#117) A rename the safety check refuses leaves the edited references `refused-rename-references`
+### (#117) After a refused or undone refactoring, a later one edited the wrong places `refused-rename-references`
 
-The check builds the edited CUs into the table before it undoes the edits. A change is
-a difference in content (ADR-0036), so the undo and a new time on the buffers should be
-enough for the next request to build them again. Not shown: a rename the check
-refuses, then a push on the old name, which should find its references
-(WSL, session `d25255b8`, 2026-11-17).
 Seen in daily use: a rename of `popReferenceOnly()` to the existing `popSession`, refused or
-undone, left references to `popSession` at the calls of `popReferenceOnly()`. A later Add
-Parameter on `popSession()` then edited those calls, 11 characters in, the length of
-`popSession(` (WSL, session `d25255b8`, 2026-11-23).
+undone, then an Add Parameter on the wrong function, undone too. A later Add Parameter on
+`popSession()` then edited the calls of `popReferenceOnly()`, 11 characters in, the length
+of `popSession(`. So the table had references to `popSession` at those calls. One of the
+edited files was a `.mock` (WSL, session `d25255b8`, 2026-11-23).
+The safety check builds the edited CUs into the table before it undoes the edits, which
+is the suspect. But three paths do not show it: a refused rename
+(`test_refused_rename_keeps_the_references`), a rename undone and saved
+(`test_undone_rename_keeps_the_references`), and a rename and an Add Parameter undone
+without saving, followed by another Add Parameter
+(`test_undone_refactorings_keep_the_references`). Not tried: a `.mock` among the edited
+files, and the request between the undo and the Add Parameter that found no symbol.
+The order of the steps is not known, so the next case needs a record of the requests.
 
 After: rename-leaves-sessions
 

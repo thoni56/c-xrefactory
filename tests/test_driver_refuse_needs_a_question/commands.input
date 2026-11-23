@@ -1,0 +1,9 @@
+CXREF -server
+-getproject CURDIR/source.c
+<sync>
+-rfct-rename -renameto=total -mark=4 -cursor=4 CURDIR/source.c
+<sync>
+<refuse>
+-browse-push -cursor=4 CURDIR/source.c
+<sync>
+<exit>

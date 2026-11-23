@@ -1,0 +1,14 @@
+CXREF -server
+-getproject CURDIR/user.c
+<sync>
+-rfct-rename -renameto=popSession -mark=42 -cursor=42 CURDIR/user.c
+<sync>
+-continuerefactoring
+<sync>
+!sleep 0.1
+!touch CURDIR/stack.h CURDIR/stack.c CURDIR/user.c
+-browse-push -cursor=49 CURDIR/stack.c
+<sync>
+-filter=0 -cursor=0 nil
+<sync>
+<exit>

@@ -1,0 +1,111 @@
+CXREF -server -o server-buffer
+-getproject CURDIR/source.c
+end-of-options
+
+<sync>
+<set-info len=<n>>CURDIR</set-info>
+-rfct-rename -renameto=sum -mark=26 -cursor=26 CURDIR/source.c
+end-of-options
+
+<sync>
+<goto>
+ <position-off off=10 len=<n>>CURDIR/globals.h</position-off>
+</goto>
+<precheck len=<n>> total;</precheck>
+<goto>
+ <position-off off=50 len=<n>>CURDIR/other.c</position-off>
+</goto>
+<precheck len=<n>> total;</precheck>
+<goto>
+ <position-off off=25 len=<n>>CURDIR/source.c</position-off>
+</goto>
+<precheck len=<n>> total;</precheck>
+<goto>
+ <position-off off=63 len=<n>>CURDIR/source.c</position-off>
+</goto>
+<precheck len=<n>> total </precheck>
+<goto>
+ <position-off off=98 len=<n>>CURDIR/source.c</position-off>
+</goto>
+<precheck len=<n>> total </precheck>
+<goto>
+ <position-off off=26 len=<n>>CURDIR/source.c</position-off>
+</goto>
+<display-resolution len=<n> mtype=1 continue=1>These references may be misinterpreted after refactoring</display-resolution>
+-continuerefactoring
+end-of-options
+
+<sync>
+<ask-confirmation len=<n>>The refactoring may change program behaviour, really continue?</ask-confirmation>
+<goto>
+ <position-off off=11 len=<n>>CURDIR/globals.h</position-off>
+</goto>
+<replacement>
+ <str len=<n>>total</str>  <str len=<n>>sum</str>
+</replacement>
+<goto>
+ <position-off off=51 len=<n>>CURDIR/other.c</position-off>
+</goto>
+<replacement>
+ <str len=<n>>total</str>  <str len=<n>>sum</str>
+</replacement>
+<goto>
+ <position-off off=26 len=<n>>CURDIR/source.c</position-off>
+</goto>
+<replacement>
+ <str len=<n>>total</str>  <str len=<n>>sum</str>
+</replacement>
+<goto>
+ <position-off off=62 len=<n>>CURDIR/source.c</position-off>
+</goto>
+<replacement>
+ <str len=<n>>total</str>  <str len=<n>>sum</str>
+</replacement>
+<goto>
+ <position-off off=95 len=<n>>CURDIR/source.c</position-off>
+</goto>
+<replacement>
+ <str len=<n>>total</str>  <str len=<n>>sum</str>
+</replacement>
+<goto>
+ <position-off off=26 len=<n>>CURDIR/source.c</position-off>
+</goto>
+<refuse>
+-browse-push -cursor=26 CURDIR/source.c
+end-of-options
+
+<sync>
+<goto>
+ <position-lc line=3 col=4 len=<n>>CURDIR/source.c</position-lc>
+</goto>
+-filter=0 -cursor=0 nil
+end-of-options
+
+<sync>
+<reference-list val=0 symbol="total">
+<src-line refn=1 len=<n>>source.c:3:int total;</src-line>
+<src-line refn=1 len=<n>>globals.h:1:extern int total;</src-line>
+<src-line refn=1 len=<n>>other.c:4:    return total;</src-line>
+<src-line refn=1 len=<n>>source.c:7:    total = 1;</src-line>
+<src-line refn=1 len=<n>>source.c:9:    return total + sum;</src-line>
+</reference-list>
+-browse-push -cursor=37 CURDIR/source.c
+end-of-options
+
+<sync>
+<goto>
+<position-lc line=4 col=4 len=<n>>CURDIR/source.c</position-lc>
+</goto>
+-filter=0 -cursor=0 nil
+end-of-options
+
+<sync>
+<reference-list val=0 symbol="sum">
+<src-line refn=1 len=<n>>source.c:4:int sum;</src-line>
+<src-line refn=1 len=<n>>globals.h:2:extern int sum;</src-line>
+<src-line refn=1 len=<n>>source.c:8:    sum = 2;</src-line>
+<src-line refn=1 len=<n>>source.c:9:    return total + sum;</src-line>
+</reference-list>
+-exit
+end-of-options
+

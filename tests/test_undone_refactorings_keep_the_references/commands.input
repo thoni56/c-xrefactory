@@ -1,0 +1,13 @@
+CXREF -server
+-getproject CURDIR/user.c
+<sync>
+-rfct-rename -renameto=popSession -mark=42 -cursor=42 CURDIR/user.c
+<sync>
+-continuerefactoring
+<sync>
+-rfct-add-param -parameter=1 "-rfct-parameter-name=int n" -rfct-parameter-value=0 -preload CURDIR/stack.h CURDIR/stack.h.renamed -preload CURDIR/stack.c CURDIR/stack.c.renamed -preload CURDIR/user.c CURDIR/user.c.renamed -cursor=52 CURDIR/stack.c
+<sync>
+<undo>
+-rfct-add-param -parameter=1 "-rfct-parameter-name=int n" -rfct-parameter-value=0 -cursor=49 CURDIR/stack.c
+<sync>
+<exit>

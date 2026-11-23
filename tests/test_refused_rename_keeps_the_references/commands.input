@@ -1,0 +1,17 @@
+CXREF -server
+-getproject CURDIR/source.c
+<sync>
+-rfct-rename -renameto=sum -mark=26 -cursor=26 CURDIR/source.c
+<sync>
+-continuerefactoring
+<sync>
+<refuse>
+-browse-push -cursor=26 CURDIR/source.c
+<sync>
+-filter=0 -cursor=0 nil
+<sync>
+-browse-push -cursor=37 CURDIR/source.c
+<sync>
+-filter=0 -cursor=0 nil
+<sync>
+<exit>

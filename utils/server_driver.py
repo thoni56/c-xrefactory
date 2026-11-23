@@ -36,6 +36,13 @@
 # requests, e.g.:
 #
 #     !sed -i 's/old/new/' CURDIR/source.c
+#
+# A '<refuse>' line after a <sync> says that the client answered No to the
+# question (<ask-confirmation>) in the last answer. The client then throws that
+# answer's edits away, so the next request need not preload or save those files.
+#
+# An '<undo>' line says that the client undid the edits of the last answer. The
+# buffers are then as on disk again, and Emacs marks them unmodified.
 
 import sys
 import os
@@ -252,12 +259,26 @@ if __name__ == "__main__":
             read_output(args.server_buffer_filename)
 
         edited = {}                     # files the last answer edited, with their mtimes
+        asked = False                   # the last answer asked for a confirmation
         sent = {}                       # the content last preloaded for each file
         in_request = False
         command = read_command(file)
         while command != '':
             while command != '<sync>' and command != '<exit>' and command != '': #and not "-refactory" in command:
-                if command.startswith('!'):
+                if command == '<refuse>':
+                    print(command)
+                    if not asked:
+                        sys.stdout.flush()
+                        eprint("ERROR: <refuse>, but the last answer asked nothing, so the client applied its edits")
+                        p.kill()
+                        sys.exit(1)
+                    edited.clear()
+                    command = read_command(file)
+                elif command == '<undo>':
+                    print(command)
+                    edited.clear()
+                    command = read_command(file)
+                elif command.startswith('!'):
                     # Shell command - execute locally, CURDIR substituted
                     shell_cmd = command[1:].replace("CURDIR", args.CURDIR)
                     print(f"shell: {shell_cmd}")
@@ -299,7 +320,9 @@ if __name__ == "__main__":
             if command == '<sync>':
                 end_of_options(p)
                 wait_for_sync(p)
-                note_edited_files(read_output(args.server_buffer_filename), edited)
+                answer = read_output(args.server_buffer_filename)
+                note_edited_files(answer, edited)
+                asked = '<ask-confirmation' in answer
                 in_request = False
                 command = read_command(file)
 
