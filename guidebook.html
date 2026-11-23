@@ -5,7 +5,7 @@
 <meta http-equiv="X-UA-Compatible" content="IE=edge">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <meta name="generator" content="Asciidoctor 2.0.26">
-<meta name="author" content="v{VERSION} - Generated 2026-11-21">
+<meta name="author" content="v{VERSION} - Generated 2026-11-23">
 <title>C-xrefactory - a C/Yacc refactoring and code browsing tool - Design Documentation</title>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Open+Sans:300,300italic,400,400italic,600,600italic%7CNoto+Serif:400,400italic,700,700italic%7CDroid+Sans+Mono:400,700">
 <style>
@@ -441,7 +441,7 @@ body.book #toc,body.book #preamble,body.book h1.sect0,body.book .sect1>h2{page-b
 <div id="header">
 <h1>C-xrefactory - a C/Yacc refactoring and code browsing tool - Design Documentation</h1>
 <div class="details">
-<span id="author" class="author">v{VERSION} - Generated 2026-11-21</span><br>
+<span id="author" class="author">v{VERSION} - Generated 2026-11-23</span><br>
 </div>
 <div id="toc" class="toc2">
 <div id="toctitle">Table of Contents</div>
@@ -509,10 +509,11 @@ body.book #toc,body.book #preamble,body.book h1.sect0,body.book .sect1>h2{page-b
 <li><a href="#_guiding_principles">10.1. Guiding Principles</a></li>
 <li><a href="#_convergence_memory_as_truth">10.2. Convergence: Memory as Truth</a></li>
 <li><a href="#_convergence_the_setup_ladder">10.3. Convergence: The Setup Ladder</a></li>
-<li><a href="#_optimization">10.4. Optimization</a></li>
-<li><a href="#_known_limitations">10.5. Known Limitations</a></li>
-<li><a href="#_feature_vision_lsp_support_explorative">10.6. Feature Vision: LSP Support (explorative)</a></li>
-<li><a href="#_further_refactorings">10.7. Further refactorings</a></li>
+<li><a href="#_convergence_freshness_as_make">10.4. Convergence: Freshness as Make</a></li>
+<li><a href="#_optimization">10.5. Optimization</a></li>
+<li><a href="#_known_limitations">10.6. Known Limitations</a></li>
+<li><a href="#_feature_vision_lsp_support_explorative">10.7. Feature Vision: LSP Support (explorative)</a></li>
+<li><a href="#_further_refactorings">10.8. Further refactorings</a></li>
 </ul>
 </li>
 <li><a href="#_planned_features">11. Planned Features</a>
@@ -623,12 +624,11 @@ body.book #toc,body.book #preamble,body.book h1.sect0,body.book .sect1>h2{page-b
 <li><a href="#_known_bugs">19. Known Bugs</a>
 <ul class="sectlevel2">
 <li><a href="#_globalunused_false_positive_for_static_functions_in_y_files">19.1. GlobalUnused false positive for static functions in .y files</a></li>
-<li><a href="#_a_refactoring_can_see_a_truncated_reference_set">19.2. A refactoring can see a truncated reference set</a></li>
-<li><a href="#_stale_sessions_after_pop">19.3. Stale sessions after POP</a></li>
-<li><a href="#_header_static_prototype_and_definition_are_two_symbols">19.4. Header static: prototype and definition are two symbols</a></li>
-<li><a href="#_token_pasting_that_forms_numbers">19.5. Token pasting that forms numbers</a></li>
-<li><a href="#_a_stale_snapshot_keeps_symbols_the_parser_no_longer_makes_global">19.6. A stale snapshot keeps symbols the parser no longer makes global</a></li>
-<li><a href="#_extract_variable_puts_the_declaration_in_the_wrong_place_for_some_statements">19.7. Extract Variable puts the declaration in the wrong place for some statements</a></li>
+<li><a href="#_stale_sessions_after_pop">19.2. Stale sessions after POP</a></li>
+<li><a href="#_header_static_prototype_and_definition_are_two_symbols">19.3. Header static: prototype and definition are two symbols</a></li>
+<li><a href="#_token_pasting_that_forms_numbers">19.4. Token pasting that forms numbers</a></li>
+<li><a href="#_a_stale_snapshot_keeps_symbols_the_parser_no_longer_makes_global">19.5. A stale snapshot keeps symbols the parser no longer makes global</a></li>
+<li><a href="#_extract_variable_puts_the_declaration_in_the_wrong_place_for_some_statements">19.6. Extract Variable puts the declaration in the wrong place for some statements</a></li>
 </ul>
 </li>
 <li><a href="#_refactoring_recipes">20. Refactoring Recipes</a>
@@ -2182,7 +2182,129 @@ The shape was first written down on the Mac, session <code>4839a129</code>, with
 </div>
 </div>
 <div class="sect3">
-<h4 id="_what_the_server_knows_about_a_file">8.2.3. What the Server Knows About a File</h4>
+<h4 id="_a_request_step_by_step">8.2.3. A Request, Step by Step</h4>
+<div class="paragraph">
+<p>What <code>callServer()</code> does with every request today, in order, with the line of the shape each step belongs to.
+The first column is what <code>callServer()</code> calls, the second what that does and calls in turn.
+Names only, so that the list stays true when the code moves, and so that it shows whether the names say what happens.</p>
+</div>
+<table class="tableblock frame-all grid-all stretch">
+<colgroup>
+<col style="width: 37.5%;">
+<col style="width: 50%;">
+<col style="width: 12.5%;">
+</colgroup>
+<thead>
+<tr>
+<th class="tableblock halign-left valign-top">Step</th>
+<th class="tableblock halign-left valign-top">What it does</th>
+<th class="tableblock halign-left valign-top">Line</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>prepareInputFileForRequest()</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Takes the file the request names.</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">goal</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>setUpProjectIfNew()</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Once: finds the project and loads the snapshot.</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><em>Setup Ladder</em></p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>findChangedFiles()</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Reads the buffers the client sent, the content of a held file (<code>loadAllOpenedEditorBuffers()</code>).
+Closes a buffer the client no longer sends, and puts its CU on the build list (<code>closeEditorBuffersNoLongerHeld()</code>).
+Reloads a changed config (<code>isProjectConfigChanged()</code>, <code>reloadProjectConfig()</code>).</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">changed, build</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>scanIncludesOfChangedFiles()</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">First request, or a config change: walks the project and scans every file (<code>scanProjectStructure()</code>).
+Every other request: scans the files that changed (<code>rescanChangedFiles()</code>).
+Then the include graph, from the scan&#8217;s edges and the parse&#8217;s include references (<code>collectPrerequisites()</code>).</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">discover, scan</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>removeReferences()</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">A config change is a change of every file (<code>removeAllReferencesExceptIncludes()</code>, <code>markAllCompilationUnitsStale()</code>).
+Then the references of the changed files (<code>removeReferencesOfChangedFiles()</code>).</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">remove</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>collectGoal()</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Held CUs that are out of date, in a project that was open already (<code>collectOutOfDateHeldCUs()</code>).
+The request CU, if it is out of date (<code>collectRequestCUForStripping()</code>, <code>collectRequestCUToBuild()</code>). The first does not build it, since the operation parses it.
+The CUs that reach the request file, unless the operation is on a name (<code>collectSiblingCUs()</code>).
+An operation on a name: every other CU that is out of date, on a list of its own (<code>collectOutOfDateCUsNotIn()</code>).</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">goal</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>stripRequestCU()</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Removes the request CU&#8217;s references, which the operation&#8217;s parse puts back.</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">remove</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>buildKnowledgeOfAll()</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Builds the build list.</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">build</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>buildAfterAsking()</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">An operation on a name: builds the rest of the goal, asking above the budget (<code>okToAnalyse()</code>).</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">build</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>parseForTheAnswer()</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">The request gets its own options back after the build (<code>deepCopyOptionsFromTo()</code>, <code>processOptions()</code>).
+Parses the request file once for each pass, for the cursor, and in a macro body the CUs expanding it (<code>pushEmptySession()</code>, <code>processFile()</code>).</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">answer</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>answerEditorAction()</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Answers, after <code>callServer()</code> returns.</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">answer</p></td>
+</tr>
+</tbody>
+</table>
+<div class="paragraph">
+<p>A step on more than one line does more than its name says, and is where to look first:</p>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p><code>findChangedFiles()</code> also decides a build, past the build predicate, for a closed buffer.</p>
+</li>
+<li>
+<p><code>scanIncludesOfChangedFiles()</code> is discover and scan in one, since a config change, which is found with the changed files, also discovers.</p>
+</li>
+<li>
+<p><code>markAllCompilationUnitsStale()</code> is part of the removal, as a changed CU loses its knowledge time when its references are removed. It goes with <code>out-of-date</code>. "Stale" is the word from before ADR-0035.</p>
+</li>
+<li>
+<p><code>collectOutOfDateHeldCUs()</code> widens the goal by the held files, which the goal line does not name, and only in a project that was open already (<code>held-cus-on-first-request</code>).</p>
+</li>
+<li>
+<p><code>collectRequestCUForStripping()</code> does not collect, and <code>stripRequestCU()</code> is a second removal, beside the remove line, for the cursor parse (<code>cursor-parse-reuse</code>).</p>
+</li>
+<li>
+<p>An operation on a name builds two lists (<code>whole-project-goal</code>).
+First <code>buildList</code>, without a question. It has the held CUs that are out of date.
+Then <code>wholeProject</code>, the other CUs that are out of date.
+The question counts only <code>wholeProject</code>.</p>
+</li>
+<li>
+<p><code>processFile()</code> says nothing about what it does.</p>
+</li>
+</ul>
+</div>
+<div class="paragraph">
+<p>Traced on WSL, session <code>d25255b8</code>, 2026-11-22.</p>
+</div>
+</div>
+<div class="sect3">
+<h4 id="_what_the_server_knows_about_a_file">8.2.4. What the Server Knows About a File</h4>
 <div class="paragraph">
 <p>Knowing a file is several facts, kept in different places, and a change has to reach each of them.</p>
 </div>
@@ -2330,14 +2452,14 @@ It is set in only some of the places that change the table (<code>session-refres
 </div>
 </div>
 <div class="sect3">
-<h4 id="_where_it_is_not_yet_make">8.2.4. Where It Is Not Yet Make</h4>
+<h4 id="_where_it_is_not_yet_make">8.2.5. Where It Is Not Yet Make</h4>
 <div class="paragraph">
 <p>Items in <code>doc/backlog.md</code>:</p>
 </div>
 <div class="ulist">
 <ul>
 <li>
-<p><strong>The include walk is limited</strong> (<code>cap-is-a-question</code>). <code>collectCUsIncluding()</code> walks at most 256 includers up from a header, and the CUs beyond them stay out of date without a question. Every CU it finds is built. ADR-0032 makes a long build a question, and later a time budget (<code>time-budget</code>).</p>
+<p><strong>A macro body is parsed again</strong> (<code>cap-is-a-question</code>). For a cursor in a macro body, <code>collectCompilationUnitsExpandingTheMacro()</code> parses up to 128 of the CUs that can expand it, also when they are current. They are the request file&#8217;s includers, so the build has already made them current, and the answer comes from the table.</p>
 </li>
 <li>
 <p><strong>The goal is too small</strong> (<code>request-target</code>). We run <code>make request.o</code>, but the answer is linked from more objects than that.</p>
@@ -2361,7 +2483,7 @@ It is set in only some of the places that change the table (<code>session-refres
 </div>
 </div>
 <div class="sect3">
-<h4 id="_overview">8.2.5. Overview</h4>
+<h4 id="_overview">8.2.6. Overview</h4>
 <div class="admonitionblock note">
 <table>
 <tr>
@@ -2438,7 +2560,7 @@ build; see Pass 2 for the rationale.</p>
 </div>
 </div>
 <div class="sect3">
-<h4 id="_what_refresh_covers">8.2.6. What Refresh Covers</h4>
+<h4 id="_what_refresh_covers">8.2.7. What Refresh Covers</h4>
 <div class="paragraph">
 <p>Between them, the passes and the cleaning concern below cover the ways the codebase
 can change from one request to the next:</p>
@@ -2490,7 +2612,7 @@ gap the next section addresses.</p>
 </div>
 </div>
 <div class="sect3">
-<h4 id="entry-refresh-pass-1">8.2.7. Pass 1: Held CUs Whose Knowledge Is Out of Date</h4>
+<h4 id="entry-refresh-pass-1">8.2.8. Pass 1: Held CUs Whose Knowledge Is Out of Date</h4>
 <div class="paragraph">
 <p>The simplest case: the user edited a <code>.c</code> file, or the client sent a <code>-preload</code> with
 newer content.
@@ -2512,7 +2634,7 @@ include edges).</p>
 </div>
 </div>
 <div class="sect3">
-<h4 id="entry-refresh-pass-2">8.2.8. Pass 2: Strip Changed Held Headers, Take Their Includers</h4>
+<h4 id="entry-refresh-pass-2">8.2.9. Pass 2: Strip Changed Held Headers, Take Their Includers</h4>
 <div class="paragraph">
 <p>If the user edited a header file, all CUs that include it (transitively) have stale
 references — even though those CUs themselves haven&#8217;t changed.</p>
@@ -2553,7 +2675,7 @@ there yet, but <code>bar.c</code> is held and out of date, so it is built anyway
 </div>
 </div>
 <div class="sect3">
-<h4 id="entry-refresh-pass-3">8.2.9. Pass 3: Parse Unparsed Sibling CUs</h4>
+<h4 id="entry-refresh-pass-3">8.2.10. Pass 3: Parse Unparsed Sibling CUs</h4>
 <div class="paragraph">
 <p>On cold start (no snapshot, or snapshot doesn&#8217;t cover everything), many CUs have never
 been parsed. If the user navigates to a symbol defined in a header, the server needs
@@ -2595,13 +2717,13 @@ defines the symbol being navigated to.</p>
 </div>
 </div>
 <div class="sect3">
-<h4 id="project-wide-operations">8.2.10. Project-wide Operations: Parse All</h4>
+<h4 id="project-wide-operations">8.2.11. Project-wide Operations: Parse All</h4>
 <div class="paragraph">
 <p>Pass 3 follows includes from a position. Some operations have no position to start
 from, or are about the whole project by definition, so no include-based subset can make
-their answer complete. For those, after Pass 3, the server counts the CUs that are
-out of date. Within the cap (<code>MAX_CUS_TO_REPARSE</code>) it parses them without asking. Above
-it, it first asks "N of M files need analysing. Analyse all before &#8230;&#8203;?" (see Blocking
+their answer complete. For those, the server skips Pass 3 and counts the CUs that are
+out of date. Up to <code>MAX_CUS_TO_REPARSE</code> (128) it parses them without asking. Above
+that, it first asks "N of M files need analysing. Analyse all before &#8230;&#8203;?" (see Blocking
 confirmation under Interactive Dialogs below). Before parsing, it strips each header whose
 includers are all among them. The snapshot is saved after every 100 CUs, so that progress
 survives an interrupt or a crash. That is a save interval, not a limit.</p>
@@ -2638,7 +2760,7 @@ shares no header, which only appears when linking. That is the same trade-off as
 </div>
 </div>
 <div class="sect3">
-<h4 id="_staleness_after_refactoring">8.2.11. Staleness After Refactoring</h4>
+<h4 id="_staleness_after_refactoring">8.2.12. Staleness After Refactoring</h4>
 <div class="paragraph">
 <p>Refactoring operations (rename, move-function, etc.) modify editor buffers in memory.
 The disk files and their mtimes are unchanged, so the normal mtime-based staleness
@@ -2656,7 +2778,7 @@ the next request, triggering a reparse via Pass 1.</p>
 </div>
 </div>
 <div class="sect3">
-<h4 id="_cleaning_stale_emissions">8.2.12. Cleaning Stale Emissions</h4>
+<h4 id="_cleaning_stale_emissions">8.2.13. Cleaning Stale Emissions</h4>
 <div class="paragraph">
 <p>Reparsing a CU strips its old references and adds its current ones — but "old" means
 only references at <code>position.file == CU</code>. <code>removeReferenceableItemsForFile</code> is
@@ -4150,12 +4272,121 @@ given where the option is parsed.</p>
 </div>
 </div>
 <div class="sect2">
-<h3 id="_optimization">10.4. Optimization</h3>
+<h3 id="_convergence_freshness_as_make">10.4. Convergence: Freshness as Make</h3>
+<div class="paragraph">
+<p>Memory as Truth settled where the knowledge is, and the Setup Ladder when each thing is
+bound. This convergence settles what a request brings up to date before it answers.
+A compilation unit is built when it is out of date with its prerequisites, as in make, and
+a file has changed when its content is different.
+The request converges to the shape in <a href="/workspace/1/documentation/C-xrefactory#algorithms">Algorithms</a>
+("The Shape It Converges To").</p>
+</div>
+<div class="paragraph">
+<p><strong>Done when</strong> every step of a request belongs to a line of the shape, and the answer on a
+real project is complete, except for the gaps listed under Remaining.
+What a request costs is not part of it, that is Optimization.</p>
+</div>
+<div class="sect3">
+<h4 id="_done_3">10.4.1. Done</h4>
+<div class="ulist">
+<ul>
+<li>
+<p><strong>Freshness is make</strong> — a CU is built when its knowledge is older than a prerequisite,
+its include closure or the config (<a href="/workspace/1/decisions/C-xrefactory#32">ADR-0032</a>).</p>
+</li>
+<li>
+<p><strong>Remove on change</strong> — a file&#8217;s references are removed when its content changes, and the
+left-behind mark is gone (<a href="/workspace/1/decisions/C-xrefactory#35">ADR-0035</a>).</p>
+</li>
+<li>
+<p><strong>Change is difference</strong> — a file has changed when its content token differs, a held
+buffer&#8217;s as well as a file on disk (<a href="/workspace/1/decisions/C-xrefactory#36">ADR-0036</a>).</p>
+</li>
+<li>
+<p><strong>The include edges are inputs</strong> — a request takes the include graph from the scan&#8217;s edges
+and the parse&#8217;s include references.</p>
+</li>
+<li>
+<p><strong>No caps on the goal</strong> — the sibling cap and the include walk&#8217;s limit are gone, and a
+request on a name asks before analysing the whole project.</p>
+</li>
+<li>
+<p><strong>The scan reads every header it has not read</strong> — also one the file table knew before the
+scan, e.g. the request file.</p>
+</li>
+</ul>
+</div>
+</div>
+<div class="sect3">
+<h4 id="_remaining_3">10.4.2. Remaining</h4>
+<table class="tableblock frame-all grid-all stretch">
+<colgroup>
+<col style="width: 33.3333%;">
+<col style="width: 66.6667%;">
+</colgroup>
+<thead>
+<tr>
+<th class="tableblock halign-left valign-top">Work</th>
+<th class="tableblock halign-left valign-top">Notes / dependency</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>&lt;&#8230;&#8203;&gt;</code> includes</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">The scan does not record them, so a project that includes its own headers that way
+ misses CUs that were never parsed (ffmpeg&#8217;s <code>doc/examples</code>). The reach of the symbol
+ comes first, so that system headers do not pull in every CU. Backlog <code>header-filtered-siblings</code>,
+ then <code>scan-angle-includes</code>.</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">A CU that stops emitting into an unchanged header</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Its references stay in the header, since nothing about the header changed. Backlog <code>variant-b</code>.</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">A request in a header goes through its includers</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Never on its own, and with no includer the message says so. Backlog <code>request-through-includers</code>.</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">References in <code>wrap()</code> macros</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Six references in ffmpeg&#8217;s <code>neontest</code> and <code>w64xmmtest</code> were not found. Not checked yet,
+ so it may be a gap or not.</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Steps on more than one line</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">The steps of a request that do more than one line&#8217;s job, listed in
+ <a href="/workspace/1/documentation/C-xrefactory#algorithms">Algorithms</a> ("A Request, Step by Step").
+ Backlog <code>held-cus-on-first-request</code>, <code>whole-project-goal</code> and <code>cursor-parse-reuse</code>.</p></td>
+</tr>
+</tbody>
+</table>
+<div class="paragraph">
+<p>The rest of backlog section 7 is cost or structure, and does not keep this open.</p>
+</div>
+</div>
+<div class="sect3">
+<h4 id="_decisions_that_shaped_this_direction_3">10.4.3. Decisions that shaped this direction</h4>
+<div class="ulist">
+<ul>
+<li>
+<p><a href="/workspace/1/decisions/C-xrefactory#32">ADR-0032</a> — knowledge is rebuilt like make rebuilds targets</p>
+</li>
+<li>
+<p><a href="/workspace/1/decisions/C-xrefactory#35">ADR-0035</a> — a file&#8217;s references are removed when its content changes</p>
+</li>
+<li>
+<p><a href="/workspace/1/decisions/C-xrefactory#36">ADR-0036</a> — a change is a difference, and the server orders what it saw</p>
+</li>
+</ul>
+</div>
+</div>
+</div>
+<div class="sect2">
+<h3 id="_optimization">10.5. Optimization</h3>
 <div class="paragraph">
 <p>Once the core architectural path (lightweight scan, entry refresh, memory-as-truth) is functional, targeted optimizations can reduce cold-start latency and improve responsiveness on large projects.</p>
 </div>
 <div class="sect3">
-<h4 id="_measured_2026_09_23">10.4.1. Measured, 2026-09-23</h4>
+<h4 id="_measured_2026_09_23">10.5.1. Measured, 2026-09-23</h4>
 <div class="paragraph">
 <p>Two different numbers, on the same tree — ffmpeg in <code>tests/test_ffmpeg</code>, 2615 compilation
 units, 1.38M lines of <code>.c</code> and <code>.h</code>, on the maintainer&#8217;s Mac:</p>
@@ -4184,7 +4415,7 @@ second is what a user waits for before anything appears.</p>
 </div>
 </div>
 <div class="sect3">
-<h4 id="_measured_2026_10_12">10.4.2. Measured, 2026-10-12</h4>
+<h4 id="_measured_2026_10_12">10.5.2. Measured, 2026-10-12</h4>
 <div class="paragraph">
 <p>The cold-start PUSH again, for <code>AudioFIRContext</code> from <code>af_afir.c</code>, on the WSL machine
 (session <code>d25255b8</code>), with the development build and the fixture&#8217;s <code>c-xrefrc.tpl</code>, from no
@@ -4247,7 +4478,7 @@ CI would mean printing elapsed time per test in <code>tests/Makefile</code>.</p>
 </div>
 </div>
 <div class="sect2">
-<h3 id="_known_limitations">10.5. Known Limitations</h3>
+<h3 id="_known_limitations">10.6. Known Limitations</h3>
 <div class="paragraph">
 <p>Consequences of the current entry refresh implementation, each deferred because it has low
 practical impact or dissolves with planned work. Mechanics are in
@@ -4288,7 +4519,7 @@ practical impact or dissolves with planned work. Mechanics are in
 </table>
 </div>
 <div class="sect2">
-<h3 id="_feature_vision_lsp_support_explorative">10.6. Feature Vision: LSP Support (explorative)</h3>
+<h3 id="_feature_vision_lsp_support_explorative">10.7. Feature Vision: LSP Support (explorative)</h3>
 <div class="paragraph">
 <p>The last and least-defined direction: expose <code>c-xrefactory</code> through the Language Server
 Protocol so VS Code, Neovim, and other LSP editors can use its navigation and — as far as
@@ -4311,7 +4542,7 @@ those events have already made current. So the LSP path needs no architecture of
 it reuses entry refresh (<a href="/workspace/1/documentation/C-xrefactory#algorithms">Algorithms</a>), triggered by different events.</p>
 </div>
 <div class="sect3">
-<h4 id="lsp-refactoring-reach">10.6.1. Reaching refactorings: three tiers</h4>
+<h4 id="lsp-refactoring-reach">10.7.1. Reaching refactorings: three tiers</h4>
 <div class="paragraph">
 <p>The Emacs protocol is interactive and LSP is not, but most of that gap can be closed in
 the server rather than in each editor. Every LSP editor gets what the server exposes
@@ -4359,7 +4590,7 @@ extension API, such as Zed and Helix, get tiers 1 and 2 only.</p>
 </div>
 </div>
 <div class="sect2">
-<h3 id="_further_refactorings">10.7. Further refactorings</h3>
+<h3 id="_further_refactorings">10.8. Further refactorings</h3>
 <div class="paragraph">
 <p><code>c-xrefactory</code> crossed the "Refactoring Rubicon" early, but only a fraction of the
 refactorings that apply to C are automated today. Extending the catalogue — both deeper
@@ -4377,10 +4608,10 @@ is a standing source of value. Several candidates are specified in
 <p>This chapter documents planned user-facing features—new refactorings, navigation capabilities, and editor integrations. These represent functionality users will interact with directly.</p>
 </div>
 <div class="paragraph">
-<p>For internal architectural improvements and code quality work, see <a href="18-major-codebase-improvements.adoc">Chapter 18: Major Codebase Improvements</a>.</p>
+<p>For internal architectural improvements and code quality work, see <a href="/workspace/1/documentation/C-xrefactory#major-codebase-improvements">Chapter 18: Major Codebase Improvements</a>.</p>
 </div>
 <div class="paragraph">
-<p>For detailed specifications of refactoring operations (both existing and planned), see <a href="20-refactoring-recipes.adoc">Chapter 20: Refactoring Recipes</a>.</p>
+<p>For detailed specifications of refactoring operations (both existing and planned), see <a href="/workspace/1/documentation/C-xrefactory#refactoring-recipes">Chapter 20: Refactoring Recipes</a>.</p>
 </div>
 <div class="sect2">
 <h3 id="move-function-refactoring">11.1. Move Function Between Files</h3>
@@ -4465,7 +4696,10 @@ If there is a comment above it, or above something that moves along, Move Functi
 </div>
 <div class="paragraph">
 <p><strong>Smarter header placement</strong>: Automatically find the right location in header files
-  based on existing declarations and dependencies.</p>
+  based on existing declarations and dependencies.
+  Today the declaration goes last. The target&#8217;s neighbours in the <code>.c</code> say more: put the
+  declaration before that of the function after the target. If that has none, put it after
+  that of the function before the target. Only if neither has one does it go last.</p>
 </div>
 <div class="paragraph">
 <p><strong>Preview</strong>: Show what will be changed before applying the refactoring.</p>
@@ -4603,7 +4837,7 @@ Bob -&gt; Alice : hello
 <div class="ulist">
 <ul>
 <li>
-<p><a href="18-major-codebase-improvements.adoc">Chapter 18: Major Codebase Improvements</a> discusses the technical architecture</p>
+<p><a href="/workspace/1/documentation/C-xrefactory#major-codebase-improvements">Chapter 18: Major Codebase Improvements</a> discusses the technical architecture</p>
 </li>
 <li>
 <p>Multi-file support requires include graph and on-demand parsing (foundational work described in Chapter 18)</p>
@@ -4931,7 +5165,7 @@ changes into the external files.</p>
 <p>The legacy <code>c-xrefactory</code> treated all parsed files equally — there was no distinction
 between "my code" and "code I depend on." This was acceptable when projects were
 self-contained, but with the modern include-path-based project scope (see
-<a href="06-principles.adoc">Principles, Project Scope</a>) the distinction matters.</p>
+<a href="/workspace/1/documentation/C-xrefactory#principles">Principles, Project Scope</a>) the distinction matters.</p>
 </div>
 </div>
 <div class="sect3">
@@ -5660,7 +5894,7 @@ void callParser(int fileNumber, Language language);</code></pre>
 <p><strong>Requires input file processing</strong> (<code>requiresProcessingInputFile</code>): completion, search, extraction, and all operations that open a browsing session — these parse the request&#8217;s input file</p>
 </li>
 <li>
-<p><strong>Needs the whole project parsed</strong> (<code>needsWholeProjectParsed</code>): search, unused globals, push by name — these parse every out-of-date compilation unit first, and ask when there are more than the cap</p>
+<p><strong>Needs the whole project parsed</strong> (<code>needsWholeProjectParsed</code>): search, unused globals, push by name — these parse every out-of-date compilation unit first, and ask when there are more than <code>MAX_CUS_TO_REPARSE</code> (128)</p>
 </li>
 <li>
 <p><strong>Answered without references</strong> (<code>answeredWithoutReferences</code>): <code>-getproject</code> — entry refresh skips Pass 3 for it</p>
@@ -5676,7 +5910,7 @@ void callParser(int fileNumber, Language language);</code></pre>
 <div class="listingblock">
 <div class="content">
 <pre class="highlightjs highlight"><code class="language-c hljs" data-lang="c">void server(ArgumentsVector args);       // Infinite request loop
-void callServer(ArgumentsVector baseArgs, ArgumentsVector requestArgs);  // Single request dispatch
+void callServer(ArgumentsVector startupOptions, ArgumentsVector requestOptions);  // Single request dispatch
 void initServer(ArgumentsVector args);   // Per-request initialization</code></pre>
 </div>
 </div>
@@ -8027,7 +8261,7 @@ extract operations and similar.</p>
 <td class="content">
 The global-variable communication channel is targeted for removal; see "Replace
 Global <code>options</code> with Typed Requests" in
-<a href="18-major-codebase-improvements.adoc">Chapter 18</a>.
+<a href="/workspace/1/documentation/C-xrefactory#major-codebase-improvements">Chapter 18</a>.
 </td>
 </tr>
 </table>
@@ -8109,7 +8343,7 @@ dedicated structures.</p>
 <td class="content">
 <code>parsedInfo</code> is one of the structures targeted for unification under
 "Replace Global <code>options</code> with Typed Requests" in
-<a href="18-major-codebase-improvements.adoc">Chapter 18</a>.
+<a href="/workspace/1/documentation/C-xrefactory#major-codebase-improvements">Chapter 18</a>.
 </td>
 </tr>
 </table>
@@ -8128,7 +8362,7 @@ dedicated structures.</p>
 <i class="fa icon-note" title="Note"></i>
 </td>
 <td class="content">
-The architectural direction for <code>cxfile.c</code> is documented in <a href="18-major-codebase-improvements.adoc">Chapter 18: Incremental cxfile.c Cleanup</a>. The high-level "Memory as Truth" vision is in <a href="10-roadmap.adoc">Chapter 10: Roadmap</a>.
+The architectural direction for <code>cxfile.c</code> is documented in <a href="/workspace/1/documentation/C-xrefactory#major-codebase-improvements">Chapter 18: Incremental cxfile.c Cleanup</a>. The high-level "Memory as Truth" vision is in <a href="/workspace/1/documentation/C-xrefactory#roadmap">Chapter 10: Roadmap</a>.
 </td>
 </tr>
 </table>
@@ -8194,7 +8428,7 @@ edits that match what the user sees.</p>
 they are open in the editor. The server then instead reads the files directly from
 disk. Preloaded buffers, meaning modified files open in the editor, are persisted in the
 server across requests until the client stops sending them.  See "Preload" in
-<a href="06-principles.adoc">Principles</a> for the full lifecycle, including the per-preload
+<a href="/workspace/1/documentation/C-xrefactory#principles">Principles</a> for the full lifecycle, including the per-preload
 mtime check and the connection to entry refresh.</p>
 </div>
 </div>
@@ -8267,7 +8501,7 @@ process).</p>
 <td class="content">
 Refactorings used to spawn a separate <code>-refactory</code> process per operation;
 that mechanism was removed in 2026-03 — all refactorings now run as server
-operations. See <a href="22-archive.adoc">Archive</a> for the historical two-process model.
+operations. See <a href="/workspace/1/documentation/C-xrefactory#archive">Archive</a> for the historical two-process model.
 </td>
 </tr>
 </table>
@@ -8283,7 +8517,7 @@ Some refactoring state still lives in dedicated structures inherited from the
 two-process era — e.g. <code>refactoring_options</code>, a separate copy of the options struct
 used only during refactoring. Folding these into a unified options model is covered
 in "Replace Global <code>options</code> with Typed Requests" in
-<a href="18-major-codebase-improvements.adoc">Chapter 18</a>.
+<a href="/workspace/1/documentation/C-xrefactory#major-codebase-improvements">Chapter 18</a>.
 </td>
 </tr>
 </table>
@@ -9294,7 +9528,7 @@ setup.</p>
 <p>This chapter documents internal architectural changes and technical debt reduction efforts that improve code quality, maintainability, and performance. These are improvements to `c-xrefactory&#8217;s own implementation, not features users interact with directly.</p>
 </div>
 <div class="paragraph">
-<p>For planned user-facing features, see <a href="11-planned-features.adoc">Chapter 11: Planned Features</a>.</p>
+<p>For planned user-facing features, see <a href="/workspace/1/documentation/C-xrefactory#planned-features">Chapter 11: Planned Features</a>.</p>
 </div>
 <div class="sect2">
 <h3 id="_incremental_cxfile_c_cleanup">18.1. Incremental <code>cxfile.c</code> Cleanup</h3>
@@ -9304,7 +9538,7 @@ setup.</p>
 <p>The <code>cxfile</code> module was designed when the <code>.cx</code> files on disk were the reference database. Operations like "show all references to symbol X" or "find unused symbols" were table-driven scans over the disk format — hash the symbol name, stream the right partition, apply a per-operation filter. This was efficient for the batch cross-referencer that <code>c-xrefactory</code> evolved from, where the workflow was <code>c-xref -create</code> → <code>c-xref -update</code> → query the on-disk database.</p>
 </div>
 <div class="paragraph">
-<p>Under memory-as-truth (<a href="10-roadmap.adoc">Chapter 10</a>), all operations now read from the in-memory <code>referenceableItemTable</code>; the <code>.cx</code> files serve only as a startup snapshot.</p>
+<p>Under memory-as-truth (<a href="/workspace/1/documentation/C-xrefactory#roadmap">Chapter 10</a>), all operations now read from the in-memory <code>referenceableItemTable</code>; the <code>.cx</code> files serve only as a startup snapshot.</p>
 </div>
 </div>
 <div class="sect3">
@@ -9339,7 +9573,7 @@ setup.</p>
 </ul>
 </div>
 <div class="paragraph">
-<p>A disk-read tripwire in <code>scanCxFile</code> asserts that no <code>.cx</code> read happens after the initial snapshot load. See "Memory As Truth" in <a href="06-principles.adoc">Principles</a>.</p>
+<p>A disk-read tripwire in <code>scanCxFile</code> asserts that no <code>.cx</code> read happens after the initial snapshot load. See "Memory As Truth" in <a href="/workspace/1/documentation/C-xrefactory#principles">Principles</a>.</p>
 </div>
 <div class="paragraph">
 <p>The current public interface in <code>cxfile.h</code> is:</p>
@@ -9359,7 +9593,7 @@ setup.</p>
 </div>
 </div>
 <div class="sect3">
-<h4 id="_remaining_3">18.1.3. Remaining</h4>
+<h4 id="_remaining_4">18.1.3. Remaining</h4>
 <div class="paragraph">
 <p>One small interface tightening — not a major improvement, but worth listing as a known loose end:</p>
 </div>
@@ -10563,76 +10797,13 @@ Each entry describes symptoms, analysis (when available), and suspected root cau
 </div>
 </div>
 <div class="sect2">
-<h3 id="_a_refactoring_can_see_a_truncated_reference_set">19.2. A refactoring can see a truncated reference set</h3>
+<h3 id="_stale_sessions_after_pop">19.2. Stale sessions after POP</h3>
 <div class="paragraph">
-<p><strong>Symptom:</strong> on a large project, a rename rewrites some occurrences and leaves the rest, with no warning. The definition is found correctly, so nothing looks wrong.</p>
-</div>
-<div class="paragraph">
-<p><strong>Cause:</strong> <code>collectCUsIncluding()</code> (<code>src/rebuild.c</code>) stops widening the reverse-include frontier at <code>MAX_INCLUDE_WALK_FILES</code> (256). A refactoring push is in <code>needsReferenceDatabase</code> but not in <code>needsWholeProjectParsed</code>, so it takes whatever entry refresh has parsed. Past the limit that is a subset. The cap of 128 CUs that also applied is gone.</p>
-</div>
-<div class="paragraph">
-<p><strong>Measured 2026-09-22</strong>, with both limits, on <code>tests/test_ffmpeg</code>, one cold <code>-browse-push</code> on <code>avcodec_open2</code> where it is declared in <code>avcodec.h</code>, which 713 <code>.c</code> files include:</p>
-</div>
-<table class="tableblock frame-all grid-all stretch">
-<colgroup>
-<col style="width: 33.3333%;">
-<col style="width: 33.3333%;">
-<col style="width: 33.3334%;">
-</colgroup>
-<thead>
-<tr>
-<th class="tableblock halign-left valign-top"></th>
-<th class="tableblock halign-left valign-top">caps 128 / 256</th>
-<th class="tableblock halign-left valign-top">caps 4096 / 8192</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td class="tableblock halign-left valign-top"><p class="tableblock">references found</p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock"><strong>13</strong></p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock"><strong>25</strong></p></td>
-</tr>
-<tr>
-<td class="tableblock halign-left valign-top"><p class="tableblock">wall clock</p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">23.3 s</p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">256 s</p></td>
-</tr>
-<tr>
-<td class="tableblock halign-left valign-top"><p class="tableblock">peak RSS</p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">28.5 MB</p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">91.6 MB</p></td>
-</tr>
-<tr>
-<td class="tableblock halign-left valign-top"><p class="tableblock">goto answer</p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock"><code>utils.c:542</code></p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">identical</p></td>
-</tr>
-</tbody>
-</table>
-<div class="paragraph">
-<p>So a rename there rewrites 13 of 25 occurrences. Browsing survives a truncated set; rewriting does not.</p>
-</div>
-<div class="paragraph">
-<p><strong>When it bites:</strong> only when more than 256 files (transitively) include one header. c-xrefactory itself cannot reach it — 79 CUs in <code>src</code>, worst header fan-in <code>log.h</code> at 39. systemd (642 CUs) and ffmpeg (2616) can.</p>
-</div>
-<div class="paragraph">
-<p><strong>Why the limits existed:</strong> removing the lexem-stream cache (ADR-0012) took a full ffmpeg parse from 1-2 minutes to 25, and the limits bound that. A request now builds every CU the walk finds.</p>
-</div>
-<div class="paragraph">
-<p><strong>Direction:</strong> put the refactoring pushes in <code>needsWholeProjectParsed</code> so they ask like search does — the parse-all there is uncapped and counts the CUs that are out of date. Two things that needs: declining must <strong>abort</strong> the refactoring, where today <code>if (!needsConfirmationToAnalyse(outOfDateCUs) || ppcWaitConfirmation(msg)) { &#8230;&#8203;parse&#8230;&#8203; }</code> has no else and simply proceeds; and <code>parseAllPromptFor()</code> ends in <code>default: assert(0)</code>, so each added operation needs its own prompt word. It applies to parameter manipulation as much as to rename.</p>
-</div>
-<div class="paragraph">
-<p><strong>Workaround:</strong> none. The walk should stop at the same includers every time, so re-issuing the push probably does not help.</p>
+<p>Tracked under "Known Limitations" in <a href="/workspace/1/documentation/C-xrefactory#roadmap">Chapter 10: Roadmap</a>, with the proposed dissolve (index-based sessions).</p>
 </div>
 </div>
 <div class="sect2">
-<h3 id="_stale_sessions_after_pop">19.3. Stale sessions after POP</h3>
-<div class="paragraph">
-<p>Tracked under "Known Limitations" in <a href="10-roadmap.adoc">Chapter 10: Roadmap</a>, with the proposed dissolve (index-based sessions).</p>
-</div>
-</div>
-<div class="sect2">
-<h3 id="_header_static_prototype_and_definition_are_two_symbols">19.4. Header static: prototype and definition are two symbols</h3>
+<h3 id="_header_static_prototype_and_definition_are_two_symbols">19.3. Header static: prototype and definition are two symbols</h3>
 <div class="paragraph">
 <p><strong>Symptom:</strong> For a <code>static</code> function declared and then defined in a header, renaming it
 from a file that includes the header renames the definition and the calls but leaves the
@@ -10650,7 +10821,7 @@ the definition is <code>helper.h!helper</code>.</p>
 </div>
 </div>
 <div class="sect2">
-<h3 id="_token_pasting_that_forms_numbers">19.5. Token pasting that forms numbers</h3>
+<h3 id="_token_pasting_that_forms_numbers">19.4. Token pasting that forms numbers</h3>
 <div class="paragraph">
 <p><strong>Symptom:</strong> Macros that paste numbers produce wrong symbols in the reference table.</p>
 </div>
@@ -10684,7 +10855,7 @@ left for the fix to decide.</p>
 </div>
 </div>
 <div class="sect2">
-<h3 id="_a_stale_snapshot_keeps_symbols_the_parser_no_longer_makes_global">19.6. A stale snapshot keeps symbols the parser no longer makes global</h3>
+<h3 id="_a_stale_snapshot_keeps_symbols_the_parser_no_longer_makes_global">19.5. A stale snapshot keeps symbols the parser no longer makes global</h3>
 <div class="paragraph">
 <p><strong>Symptom:</strong> a fix that narrows a symbol&#8217;s visibility has no effect in a running editor
 session, and reparsing the whole project does not help. Seen 2026-09-24 on the Mac
@@ -10741,7 +10912,7 @@ which rebuilds from the sources. It is a stopgap.</p>
 </div>
 </div>
 <div class="sect2">
-<h3 id="_extract_variable_puts_the_declaration_in_the_wrong_place_for_some_statements">19.7. Extract Variable puts the declaration in the wrong place for some statements</h3>
+<h3 id="_extract_variable_puts_the_declaration_in_the_wrong_place_for_some_statements">19.6. Extract Variable puts the declaration in the wrong place for some statements</h3>
 <div class="paragraph">
 <p><strong>Symptom:</strong> The declaration goes in on the line where the expression starts, which is only right when the statement starts on that line too.</p>
 </div>
@@ -10789,7 +10960,7 @@ If the extraction was undone, put the statement on one line first, or write the 
 <p>This chapter documents mechanical steps for refactoring operations. Each recipe describes the algorithmic steps that an automated refactoring tool would perform.</p>
 </div>
 <div class="paragraph">
-<p>For detailed discussions of refactoring feature architecture and implementation phases, see <a href="11-planned-features.adoc">Chapter 11: Planned Features</a>.</p>
+<p>For detailed discussions of refactoring feature architecture and implementation phases, see <a href="/workspace/1/documentation/C-xrefactory#planned-features">Chapter 11: Planned Features</a>.</p>
 </div>
 <div class="sect2">
 <h3 id="_existing_refactorings">20.1. Existing Refactorings</h3>
@@ -11061,7 +11232,7 @@ void publicSort(int *array, size_t n) {
 <div class="sect3">
 <h4 id="_move_function_to_different_file">20.1.6. Move Function to Different File</h4>
 <div class="paragraph">
-<p><strong>Status</strong>: Phase 1 complete. See <a href="11-planned-features.adoc">Planned Features: Move Function Between Files</a> for detailed design, what works now, and next steps.</p>
+<p><strong>Status</strong>: Phase 1 complete. See <a href="/workspace/1/documentation/C-xrefactory#move-function-refactoring">Planned Features: Move Function Between Files</a> for detailed design, what works now, and next steps.</p>
 </div>
 <div class="paragraph">
 <p><strong>Purpose:</strong> Move a function definition from one C source file to another while automatically managing visibility (static vs extern) and adding necessary declarations and includes.</p>
@@ -12677,7 +12848,7 @@ if (buffer != NULL &amp;&amp; buffer-&gt;preLoadedFromFile != NULL) {
 <div class="sect3">
 <h4 id="_architectural_lesson">22.14.5. Architectural Lesson</h4>
 <div class="paragraph">
-<p>The workaround highlighted the underlying tension: <strong>navigation and refactoring used different sources of truth</strong>. The proper fix — eliminating <code>callXref()</code> from the refactoring path entirely — landed with server-side refactoring (<a href="10-roadmap.adoc">Chapter 10: Roadmap</a>).</p>
+<p>The workaround highlighted the underlying tension: <strong>navigation and refactoring used different sources of truth</strong>. The proper fix — eliminating <code>callXref()</code> from the refactoring path entirely — landed with server-side refactoring (<a href="/workspace/1/documentation/C-xrefactory#roadmap">Chapter 10: Roadmap</a>).</p>
 </div>
 </div>
 </div>
@@ -12687,7 +12858,7 @@ if (buffer != NULL &amp;&amp; buffer-&gt;preLoadedFromFile != NULL) {
 <p>This section describes a refresh algorithm built around a function named
 <code>refreshStaleReferencesInSession()</code> that no longer exists in the source. The current
 refresh path is lazy session refresh via <code>needsBrowsingStackRefresh</code> and
-<code>updateSessionReferencesForFile</code>, described in <a href="08-algorithms.adoc">Chapter 8</a>.
+<code>updateSessionReferencesForFile</code>, described in <a href="/workspace/1/documentation/C-xrefactory#algorithms">Chapter 8</a>.
 The material is preserved here because its core insight — that
 <code>addReferenceableToBrowsingMenu</code> deduplicates by <code>(linkName, includeFileNumber, type)</code>
 and so cannot safely re-scan from disk during refresh — is still relevant. That
@@ -12976,7 +13147,7 @@ operation reads the in-memory table.</p>
 <i class="fa icon-note" title="Note"></i>
 </td>
 <td class="content">
-Client preloading behavior and stale file detection are now documented in <a href="12-components.adoc">Chapter 12: Components</a> under Server (Entry-Point Reparse) and Editor Extension (Preloading).
+Client preloading behavior and stale file detection are now documented in <a href="/workspace/1/documentation/C-xrefactory#components">Chapter 12: Components</a> under Server (Entry-Point Reparse) and Editor Extension (Preloading).
 </td>
 </tr>
 </table>
@@ -12989,7 +13160,7 @@ Client preloading behavior and stale file detection are now documented in <a hre
 </td>
 <td class="content">
 Several sections describing pre-memory-as-truth behaviour have been moved to
-<a href="22-archive.adoc">Archive</a>:
+<a href="/workspace/1/documentation/C-xrefactory#archive">Archive</a>:
 </td>
 </tr>
 </table>
@@ -13010,14 +13181,14 @@ the same in-memory table.</p>
 <p>"Stale File Refresh and Cross-File References" — describes
 <code>refreshStaleReferencesInSession()</code>, no longer in the source. Current refresh is
 lazy via <code>needsBrowsingStackRefresh</code> and <code>updateSessionReferencesForFile</code> (see
-<a href="08-algorithms.adoc">Chapter 8</a>). The dedup-key insight from that section is
-carried forward in <a href="22-archive.adoc#cu-reparse-header-staleness">a later investigation</a>.</p>
+<a href="/workspace/1/documentation/C-xrefactory#algorithms">Chapter 8</a>). The dedup-key insight from that section is
+carried forward in <a href="/workspace/1/documentation/C-xrefactory#cu-reparse-header-staleness">a later investigation</a>.</p>
 </li>
 </ul>
 </div>
 <div class="paragraph">
 <p>As of 2026-03, the in-memory reference table is authoritative — see
-<a href="06-principles.adoc">Principles</a>.</p>
+<a href="/workspace/1/documentation/C-xrefactory#principles">Principles</a>.</p>
 </div>
 </div>
 </div>
@@ -13027,7 +13198,7 @@ carried forward in <a href="22-archive.adoc#cu-reparse-header-staleness">a later
 <p>Date: 2025-01-25</p>
 </div>
 <div class="paragraph">
-<p>Investigation revealed that <strong>both XrefMode and ServerMode use the same in-memory <code>ReferenceableItemTable</code></strong>. This is the key enabler for the incremental path to "Memory as Truth" (see <a href="10-roadmap.adoc">Chapter 10: Roadmap</a>).</p>
+<p>Investigation revealed that <strong>both XrefMode and ServerMode use the same in-memory <code>ReferenceableItemTable</code></strong>. This is the key enabler for the incremental path to "Memory as Truth" (see <a href="/workspace/1/documentation/C-xrefactory#roadmap">Chapter 10: Roadmap</a>).</p>
 </div>
 <div class="paragraph">
 <p><code>handleFoundSymbolReference()</code> in <code>cxref.c</code> handles references found during parsing. It calls <code>isMemberInReferenceableItemTable()</code> to check if a symbol exists; if not found, creates a new entry; if found, adds a reference to the existing entry. This same table is used by both modes — there is no separate "server table" vs "xref table".</p>
@@ -13041,7 +13212,7 @@ carried forward in <a href="22-archive.adoc#cu-reparse-header-staleness">a later
 </div>
 <div id="footer">
 <div id="footer-text">
-Last updated 2026-11-21 22:45:56 UTC
+Last updated 2026-11-23 16:27:24 UTC
 </div>
 </div>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.18.3/highlight.min.js"></script>

@@ -5,7 +5,7 @@
 <meta http-equiv="X-UA-Compatible" content="IE=edge">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <meta name="generator" content="Asciidoctor 2.0.26">
-<meta name="author" content="v{VERSION} - Generated 2026-11-21">
+<meta name="author" content="v{VERSION} - Generated 2026-11-23">
 <title>C-xrefactory User Manual</title>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Open+Sans:300,300italic,400,400italic,600,600italic%7CNoto+Serif:400,400italic,700,700italic%7CDroid+Sans+Mono:400,700">
 <style>
@@ -441,7 +441,7 @@ body.book #toc,body.book #preamble,body.book h1.sect0,body.book .sect1>h2{page-b
 <div id="header">
 <h1>C-xrefactory User Manual</h1>
 <div class="details">
-<span id="author" class="author">v{VERSION} - Generated 2026-11-21</span><br>
+<span id="author" class="author">v{VERSION} - Generated 2026-11-23</span><br>
 </div>
 <div id="toc" class="toc2">
 <div id="toctitle">Table of Contents</div>
@@ -805,18 +805,21 @@ For a type, <code>1</code> also shows where it is used at the top level, i.e. in
 </ul>
 </div>
 <div class="paragraph">
-<p>There are two search operations available from the menu:</p>
+<p>There are two search operations, under Search in the menu.
+Both find functions, variables, types, macros, and any other symbol visible outside a function whose name matches the pattern.
+Local variables and parameters are not included, use Push on one instead.</p>
 </div>
 <div class="dlist">
 <dl>
-<dt class="hdlist1"><strong>Search Symbol</strong></dt>
+<dt class="hdlist1"><strong>Definitions</strong></dt>
 <dd>
-<p>Finds all symbols whose name matches the pattern — functions, variables, types, macros, and any other symbol known to c-xrefactory.</p>
+<p>Finds the definitions within the project.
+Symbols that are only declared, e.g. functions from an external library, are excluded.</p>
 </dd>
-<dt class="hdlist1"><strong>Search Definition</strong></dt>
+<dt class="hdlist1"><strong>Declarations</strong></dt>
 <dd>
-<p>Finds only symbols that have a definition within the project.
-Symbols that are merely used but not defined (e.g. called from an external library) are excluded.</p>
+<p>Finds the declarations, and since every definition is also a declaration, the definitions too.
+A function with a prototype in a header is listed twice, once for the prototype and once for the definition.</p>
 </dd>
 </dl>
 </div>
@@ -1044,7 +1047,7 @@ It is also in the <strong>C-xref</strong> menu.</p>
 </tr>
 <tr>
 <td class="tableblock halign-left valign-top"><p class="tableblock"><kbd>M-F6</kbd></p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">Search Definition</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Search Definitions</p></td>
 </tr>
 <tr>
 <td class="tableblock halign-left valign-top"><p class="tableblock"><kbd>F5</kbd></p></td>
@@ -1101,7 +1104,7 @@ Select the code → Refactor → Extract Function → name the new function</p>
 </div>
 <div class="paragraph">
 <p><strong>Find all globals starting with "config":</strong>
-Search Symbol → enter <code>config*</code> → browse results</p>
+Search → Declarations → enter <code>config*</code> → browse results</p>
 </div>
 <div class="paragraph">
 <p><strong>Find out why references are missing:</strong>
@@ -1121,7 +1124,7 @@ Search Symbol → enter <code>config*</code> → browse results</p>
 </div>
 <div id="footer">
 <div id="footer-text">
-Last updated 2026-11-21 22:45:11 UTC
+Last updated 2026-11-23 16:26:39 UTC
 </div>
 </div>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.18.3/highlight.min.js"></script>
