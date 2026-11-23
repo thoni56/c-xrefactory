@@ -21,8 +21,8 @@ flowchart BT
   classDef done fill:#c9d3cb,stroke:#8a958c,color:#1f2421
   first_item["§0 · 1 · First item"]
   second_item["§1 · 2 · Second item"]
-  rung_a["§2 · 3a · the first rung"]
-  rung_b["§2 · 3b · the second rung"]
+  rung_a["§2 · 3a · The first rung"]
+  rung_b["§2 · 3b · The second rung"]
   odd_title["§3 · 4 · Take out #quot;Remove#quot; for `#lt;...#gt;` includes"]
   groundwork["The groundwork"]
   groundwork --&gt; first_item
