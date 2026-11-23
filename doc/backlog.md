@@ -734,6 +734,18 @@ or refuse (WSL, session `d25255b8`, 2026-11-23).
 
 After: refused-rename-references
 
+### (#129) A request trace for daily use `daily-request-trace`
+
+After a refactoring went wrong in daily use, the order of the requests was not known, so
+it could not be reproduced (`refused-rename-references`). `-commandlog=<file>` writes each
+request's arguments, and `-info` the builds and an "answered" line per request. Two
+things are missing. The "answered" line could say what the answer did: the edits per
+file, and the question if one was asked. And what only the client sees, an Undo, a save
+or a No to a question, has to be logged by the client, with a time, so that it can be
+read beside the server's log (WSL, session `d25255b8`, 2026-11-23).
+
+After: refactoring-stale-buffer
+
 ### (#24) Retry the request that created the project `retry-creating-request`
 
 Small, and it becomes first contact

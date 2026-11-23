@@ -1,0 +1,9 @@
+CXREF -server -info -log=log
+-getproject CURDIR/main.c
+<sync>
+-rfct-rename -renameto=number -mark=21 -cursor=21 CURDIR/main.c
+<sync>
+!cp CURDIR/main.c.renamed CURDIR/main.c
+-browse-push -cursor=87 CURDIR/main.c
+<sync>
+<exit>
