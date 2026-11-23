@@ -709,6 +709,10 @@ a difference in content (ADR-0036), so the undo and a new time on the buffers sh
 enough for the next request to build them again. Not shown: a rename the check
 refuses, then a push on the old name, which should find its references
 (WSL, session `d25255b8`, 2026-11-17).
+Seen in daily use: a rename of `popReferenceOnly()` to the existing `popSession`, refused or
+undone, left references to `popSession` at the calls of `popReferenceOnly()`. A later Add
+Parameter on `popSession()` then edited those calls, 11 characters in, the length of
+`popSession(` (WSL, session `d25255b8`, 2026-11-23).
 
 After: rename-leaves-sessions
 
