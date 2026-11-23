@@ -8,4 +8,3 @@
 - (#2) <a id="second-item"></a>**Second item** — names the whole of the first.
    Waits for: first-item
    After: first-item
-   Goes with: first-item

@@ -19,7 +19,6 @@ NUMBERED = re.compile(r'^- \(#(\d+)\) ')
 ITEM = re.compile(r'^- \(#(\d+)\) <a id="([^"]+)"></a>\*\*(.+?)\*\*')
 SUBITEM = re.compile(r'^\s+([a-z])\. <a id="([^"]+)"></a>\*\*(.+?)\*\*')
 WAITS = re.compile(r'^\s*Waits for:\s*(.+)$')
-GOES_WITH = re.compile(r'^\s*Goes with:\s*(.+)$')
 AFTER = re.compile(r'^\s*After:\s*(.+)$')
 FOUNDATION = re.compile(r'^## Foundation\s*$')
 DONE = re.compile(r'^- <a id="([^"]+)"></a>\*\*(.+?)\*\*')
@@ -36,7 +35,7 @@ def label(text):
 
 def new_item(number, slug, title, section):
     return {'number': number, 'slug': slug, 'title': title, 'section': section,
-            'waits': [], 'goes_with': [], 'after': [], 'parts': []}
+            'waits': [], 'after': [], 'parts': []}
 
 
 def read_backlog(lines):
@@ -80,10 +79,6 @@ def read_backlog(lines):
         m = AFTER.match(line)
         if m and current is not None:
             current['after'] += [s.strip() for s in m.group(1).split(',')]
-            continue
-        m = GOES_WITH.match(line)
-        if m and current is not None:
-            current['goes_with'] += [s.strip() for s in m.group(1).split(',')]
     return sections, items, foundation
 
 
@@ -106,7 +101,6 @@ def node_lines(work, foundation):
 
 
 def edge_lines(work):
-    # Goes with is not drawn: the layout would take it as an edge to rank by
     # What an item comes after is a preferred order, so it is dashed and does not block
     waits = [f"  {node_id(waited)} --> {node_id(item['slug'])}"
              for item in work for waited in item['waits']]
@@ -301,9 +295,6 @@ def problems_in(path, text):
                 found.append(f"{path}: {item['slug']} comes after {before}, which is not in the backlog")
             elif before in split:
                 found.append(f"{path}: {item['slug']} comes after {before}, which is split into parts, so name one of them")
-        for other in item['goes_with']:
-            if other not in known:
-                found.append(f"{path}: {item['slug']} goes with {other}, which is not in the backlog")
     # A loop has no order, whether it goes through Waits for or After
     for loop in loops_in(items):
         names = ', '.join(loop[:-1]) + ' and ' + loop[-1]

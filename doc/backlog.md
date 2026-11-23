@@ -23,10 +23,9 @@ Each item has a name, the `<a id>` before its title, and the title is on one lin
 preferably come after, an order that can be skipped, and these make the themes trees.
 Every item has one or the other. An order may be invented, e.g. for a group of small bugs,
 since the order is what gets changed, and an item without either widens the graph.
-`Goes with:` names what it belongs with. The docs build draws the dependency graph on
-every push, `Waits for` thick and dark, `After` dashed and grey and `Goes with` not at all,
-linked at the end of this file, and `utils/backlog_graph --check`, run with the tests,
-fails if a name is unknown.
+The docs build draws the dependency graph on every push, `Waits for` thick and dark and
+`After` dashed and grey, linked at the end of this file. `utils/backlog_graph --check`,
+run with the tests, fails if a name is unknown.
 
 ## 1. The foundational one
 
@@ -89,7 +88,6 @@ fails if a name is unknown.
       `lockedProject` says about the same project, where its name does not clash with the
       locals called `projectConfigFileName`.
       Waits for: adr-0029, project-extent
-      Goes with: startup-command-line, adr-0030
    c. <a id="setup-into-openproject"></a>**project setup moves into the future `-openproject`** — discovery, config read, compiler
       interrogation, snapshot load;
       Then `initializeFileProcessing()` discovers nothing. Today it must skip the config
@@ -121,12 +119,11 @@ fails if a name is unknown.
 - (#68) <a id="lsp-mode"></a>**An `LspMode`, and a sink for the messages** — *no repo home yet.*
     LSP sets `ServerMode` (`src/parsing.c:140`), a stop-gap for the `assert(options.mode)`
     that are gone now, and nothing reads the mode any more. `Mode` becomes `ServerMode`
-    or `LspMode`, set once from argv, and it replaces `cxrefProtocol`. A
+    or `LspMode`, set once from argv (`startup-command-line`), and it replaces `cxrefProtocol`. A
     check of the mode deep in the code is where packing is mixed into collecting. `src/commons.c` then sends messages to a sink
     chosen at startup: `<log>` and `<analysing>` for `-server`,
     `textDocument/publishDiagnostics` for `-lsp`, which replaces a document's diagnostics
     as a reparse replaces a unit's group. The first case of what #25 needs.
-    Goes with: startup-command-line, partition-options
 - (#7) <a id="startup-command-line"></a>**Decide, and enforce, what the startup command line may carry** — *no repo home yet.*
    Bigger than `c-xref file.c`, and it needs code, not just a decision. Once XrefMode is
    gone the server takes no file at startup: every request names its own, and the same
@@ -184,7 +181,6 @@ fails if a name is unknown.
     `initializeFileProcessing()` are not a context, they go with #3.
     Test first: an `options_tests.c` case where a request-only option in the project
     context is refused (WSL, session `d25255b8`, 2026-10-25).
-    Goes with: partition-options, startup-command-line
     After: indexing-log-buffer
 - (#62) <a id="docs-audit"></a>**Audit the docs, chapter by chapter** — much of `doc/docs/` was
     written while the batch modes and the disk database were the truth. Each chapter is
@@ -236,7 +232,6 @@ fails if a name is unknown.
     directories the walk visits and list again those whose time moved; a vanished file is
     a change. `06-principles` (New files and deleted files) and `08-algorithms` (Deletion
     Detection) describe more than the code does (Mac, session `4839a129`, 2026-11-06).
-    Goes with: setup-into-openproject
 - (#94) <a id="inserted-text-loses-non-ascii"></a>**Investigate: which refactorings insert text copied from the server's buffer** —
     *no repo home yet.* A loaded buffer has each multibyte character replaced by a space
     (`convertUtf8()`, `src/encoding.c`), so that byte offsets are character offsets. Text the
@@ -388,7 +383,6 @@ Roadmap → Optimization has the baseline: a cold-start PUSH on ffmpeg, measured
     current. It narrows what `request-target` widens: the reach of the symbol, not of the
     request file's closure. A CU that includes the declaring file only with `<...>` is
     then missed, also when another header brings it in today (`scan-angle-includes`).
-    Goes with: cursor-parse-reuse
     After: request-target
 - (#17) <a id="scan-angle-includes"></a>**Extend the lightweight scan to `<...>` includes** — blocked on header-filtered
     sibling parsing, or ubiquitous system headers drag in nearly every CU. Also removes
@@ -400,9 +394,8 @@ Roadmap → Optimization has the baseline: a cold-start PUSH on ffmpeg, measured
     (WSL, session `d25255b8`, 2026-11-22). cgreen's own
     sources are the large case, `<cgreen/...>` throughout. Resolving `<...>` against the
     `-I` directories only, not the compiler's, might leave the system headers out and
-    lift the block.
+    lift the block. Which headers are the project's own is `project-extent`'s question.
     Waits for: header-filtered-siblings
-    Goes with: project-extent
 - (#18) <a id="lexing-cache"></a>**Lexing cache re-introduction** — present in the original codebase, lost in
     restructuring.
     Waits for: scan-angle-includes
@@ -492,13 +485,11 @@ Roadmap → Optimization has the baseline: a cold-start PUSH on ffmpeg, measured
     stale snapshot outliving a visibility fix (both in `doc/docs/19-known-bugs.adoc`). The
     real work is making the database not need discarding — behind-the-back detection and
     entry refresh are probably most of it,
-    and item 22 dissolves another part. Remove the entry when they land, and check the
+    and `index-based-sessions` dissolves another part. Remove the entry when they land, and check the
     symptoms are gone rather than assuming it. One ghost stays under ADR-0035: that of
     the Variant-B gap (`variant-b`).
     1.10.0 announces the entry in `CHANGES.md`, so its removal needs a line there too.
     Waits for: adr-0035
-    Goes with: time-budget
-    Goes with: index-based-sessions
 
 - (#22) <a id="index-based-sessions"></a>**Index-based sessions** — dissolves stale-POP *and* lets an answer grow while you
     work. Roadmap → Memory as Truth → Remaining. Starts with a design: what a session
@@ -523,7 +514,6 @@ Roadmap → Optimization has the baseline: a cold-start PUSH on ffmpeg, measured
     pushes the "Conflicting References" session and `safetyCheck()` the symbol's own,
     and a rename without conflicts pops neither. Write the test first: a rename from
     inside a session, then a Pop that lands in that session.
-    Goes with: index-based-sessions
     After: rename-partial-in-broken-code
 - (#117) <a id="refused-rename-references"></a>**A rename the safety check refuses leaves the edited references** —
     the check builds the edited CUs into the table before it undoes the edits. A change is
@@ -531,7 +521,6 @@ Roadmap → Optimization has the baseline: a cold-start PUSH on ffmpeg, measured
     enough for the next request to build them again. Not shown: a rename the check
     refuses, then a push on the old name, which should find its references
     (WSL, session `d25255b8`, 2026-11-17).
-    Goes with: rename-leaves-sessions
     After: rename-leaves-sessions
 - (#24) <a id="retry-creating-request"></a>**Retry the request that created the project** — small, and it becomes first contact
     with every new project once auto-discovery is the only way in.
@@ -641,8 +630,8 @@ Roadmap → Optimization has the baseline: a cold-start PUSH on ffmpeg, measured
 - (#30) <a id="compile-commands"></a>**Read `-I` and `-D` from `compile_commands.json`** —
     *no repo home yet.* Nothing reads it today. CMake and Meson write one, and `bear`
     makes one for Make. It decides whether a stranger's first project works without
-    learning `.c-xrefrc` (section 8).
-    Goes with: project-extent, partition-options
+    learning `.c-xrefrc` (section 8). It also lists the CUs, so it could answer part of
+    `project-extent`.
     After: local-config-fragments
 
 ## 6. Developer tooling
@@ -701,7 +690,6 @@ implementation, and are noted in `cu-prerequisites`, `out-of-date`, `time-budget
     `needsBrowsingStackRefresh`, which is set in only some of the places that change the
     table and is cleared by the first session that reads it (stale-POP).
     `index-based-sessions` removes it again.
-    Goes with: index-based-sessions
     After: refactoring-session-kinds
 - (#107) <a id="cap-is-a-question"></a>**The macro path parses CUs that are current** —
     for a cursor in a macro body, `collectCompilationUnitsExpandingTheMacro()` parses up to
@@ -721,13 +709,12 @@ implementation, and are noted in `cu-prerequisites`, `out-of-date`, `time-budget
     replaces `markAllCompilationUnitsStale()`, and the zero sentinel goes. A config change
     already removes every reference, and it is found by its content token, also across a
     restart. The config is the
-    `.c-xrefrc` and its local fragment (ADR-0034), and its change time is the later of the
+    `.c-xrefrc` and its local fragment (ADR-0034, `local-config-fragments`), and its change time is the later of the
     two.
     Left until real use shows the cost (see `removal-cost`): `MAX_INCLUDE_CLOSURE` (1000)
     has no measured reason, and evaluating change first, i.e. `stat` each known file once
     and walk the reverse include graph to the CUs whose knowledge is older, costs in
     proportion to what changed.
-    Goes with: local-config-fragments
     After: cu-prerequisites
 - (#37) <a id="request-target"></a>**What a request needs** — the CUs that reach the request
     file's closure, and the whole project for an operation on a name. Left: the scan does
@@ -755,7 +742,7 @@ implementation, and are noted in `cu-prerequisites`, `out-of-date`, `time-budget
     is in `requiresProcessingInputFile()` (`processFile()` opens it, but does not parse it).
     Taken out, the request is built with the reach instead, before the question: `test_a_search_from_a_file_asks_before_analysing_its_siblings`
     asks about 130 of 131, `test_a_config_change_is_reloaded_once` shows two progress runs.
-    Goes with: time-budget
+    `time-budget` changes what the question counts.
     Waits for: held-cus-on-first-request
 - (#127) <a id="modules-follow-the-shape"></a>**Modules follow the lines of the shape** —
     `callServer()` calls one function for each line ("A Request, Step by Step" in
@@ -863,15 +850,14 @@ Mac (session `05984816`), 2026-10-07.
     (`c-xref-...` in `editors/emacs/c-xrefactory.el`). A group can get a `:tag`, but an
     option is relabelled only by a rename, with `define-obsolete-variable-alias` so that
     old settings still work. MELPA's `package-lint` probably wants one prefix, the
-    package's name, so the two go together.
-    Goes with: melpa
+    package's name, so the two go together (`melpa`).
 - (#52) <a id="announce"></a>**Announce** — positioned beside clangd, not against it: the
     refactorings clangd does not have (parameters, move function, macros, Yacc). LSP
-    tier 2 is the shape of that, with clangd as the main server; lsp-mode takes add-on
+    tier 2 (`lsp-tiers`) is the shape of that, with clangd as the main server; lsp-mode takes add-on
     servers, eglot needs a look. EmacsConf, Sacha Chua's Emacs News, Show HN. A stranger's
-    first project working without configuration matters here, see `compile-commands`.
+    first project working without configuration matters here, see `compile-commands` and
+    `retry-creating-request`.
     Waits for: refactoring-refusals, install-server, readme-first-screen
-    Goes with: lsp-tiers, retry-creating-request, compile-commands
 - (#53) <a id="windows-build"></a>**A Windows build** — most of the code is plain C. About 28
     `__WIN32__` remnants from the original Xrefactory are there, unmaintained and untested
     (`misc.c`, `commons.c`, `options.c`). The work is probably: file names (drive letters,

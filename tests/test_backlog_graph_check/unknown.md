@@ -5,5 +5,4 @@
 - (#1) <a id="first-item"></a>**First item** — below.
 - (#2) <a id="second-item"></a>**Second item** — waits for something gone.
    Waits for: gone-item
-   Goes with: also-gone
    After: gone-too
