@@ -45,7 +45,8 @@ static void initLogging(ArgumentsVector args) {
 
     /* Was there a filename, -log given? */
     if (fileName[0] != '\0') {
-        FILE *logFile = openFile(fileName, "w");
+        /* Appended, so that a restart keeps the log of the run before it */
+        FILE *logFile = openFile(fileName, "a");
         if (logFile != NULL)
             log_add_fp(logFile, log_level);
     }
