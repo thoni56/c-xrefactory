@@ -2,6 +2,22 @@
 
 ## 0. Only section
 
-- (#1) <a id="first-item"></a>**First item** — below.
-- (#2) <a id="second-item"></a>**Second item** — above.
-   Waits for: first-item
+### (#1) First item `first-item`
+
+Below.
+
+### (#2) Second item `second-item`
+
+Above.
+
+Waits for: first-item
+
+### (#3) Third item `third-item`
+
+Rests on something done.
+
+Waits for: done-item
+
+## Foundation
+
+- **Done item** `done-item`

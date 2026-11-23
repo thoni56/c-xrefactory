@@ -2,7 +2,16 @@
 
 ## 0. Only section
 
-- (#1) <a id="first-item"></a>**First item** — below.
-- (#2) <a id="second-item"></a>**Second item** — above.
-   Waits for: first-item
-- (#2) <a id="third-item"></a>**Third item** — took a number already taken.
+### (#1) First item `first-item`
+
+Below.
+
+### (#2) Second item `second-item`
+
+Above.
+
+Waits for: first-item
+
+### (#2) Third item `third-item`
+
+Took a number already taken.

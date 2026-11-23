@@ -15,13 +15,14 @@ import re
 import sys
 
 SECTION = re.compile(r'^## (\d+)\. (.+)$')
-NUMBERED = re.compile(r'^- \(#(\d+)\) ')
-ITEM = re.compile(r'^- \(#(\d+)\) <a id="([^"]+)"></a>\*\*(.+?)\*\*')
-SUBITEM = re.compile(r'^\s+([a-z])\. <a id="([^"]+)"></a>\*\*(.+?)\*\*')
+NUMBERED = re.compile(r'^### \(#(\d+)\) ')
+# The name ends the heading, in backticks, as `After:` and `Waits for:` write it
+ITEM = re.compile(r'^### \(#(\d+)\) (.+?) `([a-z0-9-]+)`\s*$')
+SUBITEM = re.compile(r'^#### ([a-z])\. (.+?) `([a-z0-9-]+)`\s*$')
 WAITS = re.compile(r'^\s*Waits for:\s*(.+)$')
 AFTER = re.compile(r'^\s*After:\s*(.+)$')
 FOUNDATION = re.compile(r'^## Foundation\s*$')
-DONE = re.compile(r'^- <a id="([^"]+)"></a>\*\*(.+?)\*\*')
+DONE = re.compile(r'^- \*\*(.+?)\*\* `([a-z0-9-]+)`\s*$')
 
 
 def node_id(slug):
@@ -56,18 +57,18 @@ def read_backlog(lines):
             continue
         m = DONE.match(line)
         if m and in_foundation:
-            foundation.append({'slug': m.group(1), 'title': m.group(2)})
+            foundation.append({'slug': m.group(2), 'title': m.group(1)})
             continue
         m = ITEM.match(line)
         if m:
-            current = new_item(m.group(1), m.group(2), m.group(3), sections[-1]['number'])
+            current = new_item(m.group(1), m.group(3), m.group(2), sections[-1]['number'])
             parent = current
             items[current['slug']] = current
             sections[-1]['items'].append(current)
             continue
         m = SUBITEM.match(line)
         if m:
-            current = new_item(parent['number'] + m.group(1), m.group(2), m.group(3),
+            current = new_item(parent['number'] + m.group(1), m.group(3), m.group(2),
                                parent['section'])
             items[current['slug']] = current
             parent['parts'].append(current)
@@ -278,7 +279,7 @@ def problems_in(path, text):
     for line in text.split('\n'):
         m = NUMBERED.match(line)
         if m and not ITEM.match(line):
-            found.append(f"{path}: #{m.group(1)} is not read as an item, its title must be on one line")
+            found.append(f"{path}: #{m.group(1)} is not read as an item, its heading must end in its name, in backticks")
     # An item with parts is drawn as its parts, so an order naming it has nothing to point at
     split = {slug for slug, item in items.items() if item['parts']}
     for item in items.values():

@@ -2,9 +2,22 @@
 
 ## 0. Only section
 
-- (#1) <a id="first-item"></a>**First item, in this sequence** — has parts.
-   a. <a id="first-part"></a>**First part** — the first.
-   b. <a id="second-part"></a>**Second part** — the second.
-- (#2) <a id="second-item"></a>**Second item** — names the whole of the first.
-   Waits for: first-item
-   After: first-item
+### (#1) First item, in this sequence `first-item`
+
+Has parts.
+
+#### a. First part `first-part`
+
+The first.
+
+#### b. Second part `second-part`
+
+The second.
+
+### (#2) Second item `second-item`
+
+Names the whole of the first.
+
+Waits for: first-item
+
+After: first-item
