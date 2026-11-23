@@ -1824,6 +1824,8 @@ void answerEditorAction(void) {
         /* The session of the request parse. A refactoring pushes sessions of its own */
         if (browsingStack.top == requestSession)
             popReferenceOnly();
+        /* A pop leaves a session for a re-push, so the popped ones are deleted */
+        freePoppedSessionStackEntries(&browsingStack);
         break;
     }
 
