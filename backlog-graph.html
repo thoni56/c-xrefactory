@@ -70,7 +70,7 @@ flowchart BT
   rename_partial_in_broken_code["§5 · 97 · Rename in code that does not parse leaves occurrences behind"]
   remove_references_stopgap["§5 · 20 · Take the client's #quot;Remove References and Restart Server#quot; back out"]
   index_based_sessions["§5 · 22 · Index-based sessions"]
-  rename_leaves_sessions["§5 · 110 · A rename with conflicts leaves more than #quot;Conflicting References#quot; on the browsing stack"]
+  refactorings_leave_sessions["§5 · 130 · Other refactorings may leave sessions on the browsing stack"]
   refused_rename_references["§5 · 117 · After a refused or undone refactoring, a later one edited the wrong places"]
   refactoring_stale_buffer["§5 · 128 · A refactoring edits a buffer whose file changed on disk"]
   daily_request_trace["§5 · 129 · A request trace for daily use"]
@@ -186,8 +186,8 @@ flowchart BT
   extract_guard_return -.-&gt; inline_variable
   inline_variable -.-&gt; rename_keeps_alignment
   request_target -.-&gt; index_based_sessions
-  rename_partial_in_broken_code -.-&gt; rename_leaves_sessions
-  rename_leaves_sessions -.-&gt; refused_rename_references
+  rename_partial_in_broken_code -.-&gt; refactorings_leave_sessions
+  rename_partial_in_broken_code -.-&gt; refused_rename_references
   refused_rename_references -.-&gt; refactoring_stale_buffer
   refactoring_stale_buffer -.-&gt; daily_request_trace
   lsp_mode -.-&gt; lsp_implementation_path
@@ -269,7 +269,7 @@ flowchart BT
   class rename_partial_in_broken_code ready
   class remove_references_stopgap ready
   class index_based_sessions ready
-  class rename_leaves_sessions ready
+  class refactorings_leave_sessions ready
   class refused_rename_references ready
   class refactoring_stale_buffer ready
   class daily_request_trace ready

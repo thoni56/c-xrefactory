@@ -521,7 +521,7 @@ body.book #toc,body.book #preamble,body.book h1.sect0,body.book .sect1>h2{page-b
 <li><a href="#move-function-refactoring">11.1. Move Function Between Files</a></li>
 <li><a href="#make-static">11.2. Make Static</a></li>
 <li><a href="#_lsp_integration">11.3. LSP Integration</a></li>
-<li><a href="#_rename_function_handles_expect">11.4. Rename function handles <code>expect</code></a></li>
+<li><a href="#_names_in_stringized_macro_arguments_e_g_cgreens_expect">11.4. Names in stringized macro arguments, e.g. Cgreen&#8217;s <code>expect</code></a></li>
 <li><a href="#_migrate_to_project_local_config">11.5. Migrate to project local config</a></li>
 <li><a href="#_retry_the_request_that_created_the_project">11.6. Retry the request that created the project</a></li>
 <li><a href="#_diagnostics_buffer">11.7. Diagnostics Buffer</a></li>
@@ -4887,27 +4887,81 @@ an operation needs interaction during the operation itself.</p>
 </div>
 </div>
 <div class="sect2">
-<h3 id="_rename_function_handles_expect">11.4. Rename function handles <code>expect</code></h3>
+<h3 id="_names_in_stringized_macro_arguments_e_g_cgreens_expect">11.4. Names in stringized macro arguments, e.g. Cgreen&#8217;s <code>expect</code></h3>
 <div class="paragraph">
-<p>Many unittest frameworks have a feature for isolating a unit, often referred to as
-"mocks", in C the "unit" of mocking/stubbing/doubling is almost always a function. These
-mocks need to understand how they should respond to a call. As they have no logic they
-are "programmed" by expressing conditions and responses.</p>
+<p>Many unittest frameworks isolate a unit with "mocks". In C the unit is almost always a
+function. A mock has no logic, so a test programs it with conditions and responses.</p>
 </div>
 <div class="paragraph">
-<p>In particular, Cgreen, has an <code>expect()</code> which takes the function name as the first
-parameter, and then constraints to apply and values to return. This is implemented using
-CPP macros so the function name is just text, and cannot be detected using normal
-C-parsing/analysis.</p>
+<p>Cgreen&#8217;s <code>expect()</code> takes the name of the mocked function as its first argument:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-c hljs" data-lang="c">expect(helper, when(count, is_equal_to(3)), will_return(1));</code></pre>
+</div>
 </div>
 <div class="paragraph">
-<p>Renaming a function that appears in an <code>expect</code> will not rename that reference. This
-will usually cause the unittest to fail, because there is no call to that, no longer
-existin, function.</p>
+<p><code>expect(f, &#8230;&#8203;)</code> passes <code>f</code> to <code>STRINGIFY_TOKEN(token)</code>, which is <code><mark>token</code>. The <code></mark></code> turns
+<code>helper</code> into a string during the expansion, and only the string reaches the parser.</p>
+</div>
+<div class="sect3">
+<h4 id="_done_a_stringized_identifier_is_a_reference">11.4.1. Done: a stringized identifier is a reference</h4>
+<div class="paragraph">
+<p>An argument that a macro stringizes, and that is one identifier, is a reference to the
+symbol of that name, if one is visible. The lexer records it where <code>#</code> is expanded,
+<code>addReferenceForStringizedIdentifier()</code> in <code>src/yylex.c</code>. The reference is at the
+position of the identifier in the source. So a push from <code>expect(helper, &#8230;&#8203;)</code> finds
+<code>helper()</code>, and a rename edits the identifier. The string follows on the next expansion.</p>
 </div>
 <div class="paragraph">
-<p>A handy extension of the "Rename Function" would be to find these using some special
-magic and replace them too.</p>
+<p>The rule knows nothing about Cgreen. It also covers Cgreen&#8217;s <code>add_test(suite, test)</code> and
+<code>assert_that(x, &#8230;&#8203;)</code>, and a project&#8217;s own <code>#define CASE(x) {#x, x}</code> tables. A stringized
+word that names no visible symbol, e.g. <code>STR(hello)</code>, stays only a string. An identifier
+used before its declaration has no reference, as in C.</p>
+</div>
+<div class="paragraph">
+<p><code>tests/test_sees_references_in_stringized_arguments</code> pins this.</p>
+</div>
+<div class="paragraph">
+<p>What follows is planned.</p>
+</div>
+</div>
+<div class="sect3">
+<h4 id="_when_and_the_parameters_of_the_mock">11.4.2. <code>when()</code> and the parameters of the mock</h4>
+<div class="paragraph">
+<p><code>when(count, &#8230;&#8203;)</code> stringizes <code>count</code> too. It must match a parameter name in the mock, the
+<code>mock(a, count)</code> in the mock function, which Cgreen also stringizes. By convention the mock
+has the same parameter names as the real function. So <code>count</code> names a parameter of the
+mocked function, here <code>helper()</code>, and not a symbol that is visible at the <code>when()</code>.</p>
+</div>
+<div class="paragraph">
+<p>The generic rule does not find this reference. It needs to know that the first argument
+of <code>expect()</code> names the function whose parameters the <code>when()</code> arguments name. That is
+knowledge of Cgreen, not of C.</p>
+</div>
+<div class="paragraph">
+<p>With that knowledge, two features follow:</p>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p>Completion inside <code>when(</code> offers the parameter names of the function in the <code>expect()</code>.</p>
+</li>
+<li>
+<p>Rename of a parameter also edits the <code>when()</code> arguments and the <code>mock()</code> in the mock.</p>
+</li>
+</ul>
+</div>
+</div>
+<div class="sect3">
+<h4 id="_derived_names">11.4.3. Derived names</h4>
+<div class="paragraph">
+<p>Other frameworks build names with <code>##</code>. In fff, <code>FAKE_VALUE_FUNC(int, foo, int)</code> defines
+<code>foo_fake</code>. GObject&#8217;s <code>G_DEFINE_TYPE</code> builds a set of functions the same way. During the
+expansion, c-xrefactory sees that <code>foo_fake</code> was built from the argument <code>foo</code>. A rename
+of <code>foo</code> could offer to rename <code>foo_fake</code> too. CMock&#8217;s <code>foo_ExpectAndReturn()</code> is
+generated by a tool, not by an expansion, so this does not cover it.</p>
+</div>
 </div>
 </div>
 <div class="sect2">
@@ -13212,7 +13266,7 @@ carried forward in <a href="/workspace/1/documentation/C-xrefactory#cu-reparse-h
 </div>
 <div id="footer">
 <div id="footer-text">
-Last updated 2026-11-24 08:14:49 UTC
+Last updated 2026-11-24 11:07:55 UTC
 </div>
 </div>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.18.3/highlight.min.js"></script>
