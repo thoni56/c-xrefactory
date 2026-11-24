@@ -1,0 +1,2 @@
+c-xref -server -commandlog=commands.log -o server-buffer
+-getproject a.c

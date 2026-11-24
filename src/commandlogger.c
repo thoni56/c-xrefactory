@@ -44,4 +44,6 @@ void logCommands(ArgumentsVector args) {
     char *cleaned = removePattern(args.argv[args.argc-1], cwd);
     writeFile(commandsLogfile, cleaned, strlen(cleaned), 1);
     writeFile(commandsLogfile, "\n", 1, 1);
+    /* A running server's log is read, and a crash would lose its last requests */
+    fflush(commandsLogfile);
 }
