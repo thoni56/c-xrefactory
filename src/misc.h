@@ -62,7 +62,7 @@ extern void prettyPrintLinkNameForSymbolInMenu(char *ttt, BrowsingMenu *ss);
 
 /* Strings */
 extern char *strmcpy(char *dest, char *src);
-extern char *lastOccurenceInString(char *ss, int ch);
+extern char *lastOccurrenceInString(char *ss, int ch);
 
 #define UNUSED (void)
 

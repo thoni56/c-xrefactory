@@ -459,7 +459,7 @@ char *expandPredefinedSpecialVariables_static(char *variable, char *inputFilenam
     assert(strlen(filename) < MAX_FILE_NAME_SIZE - 1);
     strcpy(path, directoryName_static(filename));
     strcpy(name, simpleFileNameWithoutSuffix_static(filename));
-    suffix = lastOccurenceInString(filename, '.');
+    suffix = lastOccurrenceInString(filename, '.');
     if (suffix == NULL)
         suffix = "";
     else

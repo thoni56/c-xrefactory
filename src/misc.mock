@@ -51,7 +51,7 @@ bool fileNameHasOneOfSuffixes(char *fname, char *suffs) {
   return (bool) mock(fname, suffs);
 }
 
-char *lastOccurenceInString(char *string, int ch) {
+char *lastOccurrenceInString(char *string, int ch) {
   return (char *) mock(string, ch);
 }
 

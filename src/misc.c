@@ -292,7 +292,7 @@ char *strmcpy(char *dest, char *src) {
     return p1;
 }
 
-char *lastOccurenceInString(char *string, int ch) {
+char *lastOccurrenceInString(char *string, int ch) {
     return strrchr(string, ch);
 }
 

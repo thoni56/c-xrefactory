@@ -674,7 +674,7 @@ static void symbolHighlightNameSprint(char *output, BrowsingMenu *menu) {
         *cc = 0;
     len = strlen(output);
     output[len]=0;
-    bb = lastOccurenceInString(output,'.');
+    bb = lastOccurrenceInString(output,'.');
     if (bb!=NULL) {
         bb++;
         llen = strlen(bb);
