@@ -836,6 +836,14 @@ missing is the division and a format like "4 min left". Decide the unit first: C
 uneven (`avcodec.h`'s consumers against a 40-line `.c`), lines or bytes are steadier,
 and both are known before parsing starts.
 
+### (#134) Make Static `make-static`
+
+Makes a function `static` when nothing outside its file refers to it, and removes its
+declaration from the header. 11-planned-features → Make Static. It needs a full parse
+first, since a refactoring can miss references today, e.g. from a `.mock`.
+
+After: parse-all
+
 ### (#92) The refactoring dialog's help describes what the dialog offers `refactoring-help`
 
 *no repo home yet.*
