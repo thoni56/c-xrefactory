@@ -403,7 +403,7 @@ lexem.h: lexem.h.head lexem.h.tail c_parser.tab.h character_lexems.txt Makefile
 	@cat lexem.h.head character_lexems.txt lexem.h.tab lexem.h.tail > lexem.h.tmp
 	# Sanity check for content, in case yacc errored out
 	@if grep " = " lexem.h.tmp > /dev/null ; then \
-		cmp lexem.h.tmp lexem.h || mv lexem.h.tmp lexem.h && rm lexem.h.tmp ; \
+		if cmp -s lexem.h.tmp lexem.h ; then rm lexem.h.tmp ; else mv lexem.h.tmp lexem.h ; fi ; \
 	else \
 		rm lexem.h.tmp ; \
 	fi
