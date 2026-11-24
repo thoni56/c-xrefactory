@@ -55,10 +55,6 @@ char *lastOccurrenceInString(char *string, int ch) {
   return (char *) mock(string, ch);
 }
 
-char *lastOccurenceOfSlashOrBackslash(char *string) {
-  return (char *) mock(string);
-}
-
 char *getFileSuffix(char *fn) {
   return (char *) mock(fn);
 }
