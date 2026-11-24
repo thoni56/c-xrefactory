@@ -770,7 +770,7 @@ static void gotoReferenceWithIndex(int referenceIndex) {
 }
 
 static void popAndFreeSession(void) {
-    popSession();
+    popSession(&browsingStack);
     freePoppedSessionStackEntries(&browsingStack);
 }
 
@@ -786,7 +786,7 @@ static void popAndFreeSessionsUntil(SessionStackEntry *oldtop) {
     popAndFreeSession();
     // recover old top, but what if it was freed, hmm
     while (browsingStack.top!=NULL && browsingStack.top!=oldtop) {
-        popSession();
+        popSession(&browsingStack);
     }
 }
 
@@ -905,14 +905,6 @@ bool haveSameBareName(ReferenceableItem *p1, ReferenceableItem *p2) {
     if (strncmp(n1start, n2start, n1len))
         return false;
     return true;
-}
-
-void deleteEntryFromSessionStack(SessionStackEntry *entry) {
-    SessionStackEntry **entryP;
-    for (entryP= &browsingStack.root; *entryP!=NULL&&*entryP!=entry; entryP= &(*entryP)->previous)
-        ;
-    assert(*entryP != NULL);
-    deleteSessionStackEntry(&browsingStack, entryP);
 }
 
 void processSelectedReferences(SessionStackEntry *sessionStackEntry,
@@ -1370,7 +1362,7 @@ static void printPushingAction(ServerOperation operation) {
             //& if (options.cxrefProtocol) ppcGenRecord(PPC_NO_SYMBOL, "");
             //& else
             noSymbolFoundErrorMessage();
-            deleteEntryFromSessionStack(browsingStack.top);
+            deleteSession(&browsingStack, browsingStack.top);
         }
         break;
     case OP_BROWSE_PUSH_NAME:
@@ -1378,7 +1370,7 @@ static void printPushingAction(ServerOperation operation) {
             orderReferencesAndGotoDefinition();
         } else {
             noSymbolFoundErrorMessage();
-            deleteEntryFromSessionStack(browsingStack.top);
+            deleteSession(&browsingStack, browsingStack.top);
         }
         break;
     case OP_UNUSED_IN_PROJECT:
@@ -1390,7 +1382,7 @@ static void printPushingAction(ServerOperation operation) {
             referenceList(";");
         } else {
             noSymbolFoundErrorMessage();
-            deleteEntryFromSessionStack(browsingStack.top);
+            deleteSession(&browsingStack, browsingStack.top);
         }
         break;
     case OP_BROWSE_PUSH_ONLY:
@@ -1398,7 +1390,7 @@ static void printPushingAction(ServerOperation operation) {
             pushOnly();
         } else {
             noSymbolFoundErrorMessage();
-            deleteEntryFromSessionStack(browsingStack.top);
+            deleteSession(&browsingStack, browsingStack.top);
         }
         break;
     case OP_BROWSE_PUSH_AND_CALL_MACRO:
@@ -1406,7 +1398,7 @@ static void printPushingAction(ServerOperation operation) {
             pushAndCallMacro();
         } else {
             noSymbolFoundErrorMessage();
-            deleteEntryFromSessionStack(browsingStack.top);
+            deleteSession(&browsingStack, browsingStack.top);
         }
         break;
     default:
@@ -1810,14 +1802,14 @@ void answerEditorAction(void) {
         /* REFACTORINGS */
     case OP_GET_AVAILABLE_REFACTORINGS:
         printAvailableRefactorings();
-        deleteEntryFromSessionStack(browsingStack.top);
+        deleteSession(&browsingStack, browsingStack.top);
         break;
 
     case OP_REFACTORY: {
         SessionStackEntry *requestSession = browsingStack.top;
         serverPerformRefactoring();
         /* The session of the request parse, under any session the refactoring left on top */
-        deleteEntryFromSessionStack(requestSession);
+        deleteSession(&browsingStack, requestSession);
         /* A pop leaves a session for a re-push, so the popped ones are deleted */
         freePoppedSessionStackEntries(&browsingStack);
         break;

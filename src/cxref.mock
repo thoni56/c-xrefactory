@@ -37,10 +37,6 @@ void popReferenceOnly(void) {
     mock();
 }
 
-void deleteEntryFromSessionStack(SessionStackEntry *refs) {
-    mock(refs);
-}
-
 int getFileNumberFromName(char *name) {
     return (int) mock(name);
 }

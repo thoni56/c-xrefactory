@@ -8,8 +8,8 @@ CompletionStack completionStack;
 BrowsingStack browsingStack;
 
 
-void deleteSessionStackEntry(SessionStack *stack, SessionStackEntry **entryP) {
-    mock(stack, entryP);
+void deleteSession(SessionStack *stack, SessionStackEntry *entry) {
+    mock(stack, entry);
 }
 
 void freePoppedSessionStackEntries(SessionStack *stack) {
@@ -28,8 +28,8 @@ void pushEmptySession(SessionStack *stack) {
     mock(stack);
 }
 
-void popSession(void) {
-    mock();
+void popSession(SessionStack *stack) {
+    mock(stack);
 }
 
 SessionStackEntry *getSessionEntryForOperation(ServerOperation operation) {

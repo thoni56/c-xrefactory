@@ -423,18 +423,18 @@ static bool makeSafetyCheckAndUndo(EditorMarker *point, EditorMarkerList **occs,
     SAFETY_CHECK_GET_SYM_LISTS(refs, origrefs, newrefs, diffrefs, pbflag);
     assert(origrefs != NULL && newrefs != NULL && diffrefs != NULL);
 
-    deleteEntryFromSessionStack(newrefs);
-    deleteEntryFromSessionStack(origrefs);
+    deleteSession(&browsingStack, newrefs);
+    deleteSession(&browsingStack, origrefs);
     if (diff1 == NULL && diff2 == NULL) {
         /* No conflicts, so the browsing stack is as before the rename */
-        deleteEntryFromSessionStack(diffrefs);
+        deleteSession(&browsingStack, diffrefs);
         return true;
     }
     /* The conflicts are on top while the dialog shows them */
     putConflictsInSession(diff1, diff2, diffrefs);
     displayConflicts();
     /* The dialog is closed, so the stack is as before the rename */
-    deleteEntryFromSessionStack(diffrefs);
+    deleteSession(&browsingStack, diffrefs);
     return false;
 }
 

@@ -27,7 +27,7 @@ BrowsingStack browsingStack;
  * on the semantic context (browser navigation vs completion vs retrieval).
  */
 
-void deleteSessionStackEntry(SessionStack *stack, SessionStackEntry **entryP) {
+static void deleteSessionStackEntry(SessionStack *stack, SessionStackEntry **entryP) {
     SessionStackEntry *entry = *entryP;
 
     freeReferences(entry->references);
@@ -45,6 +45,15 @@ void deleteSessionStackEntry(SessionStack *stack, SessionStackEntry **entryP) {
     }
     *entryP = entry->previous;
     free(entry);
+}
+
+void deleteSession(SessionStack *stack, SessionStackEntry *entry) {
+    SessionStackEntry **entryP;
+    for (entryP = &stack->root; *entryP != NULL && *entryP != entry;
+         entryP = &(*entryP)->previous)
+        ;
+    assert(*entryP != NULL);
+    deleteSessionStackEntry(stack, entryP);
 }
 
 void freePoppedSessionStackEntries(SessionStack *stack) {
@@ -91,8 +100,8 @@ void freeOldCompletionStackEntries(SessionStack *stack) {
     deleteSessionStackEntry(stack, entry);
 }
 
-void popSession(void) {
-    browsingStack.top = browsingStack.top->previous;
+void popSession(SessionStack *stack) {
+    stack->top = stack->top->previous;
 }
 
 void pushEmptySession(SessionStack *stack) {
