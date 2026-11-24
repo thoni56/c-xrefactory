@@ -675,13 +675,14 @@ Waits for: adr-0035
 
 Dissolves stale-POP *and* lets an answer grow while you work. Roadmap → Memory as
 Truth → Remaining. The design and its steps are in 11-planned-features → Index-based
-Sessions, today's stack in 14-datastructures → Browser Stack. Before the request chain
+Sessions, today's stack in 14-datastructures → Browser Stack. Steps 2 to 4 are left,
+step 1 is `session-symbol-reach`. Before the request chain
 (`symbol-at-cursor-from-table`, `header-filtered-siblings`),
 since it decides what a push sees once those change what is built. It makes
-`session-refresh-time` unnecessary, and answers `held-cus-on-first-request` for Next,
-Previous, Pop and Re-push.
+`session-refresh-time` unnecessary, and with `session-symbol-reach` answers
+`held-cus-on-first-request` for Next, Previous, Pop and Re-push.
 
-After: request-target
+After: session-symbol-reach
 
 ### (#133) Selecting several symbols in the browser menu is hard to discover `browser-menu-selection`
 
@@ -1076,15 +1077,29 @@ proportion to what changed.
 
 After: cu-prerequisites
 
-### (#37) What a request needs `request-target`
+### (#37) A request's target is found before its goal `request-target`
 
-The CUs that reach the request
-file's closure, and the whole project for an operation on a name. Left: the scan does
-not record `<...>`
-includes (`scan-angle-includes`), so for a project that includes its own headers that
-way, reach misses CUs never parsed.
+The target line of the shape: what a request is about decides its goal, reach(target).
+An operation on a name has the whole project, which is done. A symbol at the cursor is
+looked up in the request CU (`symbol-at-cursor-from-table`), and its reach is the goal
+of a Push (`header-filtered-siblings`). The parts below are the other two targets. Done
+when the parts and those two are. The `<...>` includes are `scan-angle-includes`.
+08-algorithms → The Shape It Converges To.
 
-Waits for: adr-0032
+#### a. Next, Previous, Pop and Re-push build the reach of the session's symbols `session-symbol-reach`
+
+The target is the session's selected symbols, from the session on top or the one a Pop
+goes to. Their reach is the CUs that include a file declaring them: the files from the
+symbols' references in the table, and `collectCUsIncluding()`. Today `-browse-next`
+sends the current buffer, so the goal is that buffer's siblings and the held CUs.
+11-planned-features → Index-based Sessions → Steps, step 1.
+
+#### b. Completion, F11 and Extract build only the request CU `request-cu-target`
+
+They answer about the place of the cursor, so the request CU is their target. Today
+they get the reach of the request file, the siblings included.
+
+After: session-symbol-reach
 
 ### (#124) The held CUs in the goal are there for the sessions `held-cus-on-first-request`
 
