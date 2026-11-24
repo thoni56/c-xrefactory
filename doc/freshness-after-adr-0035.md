@@ -30,7 +30,7 @@ since ADR-0035 and the backlog cite it.
 | `closeEditorBuffersNoLongerHeld()` | none | A CU let go goes onto the build list, a header gets a `letGoTime`: two mechanisms for one event. |
 | `markAllCompilationUnitsStale()` | none | The config is not an input yet, and no references are removed (#36). |
 | `collectOutOfDateHeldCUs()` | goal | "A held CU is always in the goal" is a policy, but not stated as one. |
-| `collectRequestCUForStripping()` / `ToBuild()`, `stripRequestCU()` | none | The parse that answers is also the knowledge build (`cursor-parse-reuse`). |
+| `collectRequestCUForStripping()` / `ToBuild()`, `stripRequestCU()` | none | The parse that answers is also the knowledge build (`symbol-at-cursor-from-table`). |
 | `collectSiblingCUs()` | goal | The request file's reach, not the symbol's (`request-target`). |
 | `analyseAllOutOfDateCUs()` | goal and build | A second build list for an operation on a name. |
 

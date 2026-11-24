@@ -294,7 +294,7 @@ A step on more than one line does more than its name says, and is where to look 
 * `scanIncludesOfChangedFiles()` is discover and scan in one, since a config change, which is found with the changed files, also discovers.
 * `markAllCompilationUnitsStale()` is part of the removal, as a changed CU loses its knowledge time when its references are removed. It goes with `out-of-date`. "Stale" is the word from before ADR-0035.
 * `collectOutOfDateHeldCUs()` widens the goal by the held files, which the goal line does not name, and only in a project that was open already (`held-cus-on-first-request`).
-* `collectRequestCUForStripping()` does not collect, and `stripRequestCU()` is a second removal, beside the remove line, for the cursor parse (`cursor-parse-reuse`).
+* `collectRequestCUForStripping()` does not collect, and `stripRequestCU()` is a second removal, beside the remove line, for the cursor parse (`symbol-at-cursor-from-table`).
 * An operation on a name builds two lists (`whole-project-goal`).
   First `buildList`, without a question. It has the held CUs that are out of date.
   Then `wholeProject`, the other CUs that are out of date.
@@ -413,7 +413,7 @@ Items in `doc/backlog.md`:
 * *A missing include edge* (`scan-angle-includes`). The scan's edges are facts about each file now, but it records no `<...>` includes. A CU that reaches a changed header through such an include alone is not out of date, so its part of the header is missing without that being known.
 * *Files that appear between requests* are not seen (`files-appear-vanish`). The prerequisites of a known file are checked, but a new file is not known. A vanished header is seen to change and loses its references, but is not marked deleted, so it stays in the file table.
 * *A recipe that stops writing part of a shared output* leaves that part (`variant-b`). Make writes its targets whole, so it never meets this.
-* *The request's own recipe runs as part of the operation*, since the lexer finds the cursor during the parse. Reusing the knowledge when it is current is `cursor-parse-reuse`.
+* *The request's own recipe runs as part of the operation*, since the lexer finds the cursor during the parse. Reusing the knowledge when it is current is `symbol-at-cursor-from-table`.
 
 ==== Overview
 

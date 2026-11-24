@@ -506,12 +506,13 @@ For an operation on a symbol, build
 only the CUs that reach a file declaring it: for `AudioFIRContext` from `af_afir.c` on
 ffmpeg that is 2, not the 1567 collected today. What to build is collected before the
 operation, and the symbol is known only from the cursor parse. Looking the cursor up
-in the table (`cursor-parse-reuse`) gives the symbol first, when the request CU is
-current. It narrows what `request-target` widens: the reach of the symbol, not of the
+in the table (`symbol-at-cursor-from-table`) gives the symbol first, the target line of
+the shape, and its reach is then the goal of a Push. `index-based-sessions` does the
+same for Next, Previous and Pop, and finds the files that declare a symbol. It narrows what `request-target` widens: the reach of the symbol, not of the
 request file's closure. A CU that includes the declaring file only with `<...>` is
 then missed, also when another header brings it in today (`scan-angle-includes`).
 
-After: request-target
+After: symbol-at-cursor-from-table
 
 ### (#17) Extend the lightweight scan to `<...>` includes `scan-angle-includes`
 
@@ -674,9 +675,8 @@ Waits for: adr-0035
 
 Dissolves stale-POP *and* lets an answer grow while you work. Roadmap → Memory as
 Truth → Remaining. The design and its steps are in 11-planned-features → Index-based
-Sessions, today's stack in 14-datastructures → Browser Stack. Open: the format of a
-rename's conflicts. Before the request chain
-(`symbol-at-cursor-from-table`, `cursor-parse-reuse`, `header-filtered-siblings`),
+Sessions, today's stack in 14-datastructures → Browser Stack. Before the request chain
+(`symbol-at-cursor-from-table`, `header-filtered-siblings`),
 since it decides what a push sees once those change what is built. It makes
 `session-refresh-time` unnecessary, and answers `held-cus-on-first-request` for Next,
 Previous, Pop and Re-push.
@@ -689,9 +689,9 @@ The browser menu lists the symbols under the cursor and every other symbol with 
 name. Toggling more of them on makes Next walk them all. A user who does not know this
 does not use it, and closes the menu when it appears. The rename's conflict dialog uses
 the same browser, so this goes with the format of the conflicts in
-`index-based-sessions` (WSL, session `d25255b8`, 2026-11-24).
+`refactoring-own-stack` (WSL, session `d25255b8`, 2026-11-24).
 
-After: index-based-sessions
+After: refactoring-own-stack
 
 ### (#130) Other refactorings may leave sessions on the browsing stack `refactorings-leave-sessions`
 
@@ -997,6 +997,14 @@ is looked up, so that its reach is the goal. Locals are in the table only after 
 in this server run, since the snapshot skips `VisibilityLocal` (`cxfile.c:355`). So a
 lookup that finds nothing parses the request CU; a test for a local after a restart
 (WSL, session `d25255b8`, 2026-11-24).
+Today the lexer finds the cursor during the parse (`lexer.c:448`), so every operation
+with a cursor parses the request file, also when its knowledge is current, as ADR-0032
+says it should not. Completion and Extract still need the parse, their target is the
+request CU. In a macro body the CUs that expand it are current after the build, so their
+references can come from the table (`lexing-cache`). A refactoring parses the request
+file into the session `parseForTheAnswer()` pushes for `OP_REFACTORY`, which a rename
+does not read; it parses the buffer again in `pushReferences()` (WSL, session
+`d25255b8`, 2026-11-23).
 A parse that needs only a point, e.g. the bounds, also selects the symbol at the
 cursor, into the refactoring's browsing entry, since `needsReferenceAtCursor()`
 decides both.
@@ -1013,6 +1021,15 @@ and can be one. The `OP_INTERNAL_` prefix, and their place in `ServerOperation`,
 something else.
 
 After: symbol-at-cursor-from-table
+
+### (#135) A refactoring gets a stack of its own `refactoring-own-stack`
+
+The browsing stack then holds only the user's pushes, so F11 and a refactoring no longer
+free the popped sessions, and a refactoring cannot leave sessions on it
+(`refactorings-leave-sessions`). The steps, and the open format of a rename's conflicts,
+are in 11-planned-features → Index-based Sessions → A refactoring's own stack.
+
+After: refactoring-session-kinds
 
 ### (#109) A session refreshes a file by a time, not a flag `session-refresh-time`
 
@@ -1031,7 +1048,7 @@ For a cursor in a macro body, `collectCompilationUnitsExpandingTheMacro()` parse
 file's includers, so the build has made them current and the answer comes from the
 table: `test_every_cu_expanding_a_macro_is_parsed` gets 130 referents from 128 parses,
 786 ms on a warm push (WSL, session `d25255b8`). Skipping the loop for current CUs is
-probably enough (`cursor-parse-reuse`).
+probably enough (`symbol-at-cursor-from-table`).
 A datapoint: a cold avcodec push builds 2515 CUs and the first next 34 more, all `.c` files and
 many included by another `.c`, with the same answer (WSL, session `d25255b8`, f32fbc69).
 
@@ -1113,19 +1130,6 @@ Never on its own (ADR-0032, amended 2026-10-11), as for a macro body. No include
 gives a message saying that no compilation unit includes the file. Includers that
 are current are parsed only for the cursor, and need a bound.
 `test_push_in_header_no_cu_includes` comes off suspension.
-
-### (#1) The request CU is parsed for the cursor, also when its knowledge is current `cursor-parse-reuse`
-
-The lexer finds what the cursor is on during the parse (`lexer.c:448`), so every
-operation with a cursor parses the request file, and in a macro body every CU that
-expands it. ADR-0032 says to reuse the references when the knowledge is current,
-which needs a lookup of the reference at a position in the table. Completion, extract
-and the macro body need the parse.
-A refactoring parses the request file at the cursor too (`processFile()`), into the session
-`parseForTheAnswer()` pushes for `OP_REFACTORY`. A rename does not read that session. It
-parses the buffer again in `pushReferences()` (WSL, session `d25255b8`, 2026-11-23).
-
-After: request-through-includers
 
 ### (#40) A time budget instead of the count `time-budget`
 

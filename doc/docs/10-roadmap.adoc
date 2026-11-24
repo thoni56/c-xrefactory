@@ -235,7 +235,7 @@ What a request costs is not part of it, that is Optimization.
 |Steps on more than one line
 |The steps of a request that do more than one line's job, listed in
  link:/workspace/1/documentation/C-xrefactory#algorithms[Algorithms] ("A Request, Step by Step").
- Backlog `held-cus-on-first-request`, `whole-project-goal` and `cursor-parse-reuse`.
+ Backlog `held-cus-on-first-request`, `whole-project-goal` and `symbol-at-cursor-from-table`.
 |===
 
 The rest of backlog section 7 is cost or structure, and does not keep this open.
