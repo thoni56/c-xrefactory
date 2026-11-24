@@ -713,6 +713,14 @@ no siblings of the request file and no held CUs outside that reach, which answer
 `held-cus-on-first-request` for these operations. Usually one symbol is selected; for
 several, e.g. a name in a macro body, the goal is the union of their reaches
 (WSL, session `d25255b8`, 2026-11-24).
+Decided, what Pop keeps: the popped sessions stay for Re-push until the next Push.
+Re-push undoes a Pop, back to the reference that was current at the Pop, so it
+refreshes and builds as a Pop does. Today any request that opens a session frees them,
+e.g. F11 (`OP_GET_AVAILABLE_REFACTORINGS`), since `pushEmptySession()` frees first, so
+Re-push after F11 has nothing. Only the user's pushes on the stack fixes that. A rename
+follows into the sessions: those that hold the old key get the new one. A session whose
+key is gone from the table says so and is dropped
+(WSL, session `d25255b8`, 2026-11-24).
 
 After: request-target
 
