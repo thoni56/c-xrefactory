@@ -1090,7 +1090,8 @@ when the parts and those two are. The `<...>` includes are `scan-angle-includes`
 
 The target is the session's selected symbols, from the session on top or the one a Pop
 goes to. Their reach is the CUs that include a file declaring them: the files from the
-symbols' references in the table, and `collectCUsIncluding()`. Today `-browse-next`
+session's references, since a changed header loses its declarations in the table
+(ADR-0035), and `collectCUsIncluding()`. Today `-browse-next`
 sends the current buffer, so the goal is that buffer's siblings and the held CUs.
 11-planned-features → Index-based Sessions → Steps, step 1.
 

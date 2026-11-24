@@ -404,6 +404,9 @@ A refusal of every conflict is simpler, but it stops a deliberate merge of two v
 ==== What a session holds
 
 A session holds the keys (`linkName`) of its symbols, the user's selection, the filter levels and two indexes.
+It also holds the files that declare its symbols, found at the Push.
+The table cannot give them when it is needed most: a changed header loses all its references until a CU that includes it is built again (ADR-0035), the declaration among them.
+That is when a Next must build the reach of the symbol, and the reach is found from those files.
 
 "Current" is an index into the sorted list of the references of the selected symbols.
 A Next or Previous refreshes that list from the table, then steps the index to the next reference the filter shows.
@@ -443,7 +446,7 @@ A session whose key is gone from the table says so, and is dropped.
 Each step starts with a test that fails.
 The goal comes first, as link:/workspace/1/documentation/C-xrefactory#the-shape[The Shape It Converges To] has it.
 
-. The goal of Next, Previous, Pop and Re-push is the reach of the session's selected symbols. This needs the files that declare a symbol, from its references in the table, and `collectCUsIncluding()`. This step is the backlog item `session-symbol-reach`, a part of the target line's item.
+. The goal of Next, Previous, Pop and Re-push is the reach of the session's selected symbols. This needs the files that declare a symbol, from the session's references, and `collectCUsIncluding()`. This step is the backlog item `session-symbol-reach`, a part of the target line's item.
 . Pop and Re-push refresh, as Next does. This takes `test_browsing_pop_needs_refresh` off suspension.
 . "Current" and the place of the Push become indexes, and the session no longer copies references.
 . A rename follows into the sessions.
