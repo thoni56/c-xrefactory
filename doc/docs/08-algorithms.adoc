@@ -163,6 +163,8 @@ discover = walk the project for its files                     (first request, co
 changed  = the files whose content is not the same as when last seen (ADR-0036)
 scan     = rescan the changed files' includes, giving the include graph
 remove   = the references of the changed files, and of the files including them (ADR-0035)
+target   = what the request is about; a symbol at the cursor is found in the
+           request CU, built first if it is out of date
 goal     = reach(target): the request CU, the request file,       (policy)
            a symbol, or the whole project
 build    = the out-of-date CUs in the goal, ask above the budget (one predicate)
@@ -207,9 +209,15 @@ What the answer reads depends on the operation, so the target does too:
 * *The request CU*, for an operation about the place of the cursor, e.g. completion, the available refactorings and Extract.
 * *The request file*, for Unused in File. Its reach is the CUs that include the file or a header it includes, i.e. the siblings.
 
-Push uses the request file as a stand-in for its symbol, since the symbol is known only after the cursor parse.
+A symbol at the cursor must be known before its goal, so finding it is a step of its own, the target line.
+The request CU is made current first, i.e. the goal and build lines with the request CU as target.
+Then the symbol is looked up in the table at the cursor position (`symbol-at-cursor-from-table`).
+The table has a CU's local variables and parameters only if it was parsed in this server run, since the snapshot does not keep them.
+So a lookup that finds nothing parses the request CU, e.g. on a local after a restart.
+That is the cursor parse "only where it is needed".
+
+Today every request on the symbol at the cursor uses the request file as a stand-in, e.g. Push and Rename, since the symbol is known only after the cursor parse.
 Every symbol visible in the request file is declared in it or in a header it includes, so the reach of the request file contains the reach of the symbol.
-Push gets the symbol as its target when the symbol is found in the table before the goal (`symbol-at-cursor-from-table`).
 Today `collectGoal()` gives every operation with an input file the reach of the request file, except an operation on a name and the requests about the project (`answeredWithoutReferences()`).
 The removal is not limited to the goal, so a changed file outside it has its references missing until a request needs them.
 That is safe because the CUs reaching it are out of date, and the next goal that contains them builds them.

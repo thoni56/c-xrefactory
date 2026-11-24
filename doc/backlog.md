@@ -992,6 +992,11 @@ LSP looks it up by position (`lsp_adapter.c:43`), and so do `##` symbols
 visible usages only, with the macro default position (`cxref.c:351`) and the caller
 position. Needs tests for macros, `##` and several symbols at one position first
 (WSL, session `d25255b8`, 2026-11-17).
+This is the target line of the shape: the request CU is made current, then the symbol
+is looked up, so that its reach is the goal. Locals are in the table only after a parse
+in this server run, since the snapshot skips `VisibilityLocal` (`cxfile.c:355`). So a
+lookup that finds nothing parses the request CU; a test for a local after a restart
+(WSL, session `d25255b8`, 2026-11-24).
 A parse that needs only a point, e.g. the bounds, also selects the symbol at the
 cursor, into the refactoring's browsing entry, since `needsReferenceAtCursor()`
 decides both.
