@@ -3,156 +3,13 @@
 The code does not always explain the algorithms that it implements. This chapter tries
 to describe essential algorithms used by _c-xrefactory_.
 
-=== Lightweight Include Structure Scanning
-
-Before the server can keep references fresh, it needs to know the project's structure:
-which files are compilation units, and how they relate through `#include` directives.
-The lightweight scan (`scanProjectForFilesAndIncludes`) discovers this without full
-parsing.
-
-==== Why Not Full Parsing?
-
-Full parsing (running the C parser with preprocessor, semantic actions, and reference
-creation) is expensive — seconds per file on complex codebases. On a cold start with
-thousands of CUs, parsing everything up front would block the user for minutes.
-
-The include structure, however, can be determined by simple text scanning: find lines
-matching `#include "..."` and resolve the paths. This is orders of magnitude faster
-(e.g. ffmpeg: 2619 CUs scanned in under 1 second vs. minutes for full parsing).
-
-==== The Algorithm
-
-[source]
-----
-scanProjectForFilesAndIncludes(projectDir, includeDirs):
-  │
-  ├─ 1. Glob for compilation units
-  │     listFilesInDirectory(projectDir, recursive)
-  │     Filter to CU extensions (.c, .y)
-  │     → discoveredCUs (StringList)
-  │
-  ├─ 2. For each CU, scan for includes
-  │     scanFileForIncludes(cuPath):
-  │       Read file line by line
-  │       Match #include "filename" (quoted includes only)
-  │       For each match:
-  │         resolveIncludePath(filename, includerDir, includeDirs)
-  │         addIncludeReference(includedFileNum, includerPosition)
-  │         Recurse into the included file (transitive)
-  │
-  └─ 3. Return discoveredCUs for deletion detection
-----
-
-==== Include Path Resolution
-
-`resolveIncludePath()` tries directories in order:
-
-1. **Includer's directory** — `#include "foo.h"` in `/project/src/bar.c` looks for
-   `/project/src/foo.h` first
-2. **Include directories** — walks `options.includeDirs` (from compiler interrogation
-   or `.c-xrefrc`)
-3. **Fallback** — includer-relative (same as step 1, for robustness)
-
-This matches standard C compiler behavior for quoted includes.
-
-==== What It Produces
-
-The scan populates the same data structures that full parsing would:
-
-`TypeCppInclude` references with `UsageUsed`::
-  Created by `addIncludeReference()`. Each reference records which file includes which,
-  with the includer's position. These are the edges that Entry Refresh <<entry-refresh-pass-2,Pass 2>> queries
-  to find includers of stale headers.
-
-`TypeCppInclude` references with `UsageDefined`::
-  Identity references (a file "defines" itself as an includable entity). Created by
-  `addFileAsIncludeReference()`.
-
-File table entries::
-  New files discovered during include resolution are added to the file table.
-
-The key insight is that the scan produces **the same `TypeCppInclude` references** that
-full parsing creates. Code that queries the include graph (like
-`collectIncludersOfStaleHeader()` in Entry Refresh) doesn't care whether the references
-came from scanning or parsing.
-
-==== Current Limitation: Angle-Bracket Includes
-
-The scan only captures `#include "..."` (quoted includes), not `#include <...>` (angle-bracket
-includes). This is deliberate: without the header-filtered sibling optimization (see
-Entry Refresh <<entry-refresh-pass-3,Pass 3>> limitations), scanning `<string.h>` and similar ubiquitous system
-headers would cause near-full-project sibling explosions.
-
-Full parsing does discover `<...>` includes. On the first request after cold start, <<entry-refresh-pass-1,Pass 1>>
-reparses the request CU with the full parser, which finds the `<...>` edges. Pass 3 may
-then discover additional siblings via those edges — this is the cause of the "double
-progress bar" on cold start.
-
-==== Deletion Detection
-
-After scanning, `markMissingFilesAsDeleted()` iterates the file table and marks entries
-whose files no longer exist on disk. This handles the case where a user deletes a source
-file between sessions. Marked files have their references purged via
-`removeReferenceableItemsForFile()` so that navigation doesn't point to deleted files.
-
-Only CUs are checked (they are glob-discoverable). Header files are not checked because
-they might legitimately be absent if they're generated or live outside the project tree.
-
 [[entry-refresh]]
-=== Entry Refresh
+=== The Shape of a Request
 
-Entry refresh is what a request does before it answers, so that the knowledge the answer
-reads is up to date: the steps of the shape below, from _discover_ to _build_. It runs at
-the top of `callServer()`, before the operation dispatches. See
-link:/workspace/1/documentation/C-xrefactory#principles[Principles] for why this is necessary.
-
-[[freshness-is-make]]
-==== Freshness Is Make, for the Goal
-
-ADR-0032 and ADR-0035 make the entry refresh work like Make. The terms map like this:
-
-[cols="1,2"]
-|===
-|Make |c-xrefactory
-
-|target
-|the knowledge of a CU, i.e. the references its parse put in the table
-
-|prerequisites
-|the CU, its include closure and the project config
-
-|the target's mtime
-|the CU's `knowledgeTime`, taken before the content is read
-
-|a prerequisite's mtime
-|the change time of the content the server reads for a file: the held buffer's, the disk mtime, or the moment the server stops reading a held buffer
-
-|the recipe
-|parsing the CU, `buildKnowledgeOfCU()`
-
-|`make goal`
-|the entry refresh for one request, over the CUs on its goal: the request, the held files and the siblings
-|===
-
-`knowledgeIsOutOfDate()` in `src/freshness.c` is the rule.
-It counts every doubt as out of date: no knowledge, a prerequisite noticed changed after the knowledge was built, a closure above 1000 files.
-So it can rebuild for nothing, but should not call stale knowledge current.
-
-The dependencies work like the `.d` files from `gcc -MD`.
-They come from the previous build, the parse that gave the CU its knowledge.
-That is enough, because a new dependency can only appear through a change in a file that is already one, and that change makes the CU out of date anyway.
-An extra edge, like the scan's include that an `#ifdef` does not take, only costs a rebuild.
-A missing edge, like the scan's missing `<...>` includes, only affects a CU without knowledge, and that is out of date anyway.
-
-What this guarantees is an absence.
-After the entry refresh, no CU on the goal is out of date without that being known, i.e. every rule reachable from the goal has been evaluated and the recipes that need to run are known.
-The position the operation asks about is only looked at after that.
-
-Make has no counterpart for one thing: several recipes write the same output.
-A header's references are put in the table by every CU that includes it.
-ADR-0035 removes them when the header changes, so every includer is out of date and puts its part back when it is built.
-Until the last one has, the header is incomplete, and the CUs that are out of date say what is missing.
-Nothing has to be cleared afterwards.
+Every request brings the knowledge its answer reads up to date before it answers.
+This is the entry refresh, the steps of the shape from _discover_ to _build_, at the top of `callServer()`, before the operation dispatches.
+See link:/workspace/1/documentation/C-xrefactory#principles[Principles] for why this is necessary.
+This section is the shape, where each of its lines stands today, and how a request follows it.
 
 [[the-shape]]
 ==== The Shape It Converges To
@@ -218,9 +75,20 @@ That is the cursor parse "only where it is needed".
 
 Today every request on the symbol at the cursor uses the request file as a stand-in, e.g. Push and Rename, since the symbol is known only after the cursor parse.
 Every symbol visible in the request file is declared in it or in a header it includes, so the reach of the request file contains the reach of the symbol.
-Where the target and goal lines stand, one row for each target.
-The first column asks if the server can find the reach of the target, the second if `collectGoal()` uses it.
-The line is done when both say yes in every row.
+The removal is not limited to the goal, so a changed file outside it has its references missing until a request needs them.
+That is safe because the CUs reaching it are out of date, and the next goal that contains them builds them.
+A goal that is smaller than what the answer reads gives an answer that is incomplete without that being known (`request-target`).
+The shape was first written down on the Mac, session `4839a129`, with the removal last, as a sweep.
+
+==== Where Each Line Stands
+
+One table for each line of the shape.
+The first column asks if the server has what the line needs, the second if the requests use it.
+A line is done when both say yes in every row.
+
+===== Target and Goal
+
+One row for each target: can the server find its reach, and does `collectGoal()` use it?
 
 [cols="2,3,4",options="header"]
 |===
@@ -248,10 +116,54 @@ The line is done when both say yes in every row.
 |===
 
 The requests about the project (`answeredWithoutReferences()`) have no goal.
-The removal is not limited to the goal, so a changed file outside it has its references missing until a request needs them.
-That is safe because the CUs reaching it are out of date, and the next goal that contains them builds them.
-A goal that is smaller than what the answer reads gives an answer that is incomplete without that being known (`request-target`).
-The shape was first written down on the Mac, session `4839a129`, with the removal last, as a sweep.
+
+[[freshness-is-make]]
+==== Freshness Is Make, for the Goal
+
+ADR-0032 and ADR-0035 make the entry refresh work like Make. The terms map like this:
+
+[cols="1,2"]
+|===
+|Make |c-xrefactory
+
+|target
+|the knowledge of a CU, i.e. the references its parse put in the table
+
+|prerequisites
+|the CU, its include closure and the project config
+
+|the target's mtime
+|the CU's `knowledgeTime`, taken before the content is read
+
+|a prerequisite's mtime
+|the change time of the content the server reads for a file: the held buffer's, the disk mtime, or the moment the server stops reading a held buffer
+
+|the recipe
+|parsing the CU, `buildKnowledgeOfCU()`
+
+|`make goal`
+|the entry refresh for one request, over the CUs on its goal: the request, the held files and the siblings
+|===
+
+`knowledgeIsOutOfDate()` in `src/freshness.c` is the rule.
+It counts every doubt as out of date: no knowledge, a prerequisite noticed changed after the knowledge was built, a closure above 1000 files.
+So it can rebuild for nothing, but should not call stale knowledge current.
+
+The dependencies work like the `.d` files from `gcc -MD`.
+They come from the previous build, the parse that gave the CU its knowledge.
+That is enough, because a new dependency can only appear through a change in a file that is already one, and that change makes the CU out of date anyway.
+An extra edge, like the scan's include that an `#ifdef` does not take, only costs a rebuild.
+A missing edge, like the scan's missing `<...>` includes, only affects a CU without knowledge, and that is out of date anyway.
+
+What this guarantees is an absence.
+After the entry refresh, no CU on the goal is out of date without that being known, i.e. every rule reachable from the goal has been evaluated and the recipes that need to run are known.
+The position the operation asks about is only looked at after that.
+
+Make has no counterpart for one thing: several recipes write the same output.
+A header's references are put in the table by every CU that includes it.
+ADR-0035 removes them when the header changes, so every includer is out of date and puts its part back when it is built.
+Until the last one has, the header is incomplete, and the CUs that are out of date say what is missing.
+Nothing has to be cleared afterwards.
 
 ==== A Request, Step by Step
 
@@ -443,6 +355,106 @@ Items in `doc/backlog.md`:
 * *Files that appear between requests* are not seen (`files-appear-vanish`). The prerequisites of a known file are checked, but a new file is not known. A vanished header is seen to change and loses its references, but is not marked deleted, so it stays in the file table.
 * *A recipe that stops writing part of a shared output* leaves that part (`variant-b`). Make writes its targets whole, so it never meets this.
 * *The request's own recipe runs as part of the operation*, since the lexer finds the cursor during the parse. Reusing the knowledge when it is current is `symbol-at-cursor-from-table`.
+
+=== Lightweight Include Structure Scanning
+
+Before the server can keep references fresh, it needs to know the project's structure:
+which files are compilation units, and how they relate through `#include` directives.
+The lightweight scan (`scanProjectForFilesAndIncludes`) discovers this without full
+parsing.
+
+==== Why Not Full Parsing?
+
+Full parsing (running the C parser with preprocessor, semantic actions, and reference
+creation) is expensive — seconds per file on complex codebases. On a cold start with
+thousands of CUs, parsing everything up front would block the user for minutes.
+
+The include structure, however, can be determined by simple text scanning: find lines
+matching `#include "..."` and resolve the paths. This is orders of magnitude faster
+(e.g. ffmpeg: 2619 CUs scanned in under 1 second vs. minutes for full parsing).
+
+==== The Algorithm
+
+[source]
+----
+scanProjectForFilesAndIncludes(projectDir, includeDirs):
+  │
+  ├─ 1. Glob for compilation units
+  │     listFilesInDirectory(projectDir, recursive)
+  │     Filter to CU extensions (.c, .y)
+  │     → discoveredCUs (StringList)
+  │
+  ├─ 2. For each CU, scan for includes
+  │     scanFileForIncludes(cuPath):
+  │       Read file line by line
+  │       Match #include "filename" (quoted includes only)
+  │       For each match:
+  │         resolveIncludePath(filename, includerDir, includeDirs)
+  │         addIncludeReference(includedFileNum, includerPosition)
+  │         Recurse into the included file (transitive)
+  │
+  └─ 3. Return discoveredCUs for deletion detection
+----
+
+==== Include Path Resolution
+
+`resolveIncludePath()` tries directories in order:
+
+1. **Includer's directory** — `#include "foo.h"` in `/project/src/bar.c` looks for
+   `/project/src/foo.h` first
+2. **Include directories** — walks `options.includeDirs` (from compiler interrogation
+   or `.c-xrefrc`)
+3. **Fallback** — includer-relative (same as step 1, for robustness)
+
+This matches standard C compiler behavior for quoted includes.
+
+==== What It Produces
+
+The scan populates the same data structures that full parsing would:
+
+`TypeCppInclude` references with `UsageUsed`::
+  Created by `addIncludeReference()`. Each reference records which file includes which,
+  with the includer's position. These are the edges that Entry Refresh <<entry-refresh-pass-2,Pass 2>> queries
+  to find includers of stale headers.
+
+`TypeCppInclude` references with `UsageDefined`::
+  Identity references (a file "defines" itself as an includable entity). Created by
+  `addFileAsIncludeReference()`.
+
+File table entries::
+  New files discovered during include resolution are added to the file table.
+
+The key insight is that the scan produces **the same `TypeCppInclude` references** that
+full parsing creates. Code that queries the include graph (like
+`collectIncludersOfStaleHeader()` in Entry Refresh) doesn't care whether the references
+came from scanning or parsing.
+
+==== Current Limitation: Angle-Bracket Includes
+
+The scan only captures `#include "..."` (quoted includes), not `#include <...>` (angle-bracket
+includes). This is deliberate: without the header-filtered sibling optimization (see
+Entry Refresh <<entry-refresh-pass-3,Pass 3>> limitations), scanning `<string.h>` and similar ubiquitous system
+headers would cause near-full-project sibling explosions.
+
+Full parsing does discover `<...>` includes. On the first request after cold start, <<entry-refresh-pass-1,Pass 1>>
+reparses the request CU with the full parser, which finds the `<...>` edges. Pass 3 may
+then discover additional siblings via those edges — this is the cause of the "double
+progress bar" on cold start.
+
+==== Deletion Detection
+
+After scanning, `markMissingFilesAsDeleted()` iterates the file table and marks entries
+whose files no longer exist on disk. This handles the case where a user deletes a source
+file between sessions. Marked files have their references purged via
+`removeReferenceableItemsForFile()` so that navigation doesn't point to deleted files.
+
+Only CUs are checked (they are glob-discoverable). Header files are not checked because
+they might legitimately be absent if they're generated or live outside the project tree.
+
+=== Entry Refresh (three passes, before ADR-0032)
+
+What follows describes the entry refresh as it was before the shape, and the concerns around it.
+It is rewritten or moved to the archive under `docs-audit` in `doc/backlog.md`.
 
 ==== Overview
 
