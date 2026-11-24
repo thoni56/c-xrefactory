@@ -8,7 +8,7 @@ CXREF -server
 -continuerefactoring
 <sync>
 <refuse>
--browse-pop
+-browse-next -cursor=44 CURDIR/main.c
 <sync>
 -browse-pop
 <sync>

@@ -48,12 +48,13 @@ end-of-options
  <position-off off=44 len=<n>>CURDIR/main.c</position-off>
 </goto>
 <refuse>
--browse-pop
+-browse-next -cursor=44 CURDIR/main.c
 end-of-options
 
 <sync>
-<bottom-information len=<n>>No reference</bottom-information>
-<bottom-information len=<n>>Current top symbol: twice</bottom-information>
+<goto>
+ <position-lc line=7 col=11 len=<n>>CURDIR/main.c</position-lc>
+</goto>
 -browse-pop
 end-of-options
 

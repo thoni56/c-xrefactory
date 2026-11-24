@@ -430,9 +430,11 @@ static bool makeSafetyCheckAndUndo(EditorMarker *point, EditorMarkerList **occs,
         deleteEntryFromSessionStack(diffrefs);
         return true;
     }
-    /* Only the conflicts stay, on top, for the dialog and for browsing after it */
+    /* The conflicts are on top while the dialog shows them */
     putConflictsInSession(diff1, diff2, diffrefs);
     displayConflicts();
+    /* The dialog is closed, so the stack is as before the rename */
+    deleteEntryFromSessionStack(diffrefs);
     return false;
 }
 

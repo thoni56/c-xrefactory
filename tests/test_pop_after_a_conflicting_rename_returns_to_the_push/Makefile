@@ -3,12 +3,12 @@
 # Given a push on the call of twice() in main()
 # When the parameter value is renamed to number, which conflicts with the static number
 # And the client shows the conflicts, continues, and answers No to "really continue?"
-# And a pop follows
-# Then the push on twice() is on top again
-# And a second pop goes back to the call of twice(), where the push was made
+# And a next follows
+# Then the next goes to the call of twice(), in the push's references
+# And a pop goes back to the call of twice(), where the push was made
 #
-# The rename shows its conflicts as "Conflicting References". Under that the rename's
-# references (getReferences()) and the request's session used to stay on the stack.
+# The rename shows its conflicts as "Conflicting References" in a dialog. After the
+# dialog the stack is as before the rename, as when a refactoring was its own process.
 
 include ../Makefile.server
 
