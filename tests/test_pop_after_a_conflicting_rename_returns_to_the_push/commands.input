@@ -1,0 +1,15 @@
+CXREF -server
+-getproject CURDIR/main.c
+<sync>
+-browse-push -cursor=111 CURDIR/main.c
+<sync>
+-rfct-rename -renameto=number -mark=44 -cursor=44 CURDIR/main.c
+<sync>
+-continuerefactoring
+<sync>
+<refuse>
+-browse-pop
+<sync>
+-browse-pop
+<sync>
+<exit>

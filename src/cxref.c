@@ -1817,9 +1817,8 @@ void answerEditorAction(void) {
     case OP_REFACTORY: {
         SessionStackEntry *requestSession = browsingStack.top;
         serverPerformRefactoring();
-        /* The session of the request parse. A refactoring pushes sessions of its own */
-        if (browsingStack.top == requestSession)
-            popReferenceOnly();
+        /* The session of the request parse, under any session the refactoring left on top */
+        deleteEntryFromSessionStack(requestSession);
         /* A pop leaves a session for a re-push, so the popped ones are deleted */
         freePoppedSessionStackEntries(&browsingStack);
         break;

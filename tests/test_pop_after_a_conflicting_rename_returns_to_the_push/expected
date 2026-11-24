@@ -1,0 +1,67 @@
+CXREF -server -o server-buffer
+-getproject CURDIR/main.c
+end-of-options
+
+<sync>
+<set-info len=<n>>CURDIR</set-info>
+-browse-push -cursor=111 CURDIR/main.c
+end-of-options
+
+<sync>
+<goto>
+ <position-lc line=2 col=11 len=<n>>CURDIR/main.c</position-lc>
+</goto>
+-rfct-rename -renameto=number -mark=44 -cursor=44 CURDIR/main.c
+end-of-options
+
+<sync>
+<goto>
+ <position-off off=43 len=<n>>CURDIR/main.c</position-off>
+</goto>
+<precheck len=<n>> value)</precheck>
+<goto>
+ <position-off off=63 len=<n>>CURDIR/main.c</position-off>
+</goto>
+<precheck len=<n>> value </precheck>
+<goto>
+ <position-off off=44 len=<n>>CURDIR/main.c</position-off>
+</goto>
+<display-resolution len=<n> mtype=1 continue=1>These references may be misinterpreted after refactoring</display-resolution>
+-continuerefactoring
+end-of-options
+
+<sync>
+<ask-confirmation len=<n>>The refactoring may change program behaviour, really continue?</ask-confirmation>
+<goto>
+ <position-off off=44 len=<n>>CURDIR/main.c</position-off>
+</goto>
+<replacement>
+ <str len=<n>>value</str>  <str len=<n>>number</str>
+</replacement>
+<goto>
+ <position-off off=65 len=<n>>CURDIR/main.c</position-off>
+</goto>
+<replacement>
+ <str len=<n>>value</str>  <str len=<n>>number</str>
+</replacement>
+<goto>
+ <position-off off=44 len=<n>>CURDIR/main.c</position-off>
+</goto>
+<refuse>
+-browse-pop
+end-of-options
+
+<sync>
+<bottom-information len=<n>>No reference</bottom-information>
+<bottom-information len=<n>>Current top symbol: twice</bottom-information>
+-browse-pop
+end-of-options
+
+<sync>
+<goto>
+ <position-lc line=7 col=11 len=<n>>CURDIR/main.c</position-lc>
+</goto>
+<bottom-information len=<n>>stack is now empty</bottom-information>
+-exit
+end-of-options
+

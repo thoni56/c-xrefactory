@@ -689,19 +689,6 @@ reach answers `held-cus-on-first-request` and is what `header-filtered-siblings`
 
 After: request-target
 
-### (#110) A rename with conflicts leaves more than "Conflicting References" on the browsing stack `rename-leaves-sessions`
-
-A rename with conflicts shows "Conflicting References" (`diffrefs`). Under it are two more
-sessions: the rename's references (`origrefs`, from `getReferences()`) and the session of the
-request parse. One Pop should go from "Conflicting References" to the session you were in.
-Without conflicts it does (`test_pop_after_a_rename_returns_to_the_push`):
-`makeSafetyCheckAndUndo()` pops its three sessions, and the `OP_REFACTORY` case in
-`src/cxref.c` pops the request's. Write the test first: the same rename to a name that
-conflicts. The other refactorings may leave sessions too, not checked
-(WSL, session `d25255b8`, 2026-11-23).
-
-After: rename-partial-in-broken-code
-
 ### (#117) After a refused or undone refactoring, a later one edited the wrong places `refused-rename-references`
 
 Seen in daily use: a rename of `popReferenceOnly()` to the existing `popSession`, refused or
@@ -718,7 +705,7 @@ without saving, followed by another Add Parameter
 files, and the request between the undo and the Add Parameter that found no symbol.
 The order of the steps is not known, so the next case needs a record of the requests.
 
-After: rename-leaves-sessions
+After: rename-partial-in-broken-code
 
 ### (#128) A refactoring edits a buffer whose file changed on disk `refactoring-stale-buffer`
 

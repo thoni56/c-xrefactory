@@ -372,35 +372,33 @@ static void askForReallyContinueConfirmation(void) {
 
 // ---------------------------------------------------------------------------------
 
-static bool handleSafetyCheckDifferenceLists(EditorMarkerList *diff1, EditorMarkerList *diff2,
-                                             SessionStackEntry *diffrefs) {
-    if (diff1 != NULL || diff2 != NULL) {
-        for (BrowsingMenu *mm = diffrefs->menu; mm != NULL; mm = mm->next) {
-            mm->selected = true;
-            mm->visible  = true;
-            mm->filterLevel   = 07777777;
-            // hack, freeing now all diffs computed by old method
-            freeReferences(mm->referenceable.references);
-            mm->referenceable.references = NULL;
-        }
-        pushMarkersAsReferences(&diff1, diffrefs, LINK_NAME_SAFETY_CHECK_MISSED);
-        pushMarkersAsReferences(&diff2, diffrefs, LINK_NAME_SAFETY_CHECK_MISSED);
-        freeEditorMarkerListButNotMarkers(diff1);
-        freeEditorMarkerListButNotMarkers(diff2);
-        popReferenceOnly();
-        if (refactoringOptions.theRefactoring == AVR_RENAME_MODULE) {
-            /* TODO: Handle whatever this for C! Does it even happen!?!? */
-            displayResolutionDialog("The module already exists and is referenced in the original"
-                                    "project. Renaming will join two modules without possibility"
-                                    "of inverse refactoring",
-                                    PPCV_BROWSER_TYPE_WARNING);
-        } else {
-            displayResolutionDialog("These references may be misinterpreted after refactoring",
-                                    PPCV_BROWSER_TYPE_WARNING);
-        }
-        return false;
-    } else
-        return true;
+static void putConflictsInSession(EditorMarkerList *diff1, EditorMarkerList *diff2,
+                                  SessionStackEntry *diffrefs) {
+    for (BrowsingMenu *mm = diffrefs->menu; mm != NULL; mm = mm->next) {
+        mm->selected = true;
+        mm->visible  = true;
+        mm->filterLevel   = 07777777;
+        // hack, freeing now all diffs computed by old method
+        freeReferences(mm->referenceable.references);
+        mm->referenceable.references = NULL;
+    }
+    pushMarkersAsReferences(&diff1, diffrefs, LINK_NAME_SAFETY_CHECK_MISSED);
+    pushMarkersAsReferences(&diff2, diffrefs, LINK_NAME_SAFETY_CHECK_MISSED);
+    freeEditorMarkerListButNotMarkers(diff1);
+    freeEditorMarkerListButNotMarkers(diff2);
+}
+
+static void displayConflicts(void) {
+    if (refactoringOptions.theRefactoring == AVR_RENAME_MODULE) {
+        /* TODO: Handle whatever this for C! Does it even happen!?!? */
+        displayResolutionDialog("The module already exists and is referenced in the original"
+                                "project. Renaming will join two modules without possibility"
+                                "of inverse refactoring",
+                                PPCV_BROWSER_TYPE_WARNING);
+    } else {
+        displayResolutionDialog("These references may be misinterpreted after refactoring",
+                                PPCV_BROWSER_TYPE_WARNING);
+    }
 }
 
 static bool makeSafetyCheckAndUndo(EditorMarker *point, EditorMarkerList **occs, EditorUndo *startPoint,
@@ -425,12 +423,17 @@ static bool makeSafetyCheckAndUndo(EditorMarker *point, EditorMarkerList **occs,
     SAFETY_CHECK_GET_SYM_LISTS(refs, origrefs, newrefs, diffrefs, pbflag);
     assert(origrefs != NULL && newrefs != NULL && diffrefs != NULL);
 
-    if (!handleSafetyCheckDifferenceLists(diff1, diff2, diffrefs))
-        return false;
-    /* No conflicts, so the three sessions go and the browsing stack is as before the rename */
-    for (int i = 0; i < 3; i++)
-        popReferenceOnly();
-    return true;
+    deleteEntryFromSessionStack(newrefs);
+    deleteEntryFromSessionStack(origrefs);
+    if (diff1 == NULL && diff2 == NULL) {
+        /* No conflicts, so the browsing stack is as before the rename */
+        deleteEntryFromSessionStack(diffrefs);
+        return true;
+    }
+    /* Only the conflicts stay, on top, for the dialog and for browsing after it */
+    putConflictsInSession(diff1, diff2, diffrefs);
+    displayConflicts();
+    return false;
 }
 
 typedef struct collateSearch {
