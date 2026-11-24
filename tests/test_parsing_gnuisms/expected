@@ -31,8 +31,6 @@ __leaf__
     @source.c:17:0
 __sync_fetch_and_add
     @source.c:51:21
-__typeof__
-    @source.c:8:0
 alignment
     @source.c:5:4
 args

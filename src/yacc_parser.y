@@ -79,7 +79,7 @@ static void addYaccSymbolReference(Id *name, int usage);
 /* c-special */
 %token TYPEDEF EXTERN AUTO REGISTER SIGNED UNSIGNED STRUCT UNION ENUM
 %token SIZEOF RESTRICT _ATOMIC _BOOL _THREADLOCAL _NORETURN _STATIC_ASSERT
-%token INLINE ASM_KEYWORD
+%token INLINE ASM_KEYWORD TYPEOF
 /* hmm */
 %token ANONYMOUS_MODIFIER
 
@@ -373,7 +373,7 @@ any_token_not_perc_par
     | DOUBLE | ELSE | FLOAT | FOR | GOTO | IF | INT | LONG | RETURN | SHORT
     | SWITCH | VOID | VOLATILE | WHILE
     | TYPEDEF | EXTERN | AUTO | REGISTER | SIGNED | UNSIGNED | STRUCT | UNION
-    | ENUM | SIZEOF
+    | ENUM | SIZEOF | TYPEOF
     | ANONYMOUS_MODIFIER | TOKEN
     | TRUE_LITERAL | FALSE_LITERAL | NULL_LITERAL
     | ASM_KEYWORD
@@ -976,6 +976,8 @@ type_specifier1
 type_specifier2
     : struct_or_union_specifier     { $$.data = $1.data; }
     | enum_specifier                { $$.data = $1.data; }
+    | TYPEOF '(' expr ')'           { $$.data = $3.data.typeModifier; }
+    | TYPEOF '(' type_name ')'      { $$.data = $3.data; }
     ;
 
 function_specifier

@@ -257,7 +257,6 @@ static char *fallback_defines[] = {
     "_Alignas(x)",
     "_Alignof(x) 8",
     /* C23 */
-    "typeof(xxx) int",
     "_BitInt(x) int",
     "_Float128 long double",
     "_Float64 double",
@@ -272,7 +271,6 @@ static char *fallback_defines[] = {
     /* GNUisms and compiler-specific builtin type fallbacks */
     "__attribute__(xxx)",
     "__alignof__(xxx) 8",
-    "__typeof__(xxx) int",
     /* Map 128-bit builtin types to plain types for parsing */
     "__int128_t long",
     "__uint128_t unsigned long",

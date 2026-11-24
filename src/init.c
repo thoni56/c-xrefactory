@@ -34,6 +34,7 @@ static TokenNamesInitTable tokenNamesCanonical[] = {
     {"register",         REGISTER},
     {"signed",           SIGNED},
     {"sizeof",           SIZEOF},
+    {"typeof",           TYPEOF},
     {"struct",           STRUCT},
     {"typedef",          TYPEDEF},
     {"union",            UNION},
@@ -159,6 +160,8 @@ static TokenNamesInitTable tokenNamesAliases[] = {
     {"__restrict__",    RESTRICT},
     {"_Bool",           _BOOL},
     {"_Static_assert",  _STATIC_ASSERT},
+    {"__typeof",        TYPEOF},
+    {"__typeof__",      TYPEOF},
     {NULL,              0}
 };
 

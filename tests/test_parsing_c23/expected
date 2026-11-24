@@ -33,6 +33,7 @@ nullptr
     @source.c:13:9
 p
     @source.c:13:5
+    @source.c:17:7
 pfunc
     @source.c:14:5
     @source.c:15:0
@@ -44,10 +45,6 @@ square
     @source.c:47:12
 squareing
     @source.c:46:4
-typeof
-    @source.c:17:0
-    @source.c:20:4
-    @source.c:21:4
 utf8
     @source.c:10:6
 x
