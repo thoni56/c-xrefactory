@@ -14,8 +14,8 @@ $(TEST): .c-xrefrc
 	@cp h.h.v1 h.h
 	@touch -t 200001010000 h.h a.c b.c c.c
 	@-$(SERVER_DRIVER) commands.input --extra '-info -log=log' > output.tmp 2>&1
-	@awk '/Siblings of/ {n = NR} {line[NR] = $$0} END {for (i = n + 1; i <= NR; i++) print line[i]}' log \
-	    | grep -oE "Siblings: .*|Building .*|is out of date: .*" | sed "s|$(CURDIR)/||g" > output
+	@awk '/Siblings of|Reach of/ {n = NR} {line[NR] = $$0} END {for (i = n + 1; i <= NR; i++) print line[i]}' log \
+	    | grep -oE "Siblings: .*|Reach: .*|Building .*|is out of date: .*" | sed "s|$(CURDIR)/||g" > output
 	$(VERIFY)
 
 trace: EXTRA = --extra '-debug -log=trace'

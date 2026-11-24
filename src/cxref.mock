@@ -33,6 +33,10 @@ void processSelectedReferences(SessionStackEntry *rstack, void (*referencesMapFu
     mock(rstack, referencesMapFun);
 }
 
+int collectDeclaringFiles(SessionStackEntry *session, int fileNumbers[], int maxFiles) {
+    return (int)mock(session, fileNumbers, maxFiles);
+}
+
 void popReferenceOnly(void) {
     mock();
 }

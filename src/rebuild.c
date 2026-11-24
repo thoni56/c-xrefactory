@@ -148,6 +148,32 @@ void collectSiblingCUs(BuildList *list, Prerequisites *prerequisites, int reques
     log_info("Siblings: %d to build, %d skipped (current)", list->count, skippedCurrent);
 }
 
+/* The CUs that reach the files, i.e. a file that is a CU and every CU including a file,
+   those out of date. From the files that declare a symbol this is the symbol's reach */
+void collectCUsReaching(BuildList *list, Prerequisites *prerequisites, int fileNumbers[], int fileCount) {
+    log_info("Reach of %d declaring file(s)", fileCount);
+    int *cus = malloc(MAX_FILES * sizeof(int));
+    int cuCount = 0;
+    for (int f = 0; f < fileCount; f++) {
+        if (isCompilationUnit(getFileItemWithFileNumber(fileNumbers[f])->name) && cuCount < MAX_FILES)
+            cus[cuCount++] = fileNumbers[f];
+        cuCount = collectCUsIncluding(prerequisites, fileNumbers[f], cus, cuCount, MAX_FILES);
+    }
+    int toBuild = 0, skippedCurrent = 0;
+    for (int i = 0; i < cuCount; i++) {
+        if (list->built[cus[i]])
+            continue;
+        if (!knowledgeIsOutOfDate(prerequisites, cus[i])) {
+            skippedCurrent++;
+            continue;
+        }
+        if (addToBuildList(list, cus[i]))
+            toBuild++;
+    }
+    free(cus);
+    log_info("Reach: %d to build, %d skipped (current)", toBuild, skippedCurrent);
+}
+
 /* The CUs out of date that are not on the other list */
 void collectOutOfDateCUsNotIn(BuildList *list, BuildList *other, Prerequisites *prerequisites) {
     for (int i = getNextExistingFileNumber(0); i != -1; i = getNextExistingFileNumber(i + 1)) {

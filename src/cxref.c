@@ -919,6 +919,26 @@ void processSelectedReferences(SessionStackEntry *sessionStackEntry,
     setCurrentReferenceToFirstAfterCallerPosition(sessionStackEntry);
 }
 
+/* The files where the session's selected symbols are defined or declared, each once */
+int collectDeclaringFiles(SessionStackEntry *session, int fileNumbers[], int maxFiles) {
+    int fileCount = 0;
+    for (BrowsingMenu *m = session->menu; m != NULL; m = m->next) {
+        if (!m->selected)
+            continue;
+        for (Reference *r = m->referenceable.references; r != NULL; r = r->next) {
+            if (!isDefinitionOrDeclarationUsage(r->usage))
+                continue;
+            bool known = false;
+            for (int i = 0; i < fileCount; i++)
+                if (fileNumbers[i] == r->position.file)
+                    known = true;
+            if (!known && fileCount < maxFiles)
+                fileNumbers[fileCount++] = r->position.file;
+        }
+    }
+    return fileCount;
+}
+
 static void genOnLineReferences(SessionStackEntry *sessionStackEntry, BrowsingMenu *menu) {
     assert(menu);
     if (menu->selected) {

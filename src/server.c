@@ -1,5 +1,6 @@
 #include "server.h"
 
+#include <stdlib.h>
 #include <string.h>
 
 #include "commons.h"
@@ -327,6 +328,22 @@ static void removeReferences(bool configChanged, Prerequisites *prerequisites) {
     removeReferencesOfChangedFiles(prerequisites);
 }
 
+/* Operations whose target is the symbols of the session on top */
+static bool browsesSessionSymbols(ServerOperation operation) {
+    return operation == OP_BROWSE_NEXT
+        || operation == OP_BROWSE_PREVIOUS;
+}
+
+/* The reach of the session's symbols: the files declaring them come from the session,
+ * since a changed header loses its references in the table until it is built again */
+static void collectCUsReachingSymbolsOf(BuildList *buildList, Prerequisites *prerequisites,
+                                        SessionStackEntry *session) {
+    int *declaringFiles = malloc(MAX_FILES * sizeof(int));
+    int fileCount = collectDeclaringFiles(session, declaringFiles, MAX_FILES);
+    collectCUsReaching(buildList, prerequisites, declaringFiles, fileCount);
+    free(declaringFiles);
+}
+
 static void collectGoal(BuildList *buildList, BuildList *wholeProject, bool projectWasOpen,
                         bool hasInputFile, Prerequisites *prerequisites) {
     /* The held CUs that are out of date are in every operation's goal, so all
@@ -342,9 +359,14 @@ static void collectGoal(BuildList *buildList, BuildList *wholeProject, bool proj
         && !answeredWithoutReferences(options.serverOperation))
         collectRequestCUToBuild(buildList, prerequisites, requestFileNumber);
 
+    /* An operation on the session's symbols: the CUs that reach the files declaring them */
+    if (projectContextInitialized && browsesSessionSymbols(options.serverOperation)) {
+        if (browsingStack.top != NULL)
+            collectCUsReachingSymbolsOf(buildList, prerequisites, browsingStack.top);
+    }
     /* Sibling CUs that share headers with the request file but are out of date,
      * e.g. on a cold start */
-    if (projectContextInitialized && hasInputFile && !answeredWithoutReferences(options.serverOperation)
+    else if (projectContextInitialized && hasInputFile && !answeredWithoutReferences(options.serverOperation)
         && !needsWholeProjectParsed(options.serverOperation))
         collectSiblingCUs(buildList, prerequisites, requestFileNumber);
 

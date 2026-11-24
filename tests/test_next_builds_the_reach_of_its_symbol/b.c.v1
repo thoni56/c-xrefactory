@@ -1,0 +1,2 @@
+#include "sym.h"
+int fb(void) { return shared; }
