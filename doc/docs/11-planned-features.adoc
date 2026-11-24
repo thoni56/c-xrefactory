@@ -405,8 +405,8 @@ A refusal of every conflict is simpler, but it stops a deliberate merge of two v
 
 A session holds the keys (`linkName`) of its symbols, the user's selection, the filter levels and two indexes.
 
-"Current" is an index into the sorted, filtered list of the references of the selected symbols.
-A Next or Previous refreshes that list from the table, then steps the index.
+"Current" is an index into the sorted list of the references of the selected symbols.
+A Next or Previous refreshes that list from the table, then steps the index to the next reference the filter shows.
 So it always lands on a real reference.
 An index past the end of the list is dropped.
 An edit before "current" can make one Next repeat or skip a reference, but more Nexts still reach every reference.
@@ -415,7 +415,8 @@ The place of the Push is an index too, into the list of the session that a Pop l
 A Pop refreshes that list and goes to that index.
 So a Pop after an edit is the same case as a Next.
 
-Open: what a filter change does to "current".
+The filter does not change the list, so a filter change does not move the index.
+If the filter hides the current reference, "current" steps to the next one it shows, as `setFilter()` does today.
 
 ==== What a Next, Previous, Pop or Re-push builds
 
@@ -436,6 +437,17 @@ With only the user's pushes on the stack, F11 and a refactoring no longer free t
 
 A rename follows into the sessions: a session that holds the old key gets the new one.
 A session whose key is gone from the table says so, and is dropped.
+
+==== Steps
+
+Each step starts with a test that fails.
+
+. The handlers that read `browsingStack.top` take the session as a parameter. This is a refactoring, and `popSession()` taking the stack is its first part.
+. A refactoring and F11 get a stack of their own. Test: Pop, F11, then Re-push goes back to the popped symbol.
+. Pop and Re-push refresh, as Next does. This takes `test_browsing_pop_needs_refresh` off suspension.
+. "Current" and the place of the Push become indexes, and the session no longer copies references.
+. The goal of Next, Previous, Pop and Re-push is the reach of the session's selected symbols.
+. A rename follows into the sessions.
 
 === Browsing includes
 

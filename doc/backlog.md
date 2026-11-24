@@ -673,9 +673,9 @@ Waits for: adr-0035
 ### (#22) Index-based sessions `index-based-sessions`
 
 Dissolves stale-POP *and* lets an answer grow while you work. Roadmap → Memory as
-Truth → Remaining. The design is in 11-planned-features → Index-based Sessions, today's
-stack in 14-datastructures → Browser Stack. Open: what a filter change does to
-"current", and the format of a rename's conflicts. Before the request chain
+Truth → Remaining. The design and its steps are in 11-planned-features → Index-based
+Sessions, today's stack in 14-datastructures → Browser Stack. Open: the format of a
+rename's conflicts. Before the request chain
 (`symbol-at-cursor-from-table`, `cursor-parse-reuse`, `header-filtered-siblings`),
 since it decides what a push sees once those change what is built. It makes
 `session-refresh-time` unnecessary, and answers `held-cus-on-first-request` for Next,
