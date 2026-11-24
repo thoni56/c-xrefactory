@@ -177,24 +177,25 @@ Cgreen's `expect()` takes the name of the mocked function as its first argument:
 expect(helper, when(count, is_equal_to(3)), will_return(1));
 ----
 
-`expect(f, ...)` passes `f` to `STRINGIFY_TOKEN(token)`, which is `#token`. In the source,
-`helper` is an identifier with a position. The `#` turns it into a string during the
-expansion, and only the string reaches the parser. So no reference is recorded, and
-Rename Function leaves `expect(helper, ...)` as it was. The unittest then fails at run time.
+`expect(f, ...)` passes `f` to `STRINGIFY_TOKEN(token)`, which is `#token`. The `#` turns
+`helper` into a string during the expansion, and only the string reaches the parser.
 
-==== The generic rule
+==== Done: a stringized identifier is a reference
 
 An argument that a macro stringizes, and that is one identifier, is a reference to the
-symbol of that name, if one is visible. The reference is at the position of the
-identifier in the source. A rename edits that identifier, and the string follows on the
-next expansion. No string is edited.
+symbol of that name, if one is visible. The lexer records it where `#` is expanded,
+`addReferenceForStringizedIdentifier()` in `src/yylex.c`. The reference is at the
+position of the identifier in the source. So a push from `expect(helper, ...)` finds
+`helper()`, and a rename edits the identifier. The string follows on the next expansion.
 
 The rule knows nothing about Cgreen. It also covers Cgreen's `add_test(suite, test)` and
 `assert_that(x, ...)`, and a project's own `#define CASE(x) {#x, x}` tables. A stringized
-word that names no visible symbol, e.g. `STR(hello)`, stays only a string.
+word that names no visible symbol, e.g. `STR(hello)`, stays only a string. An identifier
+used before its declaration has no reference, as in C.
 
-`tests/test_rename_function_in_stringized_argument` is suspended until this works. Its
-`.suspended` note lists what to check first.
+`tests/test_sees_references_in_stringized_arguments` pins this.
+
+What follows is planned.
 
 ==== `when()` and the parameters of the mock
 

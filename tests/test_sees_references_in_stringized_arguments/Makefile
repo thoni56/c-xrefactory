@@ -1,6 +1,6 @@
 # expect() in Cgreen stringizes the name of the function it mocks, so the name
 # reaches the parser only as a string. The identifier in the source is still a
-# reference to the function, and a rename must edit it.
+# reference to the function. A push from it and a rename both show the reference.
 #
 # The two macros have the shape of Cgreen's, so that the test does not need it
 # installed.

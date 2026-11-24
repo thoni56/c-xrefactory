@@ -2207,6 +2207,37 @@ static void macroArgumentsToString(char *writeBuffer, LexemStream *lexInput) {
     }
 }
 
+static bool isOneIdentifier(LexemStream *argument, char **name, Position *position) {
+    char *readP = argument->begin;
+    if (readP >= argument->write)
+        return false;
+    LexemCode lexem = getLexemCodeAndAdvance(&readP);
+    *name = readP;
+    getExtraLexemInformationFor(lexem, &readP, NULL, NULL, position, NULL, NULL, false);
+    return isIdentifierLexem(lexem) && readP >= argument->write;
+}
+
+static Symbol *findVisibleSymbol(char *name) {
+    unsigned hash = hashFun(name) % symbolTable->size;
+    for (Symbol *s = symbolTable->tab[hash]; s != NULL; s = s->next)
+        if (s->type == TypeDefault && strcmp(s->name, name) == 0)
+            return s;
+    return NULL;
+}
+
+/* "#f" in a macro turns the identifier f into a string, so the parser never sees it.
+ * If f is one identifier that names a visible symbol, it is still a reference to it,
+ * e.g. the function in Cgreen's expect(f, ...). */
+static void addReferenceForStringizedIdentifier(LexemStream *argument) {
+    char *name;
+    Position position;
+    if (!isOneIdentifier(argument, &name, &position))
+        return;
+    Symbol *symbol = findVisibleSymbol(name);
+    if (symbol != NULL)
+        handleFoundSymbolReference(symbol, position, UsageUsed, NO_FILE_NUMBER);
+}
+
 static LexemStream replaceMacroArguments(LexemStream *actualArgumentsInput, char *readBuffer, char *readEnd) {
     LexemBufferDescriptor bufferDesc;
     bufferDesc.size = MACRO_BODY_BUFFER_SIZE;
@@ -2238,6 +2269,7 @@ static LexemStream replaceMacroArguments(LexemStream *actualArgumentsInput, char
             expandMacroBodyBufferIfOverflow(&bufferDesc, outputStream.write, MACRO_BODY_BUFFER_SIZE);
 
             macroArgumentsToString(outputStream.write, &actualArgumentsInput[argumentIndex]);
+            addReferenceForStringizedIdentifier(&actualArgumentsInput[argumentIndex]);
             /* Skip over the string... */
             int len = strlen(outputStream.write) + 1;
             outputStream.write += len;

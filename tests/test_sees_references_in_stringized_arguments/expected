@@ -4,6 +4,13 @@ end-of-options
 
 <sync>
 <set-info len=<n>>CURDIR</set-info>
+-browse-push -cursor=188 CURDIR/main.c
+end-of-options
+
+<sync>
+<goto>
+ <position-lc line=6 col=4 len=<n>>CURDIR/main.c</position-lc>
+</goto>
 -rfct-rename -renameto=helper2 -cursor=120 CURDIR/main.c
 end-of-options
 
