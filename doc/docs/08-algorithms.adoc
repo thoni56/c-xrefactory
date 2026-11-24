@@ -286,6 +286,12 @@ A header's references are put in the table by every CU that includes it.
 ADR-0035 removes them when the header changes, so every includer is out of date and puts its part back when it is built.
 Until the last one has, the header is incomplete, and the CUs that are out of date say what is missing.
 Nothing has to be cleared afterwards.
+The other side of it has no counterpart either: a recipe that stops writing its part of a shared output, e.g. after an `#ifdef` flips, leaves that part there, since nothing about the header changed (`variant-b`).
+Make writes its targets whole, so it never meets this.
+
+The config reaches the build another way than in Make.
+Make's classic pitfall, changing `CFLAGS` and nothing being rebuilt, does not happen: a config change is found by its content token, also across a restart, and removes every reference, which takes every CU's knowledge.
+But the predicate itself does not read the config (`out-of-date`).
 
 ==== A Request, Step by Step
 
@@ -465,18 +471,6 @@ They are the two writers of the include graph, until the scan records `<...>` in
 *A session's references and the table.*
 A session works on a copy, and the refresh flag says the copy is out of date.
 It is set in only some of the places that change the table (`session-refresh-time`).
-
-==== Where It Is Not Yet Make
-
-Items in `doc/backlog.md`:
-
-* *A macro body is parsed again* (`cap-is-a-question`). For a cursor in a macro body, `collectCompilationUnitsExpandingTheMacro()` parses up to 128 of the CUs that can expand it, also when they are current. They are the request file's includers, so the build has already made them current, and the answer comes from the table.
-* *The goal is too small* (`request-target`). We run `make request.o`, but the answer is linked from more objects than that.
-* *The config is not an input of the build predicate* (`out-of-date`). Make's classic pitfall, changing `CFLAGS` and nothing being rebuilt, does not happen: a config change is found by its content token, also across a restart, and removes every reference and takes every CU's knowledge. But the predicate itself does not read the config.
-* *A missing include edge* (`scan-angle-includes`). The scan's edges are facts about each file now, but it records no `<...>` includes. A CU that reaches a changed header through such an include alone is not out of date, so its part of the header is missing without that being known.
-* *Files that appear between requests* are not seen (`files-appear-vanish`). The prerequisites of a known file are checked, but a new file is not known. A vanished header is seen to change and loses its references, but is not marked deleted, so it stays in the file table.
-* *A recipe that stops writing part of a shared output* leaves that part (`variant-b`). Make writes its targets whole, so it never meets this.
-* *The request's own recipe runs as part of the operation*, since the lexer finds the cursor during the parse. Reusing the knowledge when it is current is `symbol-at-cursor-from-table`.
 
 === Lightweight Include Structure Scanning
 
