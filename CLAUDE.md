@@ -122,6 +122,25 @@ Never push a test or source change without evidence that the affected tests pass
 Both machines push to the same trunk, and a red commit blocks the other one and
 CI.
 
+## When to push
+
+Passing tests are not a reason to push. Commit locally, report, and ask. CI runs on a
+limited budget of free credits, so a source push is worth batching.
+
+A commit with only docs or backlog changes (`[skip ci]`) stays local. Push it when the
+user says "push", or says they are leaving for a while. The other machine needs it then.
+Do not ask about it after each commit.
+
+## Tell the user when `stable` is worth an upgrade
+
+The user's daily Emacs runs the `stable` branch, not the build in this repo. CI moves
+`stable` to `main` after a green build of `main`, in `.travis_merge_to_stable_maybe.sh`.
+
+When a pushed change is something the user would use or notice while editing, check
+`git log origin/stable`. When the change is there, say so, and name what to try. A new
+reference, a refactoring that behaves differently or a client fix qualifies. A docs,
+test-only or internal change does not.
+
 ## Smell pass after medium and large changes
 
 After a change bigger than a one-liner, re-read what was touched and report what
