@@ -163,7 +163,8 @@ discover = walk the project for its files                     (first request, co
 changed  = the files whose content is not the same as when last seen (ADR-0036)
 scan     = rescan the changed files' includes, giving the include graph
 remove   = the references of the changed files, and of the files including them (ADR-0035)
-goal     = reach(request file) or the whole project              (policy)
+goal     = reach(target): the request CU, the request file,       (policy)
+           a symbol, or the whole project
 build    = the out-of-date CUs in the goal, ask above the budget (one predicate)
 answer (a cursor parse only where it is needed)
 ----
@@ -199,6 +200,17 @@ Once it does (`scan-angle-includes`), the graph has one writer.
 Refined on the Mac, session `4839a129`, 2026-11-06.
 
 The goal must contain every CU whose references the answer reads.
+What the answer reads depends on the operation, so the target does too:
+
+* *The whole project*, for an operation on a name, e.g. Search, Push by Name and Unused in Project. The name can be anywhere.
+* *A symbol*, for an operation on the references of one symbol, e.g. Next, Previous, Pop, Re-push, Rename and the other refactorings of a symbol. The reach of a symbol is the CUs that include a file declaring it, or the CU alone for a `static` there.
+* *The request CU*, for an operation about the place of the cursor, e.g. completion, the available refactorings and Extract.
+* *The request file*, for Unused in File. Its reach is the CUs that include the file or a header it includes, i.e. the siblings.
+
+Push uses the request file as a stand-in for its symbol, since the symbol is known only after the cursor parse.
+Every symbol visible in the request file is declared in it or in a header it includes, so the reach of the request file contains the reach of the symbol.
+Push gets the symbol as its target when the symbol is found in the table before the goal (`symbol-at-cursor-from-table`).
+Today `collectGoal()` gives every operation with an input file the reach of the request file, except an operation on a name and the requests about the project (`answeredWithoutReferences()`).
 The removal is not limited to the goal, so a changed file outside it has its references missing until a request needs them.
 That is safe because the CUs reaching it are out of date, and the next goal that contains them builds them.
 A goal that is smaller than what the answer reads gives an answer that is incomplete without that being known (`request-target`).
