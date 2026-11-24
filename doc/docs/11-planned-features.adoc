@@ -441,14 +441,18 @@ A session whose key is gone from the table says so, and is dropped.
 ==== Steps
 
 Each step starts with a test that fails.
+The goal comes first, as link:/workspace/1/documentation/C-xrefactory#the-shape[The Shape It Converges To] has it.
 
-. The code a refactoring runs takes the stack as a parameter, e.g. `pushReferences()`, `safetyCheck()`, `SAFETY_CHECK_GET_SYM_LISTS` and the cursor parse. This is a refactoring. `popSession()` and `deleteSession()` taking the stack are its first part. The browse handlers stay on `browsingStack`, since they work on the user's sessions.
-. Decide the format of a rename's conflicts. With the browser, the handlers the dialog sends to (the filters and the selection) take the session too. With a list in the compilation-mode format, the dialog and its nested loop go.
-. A refactoring and F11 get a stack of their own. Test: Pop, F11, then Re-push goes back to the popped symbol.
+. The goal of Next, Previous, Pop and Re-push is the reach of the session's selected symbols. This needs the files that declare a symbol, from its references in the table, and `collectCUsIncluding()`.
 . Pop and Re-push refresh, as Next does. This takes `test_browsing_pop_needs_refresh` off suspension.
 . "Current" and the place of the Push become indexes, and the session no longer copies references.
-. The goal of Next, Previous, Pop and Re-push is the reach of the session's selected symbols.
 . A rename follows into the sessions.
+. The code a refactoring runs takes the stack as a parameter, e.g. `pushReferences()`, `SAFETY_CHECK_GET_SYM_LISTS` and `olcxPushSpecialCheckMenuSym()`. This is a refactoring. `popSession()` and `deleteSession()` taking the stack were its first part. The browse handlers stay on `browsingStack`, since they work on the user's sessions.
+. Decide the format of a rename's conflicts. With the browser, the handlers the dialog sends to (the filters and the selection) take the session too. With a list in the compilation-mode format, the dialog and its nested loop go.
+. A refactoring and F11 get a stack of their own. Test: Pop, F11, then Re-push goes back to the popped symbol.
+
+Push gets the reach of its symbol as its goal with `symbol-at-cursor-from-table`, outside this design.
+The cursor parse writes what it finds into `browsingStack.top`, and that goes with it.
 
 === Browsing includes
 
