@@ -695,6 +695,17 @@ never names a session, so the dialog works on any session once the handlers take
 as a parameter. The conflicts could instead be a list of positions in the
 compilation-mode format, then the Yes/No question. A refusal of every conflict is simpler, but it blocks a deliberate merge of
 two variables by a rename (WSL, session `d25255b8`, 2026-11-24).
+Decided, what a session holds: the keys (`linkName`) of its symbols, the user's
+selection, the filter levels, and two indexes. "Current" is an index into the sorted,
+filtered list of references. A Next or Previous refreshes that list from the table,
+then steps the index, so it always lands on a real reference. An index past the end
+is dropped. An edit before "current" can make one Next repeat or skip a reference, but
+more Nexts reach every reference. `callerPosition` becomes an index too, into the
+popped session's list, where the push was made. A Pop refreshes that list and goes to
+it, so stale-POP is the same case as a Next. The refresh builds the out-of-date CUs in
+the symbol's reach first, otherwise the index finds a reference from before the edit.
+Open: what a filter change does to "current"
+(WSL, session `d25255b8`, 2026-11-24).
 
 After: request-target
 
