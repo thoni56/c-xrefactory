@@ -213,6 +213,9 @@ With that knowledge, two features follow:
 * Completion inside `when(` offers the parameter names of the function in the `expect()`.
 * Rename of a parameter also edits the `when()` arguments and the `mock()` in the mock.
 
+<<unify-parameter-names,Unify Parameter Names>> makes the convention hold, so that the mock and the real
+function have the same parameter names.
+
 ==== Derived names
 
 Other frameworks build names with `##`. In fff, `FAKE_VALUE_FUNC(int, foo, int)` defines
@@ -579,6 +582,7 @@ A parameter declared `char`, `short` or `float` is a catch.
 A caller without a prototype in scope passes it promoted, to `int` or `double`, so adding the prototype changes how it is called.
 Refusing, or at least warning, is probably right there.
 
+[[unify-parameter-names]]
 === Unify Parameter Names
 
 **Status**: Not implemented.

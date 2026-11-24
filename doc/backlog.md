@@ -917,6 +917,24 @@ learning `.c-xrefrc` (section 8). It also lists the CUs, so it could answer part
 
 After: local-config-fragments
 
+### (#131) Unify Parameter Names `unify-parameter-names`
+
+Gives a parameter one name in every declaration and definition of its function: the
+header, a forward declaration, the definition and a mock. Today each is a symbol of its
+own, and Rename changes only one. 11-planned-features → Unify Parameter Names.
+
+After: rename-keeps-alignment
+
+### (#132) Completion inside Cgreen's `when(` offers the parameters of the mocked function `cgreen-when-completion`
+
+`expect(helper, when(count, ...))` is now a reference to `helper()`, so the server knows
+the function. `when()` must name a parameter of the mock, and by convention the mock and
+the real function have the same parameter names. Unify Parameter Names makes that
+convention hold. The same knowledge lets a parameter rename also edit `when()` and
+`mock()`. 11-planned-features → Names in stringized macro arguments.
+
+After: unify-parameter-names
+
 ## 6. Developer tooling
 
 ### (#61) The `-yydebug` parse trace goes to the log `yydebug-to-log`
