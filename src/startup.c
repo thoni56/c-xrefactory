@@ -283,8 +283,9 @@ static char *fallback_defines[] = {
     "__leaf__",
     "__extension__",
     "__builtin_types_compatible_p(x, y) 0",
-    "__builtin_offsetof(x, y) 0",
-    "offsetof(x, y) 0",
+    /* The classic definition, so that the type and the field stay references */
+    "__builtin_offsetof(x, y) ((unsigned long)&((x *)0)->y)",
+    "offsetof(x, y) ((unsigned long)&((x *)0)->y)",
     "__builtin_expect(x, y) (x)",
     "__builtin_assume(x)",
     "__builtin_va_arg(v, t) (*(t*)0)",

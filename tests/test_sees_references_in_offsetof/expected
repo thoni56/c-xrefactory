@@ -1,0 +1,23 @@
+CXREF -server -o server-buffer
+-getproject CURDIR/main.c
+end-of-options
+
+<sync>
+<set-info len=<n>>CURDIR</set-info>
+-browse-push -cursor=107 CURDIR/main.c
+end-of-options
+
+<sync>
+<goto>
+ <position-lc line=3 col=8 len=<n>>CURDIR/main.c</position-lc>
+</goto>
+-browse-push -cursor=190 CURDIR/main.c
+end-of-options
+
+<sync>
+<goto>
+ <position-lc line=2 col=8 len=<n>>CURDIR/main.c</position-lc>
+</goto>
+-exit
+end-of-options
+
