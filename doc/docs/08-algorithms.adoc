@@ -86,6 +86,86 @@ One table for each line of the shape.
 The first column asks if the server has what the line needs, the second if the requests use it.
 A line is done when both say yes in every row.
 
+===== Discover
+
+One row for each way the set of files changes: does the server see it, and does every request look?
+
+[cols="2,3,4",options="header"]
+|===
+|Change |Seen |Used by the requests
+
+|The project's files, on the first request
+|Yes, the walk of the project
+|Yes
+
+|A file that appears between requests
+|No (`files-appear-vanish`)
+|No, a new file is not known until the project is walked again
+
+|A file that vanishes between requests
+|Partly, a vanished header is seen to change and loses its references
+|No, it is not marked deleted and stays in the file table (`files-appear-vanish`)
+|===
+
+===== Changed
+
+One row for each kind of content: does the server see that it changed, and do the scan and the removal use that?
+
+[cols="2,3,4",options="header"]
+|===
+|Content |Change seen |Used by the scan and the removal
+
+|A file on disk
+|Yes, by its content token (ADR-0036)
+|Yes, both through `editorContentTokenOf()`
+
+|A held buffer
+|Yes, the buffer's token, also when the server stops reading the buffer (ADR-0035)
+|Yes
+
+|The config
+|Yes, by its content token, also across a restart
+|Yes, a config change is a change of every file
+|===
+
+===== Scan
+
+One row for each kind of include: does the scan record the edge, and does the include graph use it?
+
+[cols="2,3,4",options="header"]
+|===
+|Include |Edge recorded |Used by the include graph
+
+|`#include "..."`
+|Yes, by the scan, also for a header the file table knew before the scan
+|Yes
+
+|`#include <...>`
+|No, only a parse records it (`scan-angle-includes`)
+|Partly, the parse adds its edges beside the scan's (`buildIncludeGraph()`), so a CU never parsed misses them
+|===
+
+===== Remove
+
+One row for each kind of change: are the references it makes wrong found, and are they removed?
+
+[cols="2,3,4",options="header"]
+|===
+|Change |Found |Removed
+
+|A file's content changed
+|Yes
+|Yes, its references, and those of the files including it (ADR-0035)
+
+|The config changed
+|Yes
+|Yes, every reference, and every CU is out of date
+
+|A CU stops emitting into a header that did not change
+|No, nothing about the header changed (`variant-b`)
+|No
+|===
+
 ===== Target and Goal
 
 One row for each target: can the server find its reach, and does `collectGoal()` use it?
@@ -116,6 +196,48 @@ One row for each target: can the server find its reach, and does `collectGoal()`
 |===
 
 The requests about the project (`answeredWithoutReferences()`) have no goal.
+
+===== Build
+
+One row for each reason a CU is out of date: does the predicate see it, and is the CU built?
+
+[cols="2,3,4",options="header"]
+|===
+|Reason |Seen by `knowledgeIsOutOfDate()` |Built
+
+|No knowledge, an input changed after the knowledge, or a closure above 1000 files
+|Yes
+|Yes, when the CU is in the goal, asking above the budget (`okToAnalyse()`)
+
+|The config changed
+|No, the predicate does not read the config (`out-of-date`)
+|Yes, through the removal, which takes every CU's knowledge
+
+|A changed header reached only through `#include <...>`
+|No, the edge is missing (`scan-angle-includes`)
+|No, its part of the header is missing without that being known
+|===
+
+===== Answer
+
+One row for each kind of answer: can it come from the table, and does it?
+
+[cols="2,3,4",options="header"]
+|===
+|Answer |Can come from the table |Does
+
+|A symbol at the cursor
+|Yes, a lookup by position in the current request CU
+|No, the request file is parsed for the cursor every time (`symbol-at-cursor-from-table`)
+
+|A name in a macro body
+|Yes, the CUs that expand it are current after the build
+|No, up to 128 of them are parsed again (`cap-is-a-question`)
+
+|Completion and Extract
+|No, they need the parse of the request CU
+|Yes, they parse it
+|===
 
 [[freshness-is-make]]
 ==== Freshness Is Make, for the Goal
