@@ -706,8 +706,25 @@ it, so stale-POP is the same case as a Next. The refresh builds the out-of-date 
 the symbol's reach first, otherwise the index finds a reference from before the edit.
 Open: what a filter change does to "current"
 (WSL, session `d25255b8`, 2026-11-24).
+Decided, what a Next, Previous or Pop builds: the out-of-date CUs in the reach of the
+session's selected symbols, i.e. the CUs that reach a file declaring them. The keys are
+in the session, so the goal is collected before the answer, as the shape wants. It has
+no siblings of the request file and no held CUs outside that reach, which answers
+`held-cus-on-first-request` for these operations. Usually one symbol is selected; for
+several, e.g. a name in a macro body, the goal is the union of their reaches
+(WSL, session `d25255b8`, 2026-11-24).
 
 After: request-target
+
+### (#133) Selecting several symbols in the browser menu is hard to discover `browser-menu-selection`
+
+The browser menu lists the symbols under the cursor and every other symbol with the same
+name. Toggling more of them on makes Next walk them all. A user who does not know this
+does not use it, and closes the menu when it appears. The rename's conflict dialog uses
+the same browser, so this goes with the conflict format question in
+`index-based-sessions` (WSL, session `d25255b8`, 2026-11-24).
+
+After: index-based-sessions
 
 ### (#130) Other refactorings may leave sessions on the browsing stack `refactorings-leave-sessions`
 
