@@ -1141,7 +1141,6 @@ static void popReference(void) {
     } else {
         ppcIndicateNoReference();
     }
-    //& deleteEntryFromSessionStack(sessionEntry);  // this was before non deleting pop
     browsingStack.top = sessionEntry->previous;
     olcxPrintSymbolName(browsingStack.top);
 }
