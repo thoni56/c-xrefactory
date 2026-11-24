@@ -686,6 +686,15 @@ that changed on disk loses its references, and nothing builds it. Next is one of
 operations that must be fastest, and a small goal is what makes it fast. The same
 reach answers `held-cus-on-first-request` and is what `header-filtered-siblings` needs
 (WSL, session `d25255b8`, 2026-11-22).
+Design question: should the browsing stack hold only the user's pushes? Today a
+refactoring, the request parse and `findAndGotoDefinition()` push temporary sessions
+on it too. In the old `-refactory` process a refactoring had its own stack, which died
+with the process. The rename's conflict dialog is the one place that uses the browser:
+its nested request loop (`beInteractive()`) filters `browsingStack.top`. The client
+never names a session, so the dialog works on any session once the handlers take one
+as a parameter. The conflicts could instead be a list of positions in the
+compilation-mode format, then the Yes/No question. A refusal of every conflict is simpler, but it blocks a deliberate merge of
+two variables by a rename (WSL, session `d25255b8`, 2026-11-24).
 
 After: request-target
 
