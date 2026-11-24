@@ -689,6 +689,17 @@ reach answers `held-cus-on-first-request` and is what `header-filtered-siblings`
 
 After: request-target
 
+### (#130) Other refactorings may leave sessions on the browsing stack `refactorings-leave-sessions`
+
+The `OP_REFACTORY` case in `src/cxref.c` deletes the session of the request parse for every
+refactoring. A rename deletes the sessions of its safety check in `makeSafetyCheckAndUndo()`.
+The other refactorings push sessions too, with `pushReferences()` and `pushEmptySession()`.
+Nobody has checked that a Pop after them goes back to the push. A test like
+`test_pop_after_a_rename_returns_to_the_push` for each refactoring would show it
+(WSL, session `d25255b8`, 2026-11-24).
+
+After: rename-partial-in-broken-code
+
 ### (#117) After a refused or undone refactoring, a later one edited the wrong places `refused-rename-references`
 
 Seen in daily use: a rename of `popReferenceOnly()` to the existing `popSession`, refused or
