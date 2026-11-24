@@ -92,6 +92,8 @@ flowchart BT
   macro_expansion_module["§5 · 76 · Extract the macro expansion module from `src/yylex.c`"]
   dump_reference_database["§5 · 29 · Dump Reference Database"]
   compile_commands["§5 · 30 · Read `-I` and `-D` from `compile_commands.json`"]
+  unify_parameter_names["§5 · 131 · Unify Parameter Names"]
+  cgreen_when_completion["§5 · 132 · Completion inside Cgreen's `when(` offers the parameters of the mocked function"]
   yydebug_to_log["§6 · 61 · The `-yydebug` parse trace goes to the log"]
   every_parse_all_passes["§7 · 115 · Every parse of a CU parses it once for each pass"]
   symbol_at_cursor_from_table["§7 · 113 · The symbol at the cursor is looked up in the table, not parsed for"]
@@ -205,6 +207,8 @@ flowchart BT
   chapter_18_hygiene -.-&gt; macro_expansion_module
   macro_expansion_module -.-&gt; dump_reference_database
   local_config_fragments -.-&gt; compile_commands
+  rename_keeps_alignment -.-&gt; unify_parameter_names
+  unify_parameter_names -.-&gt; cgreen_when_completion
   dump_reference_database -.-&gt; yydebug_to_log
   index_based_sessions -.-&gt; every_parse_all_passes
   every_parse_all_passes -.-&gt; symbol_at_cursor_from_table
@@ -217,7 +221,7 @@ flowchart BT
   refactoring_catalogue -.-&gt; windows_build
   customize_names -.-&gt; refactoring_catalogue
   linkStyle 0,1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20,21,22,23,24,25,26,27 stroke:#333,stroke-width:2.5px
-  linkStyle 28,29,30,31,32,33,34,35,36,37,38,39,40,41,42,43,44,45,46,47,48,49,50,51,52,53,54,55,56,57,58,59,60,61,62,63,64,65,66,67,68,69,70,71,72,73,74,75,76,77,78,79,80,81,82,83,84,85,86,87,88,89 stroke:#aaa,stroke-width:1px
+  linkStyle 28,29,30,31,32,33,34,35,36,37,38,39,40,41,42,43,44,45,46,47,48,49,50,51,52,53,54,55,56,57,58,59,60,61,62,63,64,65,66,67,68,69,70,71,72,73,74,75,76,77,78,79,80,81,82,83,84,85,86,87,88,89,90,91 stroke:#aaa,stroke-width:1px
   class config_without_pass ready
   class defines_at_parse_start ready
   class side_effects_to_dispatcher ready
@@ -291,6 +295,8 @@ flowchart BT
   class macro_expansion_module ready
   class dump_reference_database ready
   class compile_commands ready
+  class unify_parameter_names ready
+  class cgreen_when_completion ready
   class yydebug_to_log ready
   class every_parse_all_passes ready
   class symbol_at_cursor_from_table ready
