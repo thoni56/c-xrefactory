@@ -241,32 +241,44 @@ When a file is preloaded, the server must handle reference updates carefully:
 
 === Browser Stack
 
-The browser stack maintains navigation history for symbol references, allowing users to browse through code by pushing symbol lookups and navigating back through previous queries.
+The browser stack, `browsingStack`, keeps the sessions of the user's Push operations, so that Pop can go back to an earlier one and Re-push can undo a Pop.
+It is a `SessionStack`, the same type as `completionStack` and `searchingStack`.
 
 ==== Structure
 
-The browser stack is a linked list of `OlcxReferences` entries, where each entry represents a symbol lookup session:
+A session is a `SessionStackEntry` (`src/session.h`).
+It holds:
 
-* **Stack entries** contain complete symbol information and reference lists for one navigation session
-* **Top pointer** indicates the current active entry being navigated
-* **Root pointer** tracks the base of the stack (most recent entry still available)
-* Entries between root and top are "future" navigation states that can be returned to via "next"
+* `menu`: the symbols with the name at the cursor, each a `BrowsingMenu` with a copy of the symbol's references
+* `hkSelectedSym`: the symbols resolved at the cursor
+* `references`: the merged references of the selected symbols, the list that Next and Previous walk
+* `current`: a pointer into `references`
+* `callerPosition`: where the Push was made, where Pop goes back to
+* the filter levels for the menu and for the references
 
-==== Lifecycle
+The entries are linked by `previous`.
+`root` is the most recently pushed entry, and `top` is the current one.
+The entries from `root` down to just above `top` are the popped sessions.
 
-1. **Push**: When user requests symbol references (e.g., `-browse-push`), a new empty entry is created on the stack
-2. **Population**: After parsing, the entry is filled with `BrowsingMenu` structures containing references
-3. **Navigation**: Commands like `-browse-next` and `-browse-previous` move through references in the current entry
-4. **Pop**: User can pop back to previous entries to return to earlier symbol lookups
+==== Rules
 
-==== Relationship to Parsing
+* A Push frees the popped sessions, then puts the new session on top: `pushEmptySession()` calls `freePoppedSessionStackEntries()` first, and the new entry is both `top` and `root`.
+* A Pop only moves `top` down. `popReference()` goes to `callerPosition` first. The popped session stays for a Re-push.
+* A Re-push moves `top` up one entry, `rePush()` with `getNextTopStackItem()`, and goes to that session's `current`. It undoes a Pop.
+* Every request that opens a session goes through `pushEmptySession()`, not only a Push. These are the operations in `opensBrowsingSession()` (`src/server.c`), e.g. F11 (`OP_GET_AVAILABLE_REFACTORINGS`) and a refactoring (`OP_REFACTORY`). So F11 or a refactoring frees the popped sessions, and a Re-push after it has nothing.
+* Some sessions are temporary and are deleted when the request is done. `OP_GET_AVAILABLE_REFACTORINGS` deletes its session, and so does `OP_INTERNAL_LIST` when it finds no symbol. A refactoring deletes the session of its request parse, and a rename deletes the three sessions of its safety check (`makeSafetyCheckAndUndo()`). These deletes can be below `top`, so they use `deleteEntryFromSessionStack()`, not a Pop.
+* `findAndGotoDefinition()` keeps the popped sessions: `pushSession()` sets `top` to `root` before it pushes, and `popAndFreeSessionsUntil()` deletes only the temporary session.
 
-The browser stack is populated in two stages:
+==== Refresh
 
-1. **Parse-time**: References are collected in the referenceableItemTable during file parsing
-2. **Menu Creation**: ReferenceableItems are wrapped in BrowsingMenu structures and added to the browser stack entry via `putOnLineLoadedReferences()`
+A session holds copies, so a build makes them stale.
+A build sets `FileItem.needsBrowsingStackRefresh` for each file it changes, in `removeReferencesOfChangedFiles()` and `buildKnowledgeOfAll()`.
+Next and Previous refresh two files only: the request file, and the file of the reference they go to.
+`updateSessionReferencesForFile()` drops that file's references and adds the table's, by `linkName`, and `current` is found again by its position.
+The first session that refreshes a file clears the flag, so other sessions do not see that change.
+Pop and Re-push refresh nothing, so a Pop can go to a position that an edit has moved (`test_browsing_pop_needs_refresh`, suspended).
 
-This separation means that browser stack entries can become stale if files are reparsed (e.g., with preloaded content) without refreshing the stack. Users typically need to pop and re-push to get fresh reference lists after edits.
+link:/workspace/1/documentation/C-xrefactory#index-based-sessions[Chapter 11: Index-based Sessions] is the planned design that replaces the copies.
 
 === Browser Menu
 

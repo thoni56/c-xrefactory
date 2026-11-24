@@ -379,6 +379,64 @@ The relative needs more, the value of each assignment, which the references do n
 carry.
 That is probably a later step, if at all.
 
+[[index-based-sessions]]
+=== Index-based Sessions
+
+A session reads its references from the table, so Next, Previous, Pop and Re-push always go to a reference that is up to date.
+Today a session holds a copy of its references, made at the Push.
+link:/workspace/1/documentation/C-xrefactory#data-structures[Chapter 14: Data Structures] → Browser Stack describes how it works today.
+
+==== Only the user's pushes on the browsing stack
+
+The browsing stack holds the sessions of the user's Push operations, and nothing else.
+Today a refactoring, the request parse and `findAndGotoDefinition()` also put temporary sessions on it.
+In the old `-refactory` process a refactoring had its own stack, which went when the process exited.
+A refactoring would get that again, as its own `SessionStack`.
+
+The rename's conflict dialog is the one place where a refactoring uses the browser.
+Its nested request loop (`beInteractive()`) answers the filter requests on `browsingStack.top`.
+The client never names a session, so the dialog works on any session once the handlers take the session as a parameter.
+
+Open: the conflicts could instead be a list of positions in the compilation-mode format, followed by the Yes/No question.
+That removes the dialog and its nested loop.
+A refusal of every conflict is simpler, but it stops a deliberate merge of two variables by a rename.
+
+==== What a session holds
+
+A session holds the keys (`linkName`) of its symbols, the user's selection, the filter levels and two indexes.
+
+"Current" is an index into the sorted, filtered list of the references of the selected symbols.
+A Next or Previous refreshes that list from the table, then steps the index.
+So it always lands on a real reference.
+An index past the end of the list is dropped.
+An edit before "current" can make one Next repeat or skip a reference, but more Nexts still reach every reference.
+
+The place of the Push is an index too, into the list of the session that a Pop leaves.
+A Pop refreshes that list and goes to that index.
+So a Pop after an edit is the same case as a Next.
+
+Open: what a filter change does to "current".
+
+==== What a Next, Previous, Pop or Re-push builds
+
+The refresh first builds the out-of-date CUs in the reach of the session's selected symbols, i.e. the CUs that reach a file declaring them.
+Without it, the index finds a reference from before the edit.
+
+The keys are in the session, so the goal is collected before the answer, as link:/workspace/1/documentation/C-xrefactory#the-shape[The Shape It Converges To] wants.
+It does not include the siblings of the request file, or held CUs outside the reach.
+Usually one symbol is selected.
+For several, e.g. a name in a macro body, the goal is the union of their reaches.
+Next is one of the operations that must be fastest, and a small goal makes it fast.
+
+==== What Pop keeps
+
+The popped sessions stay for a Re-push until the next Push.
+A Re-push undoes a Pop: it goes back to the reference that was current at the Pop, and it refreshes and builds as a Pop does.
+With only the user's pushes on the stack, F11 and a refactoring no longer free the popped sessions.
+
+A rename follows into the sessions: a session that holds the old key gets the new one.
+A session whose key is gone from the table says so, and is dropped.
+
 === Browsing includes
 
 ==== Background

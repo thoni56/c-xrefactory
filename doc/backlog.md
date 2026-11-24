@@ -672,55 +672,14 @@ Waits for: adr-0035
 
 ### (#22) Index-based sessions `index-based-sessions`
 
-Dissolves stale-POP *and* lets an answer grow while you
-work. Roadmap → Memory as Truth → Remaining. Starts with a design: what a session
-holds, what Next, Previous and Pop read, and when a position in it is out of date.
-Before the request chain (`symbol-at-cursor-from-table`, `cursor-parse-reuse`,
-`header-filtered-siblings`), since it decides what a push sees once those change what
-is built, and it makes `session-refresh-time` unnecessary.
-Design input: a session's reach is the reach of its symbol, the same CUs a rename of
-it needs. The goal of a Next or Previous is the out-of-date CUs in that reach. Today
-`-browse-next` sends the current buffer, so `collectGoal()` builds that buffer's
-siblings and the held CUs, which the answer does not read. A file in the symbol's reach
-that changed on disk loses its references, and nothing builds it. Next is one of the
-operations that must be fastest, and a small goal is what makes it fast. The same
-reach answers `held-cus-on-first-request` and is what `header-filtered-siblings` needs
-(WSL, session `d25255b8`, 2026-11-22).
-Design question: should the browsing stack hold only the user's pushes? Today a
-refactoring, the request parse and `findAndGotoDefinition()` push temporary sessions
-on it too. In the old `-refactory` process a refactoring had its own stack, which died
-with the process. The rename's conflict dialog is the one place that uses the browser:
-its nested request loop (`beInteractive()`) filters `browsingStack.top`. The client
-never names a session, so the dialog works on any session once the handlers take one
-as a parameter. The conflicts could instead be a list of positions in the
-compilation-mode format, then the Yes/No question. A refusal of every conflict is simpler, but it blocks a deliberate merge of
-two variables by a rename (WSL, session `d25255b8`, 2026-11-24).
-Decided, what a session holds: the keys (`linkName`) of its symbols, the user's
-selection, the filter levels, and two indexes. "Current" is an index into the sorted,
-filtered list of references. A Next or Previous refreshes that list from the table,
-then steps the index, so it always lands on a real reference. An index past the end
-is dropped. An edit before "current" can make one Next repeat or skip a reference, but
-more Nexts reach every reference. `callerPosition` becomes an index too, into the
-popped session's list, where the push was made. A Pop refreshes that list and goes to
-it, so stale-POP is the same case as a Next. The refresh builds the out-of-date CUs in
-the symbol's reach first, otherwise the index finds a reference from before the edit.
-Open: what a filter change does to "current"
-(WSL, session `d25255b8`, 2026-11-24).
-Decided, what a Next, Previous or Pop builds: the out-of-date CUs in the reach of the
-session's selected symbols, i.e. the CUs that reach a file declaring them. The keys are
-in the session, so the goal is collected before the answer, as the shape wants. It has
-no siblings of the request file and no held CUs outside that reach, which answers
-`held-cus-on-first-request` for these operations. Usually one symbol is selected; for
-several, e.g. a name in a macro body, the goal is the union of their reaches
-(WSL, session `d25255b8`, 2026-11-24).
-Decided, what Pop keeps: the popped sessions stay for Re-push until the next Push.
-Re-push undoes a Pop, back to the reference that was current at the Pop, so it
-refreshes and builds as a Pop does. Today any request that opens a session frees them,
-e.g. F11 (`OP_GET_AVAILABLE_REFACTORINGS`), since `pushEmptySession()` frees first, so
-Re-push after F11 has nothing. Only the user's pushes on the stack fixes that. A rename
-follows into the sessions: those that hold the old key get the new one. A session whose
-key is gone from the table says so and is dropped
-(WSL, session `d25255b8`, 2026-11-24).
+Dissolves stale-POP *and* lets an answer grow while you work. Roadmap → Memory as
+Truth → Remaining. The design is in 11-planned-features → Index-based Sessions, today's
+stack in 14-datastructures → Browser Stack. Open: what a filter change does to
+"current", and the format of a rename's conflicts. Before the request chain
+(`symbol-at-cursor-from-table`, `cursor-parse-reuse`, `header-filtered-siblings`),
+since it decides what a push sees once those change what is built. It makes
+`session-refresh-time` unnecessary, and answers `held-cus-on-first-request` for Next,
+Previous, Pop and Re-push.
 
 After: request-target
 
@@ -729,7 +688,7 @@ After: request-target
 The browser menu lists the symbols under the cursor and every other symbol with the same
 name. Toggling more of them on makes Next walk them all. A user who does not know this
 does not use it, and closes the menu when it appears. The rename's conflict dialog uses
-the same browser, so this goes with the conflict format question in
+the same browser, so this goes with the format of the conflicts in
 `index-based-sessions` (WSL, session `d25255b8`, 2026-11-24).
 
 After: index-based-sessions
