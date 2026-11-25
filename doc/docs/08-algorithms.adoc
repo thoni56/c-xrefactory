@@ -84,7 +84,7 @@ The shape was first written down on the Mac, session `4839a129`, with the remova
 
 One table for each line of the shape.
 The first column asks if the server has what the line needs, the second if the requests use it.
-A line is done when both say yes in every row.
+A line is done when both say yes in every row, or the row says why the line does not apply.
 
 ===== Discover
 
@@ -166,7 +166,36 @@ One row for each kind of change: are the references it makes wrong found, and ar
 |No
 |===
 
-===== Target and Goal
+===== Target
+
+One row for each target: can the server find it before the goal, and do the requests find it there?
+
+[cols="2,3,4",options="header"]
+|===
+|Target |Found before the goal |Used by the requests
+
+|The whole project
+|Yes, the operation is on a name
+|Yes (`needsWholeProjectParsed()`)
+
+|A symbol in a session
+|Yes, the selected symbols of the session on top, or of the one a Pop goes to
+|Next and Previous. Not Pop and Re-push, which do not refresh yet (`index-based-sessions`)
+
+|A symbol at the cursor
+|No, it needs the lookup in the request CU (`symbol-at-cursor-from-table`)
+|No, the cursor parse finds it, after the build
+
+|The request CU
+|Yes, the CU of the file the request names
+|Yes
+
+|The request file
+|Yes, the file the request names
+|Yes
+|===
+
+===== Goal
 
 One row for each target: can the server find its reach, and does `collectGoal()` use it?
 
@@ -183,7 +212,7 @@ One row for each target: can the server find its reach, and does `collectGoal()`
 |Next and Previous, but the request CU and the held CUs are added too (`held-cus-on-first-request`). Not Pop and Re-push, which do not refresh yet (`index-based-sessions`)
 
 |A symbol at the cursor
-|No, it needs the lookup in the request CU (`symbol-at-cursor-from-table`)
+|Yes, `collectCUsReaching()`, once the symbol is known
 |No, Push and the refactorings of a symbol get the reach of the request file as a stand-in (`header-filtered-siblings`)
 
 |The request CU
@@ -235,8 +264,8 @@ One row for each kind of answer: can it come from the table, and does it?
 |No, up to 128 of them are parsed again (`cap-is-a-question`)
 
 |Completion and Extract
-|No, they need the parse of the request CU
-|Yes, they parse it
+|No. They need the code at one position: completion the scope and the types at the cursor, Extract the flow through the region. The table has references, not those
+|Yes, they parse the request file, as the answer line allows
 |===
 
 [[freshness-is-make]]
