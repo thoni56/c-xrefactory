@@ -528,7 +528,7 @@ Symbol: LogTarget
     CURDIR/systemd/src/basic/log.h:202:0
 
 Symbol: Manager
-  References: 910
+  References: 949
     CURDIR/systemd/src/analyze/analyze-verify.c:197:8
     CURDIR/systemd/src/core/automount.c:70:27
     CURDIR/systemd/src/core/automount.c:315:27
@@ -621,6 +621,29 @@ Symbol: Manager
     CURDIR/systemd/src/core/dbus-manager.c:1800:8
     CURDIR/systemd/src/core/dbus-manager.c:1834:8
     CURDIR/systemd/src/core/dbus-manager.c:1876:8
+    CURDIR/systemd/src/core/dbus-manager.c:1927:66
+    CURDIR/systemd/src/core/dbus-manager.c:1928:64
+    CURDIR/systemd/src/core/dbus-manager.c:1929:64
+    CURDIR/systemd/src/core/dbus-manager.c:1930:64
+    CURDIR/systemd/src/core/dbus-manager.c:1931:67
+    CURDIR/systemd/src/core/dbus-manager.c:1932:64
+    CURDIR/systemd/src/core/dbus-manager.c:1933:71
+    CURDIR/systemd/src/core/dbus-manager.c:1934:72
+    CURDIR/systemd/src/core/dbus-manager.c:1935:73
+    CURDIR/systemd/src/core/dbus-manager.c:1936:74
+    CURDIR/systemd/src/core/dbus-manager.c:1937:72
+    CURDIR/systemd/src/core/dbus-manager.c:1938:73
+    CURDIR/systemd/src/core/dbus-manager.c:1944:83
+    CURDIR/systemd/src/core/dbus-manager.c:1945:80
+    CURDIR/systemd/src/core/dbus-manager.c:1947:60
+    CURDIR/systemd/src/core/dbus-manager.c:1948:77
+    CURDIR/systemd/src/core/dbus-manager.c:1949:75
+    CURDIR/systemd/src/core/dbus-manager.c:1950:57
+    CURDIR/systemd/src/core/dbus-manager.c:1951:93
+    CURDIR/systemd/src/core/dbus-manager.c:1952:92
+    CURDIR/systemd/src/core/dbus-manager.c:1953:124
+    CURDIR/systemd/src/core/dbus-manager.c:1954:117
+    CURDIR/systemd/src/core/dbus-manager.c:1955:60
     CURDIR/systemd/src/core/dbus-manager.c:2042:16
     CURDIR/systemd/src/core/dbus-manager.c:2087:32
     CURDIR/systemd/src/core/dbus-manager.c:2106:36
@@ -810,6 +833,21 @@ Symbol: Manager
     CURDIR/systemd/src/login/logind-dbus.c:2216:8
     CURDIR/systemd/src/login/logind-dbus.c:2252:8
     CURDIR/systemd/src/login/logind-dbus.c:2287:8
+    CURDIR/systemd/src/login/logind-dbus.c:2397:81
+    CURDIR/systemd/src/login/logind-dbus.c:2398:74
+    CURDIR/systemd/src/login/logind-dbus.c:2400:56
+    CURDIR/systemd/src/login/logind-dbus.c:2401:62
+    CURDIR/systemd/src/login/logind-dbus.c:2402:65
+    CURDIR/systemd/src/login/logind-dbus.c:2403:65
+    CURDIR/systemd/src/login/logind-dbus.c:2410:67
+    CURDIR/systemd/src/login/logind-dbus.c:2411:84
+    CURDIR/systemd/src/login/logind-dbus.c:2412:86
+    CURDIR/systemd/src/login/logind-dbus.c:2413:88
+    CURDIR/systemd/src/login/logind-dbus.c:2414:85
+    CURDIR/systemd/src/login/logind-dbus.c:2415:91
+    CURDIR/systemd/src/login/logind-dbus.c:2416:66
+    CURDIR/systemd/src/login/logind-dbus.c:2417:80
+    CURDIR/systemd/src/login/logind-dbus.c:2418:62
     CURDIR/systemd/src/login/logind-dbus.c:2500:8
     CURDIR/systemd/src/login/logind-dbus.c:2569:8
     CURDIR/systemd/src/login/logind-dbus.c:2596:8
@@ -1123,6 +1161,7 @@ Symbol: Manager
     CURDIR/systemd/src/network/networkd-link.h:42:8
     CURDIR/systemd/src/network/networkd-link.h:96:13
     CURDIR/systemd/src/network/networkd-link.h:97:13
+    CURDIR/systemd/src/network/networkd-manager-bus.c:31:90
     CURDIR/systemd/src/network/networkd-manager-bus.c:36:25
     CURDIR/systemd/src/network/networkd-manager.c:52:38
     CURDIR/systemd/src/network/networkd-manager.c:80:8
@@ -1666,7 +1705,7 @@ Symbol: Set
     CURDIR/systemd/src/basic/util.c:5022:40
 
 Symbol: Unit
-  References: 834
+  References: 888
     CURDIR/systemd/src/analyze/analyze-verify.c:62:25
     CURDIR/systemd/src/analyze/analyze-verify.c:95:29
     CURDIR/systemd/src/analyze/analyze-verify.c:105:30
@@ -1820,9 +1859,63 @@ Symbol: Unit
     CURDIR/systemd/src/core/dbus-unit.c:458:8
     CURDIR/systemd/src/core/dbus-unit.c:500:8
     CURDIR/systemd/src/core/dbus-unit.c:522:8
+    CURDIR/systemd/src/core/dbus-unit.c:552:50
+    CURDIR/systemd/src/core/dbus-unit.c:555:78
+    CURDIR/systemd/src/core/dbus-unit.c:556:89
+    CURDIR/systemd/src/core/dbus-unit.c:557:79
+    CURDIR/systemd/src/core/dbus-unit.c:558:90
+    CURDIR/systemd/src/core/dbus-unit.c:559:75
+    CURDIR/systemd/src/core/dbus-unit.c:560:77
+    CURDIR/systemd/src/core/dbus-unit.c:561:76
+    CURDIR/systemd/src/core/dbus-unit.c:562:80
+    CURDIR/systemd/src/core/dbus-unit.c:563:91
+    CURDIR/systemd/src/core/dbus-unit.c:564:81
+    CURDIR/systemd/src/core/dbus-unit.c:565:92
+    CURDIR/systemd/src/core/dbus-unit.c:566:78
+    CURDIR/systemd/src/core/dbus-unit.c:567:77
+    CURDIR/systemd/src/core/dbus-unit.c:568:80
+    CURDIR/systemd/src/core/dbus-unit.c:569:79
+    CURDIR/systemd/src/core/dbus-unit.c:570:82
+    CURDIR/systemd/src/core/dbus-unit.c:571:76
+    CURDIR/systemd/src/core/dbus-unit.c:572:75
+    CURDIR/systemd/src/core/dbus-unit.c:573:79
+    CURDIR/systemd/src/core/dbus-unit.c:574:78
+    CURDIR/systemd/src/core/dbus-unit.c:575:81
+    CURDIR/systemd/src/core/dbus-unit.c:576:88
+    CURDIR/systemd/src/core/dbus-unit.c:577:90
+    CURDIR/systemd/src/core/dbus-unit.c:578:86
+    CURDIR/systemd/src/core/dbus-unit.c:579:66
+    CURDIR/systemd/src/core/dbus-unit.c:580:62
+    CURDIR/systemd/src/core/dbus-unit.c:582:76
+    CURDIR/systemd/src/core/dbus-unit.c:585:60
+    CURDIR/systemd/src/core/dbus-unit.c:586:58
+    CURDIR/systemd/src/core/dbus-unit.c:587:60
+    CURDIR/systemd/src/core/dbus-unit.c:590:70
+    CURDIR/systemd/src/core/dbus-unit.c:591:69
+    CURDIR/systemd/src/core/dbus-unit.c:592:68
+    CURDIR/systemd/src/core/dbus-unit.c:593:71
+    CURDIR/systemd/src/core/dbus-unit.c:599:81
+    CURDIR/systemd/src/core/dbus-unit.c:600:82
+    CURDIR/systemd/src/core/dbus-unit.c:601:81
+    CURDIR/systemd/src/core/dbus-unit.c:602:77
+    CURDIR/systemd/src/core/dbus-unit.c:603:84
+    CURDIR/systemd/src/core/dbus-unit.c:604:81
+    CURDIR/systemd/src/core/dbus-unit.c:605:80
+    CURDIR/systemd/src/core/dbus-unit.c:606:81
+    CURDIR/systemd/src/core/dbus-unit.c:608:79
+    CURDIR/systemd/src/core/dbus-unit.c:609:87
+    CURDIR/systemd/src/core/dbus-unit.c:610:72
+    CURDIR/systemd/src/core/dbus-unit.c:611:80
+    CURDIR/systemd/src/core/dbus-unit.c:612:77
+    CURDIR/systemd/src/core/dbus-unit.c:613:67
+    CURDIR/systemd/src/core/dbus-unit.c:614:64
+    CURDIR/systemd/src/core/dbus-unit.c:615:84
+    CURDIR/systemd/src/core/dbus-unit.c:616:81
+    CURDIR/systemd/src/core/dbus-unit.c:618:74
     CURDIR/systemd/src/core/dbus-unit.c:643:8
     CURDIR/systemd/src/core/dbus-unit.c:662:8
     CURDIR/systemd/src/core/dbus-unit.c:686:8
+    CURDIR/systemd/src/core/dbus-unit.c:703:60
     CURDIR/systemd/src/core/dbus-unit.c:712:8
     CURDIR/systemd/src/core/dbus-unit.c:740:8
     CURDIR/systemd/src/core/dbus-unit.c:767:33
