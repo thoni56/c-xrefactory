@@ -675,11 +675,12 @@ Waits for: adr-0035
 
 Dissolves stale-POP *and* lets an answer grow while you work. Roadmap → Memory as
 Truth → Remaining. The design and its steps are in 11-planned-features → Index-based
-Sessions, today's stack in 14-datastructures → Browser Stack. Steps 2 to 4 are left,
-step 1 is `session-symbol-reach`. Before the request chain
+Sessions, today's stack in 14-datastructures → Browser Stack. Step 1 is
+`session-symbol-reach`, done for Next and Previous. Steps 2 to 4 are left. Before the request chain
 (`symbol-at-cursor-from-table`, `header-filtered-siblings`),
-since it decides what a push sees once those change what is built. It makes
-`session-refresh-time` unnecessary, and with `session-symbol-reach` answers
+since it decides what a push sees once those change what is built. It removes
+`needsBrowsingStackRefresh`, which is set in only some of the places that change the
+table and is cleared by the first session that reads it (stale-POP). With `session-symbol-reach` it answers
 `held-cus-on-first-request` for Next, Previous, Pop and Re-push.
 
 After: session-symbol-reach
@@ -961,8 +962,9 @@ After: dump-reference-database
 
 ## 7. Freshness as make (ADR-0032, ADR-0035, ADR-0036)
 
-The order is roughly as listed. "Freshness Is Make, for the
-Goal" in `08-algorithms` has the shape the request converges to.
+The `Waits for:` and `After:` lines give the order, also across the sections, and the
+dependency graph draws it. "The Shape It Converges To" in `08-algorithms` has the shape the
+request converges to.
 
 Performance, from reading the code (Mac, session `05984816`, 2026-10-08): at equal
 correctness the design costs the same or less. Parsing dominates, and what is parsed
@@ -1032,16 +1034,6 @@ are in 11-planned-features → Index-based Sessions → A refactoring's own stac
 
 After: refactoring-session-kinds
 
-### (#109) A session refreshes a file by a time, not a flag `session-refresh-time`
-
-A file's references get a time they last changed, never cleared, and a session
-refreshes its copy of a file when that is later than the copy. Replaces
-`needsBrowsingStackRefresh`, which is set in only some of the places that change the
-table and is cleared by the first session that reads it (stale-POP).
-`index-based-sessions` removes it again.
-
-After: refactoring-session-kinds
-
 ### (#107) The macro path parses CUs that are current `cap-is-a-question`
 
 For a cursor in a macro body, `collectCompilationUnitsExpandingTheMacro()` parses up to
@@ -1091,9 +1083,9 @@ when the parts and those two are. The `<...>` includes are `scan-angle-includes`
 The target is the session's selected symbols, from the session on top or the one a Pop
 goes to. Their reach is the CUs that include a file declaring them: the files from the
 session's references, since a changed header loses its declarations in the table
-(ADR-0035), and `collectCUsIncluding()`. Today `-browse-next`
-sends the current buffer, so the goal is that buffer's siblings and the held CUs.
-11-planned-features → Index-based Sessions → Steps, step 1.
+(ADR-0035), and `collectCUsReaching()`. Next and Previous do this since `cfca3cb61`,
+the request CU and the held CUs added (`held-cus-on-first-request`). Pop and Re-push
+do not refresh yet. 11-planned-features → Index-based Sessions → Steps, step 1.
 
 #### b. Completion, F11 and Extract build only the request CU `request-cu-target`
 

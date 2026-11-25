@@ -264,7 +264,7 @@ ADR-0032 and ADR-0035 make the entry refresh work like Make. The terms map like 
 |parsing the CU, `buildKnowledgeOfCU()`
 
 |`make goal`
-|the entry refresh for one request, over the CUs on its goal: the request, the held files and the siblings
+|the entry refresh for one request, over the CUs on its goal, the reach of its target
 |===
 
 `knowledgeIsOutOfDate()` in `src/freshness.c` is the rule.
@@ -331,7 +331,8 @@ Then the references of the changed files (`removeReferencesOfChangedFiles()`).
 |`collectGoal()`
 |Held CUs that are out of date, in a project that was open already (`collectOutOfDateHeldCUs()`).
 The request CU, if it is out of date (`collectRequestCUForStripping()`, `collectRequestCUToBuild()`). The first does not build it, since the operation parses it.
-The CUs that reach the request file, unless the operation is on a name (`collectSiblingCUs()`).
+Next and Previous: the CUs that reach the files declaring the session's symbols (`collectCUsReachingSymbolsOf()`).
+Any other operation, unless it is on a name: the CUs that reach the request file (`collectSiblingCUs()`).
 An operation on a name: every other CU that is out of date, on a list of its own (`collectOutOfDateCUsNotIn()`).
 |goal
 
@@ -470,7 +471,7 @@ They are the two writers of the include graph, until the scan records `<...>` in
 
 *A session's references and the table.*
 A session works on a copy, and the refresh flag says the copy is out of date.
-It is set in only some of the places that change the table (`session-refresh-time`).
+It is set in only some of the places that change the table (`index-based-sessions`).
 
 === Lightweight Include Structure Scanning
 
