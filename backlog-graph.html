@@ -70,6 +70,7 @@ flowchart BT
   rename_partial_in_broken_code["§5 · 97 · Rename in code that does not parse leaves occurrences behind"]
   remove_references_stopgap["§5 · 20 · Take the client's #quot;Remove References and Restart Server#quot; back out"]
   index_based_sessions["§5 · 22 · Index-based sessions"]
+  browser_menu_selection["§5 · 133 · Selecting several symbols in the browser menu is hard to discover"]
   refactorings_leave_sessions["§5 · 130 · Other refactorings may leave sessions on the browsing stack"]
   refused_rename_references["§5 · 117 · After a refused or undone refactoring, a later one edited the wrong places"]
   refactoring_stale_buffer["§5 · 128 · A refactoring edits a buffer whose file changed on disk"]
@@ -85,6 +86,7 @@ flowchart BT
   move_takes_types["§5 · 103 · Move Function takes a type that only moved code uses"]
   move_api_comment["§5 · 104 · Where an API comment goes when a function moves"]
   parse_all["§5 · 88 · `-parse-all`, a request that parses every compilation unit the scan found and has not parsed"]
+  make_static["§5 · 134 · Make Static"]
   refactoring_help["§5 · 92 · The refactoring dialog's help describes what the dialog offers"]
   browser_for_c["§5 · 82 · The browser's Symbol Pane says which symbol each line is"]
   local_config_fragments["§5 · 27 · Local config fragments: the config names, the fragment binds"]
@@ -98,16 +100,17 @@ flowchart BT
   every_parse_all_passes["§7 · 115 · Every parse of a CU parses it once for each pass"]
   symbol_at_cursor_from_table["§7 · 113 · The symbol at the cursor is looked up in the table, not parsed for"]
   refactoring_session_kinds["§7 · 116 · The refactorings' push operations are session kinds"]
+  refactoring_own_stack["§7 · 135 · A refactoring gets a stack of its own"]
   session_refresh_time["§7 · 109 · A session refreshes a file by a time, not a flag"]
   cap_is_a_question["§7 · 107 · The macro path parses CUs that are current"]
   cu_prerequisites["§7 · 35 · A CU's prerequisites"]
   out_of_date["§7 · 36 · The config as an input of `knowledgeIsOutOfDate()`"]
-  request_target["§7 · 37 · What a request needs"]
+  session_symbol_reach["§7 · 37a · Next, Previous, Pop and Re-push build the reach of the session's symbols"]
+  request_cu_target["§7 · 37b · Completion, F11 and Extract build only the request CU"]
   held_cus_on_first_request["§7 · 124 · The held CUs in the goal are there for the sessions"]
   whole_project_goal["§7 · 125 · An operation on a name asks about its whole goal"]
   modules_follow_the_shape["§7 · 127 · Modules follow the lines of the shape"]
   request_through_includers["§7 · 54 · A request in a header is parsed through its includers"]
-  cursor_parse_reuse["§7 · 1 · The request CU is parsed for the cursor, also when its knowledge is current"]
   time_budget["§7 · 40 · A time budget instead of the count"]
   variant_b["§7 · 108 · A CU that stops emitting into an unchanged header leaves its references there"]
   removal_cost["§7 · 45 · What removal costs"]
@@ -141,7 +144,6 @@ flowchart BT
   lexing_cache --&gt; parallel_parsing
   adr_0035 --&gt; remove_references_stopgap
   adr_0035 --&gt; cap_is_a_question
-  adr_0032 --&gt; request_target
   index_based_sessions --&gt; held_cus_on_first_request
   held_cus_on_first_request --&gt; whole_project_goal
   adr_0035 --&gt; variant_b
@@ -178,7 +180,7 @@ flowchart BT
   include_bracket_from_macro -.-&gt; newline_position
   newline_position -.-&gt; if_syntax_error_twice
   if_syntax_error_twice -.-&gt; server_waits_after_client_error
-  request_target -.-&gt; header_filtered_siblings
+  symbol_at_cursor_from_table -.-&gt; header_filtered_siblings
   move_includes -.-&gt; move_to_new_module
   extract_array_used_after -.-&gt; extract_typing_ladder
   extract_typing_ladder -.-&gt; extract_out_locals_declared
@@ -187,7 +189,8 @@ flowchart BT
   output_parameter_to_return -.-&gt; extract_guard_return
   extract_guard_return -.-&gt; inline_variable
   inline_variable -.-&gt; rename_keeps_alignment
-  request_target -.-&gt; index_based_sessions
+  session_symbol_reach -.-&gt; index_based_sessions
+  refactoring_own_stack -.-&gt; browser_menu_selection
   rename_partial_in_broken_code -.-&gt; refactorings_leave_sessions
   rename_partial_in_broken_code -.-&gt; refused_rename_references
   refused_rename_references -.-&gt; refactoring_stale_buffer
@@ -200,6 +203,7 @@ flowchart BT
   move_removes_forward_declaration -.-&gt; move_removes_extern
   move_removes_extern -.-&gt; move_takes_types
   move_takes_types -.-&gt; move_api_comment
+  parse_all -.-&gt; make_static
   retry_creating_request -.-&gt; refactoring_help
   refactoring_help -.-&gt; browser_for_c
   project_extent -.-&gt; local_config_fragments
@@ -213,15 +217,16 @@ flowchart BT
   index_based_sessions -.-&gt; every_parse_all_passes
   every_parse_all_passes -.-&gt; symbol_at_cursor_from_table
   symbol_at_cursor_from_table -.-&gt; refactoring_session_kinds
+  refactoring_session_kinds -.-&gt; refactoring_own_stack
   refactoring_session_kinds -.-&gt; session_refresh_time
   cu_prerequisites -.-&gt; out_of_date
+  session_symbol_reach -.-&gt; request_cu_target
   whole_project_goal -.-&gt; modules_follow_the_shape
-  request_through_includers -.-&gt; cursor_parse_reuse
   out_of_date -.-&gt; time_budget
   refactoring_catalogue -.-&gt; windows_build
   customize_names -.-&gt; refactoring_catalogue
-  linkStyle 0,1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20,21,22,23,24,25,26,27 stroke:#333,stroke-width:2.5px
-  linkStyle 28,29,30,31,32,33,34,35,36,37,38,39,40,41,42,43,44,45,46,47,48,49,50,51,52,53,54,55,56,57,58,59,60,61,62,63,64,65,66,67,68,69,70,71,72,73,74,75,76,77,78,79,80,81,82,83,84,85,86,87,88,89,90,91 stroke:#aaa,stroke-width:1px
+  linkStyle 0,1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20,21,22,23,24,25,26 stroke:#333,stroke-width:2.5px
+  linkStyle 27,28,29,30,31,32,33,34,35,36,37,38,39,40,41,42,43,44,45,46,47,48,49,50,51,52,53,54,55,56,57,58,59,60,61,62,63,64,65,66,67,68,69,70,71,72,73,74,75,76,77,78,79,80,81,82,83,84,85,86,87,88,89,90,91,92,93 stroke:#aaa,stroke-width:1px
   class config_without_pass ready
   class defines_at_parse_start ready
   class side_effects_to_dispatcher ready
@@ -273,6 +278,7 @@ flowchart BT
   class rename_partial_in_broken_code ready
   class remove_references_stopgap ready
   class index_based_sessions ready
+  class browser_menu_selection ready
   class refactorings_leave_sessions ready
   class refused_rename_references ready
   class refactoring_stale_buffer ready
@@ -288,6 +294,7 @@ flowchart BT
   class move_takes_types ready
   class move_api_comment ready
   class parse_all ready
+  class make_static ready
   class refactoring_help ready
   class browser_for_c ready
   class local_config_fragments ready
@@ -301,16 +308,17 @@ flowchart BT
   class every_parse_all_passes ready
   class symbol_at_cursor_from_table ready
   class refactoring_session_kinds ready
+  class refactoring_own_stack ready
   class session_refresh_time ready
   class cap_is_a_question ready
   class cu_prerequisites ready
   class out_of_date ready
-  class request_target ready
+  class session_symbol_reach ready
+  class request_cu_target ready
   class held_cus_on_first_request blocked
   class whole_project_goal blocked
   class modules_follow_the_shape ready
   class request_through_includers ready
-  class cursor_parse_reuse ready
   class time_budget ready
   class variant_b ready
   class removal_cost ready
