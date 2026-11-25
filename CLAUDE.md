@@ -107,7 +107,7 @@ make -C tests/test_<name>   # one system test
 ```
 
 Both, because `make test` does not rebuild. The slow tests (`.slow`) are left
-out; run them when the change could touch them.
+out locally. CI runs them, so check the Travis build after a source push.
 
 Judge a system test by `make`'s exit status. A leftover `output` file means it
 failed, but a test that dies before writing one leaves nothing behind, so absence
