@@ -132,8 +132,13 @@ interrogation, snapshot load;
 Then `initializeFileProcessing()` discovers nothing. Today it must skip the config
 search once locked, since the search sets `autoDetectedProjectRoot` (`src/options.c`)
 and so `cxFileLocation`. `initializeProjectContext()` has a copy of that discovery.
+With the setup in the open, `projectWasOpen` in `callServer()` is true for every operation,
+so `collectGoal()` adds the held CUs also on the first request after the open. Decide
+first why they are in the goal (`held-cus-on-first-request`).
 
 Waits for: side-effects-to-dispatcher, adr-0030
+
+After: held-cus-on-first-request
 
 #### d. The assert that nothing before the future `-openproject` reads a project-scoped option `openproject-tripwire`
 
